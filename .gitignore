@@ -1,0 +1,26 @@
+# Local environment files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Dependencies
+/node_modules/
+
+# Build outputs, reports and cache folders
+/coverage/
+/build/
+/lib-cov/
+/.nyc_output/
+/.npm/
+/.eslintcache/
+
+# Miscellaneous
+*~
+.DS_Store
+npm-debug.log*
+
+# Personal folders
+/forDevOnly/
+/doc/
+
