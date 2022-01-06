@@ -1,0 +1,31 @@
+{
+  "extends": ["react-app", "plugin:import/recommended"],
+  "rules": {
+    "import/extensions": "error",
+    "import/newline-after-import": "error",
+    "import/no-commonjs": "error",
+    "import/no-cycle": "error",
+    "import/no-deprecated": "error",
+    "import/no-dynamic-require": "error",
+    "import/no-extraneous-dependencies": "error",
+    "import/no-mutable-exports": "error",
+    "import/no-namespace": "error",
+    "import/no-nodejs-modules": "error",
+    "import/no-self-import": "error",
+    "import/no-unused-modules": "error",
+    "import/no-useless-path-segments": "error",
+    "import/unambiguous": "error",
+    "no-alert": "off",
+    "no-console": "off",
+    "no-unused-vars": "warn"
+  },
+  "overrides": [
+    {
+      "files": ["src/tests/**/*.js"],
+      "rules": {
+        "import/no-commonjs": "off",
+        "import/unambiguous": "off"
+      }
+    }
+  ]
+}
