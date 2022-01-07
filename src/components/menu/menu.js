@@ -23,8 +23,8 @@ function Header() {
  */
 function Menu(props) {
   const { user } = props;
-  const changeTheme = () => {
-    /*const link = find(document.getElementsByTagName('link'), (o) => {
+  //const changeTheme = () => {
+  /*const link = find(document.getElementsByTagName('link'), (o) => {
       return o.href.indexOf('bootstrap.min.css') !== -1;
     });
     if (link) {
@@ -33,8 +33,8 @@ function Menu(props) {
         `https://bootswatch.com/3/${theme}/bootstrap.min.css`
       );3000
     }*/
-    alert('Not implemented yet');
-  };
+  //  alert('Not implemented yet');
+  //};
 
   if (!user.isLoggedIn) {
     return <Header />;

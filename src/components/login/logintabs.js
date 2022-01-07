@@ -6,7 +6,6 @@ import { useSelector } from 'react-redux';
 
 function LoginTabs() {
   const site = useSelector((state) => state.site);
-  const user = useSelector((state) => state.user);
 
   return (
     <Tabs id="login-tabs" transition={false}>

@@ -3,9 +3,10 @@ variables:
 
 stages:
   - test
+  - documentation
 
 pages:
-  stage: test
+  stage: documentation
   image: python:latest
   script:
     - pip install mkdocs-material &&  pip install mkdocstrings
@@ -14,7 +15,7 @@ pages:
     paths:
       - public
   rules:
-    - if: '$CI_COMMIT_BRANCH == "master"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
 
 Lint:
   stage: test
