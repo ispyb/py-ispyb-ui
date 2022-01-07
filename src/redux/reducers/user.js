@@ -5,13 +5,13 @@ const initialState = {
   roles: null,
   token: null,
   isAuthenticated: false,
-  isAuthenticating: false,
+  isAuthenticating: false
 };
 
 const user = (state = initialState, action) => {
   switch (action.type) {
     case LOG_IN: {
-      state = { ...initialState, username: action.username, isAuthenticated: true, logged: false };
+      state = { ...initialState, username: action.username, isAuthenticated: false, isAuthenticating: true };
       break;
     }
     case LOGGED_IN: {
@@ -20,12 +20,20 @@ const user = (state = initialState, action) => {
         username: action.username,
         token: action.token,
         roles: action.roles,
-        isAuthenticated: false,
-        logged: true,
+        isAuthenticated: true
       };
       break;
     }
     case LOG_OUT: {
+      state = {
+        ...initialState,
+        username: null,
+        token: null,
+        roles: null,
+        isAuthenticated: false,
+        isAuthenticating: false
+      };
+      debugger;
       break;
     }
     case LOGIN_ERROR: {

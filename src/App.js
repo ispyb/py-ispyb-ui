@@ -1,3 +1,4 @@
+import 'bootswatch/dist/pulse/bootstrap.min.css';
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
@@ -6,13 +7,16 @@ import Menu from 'components/menu/menu';
 import LoginPage from 'components/login/loginpage';
 import { setSite } from 'redux/actions/site';
 import sites from 'config/sites';
-import 'bootswatch/dist/pulse/bootstrap.min.css';
+import SessionsPage from 'components/sessionspage';
+import ProposalsPage from 'components/proposalspage';
+import ShippingPage from 'components/shippingpage';
+import PreparePage from 'components/preparepage';
 
 export default function App() {
   const dispatch = useDispatch();
 
-  const user = useSelector((state) => state.user);
-  const site = useSelector((state) => state.site);
+  const user = useSelector(state => state.user);
+  const site = useSelector(state => state.site);
 
   /** Check if there is a site configured */
   if (Object.entries(site).length === 0) {
@@ -30,29 +34,16 @@ export default function App() {
       </>
     );
   }
-  debugger;
+
   return (
     <BrowserRouter>
       <Menu />
       <Routes>
-        <Route path="/" element={<div>Home</div>} />
-        <Route path="users/*" element={<Users />} />
+        <Route path="/sessions" element={<SessionsPage />} />
+        <Route path="/proposals" element={<ProposalsPage />} />
+        <Route path="/shipping" element={<ShippingPage />} />
+        <Route path="/prepare" element={<PreparePage />} />
       </Routes>
     </BrowserRouter>
-  );
-}
-
-function Users() {
-  return (
-    <div>
-      <nav>
-        <Link to="me">My Profile</Link>
-      </nav>
-
-      <Routes>
-        <Route path=":id" element={<div>Test</div>} />
-        <Route path="me" element={<div>Test2</div>} />
-      </Routes>
-    </div>
   );
 }

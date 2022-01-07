@@ -58,6 +58,7 @@
   },
   "devDependencies": {
     "eslint": "^8.6.0",
-    "eslint-plugin-import": "^2.25.4"
+    "eslint-plugin-import": "^2.25.4",
+    "flow-typed": "^3.6.0"
   }
 }
