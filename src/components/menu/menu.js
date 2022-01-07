@@ -1,5 +1,5 @@
 import { Container, Navbar } from 'react-bootstrap';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import React from 'react';
 
 function Header() {
