@@ -1,8 +1,8 @@
 import React from 'react';
-import { Col, Container, Row } from 'react-bootstrap';
-import LoginTabs from './logintabs';
 import { useSelector } from 'react-redux';
-import ErrorBoundary from '../errors/errorboundary';
+import { Col, Container, Row, Alert } from 'react-bootstrap';
+import LoginTabs from 'components/login/logintabs';
+import ErrorBoundary from 'components/errors/errorboundary';
 
 function LoginPage() {
   const user = useSelector((state) => state.user);
@@ -21,7 +21,12 @@ function LoginPage() {
           </Col>
         </Row>
         <Row>
-          <Col xs={12} className="hidden-sm hidden-md hidden-lg" style={{ marginTop: 25, marginBottom: -20 }}>
+          <Col md={8}>
+            <Alert key="alert-development" variant="warning">
+              This application is currently under development
+            </Alert>
+          </Col>
+          <Col xs={12} md={4}>
             {loginTabs}
           </Col>
         </Row>

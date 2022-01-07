@@ -1,4 +1,5 @@
 const UI = {
+  theme: 'slate',
   status: {
     offline: {
       enabled: false,

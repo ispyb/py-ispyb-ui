@@ -4,35 +4,32 @@ const initialState = {
   username: null,
   roles: null,
   token: null,
-  isLoggedIn: false,
+  isAuthenticated: false,
+  isAuthenticating: false,
 };
 
 const user = (state = initialState, action) => {
   switch (action.type) {
     case LOG_IN: {
-      state = {
-        ...initialState,
-        username: action.username,
-        isSSO: action.username === null,
-        isAuthenticating: true,
-      };
+      state = { ...initialState, username: action.username, isAuthenticated: true, logged: false };
       break;
     }
     case LOGGED_IN: {
       state = {
         ...initialState,
-        username: state.username,
+        username: action.username,
         token: action.token,
         roles: action.roles,
+        isAuthenticated: false,
+        logged: true,
       };
       break;
     }
     case LOG_OUT: {
-      state = { ...initialState, isSessionExpired: action.expired };
       break;
     }
     case LOGIN_ERROR: {
-      state = { ...initialState, error: action.error };
+      state = { ...initialState, error: action.error, isAuthenticated: false, isAuthenticating: false };
       break;
     }
     default:

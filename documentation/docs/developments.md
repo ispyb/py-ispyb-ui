@@ -5,7 +5,20 @@
 The goal of this section is to write down the migration and the decision taken in order to update EXI2
 
 
+
 ### Major Changes
+
+#### Imports
+
+Support importing modules using [absolute paths](https://create-react-app.dev/docs/importing-a-component/#absolute-imports)
+
+```
+import { Button } from 'components/Button.js';
+```
+instead of
+```
+import { Button } from '../../components/Button.js';
+```
 
 #### React
 
@@ -30,9 +43,9 @@ This version updates the following dependencies:
  - From bootstrap `3` to bootstrap `5` 
 
 
-## Problems found
+### Breaking changes
 
-### react-hook-form
+#### react-hook-form
 
 The latest version of this hook has changed the way the items of a form are registered.
 From:

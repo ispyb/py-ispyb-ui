@@ -1,26 +1,27 @@
 import React from 'react';
 import { Alert, Form, Button, FormControl, Card, FormGroup, FormLabel } from 'react-bootstrap';
-import UI from '../../config/ui';
-import ErrorUserMessage from '../usermessages/errorusermessage';
-import { useSelector, useDispatch } from 'react-redux';
-import { doSignIn } from '../../redux/actions/user';
 import { useForm } from 'react-hook-form';
+import { useSelector, useDispatch } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCoffee } from '@fortawesome/free-solid-svg-icons';
+import { faSignInAlt, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { doSignIn } from 'redux/actions/user';
+import UI from 'config/ui';
+import ErrorUserMessage from 'components/usermessages/errorusermessage';
 
 function LoginForm(props) {
-  const { plugin } = props;
+  const { plugin, site } = props;
   const user = useSelector((state) => state.user);
 
+  const { isAuthenticating } = user;
   const { register, handleSubmit } = useForm();
   const dispatch = useDispatch();
 
   return (
-    <Card className="tab-panel-fix" style={{ padding: '20px 0 ' }}>
+    <Card style={{ padding: '20px 0 ' }} fluid>
       <Form
         className="container-fluid"
         onSubmit={handleSubmit((data) => {
-          dispatch(doSignIn(plugin, data.username, data.password));
+          dispatch(doSignIn(plugin, data.username, data.password, site));
         })}
       >
         {UI.loginForm.header && (
@@ -29,7 +30,7 @@ function LoginForm(props) {
           </p>
         )}
         {user.error && <ErrorUserMessage text={user.error} />}
-        {user.isSessionExpired && <Alert bsStyle="warning">Session expired</Alert>}
+        {user.isSessionExpired && <Alert variant="warning">Session expired</Alert>}
 
         <FormGroup controlId="username">
           <FormLabel>{UI.loginForm.usernameLabel}</FormLabel>
@@ -41,9 +42,13 @@ function LoginForm(props) {
           <FormControl {...register('password', { required: true })} type="password" name="password" required />
         </FormGroup>
 
-        <Button style={{ marginTop: 5, width: '100%' }} type="submit" bsStyle="primary">
-          <FontAwesomeIcon icon={faCoffee} style={{ marginRight: 10 }} />
-          {user.isAuthenticating ? 'Signing in...' : 'Sign in'}
+        <Button style={{ marginTop: 5, width: '100%' }} type="submit" variant="primary">
+          {isAuthenticating ? (
+            <FontAwesomeIcon className="fa-spin" icon={faSpinner} style={{ marginRight: 10 }}></FontAwesomeIcon>
+          ) : (
+            <FontAwesomeIcon icon={faSignInAlt} style={{ marginRight: 10 }}></FontAwesomeIcon>
+          )}
+          {isAuthenticating ? 'Signing in...' : 'Sign in'}
         </Button>
       </Form>
     </Card>
@@ -51,37 +56,3 @@ function LoginForm(props) {
 }
 
 export default LoginForm;
-
-/*
- <Card className="tab-panel-fix" style={{ padding: '20px 0 ' }}>
-      <form
-        className="container-fluid"
-        onSubmit={handleSubmit((data) => {
-          dispatch(doSignIn(plugin, data.username, data.password));
-        })}
-      >
-        {UI.loginForm.header && (
-          <p className="text-info" style={{ textAlign: 'left' }}>
-            {UI.loginForm.header}
-          </p>
-        )}
-        {user.error && <ErrorUserMessage text={user.error} />}
-        {user.isSessionExpired && <Alert bsStyle="warning">Session expired</Alert>}
-
-        <FormGroup controlId="username">
-          <FormLabel>{UI.loginForm.usernameLabel}</FormLabel>
-          <FormControl inputRef={register({ required: true })} type="text" name="username" autoFocus required />
-        </FormGroup>
-
-        <FormGroup controlId="password">
-          <FormLabel>Password</FormLabel>
-          <FormControl inputRef={register({ required: true })} type="password" name="password" required />
-        </FormGroup>
-
-        <Button style={{ marginTop: 5, width: '100%' }} type="submit" bsStyle="primary">
-          <FontAwesomeIcon icon={faCoffee} style={{ marginRight: 10 }} />
-          {user.isAuthenticating ? 'Signing in...' : 'Sign in'}
-        </Button>
-      </form>
-    </Card>
-    */

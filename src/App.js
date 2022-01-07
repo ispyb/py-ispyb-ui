@@ -1,11 +1,12 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import Menu from './components/menu/menu';
 import { useSelector, useDispatch } from 'react-redux';
-import LoginPage from './components/login/loginpage';
-import { setSite } from './redux/actions/site';
-import sites from './config/sites';
-import Footer from './components/footer/footer';
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { Alert } from 'react-bootstrap';
+import Menu from 'components/menu/menu';
+import LoginPage from 'components/login/loginpage';
+import { setSite } from 'redux/actions/site';
+import sites from 'config/sites';
+import 'bootswatch/dist/pulse/bootstrap.min.css';
 
 export default function App() {
   const dispatch = useDispatch();
@@ -19,18 +20,17 @@ export default function App() {
     if (sites.length === 1) {
       dispatch(setSite(sites[0]));
     }
-    return 'Application is not configured. Sites are missing';
+    return <Alert variant="danger">Application is not configured. Site configuration is missing</Alert>;
   }
-  if (!user.isLoggedIn) {
+  if (!user.isAuthenticated) {
     return (
       <>
-        <Menu user={user} />
+        <Menu />
         <LoginPage />
-        <Footer></Footer>
       </>
     );
   }
-
+  debugger;
   return (
     <BrowserRouter>
       <Menu />

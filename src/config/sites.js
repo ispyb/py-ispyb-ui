@@ -1,7 +1,7 @@
 const sites = [
   {
-    name: 'SOLEIL',
-    server: 'http://localhost:8080/ispyb/ispyb-ws/rest',
+    name: 'ESRF',
+    server: 'https://ispyb.esrf.fr/ispyb/ispyb-ws/rest',
     description: 'European Synchroton Radiation Facility',
     icon: '../images/site/esrf.png',
     authentication: {
@@ -15,12 +15,12 @@ const sites = [
         },
       },
       authenticators: [
-        // Database authenticator
         {
           plugin: 'db',
           title: 'ISPyB',
           server: 'https://ispyb.esrf.fr/ispyb/ispyb-ws/rest',
           enabled: true,
+          site: 'ESRF',
         },
       ],
     },
