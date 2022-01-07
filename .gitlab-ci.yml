@@ -18,7 +18,7 @@ pages:
 
 Lint:
   stage: test
-  image: node:12.14.1
+  image: node:14.18.2
   script:
     - npm ci
     - npm run lint
