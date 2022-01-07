@@ -1,0 +1,29 @@
+variables:
+  DOCKER_IMAGE_FULLNAME: $CI_REGISTRY/$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+
+stages:
+  - test
+
+pages:
+  stage: test
+  image: python:latest
+  script:
+    - pip install mkdocs-material &&  pip install mkdocstrings
+    - cd documentation && mkdocs build --site-dir ../public
+  artifacts:
+    paths:
+      - public
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "master"'
+
+Lint:
+  stage: test
+  image: node:12.14.1
+  script:
+    - npm ci
+    - npm run lint
+
+.docker-template:
+  image: docker:latest
+  before_script:
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
