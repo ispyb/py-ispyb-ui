@@ -1,14 +1,15 @@
 import React from 'react';
+import ErrorUserMessage from 'components/usermessages/errorusermessage';
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { hasError: false, message: null, stack: null };
   }
 
   static getDerivedStateFromError(error) {
     // Update state so the next render will show the fallback UI.
-    return { hasError: true };
+    return { hasError: true, message: error.message, stack: error.stack };
   }
 
   componentDidCatch(error, errorInfo) {
@@ -18,10 +19,8 @@ class ErrorBoundary extends React.Component {
 
   render() {
     if (this.state.hasError) {
-      // You can render any custom fallback UI
-      return <h1>Something went wrong.</h1>;
+      return <ErrorUserMessage title={'Something went wrong.'} message={this.state.message} stack={this.state.stack}></ErrorUserMessage>;
     }
-
     return this.props.children;
   }
 }

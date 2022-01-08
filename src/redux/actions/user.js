@@ -1,7 +1,7 @@
-import { LOGGED_IN, LOG_IN, LOG_OUT, LOGIN_ERROR } from '../actiontypes';
+import { LOGGED_IN, LOG_OUT, LOGIN_ERROR } from '../actiontypes';
 import { getLogin } from 'api/ispyb';
-// It should be replaced by a axios called, however for a reason I still don't understand, I got a CORS error when using actions due to the OPTIONS preflight call
-import $ from 'jquery';
+import axios from 'axios';
+import qs from 'qs';
 
 export function doLogOut() {
   return { type: LOG_OUT };
@@ -17,27 +17,28 @@ export function doLogOut() {
  */
 export function doSignIn(plugin, username, password, site) {
   return function(dispatch) {
-    $.ajax({
-      url: getLogin(site),
-      data: {
-        login: username,
-        password: password
-      },
-      type: 'post',
-      dataType: 'json',
-      beforeSend: function() {
-        dispatch({ type: LOG_IN, username: username, site: site });
-      },
-      success: function(data) {
-        const { token, roles } = data;
+    /* TODO: this should be called async */
+    //dispatch({ type: LOG_IN, username });
+    axios
+      .post(
+        getLogin(site),
+        qs.stringify({
+          login: username,
+          password: password
+        }),
+        { 'content-type': 'application/json' }
+      )
+      .then(response => {
+        /** ISPYB  does not respond with an error code when authentication is failed this is why it is checked if token and roles and retrieved **/
+        const { token, roles } = response.data;
         if (token && roles) {
-          dispatch({ type: LOGGED_IN, username, token, roles });
+          return dispatch({ type: LOGGED_IN, username, token, roles });
         }
-      },
-      error: function(error) {
+        throw new Error('Authentication failed');
+      })
+      .catch(error => {
         dispatch({ type: LOGIN_ERROR, error });
-      }
-    });
+      });
   };
 }
 

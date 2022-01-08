@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert, Form, Button, FormControl, Card, FormGroup, FormLabel } from 'react-bootstrap';
+import { Form, Button, FormControl, Card, FormGroup, FormLabel } from 'react-bootstrap';
 import { useForm } from 'react-hook-form';
 import { useSelector, useDispatch } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -10,17 +10,17 @@ import ErrorUserMessage from 'components/usermessages/errorusermessage';
 
 function LoginForm(props) {
   const { plugin, site } = props;
-  const user = useSelector((state) => state.user);
+  const user = useSelector(state => state.user);
 
-  const { isAuthenticating } = user;
+  const { isAuthenticating, isError } = user;
   const { register, handleSubmit } = useForm();
   const dispatch = useDispatch();
 
   return (
-    <Card style={{ padding: '20px 0 ' }} fluid>
+    <Card style={{ padding: '20px 0 ' }}>
       <Form
         className="container-fluid"
-        onSubmit={handleSubmit((data) => {
+        onSubmit={handleSubmit(data => {
           dispatch(doSignIn(plugin, data.username, data.password, site));
         })}
       >
@@ -29,8 +29,7 @@ function LoginForm(props) {
             {UI.loginForm.header}
           </p>
         )}
-        {user.error && <ErrorUserMessage text={user.error} />}
-        {user.isSessionExpired && <Alert variant="warning">Session expired</Alert>}
+        {isError && <ErrorUserMessage text="Authentication Failed" />}
 
         <FormGroup controlId="username">
           <FormLabel>{UI.loginForm.usernameLabel}</FormLabel>

@@ -1,7 +1,7 @@
 import 'bootswatch/dist/pulse/bootstrap.min.css';
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Alert } from 'react-bootstrap';
 import Menu from 'components/menu/menu';
 import LoginPage from 'components/login/loginpage';
@@ -11,6 +11,7 @@ import SessionsPage from 'components/sessionspage';
 import ProposalsPage from 'components/proposalspage';
 import ShippingPage from 'components/shippingpage';
 import PreparePage from 'components/preparepage';
+import ErrorBoundary from 'components/errors/errorboundary';
 
 export default function App() {
   const dispatch = useDispatch();
@@ -38,12 +39,21 @@ export default function App() {
   return (
     <BrowserRouter>
       <Menu />
-      <Routes>
-        <Route path="/sessions" element={<SessionsPage />} />
-        <Route path="/proposals" element={<ProposalsPage />} />
-        <Route path="/shipping" element={<ShippingPage />} />
-        <Route path="/prepare" element={<PreparePage />} />
-      </Routes>
+      <ErrorBoundary>
+        <Routes>
+          <Route
+            path="/sessions"
+            element={
+              <>
+                <SessionsPage />
+              </>
+            }
+          />
+          <Route path="/proposals" element={<ProposalsPage />} />
+          <Route path="/shipping" element={<ShippingPage />} />
+          <Route path="/prepare" element={<PreparePage />} />
+        </Routes>
+      </ErrorBoundary>
     </BrowserRouter>
   );
 }
