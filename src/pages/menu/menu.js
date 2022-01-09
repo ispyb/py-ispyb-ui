@@ -8,7 +8,6 @@ import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 function LogOut(props) {
   const { username } = props;
   const dispatch = useDispatch();
-
   return (
     <>
       <Button variant="outline-success" onClick={() => dispatch(doLogOut())}>
@@ -18,14 +17,21 @@ function LogOut(props) {
     </>
   );
 }
-function Header() {
+
+function NavBarMenu(props) {
   return (
-    <Navbar bg="light" variant="light" sticky="top">
-      <Container>
-        <Navbar.Brand href="#home">ISPyB</Navbar.Brand>
-        <Navbar.Toggle />
-      </Container>
+    <Navbar bg="light" variant="light" fixed="top">
+      <Container>{props.children}</Container>
     </Navbar>
+  );
+}
+
+function EmptyMenu() {
+  return (
+    <NavBarMenu>
+      <Navbar.Brand href="#home">ISPyB</Navbar.Brand>
+      <Navbar.Toggle />
+    </NavBarMenu>
   );
 }
 
@@ -36,29 +42,27 @@ function Menu() {
   const user = useSelector(state => state.user);
   const { username } = user;
   if (!user.isAuthenticated) {
-    return <Header />;
+    return <EmptyMenu />;
   }
   return (
-    <Navbar collapseOnSelect>
-      <Container>
-        <Navbar.Brand href="#home">ISPyB</Navbar.Brand>
-        <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-        <Navbar.Collapse id="responsive-navbar-nav">
-          <Nav className="me-auto">
-            <Nav.Link href="/sessions">Home</Nav.Link>
-            <Nav.Link href="/proposals">Proposals</Nav.Link>
-            <Nav.Link href="/sessions">Sessions</Nav.Link>
-            <Nav.Link href="/shipping">Shippings</Nav.Link>
-            <Nav.Link href="/prepare">Prepare Experiment</Nav.Link>
-          </Nav>
-          <Nav>
-            <Nav.Link>
-              <LogOut username={username} />
-            </Nav.Link>
-          </Nav>
-        </Navbar.Collapse>
-      </Container>
-    </Navbar>
+    <NavBarMenu>
+      <Navbar.Brand href="#home">ISPyB</Navbar.Brand>
+      <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+      <Navbar.Collapse id="responsive-navbar-nav">
+        <Nav className="me-auto">
+          <Nav.Link href="/sessions">Home</Nav.Link>
+          <Nav.Link href="/proposals">Proposals</Nav.Link>
+          <Nav.Link href="/sessions">Sessions</Nav.Link>
+          <Nav.Link href="/shipping">Shippings</Nav.Link>
+          <Nav.Link href="/prepare">Prepare Experiment</Nav.Link>
+        </Nav>
+        <Nav>
+          <Nav.Link>
+            <LogOut username={username} />
+          </Nav.Link>
+        </Nav>
+      </Navbar.Collapse>
+    </NavBarMenu>
   );
 }
 

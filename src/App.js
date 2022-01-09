@@ -3,15 +3,16 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Alert } from 'react-bootstrap';
-import Menu from 'components/menu/menu';
+import Menu from 'pages/menu/menu';
 import LoginPage from 'components/login/loginpage';
 import { setSite } from 'redux/actions/site';
 import sites from 'config/sites';
-import SessionsPage from 'components/sessionspage';
-import ProposalsPage from 'components/proposalspage';
-import ShippingPage from 'components/shippingpage';
-import PreparePage from 'components/preparepage';
+import SessionsPage from 'pages/sessionspage';
+import ProposalsPage from 'pages/proposalspage';
+import ShippingPage from 'pages/shippingpage';
+import PreparePage from 'pages/preparepage';
 import ErrorBoundary from 'components/errors/errorboundary';
+import Page from 'pages/page';
 
 export default function App() {
   const dispatch = useDispatch();
@@ -39,21 +40,23 @@ export default function App() {
   return (
     <BrowserRouter>
       <Menu />
-      <ErrorBoundary>
-        <Routes>
-          <Route
-            path="/sessions"
-            element={
-              <>
-                <SessionsPage />
-              </>
-            }
-          />
-          <Route path="/proposals" element={<ProposalsPage />} />
-          <Route path="/shipping" element={<ShippingPage />} />
-          <Route path="/prepare" element={<PreparePage />} />
-        </Routes>
-      </ErrorBoundary>
+      <Page>
+        <ErrorBoundary>
+          <Routes>
+            <Route
+              path="/sessions"
+              element={
+                <>
+                  <SessionsPage />
+                </>
+              }
+            />
+            <Route path="/proposals" element={<ProposalsPage />} />
+            <Route path="/shipping" element={<ShippingPage />} />
+            <Route path="/prepare" element={<PreparePage />} />
+          </Routes>
+        </ErrorBoundary>
+      </Page>
     </BrowserRouter>
   );
 }

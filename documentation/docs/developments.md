@@ -56,3 +56,11 @@ To:
 ```
  <FormControl {...register('password', { required: true })} type="password" name="password" required />
 ```
+
+
+### Other changes
+
+#### Moment and date-fns
+
+It seems that moment [is not longer recommended](https://momentjs.com/docs/) for new projects. Its size and its architecture makes only a reasonable choice for legacy projects.
+[data-fns](https://date-fns.org/) seems a good alternative.
