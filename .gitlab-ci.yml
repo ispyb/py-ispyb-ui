@@ -18,8 +18,8 @@ Build-Storybook:
       - storybook-static
   script:
     - npm ci
-    - npm run build-storybook
-    - cp -r storybook-static public/storybook && ls && ls public
+    - npm run build-storybook --output-dir storybook
+
 
 Deploy-Storybook:
   stage: deployment
@@ -35,10 +35,11 @@ Build-Pages:
   image: python:latest
   script:
     - pip install mkdocs-material &&  pip install mkdocstrings
-    - cd documentation && mkdocs build --site-dir ../public/documentation && cd.. && ls && ls public
+    - cd documentation && mkdocs build --site-dir ../public 
+    - ls && cp -r storybook public/storybook && ls && ls public
   artifacts:
     paths:
-      - public/documentation
+      - public
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
 
