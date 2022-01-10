@@ -30,7 +30,7 @@ Deploy-Storybook:
     url: $PAGES_URL
     #on_stop: remove-storybook
 
-Build-Pages:
+pages:
   stage: build
   image: python:latest
   script:
