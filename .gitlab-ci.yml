@@ -19,7 +19,8 @@ setup:
   artifacts:
     paths:
       - node_modules/
-
+  scripts:
+    - yarn
 
 Build-Storybook:
   stage: build
