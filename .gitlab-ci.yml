@@ -3,6 +3,7 @@ variables:
 
 stages:
   - test
+  - flow
   - documentation
 
 pages:
@@ -16,6 +17,13 @@ pages:
       - public
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
+
+Flow:
+  stage: flow
+  image: node:14.18.2
+  script:
+    - npm ci
+    - npm run lint
 
 Lint:
   stage: test

@@ -1,6 +1,5 @@
 import { Badge } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
-//import Loading from '../Loading.js';
 import React from 'react';
 import ResponsiveTable from 'components/table/responsivetable';
 import format from 'date-fns/format';
@@ -35,26 +34,24 @@ export function SessionTable(props) {
   };
 
   const dateFormatter = (cell, row, rowIndex, extraData) => {
-    if (!extraData.isEmpty(row)) {
-      if (cell !== null) {
-        let link = `/sessions/mx/proposal/${extraData.getProposalName(row)}/session/${row.sessionId}/datasets`;
-        if (row.beamLineName.toUpperCase() === 'BM29' || row.Proposal_ProposalType.toString().toUpperCase() === 'BX') {
-          link = `/sessions/saxs/proposal/${extraData.getProposalName(row)}/session/${row.sessionId}/experiments`;
-        }
-        if (row.beamLineName.toUpperCase() === 'CM01' || row.Proposal_ProposalType.toString().toUpperCase() === 'EM') {
-          link = `/sessions/em/proposal/${extraData.getProposalName(row)}/session/${row.sessionId}/datasets`;
-        }
-        return (
-          <Link
-            to={link}
-            onClick={() => {
-              extraData.props.setActiveSession(row.sessionId, cell);
-            }}
-          >
-            {format(parse(cell, 'MMM d, yyyy h:mm:ss aaa', new Date()), 'dd/MM/yyyy')}
-          </Link>
-        );
+    if (!extraData.isEmpty(row) && cell !== null) {
+      let link = `/sessions/mx/proposal/${extraData.getProposalName(row)}/session/${row.sessionId}/datasets`;
+      if (row.beamLineName.toUpperCase() === 'BM29' || row.Proposal_ProposalType.toString().toUpperCase() === 'BX') {
+        link = `/sessions/saxs/proposal/${extraData.getProposalName(row)}/session/${row.sessionId}/experiments`;
       }
+      if (row.beamLineName.toUpperCase() === 'CM01' || row.Proposal_ProposalType.toString().toUpperCase() === 'EM') {
+        link = `/sessions/em/proposal/${extraData.getProposalName(row)}/session/${row.sessionId}/datasets`;
+      }
+      return (
+        <Link
+          to={link}
+          onClick={() => {
+            extraData.props.setActiveSession(row.sessionId, cell);
+          }}
+        >
+          {format(parse(cell, 'MMM d, yyyy h:mm:ss aaa', new Date()), 'dd/MM/yyyy')}
+        </Link>
+      );
     }
     return format(parse(cell, 'MMM d, yyyy h:mm:ss aaa', new Date()), 'dd/MM/yyyy');
   };
