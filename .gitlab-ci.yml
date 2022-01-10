@@ -19,7 +19,7 @@ setup:
   artifacts:
     paths:
       - node_modules/
-  scripts:
+  script:
     - yarn
 
 Build-Storybook:
