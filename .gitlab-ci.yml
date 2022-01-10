@@ -1,23 +1,34 @@
 variables:
   DOCKER_IMAGE_FULLNAME: $CI_REGISTRY/$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
+  PAGES_URL: 'https://ispyb.gitlab-pages.esrf.fr/py-ispyb-ui/$CI_COMMIT_REF_SLUG/storybook/'
+  PAGES_MAIN_URL: 'https://ispyb.gitlab-pages.esrf.fr/py-ispyb-ui/$CI_DEFAULT_BRANCH/storybook/'
 
 stages:
   - test
   - storybook
-  - flow
   - build
+  - deployment
 
-Storybook:
+Build-Storybook:
   stage: build
   image: node:14.18.2
   artifacts:
     expire_in: 2 weeks
     when: always
     paths:
-      - storybook/
+      - storybook-static
   script:
     - npm ci
-    - npm run build-storybook --output-dir storybook
+    - npm run build-storybook
+
+Deploy-Storybook:
+  stage: deployment
+  script:
+    - echo "This job configures an environment."
+  environment:
+    name: storybook/$CI_COMMIT_REF_SLUG
+    url: $PAGES_URL
+    on_stop: remove-storybook
 
 pages:
   stage: build
