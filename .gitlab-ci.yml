@@ -20,7 +20,7 @@ setup:
     paths:
       - node_modules/
   script:
-    - yarn
+    - npm install
 
 Build-Storybook:
   stage: build
