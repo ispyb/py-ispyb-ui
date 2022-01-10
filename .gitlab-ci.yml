@@ -16,7 +16,7 @@ storybook:
     paths:
       - storybook/
   script:
-    - npm run build storybook --output-dir storybook
+    - npm run build-storybook --output-dir storybook
 
 pages:
   stage: build
