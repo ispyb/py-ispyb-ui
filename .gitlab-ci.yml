@@ -1,29 +1,16 @@
-image: node:14.18.2
 variables:
   DOCKER_IMAGE_FULLNAME: $CI_REGISTRY/$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
   PAGES_URL: 'https://ispyb.gitlab-pages.esrf.fr/py-ispyb-ui/$CI_COMMIT_REF_SLUG/storybook/'
   PAGES_MAIN_URL: 'https://ispyb.gitlab-pages.esrf.fr/py-ispyb-ui/$CI_DEFAULT_BRANCH/storybook/'
 
 stages:
-  - setup
   - test
   - build
   - deployment
 
-setup:
-  stage: setup
-  cache:
-    key: ${CI_COMMIT_REF_SLUG}
-    paths:
-      - node_modules/
-  artifacts:
-    paths:
-      - node_modules/
-  script:
-    - npm install
-
 Build-Storybook:
   stage: build
+  image: node:14.18.2
   artifacts:
     expire_in: 2 weeks
     when: always
@@ -57,18 +44,21 @@ Build-Pages:
 
 Build-App:
   stage: build
+  image: node:14.18.2
   script:
     - npm ci
     - npm run build
 
 Flow:
   stage: test
+  image: node:14.18.2
   script:
     - npm ci
     - npm run lint
 
 Lint:
   stage: test
+  image: node:14.18.2
   script:
     - npm ci
     - npm run lint
