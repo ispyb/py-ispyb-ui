@@ -5,7 +5,6 @@ variables:
 
 stages:
   - test
-  - storybook
   - build
   - deployment
 
@@ -20,7 +19,7 @@ Build-Storybook:
   script:
     - npm ci
     - npm run build-storybook
-    - cp -r storybook-static public/storybook
+    - cp -r storybook-static public/storybook && ls && ls public
 
 Deploy-Storybook:
   stage: deployment
@@ -36,7 +35,7 @@ pages:
   image: python:latest
   script:
     - pip install mkdocs-material &&  pip install mkdocstrings
-    - cd documentation && mkdocs build --site-dir ../public/documentation
+    - cd documentation && mkdocs build --site-dir ../public/documentation && cd.. && ls && ls public
   artifacts:
     paths:
       - public/documentation
