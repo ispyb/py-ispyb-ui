@@ -3,12 +3,10 @@ variables:
 
 stages:
   - test
-  - flow
-  - documentation
   - build
 
-pages:
-  stage: documentation
+Build-Pages:
+  stage: build
   image: python:latest
   script:
     - pip install mkdocs-material &&  pip install mkdocstrings
@@ -19,7 +17,7 @@ pages:
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
 
-Build:
+Build-App:
   stage: build
   image: node:14.18.2
   script:
@@ -27,7 +25,7 @@ Build:
     - npm run build
 
 Flow:
-  stage: flow
+  stage: test
   image: node:14.18.2
   script:
     - npm ci
