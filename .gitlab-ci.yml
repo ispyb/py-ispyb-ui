@@ -19,8 +19,7 @@ setup:
   artifacts:
     paths:
       - node_modules/
-  script:
-    - npm
+
 
 Build-Storybook:
   stage: build
