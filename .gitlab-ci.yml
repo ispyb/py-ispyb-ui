@@ -7,7 +7,7 @@ stages:
   - flow
   - build
 
-storybook:
+Storybook:
   stage: build
   image: node:14.18.2
   artifacts:
@@ -16,6 +16,7 @@ storybook:
     paths:
       - storybook/
   script:
+    - npm ci
     - npm run build-storybook --output-dir storybook
 
 pages:
