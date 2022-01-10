@@ -28,7 +28,7 @@ Deploy-Storybook:
   environment:
     name: storybook/$CI_COMMIT_REF_SLUG
     url: $PAGES_URL
-    on_stop: remove-storybook
+    #on_stop: remove-storybook
 
 pages:
   stage: build
