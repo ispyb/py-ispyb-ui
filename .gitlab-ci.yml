@@ -30,7 +30,7 @@ Deploy-Storybook:
     url: $PAGES_URL
     #on_stop: remove-storybook
 
-pages:
+Build-Pages:
   stage: build
   image: python:latest
   script:
@@ -42,7 +42,7 @@ pages:
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
 
-Build:
+Build-App:
   stage: build
   image: node:14.18.2
   script:
