@@ -20,6 +20,7 @@ Build-Storybook:
   script:
     - npm ci
     - npm run build-storybook
+    - cp -r storybook-static public/storybook
 
 Deploy-Storybook:
   stage: deployment
