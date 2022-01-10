@@ -5,6 +5,7 @@ stages:
   - test
   - flow
   - documentation
+  - build
 
 pages:
   stage: documentation
@@ -17,6 +18,13 @@ pages:
       - public
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
+
+Build:
+  stage: build
+  image: node:14.18.2
+  script:
+    - npm ci
+    - npm run build
 
 Flow:
   stage: flow
