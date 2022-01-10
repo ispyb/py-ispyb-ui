@@ -3,12 +3,22 @@ variables:
 
 stages:
   - test
+  - storybook
   - flow
-  - documentation
   - build
 
+storybook:
+  stage: build
+  artifacts:
+    expire_in: 2 weeks
+    when: always
+    paths:
+      - storybook/
+  script:
+    - npm run build storybook --output-dir storybook
+
 pages:
-  stage: documentation
+  stage: build
   image: python:latest
   script:
     - pip install mkdocs-material &&  pip install mkdocstrings
@@ -27,7 +37,7 @@ Build:
     - npm run build
 
 Flow:
-  stage: flow
+  stage: test
   image: node:14.18.2
   script:
     - npm ci

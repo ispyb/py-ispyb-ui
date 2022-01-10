@@ -25,3 +25,6 @@ npm-debug.log*
 /doc/
 
 node_modules
+
+# Storybook
+/storybook-static
