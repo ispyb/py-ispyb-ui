@@ -45,9 +45,7 @@
     "eject": "react-scripts eject",
     "lint": "eslint \"src/**/*.{js,jsx}\" --max-warnings=0",
     "lint:fix": "eslint \"src/**/*.{js,jsx}\" --fix",
-    "flow": "flow",
-    "storybook": "start-storybook -p 6006",
-    "build-storybook": "build-storybook"
+    "flow": "flow"
   },
   "eslintConfig": {
     "extends": [
@@ -81,12 +79,6 @@
     "@babel/core": "^7.16.7",
     "@babel/eslint-parser": "^7.16.5",
     "@babel/preset-flow": "^7.16.7",
-    "@storybook/addon-actions": "^6.4.10",
-    "@storybook/addon-essentials": "^6.4.10",
-    "@storybook/addon-links": "^6.4.10",
-    "@storybook/node-logger": "^6.4.10",
-    "@storybook/preset-create-react-app": "^4.0.0",
-    "@storybook/react": "^6.4.10",
     "babel-loader": "^8.2.3",
     "eslint": "^8.6.0",
     "eslint-plugin-flowtype": "^8.0.3",

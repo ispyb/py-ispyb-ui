@@ -1,6 +1,7 @@
 import React from 'react';
 import ErrorUserMessage from 'components/usermessages/errorusermessage';
 
-export default { title: 'ErrorUserMessage', component: ErrorUserMessage };
+const l = { title: 'ErrorUserMessage', component: ErrorUserMessage };
+export default l;
 
 export const Error = () => <ErrorUserMessage></ErrorUserMessage>;
