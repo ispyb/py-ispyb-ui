@@ -15,11 +15,11 @@ Build-Storybook:
     expire_in: 2 weeks
     when: always
     paths:
-      - storybook-static
+      - storybook
   script:
     - npm ci
-    - npm run build-storybook
-    - cp -r storybook-static public/storybook && ls && ls public
+    - npm run build-storybook --output-dir storybook
+
 
 Deploy-Storybook:
   stage: deployment
@@ -30,17 +30,17 @@ Deploy-Storybook:
     url: $PAGES_URL
     #on_stop: remove-storybook
 
-Build-Pages:
+pages:
   stage: build
   image: python:latest
   script:
     - pip install mkdocs-material &&  pip install mkdocstrings
-    - cd documentation && mkdocs build --site-dir ../public/documentation && cd.. && ls && ls public
+    - cd documentation && mkdocs build --site-dir ../public 
+    - ls && cp -r storybook public/storybook && ls && ls public
   artifacts:
     paths:
-      - public/documentation
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
+      - public
+
 
 Build-App:
   stage: build
