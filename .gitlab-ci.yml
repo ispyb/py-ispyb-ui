@@ -1,6 +1,6 @@
 variables:
   DOCKER_IMAGE_FULLNAME: $CI_REGISTRY/$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-  DOCKER_NODE_IMAGE: 14.18-alpine3.14
+  DOCKER_NODE_IMAGE: node:14.18.2-alpine
 stages:
   - test
   - build
