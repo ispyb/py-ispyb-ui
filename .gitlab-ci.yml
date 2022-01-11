@@ -3,33 +3,6 @@ variables:
   DOCKER_NODE_IMAGE: docker-registry.esrf.fr/dau/node:14.18.2
 stages:
   - test
-  - build
-
-Build-Pages:
-  stage: build
-  image: python:latest
-  script:
-    - pip install mkdocs-material &&  pip install mkdocstrings
-    - cd documentation && mkdocs build --site-dir ../public
-  artifacts:
-    paths:
-      - public
-  rules:
-    - if: '$CI_COMMIT_BRANCH == "main"'
-
-Build-App:
-  stage: build
-  image: $DOCKER_NODE_IMAGE
-  script:
-    - npm ci
-    - npm run build
-
-Flow:
-  stage: test
-  image: $DOCKER_NODE_IMAGE
-  script:
-    - npm ci
-    - npm run lint
 
 Lint:
   stage: test
@@ -38,7 +11,4 @@ Lint:
     - npm ci
     - npm run lint
 
-.docker-template:
-  image: docker:latest
-  before_script:
-    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
+
