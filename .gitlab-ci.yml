@@ -15,7 +15,7 @@ Build-Storybook:
     expire_in: 2 weeks
     when: always
     paths:
-      - storybook-static
+      - storybook
   script:
     - npm ci
     - npm run build-storybook --output-dir storybook
