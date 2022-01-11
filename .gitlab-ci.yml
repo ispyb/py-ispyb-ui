@@ -1,6 +1,6 @@
 variables:
   DOCKER_IMAGE_FULLNAME: $CI_REGISTRY/$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG
-
+  DOCKER_NODE_IMAGE: node:14.18.2
 stages:
   - test
   - build
@@ -19,21 +19,21 @@ Build-Pages:
 
 Build-App:
   stage: build
-  image: node:14.18.2
+  image: $DOCKER_NODE_IMAGE
   script:
     - npm ci
     - npm run build
 
 Flow:
   stage: test
-  image: node:14.18.2
+  image: $DOCKER_NODE_IMAGE
   script:
     - npm ci
     - npm run lint
 
 Lint:
   stage: test
-  image: node:16.0.0
+  image: $DOCKER_NODE_IMAGE
   script:
     - npm ci
     - npm run lint
