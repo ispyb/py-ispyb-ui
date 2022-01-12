@@ -15,7 +15,7 @@ pages:
   script:
     - npm ci
     - npm run build-storybook
-    - ls && cp -r storybook-static public && ls && ls public && echo "doc" && ls documentation
+    - ls && cp -r storybook-static public 
     - mv mkdocs-doc public
   artifacts:
     paths:
@@ -26,7 +26,7 @@ Build-doc:
   image: python:latest
   script:
     - pip install mkdocs-material &&  pip install mkdocstrings
-    - cd documentation && mkdocs build --site-dir ../mkdocs-doc && ls && cd .. && ls
+    - cd documentation && mkdocs build --site-dir ../mkdocs-doc 
   artifacts:
     paths:
       - mkdocs-doc
