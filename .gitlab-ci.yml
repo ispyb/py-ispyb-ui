@@ -20,7 +20,15 @@ Build-Storybook:
     - npm ci
     - npm run build-storybook 
 
-
+pages:
+  stage: build
+  image: python:latest
+  script:
+    - npm run build-storybook
+    - ls && cp -r storybook-static public && ls && ls public
+  artifacts:
+    paths:
+      - public
 
 
 
