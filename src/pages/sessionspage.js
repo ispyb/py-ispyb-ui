@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import useAxios from 'axios-hooks';
-import { ButtonToolbar, ButtonGroup, Button, InputGroup, FormControl, ToggleButton } from 'react-bootstrap';
+import { ButtonGroup, ToggleButton } from 'react-bootstrap';
 import { getSessions } from 'api/ispyb';
 import { SessionTable } from 'pages/session/SessionTable';
 import format from 'date-fns/format';
