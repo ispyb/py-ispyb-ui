@@ -24,6 +24,7 @@ pages:
   stage: build
   image: python:latest
   script:
+    - npm ci
     - npm run build-storybook
     - ls && cp -r storybook-static public && ls && ls public
   artifacts:
