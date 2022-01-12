@@ -15,7 +15,7 @@ pages:
   script:
     - npm ci
     - npm run build-storybook
-    - ls && cp -r storybook-static public && ls && ls public
+    - ls && cp -r storybook-static public && ls && ls public && echo "doc" && ls documentation
     - mv mkdocs-doc public
   artifacts:
     paths:
