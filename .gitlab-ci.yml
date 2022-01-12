@@ -5,9 +5,9 @@ variables:
   DOCKER_NODE_IMAGE: docker-registry.esrf.fr/dau/node:14.18.2
 stages:
   - test
+  - analyse
   - build
   - deployment
-  - analyse
 
 pages:
   stage: deployment
