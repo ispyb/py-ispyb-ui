@@ -7,6 +7,7 @@ stages:
   - test
   - build
   - deployment
+  - analyse
 
 pages:
   stage: deployment
@@ -23,6 +24,10 @@ pages:
 Build-doc:
   stage: build
   image: python:latest
+  cache:
+    paths:
+      - node_modules
+
   script:
     - pip install mkdocs-material &&  pip install mkdocstrings
     - cd documentation && mkdocs build --site-dir ../mkdocs-doc
@@ -42,7 +47,7 @@ Flow:
   image: $DOCKER_NODE_IMAGE
   script:
     - npm ci
-    - npm run lint
+    - npm run flow
 
 Lint:
   stage: test
@@ -50,3 +55,20 @@ Lint:
   script:
     - npm ci
     - npm run lint
+
+analyse:
+  stage: analyse
+  image: $DOCKER_NODE_IMAGE
+  cache:
+    paths:
+      - node_modules
+
+  cache:
+    paths:
+      - node_modules/
+  script:
+    - npm install source-map-explorer
+    - npm run analyze -- --html bundle/index.html
+  artifacts:
+    paths:
+      - bundle
