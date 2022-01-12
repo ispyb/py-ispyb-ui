@@ -17,6 +17,7 @@ pages:
     - npm run build-storybook
     - ls && cp -r storybook-static public
     - mv mkdocs-doc public
+    - mv bundle public/
   artifacts:
     paths:
       - public
@@ -62,10 +63,6 @@ analyse:
   cache:
     paths:
       - node_modules
-
-  cache:
-    paths:
-      - node_modules/
   script:
     - npm install source-map-explorer
     - npm run analyze -- --html bundle/index.html
