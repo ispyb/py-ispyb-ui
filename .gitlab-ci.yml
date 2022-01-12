@@ -8,21 +8,10 @@ stages:
   - build
   - deployment
 
-Build-Storybook:
-  stage: build
-  image: $DOCKER_NODE_IMAGE
-  artifacts:
-    expire_in: 2 weeks
-    when: always
-    paths:
-      - public
-  script:
-    - npm ci
-    - npm run build-storybook 
 
 pages:
   stage: build
-  image: python3.7-nodejs14
+  image: $DOCKER_NODE_IMAGE
   script:
     - npm ci
     - npm run build-storybook
@@ -31,7 +20,16 @@ pages:
     paths:
       - public
 
-
+Build-doc:
+  stage: build
+  image: python:latest
+  script:
+    - pip install mkdocs-material &&  pip install mkdocstrings
+    - cd documentation && mkdocs build --site-dir ../public/documentation
+    - ls && cp -r storybook public/storybook && ls && ls public
+  artifacts:
+    paths:
+      - public
 
 Build-App:
   stage: build
