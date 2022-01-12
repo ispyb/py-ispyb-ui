@@ -8,37 +8,27 @@ stages:
   - build
   - deployment
 
-Build-Storybook:
-  stage: build
+pages:
+  stage: deployment
   image: $DOCKER_NODE_IMAGE
-  artifacts:
-    expire_in: 2 weeks
-    when: always
-    paths:
-      - storybook
   script:
     - npm ci
-    - npm run build-storybook --output-dir storybook
+    - npm run build-storybook
+    - ls && cp -r storybook-static public
+    - mv mkdocs-doc public
+  artifacts:
+    paths:
+      - public
 
-Deploy-Storybook:
-  stage: deployment
-  script:
-    - echo "This job configures an environment."
-  environment:
-    name: storybook/$CI_COMMIT_REF_SLUG
-    url: $PAGES_URL
-    #on_stop: remove-storybook
-
-pages:
+Build-doc:
   stage: build
   image: python:latest
   script:
     - pip install mkdocs-material &&  pip install mkdocstrings
-    - cd documentation && mkdocs build --site-dir ../public
-    - ls && cp -r storybook public/storybook && ls && ls public
+    - cd documentation && mkdocs build --site-dir ../mkdocs-doc
   artifacts:
     paths:
-      - public
+      - mkdocs-doc
 
 Build-App:
   stage: build
