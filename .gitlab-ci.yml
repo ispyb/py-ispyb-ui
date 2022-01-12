@@ -35,7 +35,7 @@ pages:
   script:
     - pip install mkdocs-material &&  pip install mkdocstrings
     - cd documentation && mkdocs build --site-dir ../public
-    - ls && cp -r storybook public/storybook && ls && ls public
+    - ls && cp -r ../storybook ../public/storybook && ls && ls public
   artifacts:
     paths:
       - public
