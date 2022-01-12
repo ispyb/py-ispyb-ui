@@ -10,7 +10,7 @@ stages:
 
 
 pages:
-  stage: build
+  stage: deployment
   image: $DOCKER_NODE_IMAGE
   script:
     - npm ci
