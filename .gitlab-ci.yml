@@ -18,7 +18,7 @@ Build-Storybook:
       - public
   script:
     - npm ci
-    - npm run build-storybook 
+    - npm run build-storybook -- -o public/storybook
 
 
 
