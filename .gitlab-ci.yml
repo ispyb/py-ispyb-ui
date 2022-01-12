@@ -28,6 +28,7 @@ Build-doc:
     - pip install mkdocs-material &&  pip install mkdocstrings
     - cd documentation && mkdocs build --site-dir mkdocs-doc
   artifacts:
+    when: always
     paths:
       - mkdocs-doc
 
