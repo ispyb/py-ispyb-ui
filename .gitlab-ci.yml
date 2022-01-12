@@ -15,30 +15,14 @@ Build-Storybook:
     expire_in: 2 weeks
     when: always
     paths:
-      - storybook
+      - public
   script:
     - npm ci
-    - npm run build-storybook --output-dir storybook
+    - npm run build-storybook 
 
-Deploy-Storybook:
-  stage: deployment
-  script:
-    - echo "This job configures an environment."
-  environment:
-    name: storybook/$CI_COMMIT_REF_SLUG
-    url: $PAGES_URL
-    #on_stop: remove-storybook
 
-pages:
-  stage: deployment
-  image: python:latest
-  script:
-    - pip install mkdocs-material &&  pip install mkdocstrings
-    - cd documentation && mkdocs build --site-dir ../public
 
-  artifacts:
-    paths:
-      - public
+
 
 Build-App:
   stage: build
