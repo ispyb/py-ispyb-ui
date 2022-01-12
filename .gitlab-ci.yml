@@ -16,6 +16,7 @@ pages:
     - npm ci
     - npm run build-storybook
     - ls && cp -r storybook-static public && ls && ls public
+    - mv mkdocs-doc public
   artifacts:
     paths:
       - public
@@ -28,7 +29,7 @@ Build-doc:
     - cd documentation && mkdocs build --site-dir ../public/documentation
   artifacts:
     paths:
-      - public
+      - mkdocs-doc
 
 Build-App:
   stage: build
