@@ -28,3 +28,6 @@ node_modules
 
 # Storybook
 /storybook-static
+
+# source map explorer
+/bundle_explorer

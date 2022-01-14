@@ -65,7 +65,7 @@ analyse:
       - node_modules
   script:
     - npm install source-map-explorer
-    - npm run analyze -- --html bundle/index.html
+    - source-map-explorer 'build/static/js/*.js' --html bundle_explorer/bundle_explorer.html
   artifacts:
     paths:
       - bundle
