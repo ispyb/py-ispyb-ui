@@ -52,11 +52,13 @@ Lint:
 
 analyze:
   stage: analyze
+  allow_failure: true
   image: $DOCKER_NODE_IMAGE
   cache:
     paths:
       - node_modules
   script:
+    - npm ci
     - npm run build
     - npm install source-map-explorer
     - npm run analize
