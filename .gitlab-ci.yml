@@ -16,7 +16,7 @@ pages:
     - npm ci
     - npm run build-storybook
     - ls && cp -r storybook-static public
-    - mv mkdocs-doc public
+    - mv doc public
     - mv bundle public/
   artifacts:
     paths:
@@ -31,10 +31,10 @@ Build-doc:
 
   script:
     - pip install mkdocs-material &&  pip install mkdocstrings
-    - cd documentation && mkdocs build --site-dir ../mkdocs-doc
+    - cd documentation && mkdocs build --site-dir ../doc
   artifacts:
     paths:
-      - mkdocs-doc
+      - doc
 
 Build-App:
   stage: build
@@ -58,7 +58,7 @@ analyze:
     paths:
       - node_modules
   script:
-    - npm ci
+    - npm
     - npm run build
     - npm install source-map-explorer
     - npm run analize
