@@ -1,5 +1,5 @@
 import React from 'react';
 
-export default function PageLoading(props) {
+export default function PageLoading() {
   return <>Loading</>;
 }

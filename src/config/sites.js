@@ -12,8 +12,8 @@ const sites = [
         configuration: {
           realm: 'ESRF',
           url: 'https://websso.esrf.fr/auth/',
-          clientId: 'icat'
-        }
+          clientId: 'icat',
+        },
       },
       authenticators: [
         {
@@ -21,9 +21,9 @@ const sites = [
           title: 'ISPyB',
           server: 'https://ispyb.esrf.fr/ispyb/ispyb-ws/rest',
           enabled: true,
-          site: 'ESRF'
-        }
-      ]
+          site: 'ESRF',
+        },
+      ],
     },
     settings: {
       themes: [
@@ -42,7 +42,7 @@ const sites = [
         'spacelab',
         'superhero',
         'united',
-        'yeti'
+        'yeti',
       ],
       MX: {
         showQualityIndicatorPlot: true, // It shows or hides the quality indicator plot from the summary tab of a datacollection
@@ -50,8 +50,8 @@ const sites = [
         showCrystalSnapshot1: true,
         showCrystalSnapshot2: true,
         showCrystalSnapshot3: true,
-        showCrystalSnapshot4: true
-      }
+        showCrystalSnapshot4: true,
+      },
     },
     beamlines: {
       SAXS: [{ name: 'BM29' }],
@@ -64,10 +64,10 @@ const sites = [
         { name: 'ID30A-2', sampleChangerType: 'FlexHCDDual' },
         { name: 'ID30A-3', sampleChangerType: 'FlexHCDDual' },
         { name: 'ID30B', sampleChangerType: 'FlexHCDDual' },
-        { name: 'BM30A', sampleChangerType: 'FlexHCDDual' }
-      ]
-    }
-  }
+        { name: 'BM30A', sampleChangerType: 'FlexHCDDual' },
+      ],
+    },
+  },
 ];
 
 export default sites;

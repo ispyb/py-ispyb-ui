@@ -22,7 +22,7 @@ function ToggleBtn(props) {
         name="radio"
         value={checked}
         checked={checked}
-        onChange={e => {
+        onChange={() => {
           setChecked(!checked);
         }}
       >
@@ -36,7 +36,7 @@ function Menu(props) {
   return <div>{props.children}</div>;
 }
 
-function MenuSessionsPage(props) {
+function MenuSessionsPage() {
   return (
     <Menu>
       <ButtonGroup className="mb-2">

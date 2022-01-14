@@ -43,13 +43,6 @@ Build-App:
     - npm ci
     - npm run build
 
-Flow:
-  stage: test
-  image: $DOCKER_NODE_IMAGE
-  script:
-    - npm ci
-    - npm run flow
-
 Lint:
   stage: test
   image: $DOCKER_NODE_IMAGE
