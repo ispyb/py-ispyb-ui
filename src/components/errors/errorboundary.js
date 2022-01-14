@@ -12,11 +12,6 @@ class ErrorBoundary extends React.Component {
     return { hasError: true, message: error.message, stack: error.stack };
   }
 
-  componentDidCatch(error, errorInfo) {
-    // You can also log the error to an error reporting service
-    //logErrorToMyService(error, errorInfo);
-  }
-
   render() {
     if (this.state.hasError) {
       return <ErrorUserMessage title={'Something went wrong.'} message={this.state.message} stack={this.state.stack}></ErrorUserMessage>;

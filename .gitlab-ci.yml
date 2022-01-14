@@ -4,7 +4,8 @@ variables:
   PAGES_MAIN_URL: 'https://ispyb.gitlab-pages.esrf.fr/py-ispyb-ui/$CI_DEFAULT_BRANCH/storybook/'
   DOCKER_NODE_IMAGE: docker-registry.esrf.fr/dau/node:14.18.2
 stages:
-  - test
+  - lint
+  - analyze
   - build
   - deployment
 
@@ -15,7 +16,8 @@ pages:
     - npm ci
     - npm run build-storybook
     - ls && cp -r storybook-static public
-    - mv mkdocs-doc public
+    - mv doc public
+    - mv bundle public/
   artifacts:
     paths:
       - public
@@ -23,12 +25,16 @@ pages:
 Build-doc:
   stage: build
   image: python:latest
+  cache:
+    paths:
+      - node_modules
+
   script:
     - pip install mkdocs-material &&  pip install mkdocstrings
-    - cd documentation && mkdocs build --site-dir ../mkdocs-doc
+    - cd documentation && mkdocs build --site-dir ../doc
   artifacts:
     paths:
-      - mkdocs-doc
+      - doc
 
 Build-App:
   stage: build
@@ -37,16 +43,25 @@ Build-App:
     - npm ci
     - npm run build
 
-Flow:
-  stage: test
+Lint:
+  stage: lint
   image: $DOCKER_NODE_IMAGE
   script:
     - npm ci
     - npm run lint
 
-Lint:
-  stage: test
+analyze:
+  stage: analyze
+  allow_failure: true
   image: $DOCKER_NODE_IMAGE
+  cache:
+    paths:
+      - node_modules
   script:
     - npm ci
-    - npm run lint
+    - npm run build
+    - npm install source-map-explorer
+    - npm run analize
+  artifacts:
+    paths:
+      - bundle

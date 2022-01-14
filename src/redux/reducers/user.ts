@@ -1,15 +1,28 @@
 import { LOGGED_IN, LOGIN_ERROR, LOG_IN, LOG_OUT } from '../actiontypes';
 
-const initialState = {
-  username: null,
-  roles: null,
-  token: null,
+interface User {
+  username: string;
+  roles: string;
+  token: string;
+  isAuthenticated: boolean,
+  isAuthenticating: boolean,
+  isError: boolean,
+  type : string,
+  error : string
+}
+
+const initialState: User = {
+  username : "",
+  roles : "",
+  token : "",
   isAuthenticated: false,
   isAuthenticating: false,
-  isError: false
+  isError: false,
+  type : "",
+  error: ""
 };
 
-const user = (state = initialState, action) => {
+const user = (state = initialState,  action: User) => {
   switch (action.type) {
     case LOG_IN: {
       state = { ...initialState, username: action.username, isAuthenticated: false, isAuthenticating: true, isError: false };
@@ -29,9 +42,9 @@ const user = (state = initialState, action) => {
     case LOG_OUT: {
       state = {
         ...initialState,
-        username: null,
-        token: null,
-        roles: null,
+        username: "",
+        token: "",
+        roles: "",
         isAuthenticated: false,
         isAuthenticating: false,
         isError: false
@@ -39,7 +52,6 @@ const user = (state = initialState, action) => {
       break;
     }
     case LOGIN_ERROR: {
-      debugger;
       state = { ...initialState, error: action.error, isAuthenticated: false, isAuthenticating: false, isError: true };
       break;
     }

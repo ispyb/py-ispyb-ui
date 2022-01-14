@@ -1,6 +1,4 @@
 import React from 'react';
-
-import { useSelector, useDispatch } from 'react-redux';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Alert } from 'react-bootstrap';
 import Menu from 'pages/menu/menu';
@@ -13,12 +11,13 @@ import ShippingPage from 'pages/shippingpage';
 import PreparePage from 'pages/preparepage';
 import ErrorBoundary from 'components/errors/errorboundary';
 import Page from 'pages/page';
+import { useAppSelector, useAppDispatch } from 'hooks';
 
 export default function App() {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
-  const user = useSelector(state => state.user);
-  const site = useSelector(state => state.site);
+  const user = useAppSelector((state) => state.user);
+  const site = useAppSelector((state) => state.site);
 
   /** Check if there is a site configured */
   if (Object.entries(site).length === 0) {
@@ -26,7 +25,11 @@ export default function App() {
     if (sites.length === 1) {
       dispatch(setSite(sites[0]));
     }
-    return <Alert variant="danger">Application is not configured. Site configuration is missing</Alert>;
+    return (
+      <Alert variant="danger">
+        Application is not configured. Site configuration is missing
+      </Alert>
+    );
   }
   if (!user.isAuthenticated) {
     return (

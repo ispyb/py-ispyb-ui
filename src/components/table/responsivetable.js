@@ -13,14 +13,14 @@ export const ContainerWidth = {
   ExtraSmall: 768,
   Small: 992,
   Medium: 1200,
-  Large: 10000
+  Large: 10000,
 };
 
 export const ContainerSize = {
   ExtraSmall: 'xs',
   Small: 'sm',
   Medium: 'md',
-  Large: 'lg'
+  Large: 'lg',
 };
 
 function getContainerSize(window) {
@@ -50,7 +50,7 @@ class ResponsiveTable extends React.Component {
     super();
     this.state = {
       width: 800,
-      height: 182
+      height: 182,
     };
 
     //this.getSearchBar = this.getSearchBar.bind(this);
@@ -82,7 +82,7 @@ class ResponsiveTable extends React.Component {
 
       if (column.responsiveHeaderStyle) {
         if (column.responsiveHeaderStyle[size]) {
-          column.headerStyle = c => c.responsiveHeaderStyle[size];
+          column.headerStyle = (c) => c.responsiveHeaderStyle[size];
           if (column.responsiveHeaderStyle[size].hidden) {
             column.hidden = column.responsiveHeaderStyle[size].hidden;
           }
@@ -137,7 +137,7 @@ class ResponsiveTable extends React.Component {
         filter={this.props.filter}
         expandRow={this.props.expandRow}
       >
-        {props => (
+        {(props) => (
           <div>
             <BootstrapTable2
               selectRow={this.props.selectRow}

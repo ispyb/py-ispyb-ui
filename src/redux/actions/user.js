@@ -16,7 +16,7 @@ export function doLogOut() {
  * @param {*} site This can be optional depending on the specific inplementation. It is not used when py-ispyb is the backend
  */
 export function doSignIn(plugin, username, password, site) {
-  return function(dispatch) {
+  return function (dispatch) {
     /* TODO: this should be called async */
     //dispatch({ type: LOG_IN, username });
     axios
@@ -24,11 +24,11 @@ export function doSignIn(plugin, username, password, site) {
         getLogin(site),
         qs.stringify({
           login: username,
-          password: password
+          password: password,
         }),
         { 'content-type': 'application/json' }
       )
-      .then(response => {
+      .then((response) => {
         /** ISPYB  does not respond with an error code when authentication is failed this is why it is checked if token and roles and retrieved **/
         const { token, roles } = response.data;
         if (token && roles) {
@@ -36,10 +36,8 @@ export function doSignIn(plugin, username, password, site) {
         }
         throw new Error('Authentication failed');
       })
-      .catch(error => {
+      .catch((error) => {
         dispatch({ type: LOGIN_ERROR, error });
       });
   };
 }
-
-export function doSilentRefreshFromSSO() {}
