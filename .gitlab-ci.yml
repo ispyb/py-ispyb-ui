@@ -4,8 +4,8 @@ variables:
   PAGES_MAIN_URL: 'https://ispyb.gitlab-pages.esrf.fr/py-ispyb-ui/$CI_DEFAULT_BRANCH/storybook/'
   DOCKER_NODE_IMAGE: docker-registry.esrf.fr/dau/node:14.18.2
 stages:
-  - test
-  - analyse
+  - lint
+  - analyze
   - build
   - deployment
 
@@ -44,21 +44,22 @@ Build-App:
     - npm run build
 
 Lint:
-  stage: test
+  stage: lint
   image: $DOCKER_NODE_IMAGE
   script:
     - npm ci
     - npm run lint
 
-analyse:
-  stage: analyse
+analyze:
+  stage: analyze
   image: $DOCKER_NODE_IMAGE
   cache:
     paths:
       - node_modules
   script:
+    - npm run build
     - npm install source-map-explorer
-    - source-map-explorer 'build/static/js/*.js' --html bundle_explorer/bundle_explorer.html
+    - npm run analize
   artifacts:
     paths:
       - bundle
