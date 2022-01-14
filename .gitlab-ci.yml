@@ -58,7 +58,7 @@ analyze:
     paths:
       - node_modules
   script:
-    - npm
+    - npm ci
     - npm run build
     - npm install source-map-explorer
     - npm run analize
