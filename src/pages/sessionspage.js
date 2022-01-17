@@ -1,7 +1,7 @@
 import React from 'react';
 import useAxios from 'axios-hooks';
 import { getSessions } from 'api/ispyb';
-import { SessionTable } from 'pages/session/sessiontable';
+import SessionTable from 'pages/session/sessiontable';
 import format from 'date-fns/format';
 import PageLoading from 'components/pageloading';
 import useQueryParams from 'hooks/usequeyparams';

@@ -1,6 +1,6 @@
-import { Badge } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
 import React from 'react';
+import { Badge } from 'react-bootstrap';
+//import { LinkContainer } from 'react-router-bootstrap';
 import ResponsiveTable from 'components/table/responsivetable';
 import format from 'date-fns/format';
 import parse from 'date-fns/parse';
@@ -27,7 +27,7 @@ const isEmpty = (row) => {
 
 const rowStyle = (row) => (isEmpty(row) ? { color: '#B6B6B6', backgroundColor: '#F9F9F9' } : null);
 
-export function SessionTable(props) {
+export default function SessionTable(props) {
   const { data, areMXColumnsVisible = true, areSAXSColumnsVisible = true, areEMColumnsVisible = true } = props;
 
   const getProposalName = (row) => {
@@ -36,23 +36,23 @@ export function SessionTable(props) {
 
   const dateFormatter = (cell, row, rowIndex, extraData) => {
     if (!extraData.isEmpty(row) && cell !== null) {
-      let link = `/sessions/mx/proposal/${extraData.getProposalName(row)}/session/${row.sessionId}/datasets`;
+      /* let link = `/sessions/mx/proposal/${extraData.getProposalName(row)}/session/${row.sessionId}/datasets`;
       if (row.beamLineName.toUpperCase() === 'BM29' || row.Proposal_ProposalType.toString().toUpperCase() === 'BX') {
         link = `/sessions/saxs/proposal/${extraData.getProposalName(row)}/session/${row.sessionId}/experiments`;
       }
       if (row.beamLineName.toUpperCase() === 'CM01' || row.Proposal_ProposalType.toString().toUpperCase() === 'EM') {
         link = `/sessions/em/proposal/${extraData.getProposalName(row)}/session/${row.sessionId}/datasets`;
-      }
-      return (
-        <Link
+      }*/
+      //return (
+      /* <LinkContainer
           to={link}
           onClick={() => {
             extraData.props.setActiveSession(row.sessionId, cell);
           }}
         >
           {format(parse(cell, 'MMM d, yyyy h:mm:ss aaa', new Date()), 'dd/MM/yyyy')}
-        </Link>
-      );
+        </LinkContainer>*/
+      // );
     }
     return format(parse(cell, 'MMM d, yyyy h:mm:ss aaa', new Date()), 'dd/MM/yyyy');
   };
@@ -131,17 +131,15 @@ export function SessionTable(props) {
   }
 
   return (
-    <div>
-      <ResponsiveTable
-        rowStyle={rowStyle}
-        pageOptions={{
-          sizePerPage: 100,
-        }}
-        search={false}
-        keyField="id"
-        data={data}
-        columns={getColumns()}
-      />
-    </div>
+    <ResponsiveTable
+      rowStyle={rowStyle}
+      pageOptions={{
+        sizePerPage: 100,
+      }}
+      search={false}
+      keyField="id"
+      data={data}
+      columns={getColumns()}
+    />
   );
 }
