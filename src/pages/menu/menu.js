@@ -4,6 +4,7 @@ import { doLogOut } from 'redux/actions/user';
 import { Container, Navbar, Nav, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { LinkContainer } from 'react-router-bootstrap';
 
 function LogOut(props) {
   const { username } = props;
@@ -39,7 +40,7 @@ function EmptyMenu() {
  * Menu class which is used to render the app main top menu
  */
 function Menu() {
-  const user = useSelector(state => state.user);
+  const user = useSelector((state) => state.user);
   const { username } = user;
   if (!user.isAuthenticated) {
     return <EmptyMenu />;
@@ -50,11 +51,21 @@ function Menu() {
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="responsive-navbar-nav">
         <Nav className="me-auto">
-          <Nav.Link href="/sessions">Home</Nav.Link>
-          <Nav.Link href="/proposals">Proposals</Nav.Link>
-          <Nav.Link href="/sessions">Sessions</Nav.Link>
-          <Nav.Link href="/shipping">Shippings</Nav.Link>
-          <Nav.Link href="/prepare">Prepare Experiment</Nav.Link>
+          {[
+            { to: '/home', title: 'Home' },
+            { to: '/proposals', title: 'Proposals' },
+            { to: '/sessions', title: 'Sessions' },
+            { to: '/shipping', title: 'Shippings' },
+            { to: '/prepare', title: 'Prepare Experiment' },
+          ].map((item) => {
+            return (
+              <Nav>
+                <LinkContainer to={item.to}>
+                  <Nav.Link>{item.title}</Nav.Link>
+                </LinkContainer>
+              </Nav>
+            );
+          })}
         </Nav>
         <Nav>
           <Nav.Link>

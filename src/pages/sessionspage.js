@@ -1,62 +1,36 @@
-import React, { useState } from 'react';
+import React from 'react';
 import useAxios from 'axios-hooks';
-import { ButtonGroup, ToggleButton } from 'react-bootstrap';
 import { getSessions } from 'api/ispyb';
-import { SessionTable } from 'pages/session/SessionTable';
+import SessionTable from 'pages/session/sessiontable';
 import format from 'date-fns/format';
 import PageLoading from 'components/pageloading';
 import useQueryParams from 'hooks/usequeyparams';
+import SessionTableMenu from 'pages/session/sessiontablemenu';
+import { useAppSelector } from 'hooks';
+import { setTechniqueVisibleSessionTable } from 'redux/actions/ui';
+import { SET_SESSIONS_MX_COLUMNS, SET_SESSIONS_SAXS_COLUMNS, SET_SESSIONS_EM_COLUMNS } from 'redux/actiontypes';
 
-function ToggleBtn(props) {
-  const [checked = true, setChecked] = useState(true);
-  const { text } = props;
-  return (
-    <>
-      <ToggleButton
-        style={{ margin: 1 }}
-        size="sm"
-        key={'asdada' + text}
-        id={`radio-` + text}
-        type="checkbox"
-        variant={checked ? 'outline-primary' : 'light'}
-        name="radio"
-        value={checked}
-        checked={checked}
-        onChange={() => {
-          setChecked(!checked);
-        }}
-      >
-        {text}
-      </ToggleButton>
-    </>
-  );
-}
-
-function Menu(props) {
-  return <div>{props.children}</div>;
-}
-
-function MenuSessionsPage() {
-  return (
-    <Menu>
-      <ButtonGroup className="mb-2">
-        <ToggleBtn text="MX" />
-        <ToggleBtn text="SAXS" />
-        <ToggleBtn text="EM" />
-      </ButtonGroup>
-    </Menu>
-  );
-}
 export default function SessionsPage() {
-  const { startDate = '20210101', endDate = format(new Date(), 'yyyyMMdd') } = useQueryParams();
+  const today = format(new Date(), 'yyyyMMdd');
+  const tomorrow = format(new Date(Date.now() + 3600 * 1000 * 24), 'yyyyMMdd');
+
+  const { areEMColumnsVisible, areMXColumnsVisible, areSAXSColumnsVisible } = useAppSelector((state) => state.ui.options.sessionsPage);
+
+  const { startDate = today, endDate = tomorrow } = useQueryParams();
   const [{ data, loading, error }] = useAxios(getSessions(startDate, endDate));
   if (loading) return <PageLoading />;
   if (error) throw Error(error);
 
   return (
     <>
-      <MenuSessionsPage />
-      <SessionTable data={data}></SessionTable>
+      <SessionTableMenu
+        items={[
+          { text: 'MX', checked: areMXColumnsVisible, action: setTechniqueVisibleSessionTable, actionType: SET_SESSIONS_MX_COLUMNS },
+          { text: 'SAXS', checked: areSAXSColumnsVisible, action: setTechniqueVisibleSessionTable, actionType: SET_SESSIONS_SAXS_COLUMNS },
+          { text: 'EM', checked: areEMColumnsVisible, action: setTechniqueVisibleSessionTable, actionType: SET_SESSIONS_EM_COLUMNS },
+        ]}
+      />
+      <SessionTable data={data} areEMColumnsVisible={areEMColumnsVisible} areMXColumnsVisible={areMXColumnsVisible} areSAXSColumnsVisible={areSAXSColumnsVisible}></SessionTable>
     </>
   );
 }
