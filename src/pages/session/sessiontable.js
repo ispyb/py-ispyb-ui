@@ -6,7 +6,7 @@ import format from 'date-fns/format';
 import parse from 'date-fns/parse';
 import { toColumn } from 'components/table/helper';
 
-const isEmpty = row => {
+const isEmpty = (row) => {
   function checkNonZero(value) {
     return !value || value === 0;
   }
@@ -25,11 +25,12 @@ const isEmpty = row => {
   );
 };
 
-const rowStyle = row => (isEmpty(row) ? { color: '#B6B6B6', backgroundColor: '#F9F9F9' } : null);
+const rowStyle = (row) => (isEmpty(row) ? { color: '#B6B6B6', backgroundColor: '#F9F9F9' } : null);
 
 export function SessionTable(props) {
-  const { data, isMXenabled = true, isSAXSenabled = true, isEMenabled = true } = props;
-  const getProposalName = row => {
+  const { data, areMXColumnsVisible = true, areSAXSColumnsVisible = true, areEMColumnsVisible = true } = props;
+
+  const getProposalName = (row) => {
     return row.Proposal_proposalCode + row.Proposal_ProposalNumber;
   };
 
@@ -56,7 +57,7 @@ export function SessionTable(props) {
     return format(parse(cell, 'MMM d, yyyy h:mm:ss aaa', new Date()), 'dd/MM/yyyy');
   };
 
-  const statsFormatter = cell => (cell !== null && cell !== 0 ? <Badge>{cell}</Badge> : null);
+  const statsFormatter = (cell) => (cell !== null && cell !== 0 ? <Badge>{cell}</Badge> : null);
   const proposalFormatter = (cell, row, rowIndex, extraData) => (cell !== null ? extraData.getProposalName(row) : null);
   const getHeaderStats = () => {
     return { xs: { hidden: true }, sm: { hidden: true }, md: { width: '30px', textAlign: 'center' }, lg: { width: '60px', textAlign: 'center' } };
@@ -74,8 +75,8 @@ export function SessionTable(props) {
           xs: { width: '100px', textAlign: 'center' },
           sm: { width: '100px', textAlign: 'center' },
           md: { width: '80px', textAlign: 'center' },
-          lg: { width: '80px', textAlign: 'center' }
-        }
+          lg: { width: '80px', textAlign: 'center' },
+        },
       },
       {
         text: 'Beamline',
@@ -84,8 +85,8 @@ export function SessionTable(props) {
           xs: { width: '60px', textAlign: 'center' },
           sm: { width: '60px', textAlign: 'center' },
           md: { width: '60px', textAlign: 'center' },
-          lg: { width: '60px', textAlign: 'center' }
-        }
+          lg: { width: '60px', textAlign: 'center' },
+        },
       },
       {
         text: 'Proposal',
@@ -96,8 +97,8 @@ export function SessionTable(props) {
           xs: { width: '100px', textAlign: 'center' },
           sm: { width: '100px', textAlign: 'center' },
           md: { width: '100px', textAlign: 'center' },
-          lg: { width: '100px', textAlign: 'center' }
-        }
+          lg: { width: '100px', textAlign: 'center' },
+        },
       },
       {
         text: 'Local Contact',
@@ -106,26 +107,26 @@ export function SessionTable(props) {
           xs: { hidden: true },
           sm: { hidden: true },
           md: { width: '100px', textAlign: 'center' },
-          lg: { width: '140px', textAlign: 'center' }
-        }
+          lg: { width: '140px', textAlign: 'center' },
+        },
       },
       /** MX */
-      toColumn('En. Scans', 'energyScanCount', statsFormatter, getHeaderStats(), !isMXenabled),
-      toColumn('XRF', 'xrfSpectrumCount', statsFormatter, getHeaderStats(), !isMXenabled),
-      toColumn('Samples', 'sampleCount', statsFormatter, getHeaderStats(), !isMXenabled),
-      toColumn('Tests', 'testDataCollectionGroupCount', statsFormatter, getHeaderStats(), !isMXenabled),
-      toColumn('Collects', 'dataCollectionGroupCount', statsFormatter, getHeaderStats(), !isMXenabled),
+      toColumn('En. Scans', 'energyScanCount', statsFormatter, getHeaderStats(), !areMXColumnsVisible),
+      toColumn('XRF', 'xrfSpectrumCount', statsFormatter, getHeaderStats(), !areMXColumnsVisible),
+      toColumn('Samples', 'sampleCount', statsFormatter, getHeaderStats(), !areMXColumnsVisible),
+      toColumn('Tests', 'testDataCollectionGroupCount', statsFormatter, getHeaderStats(), !areMXColumnsVisible),
+      toColumn('Collects', 'dataCollectionGroupCount', statsFormatter, getHeaderStats(), !areMXColumnsVisible),
       /* SAXS */
-      toColumn('Calibration', 'calibrationCount', statsFormatter, getHeaderStats(), !isSAXSenabled),
-      toColumn('SC', 'sampleChangerCount', statsFormatter, getHeaderStats(), !isSAXSenabled),
-      toColumn('HPLC', 'hplcCount', statsFormatter, getHeaderStats(), !isSAXSenabled),
+      toColumn('Calibration', 'calibrationCount', statsFormatter, getHeaderStats(), !areSAXSColumnsVisible),
+      toColumn('SC', 'sampleChangerCount', statsFormatter, getHeaderStats(), !areSAXSColumnsVisible),
+      toColumn('HPLC', 'hplcCount', statsFormatter, getHeaderStats(), !areSAXSColumnsVisible),
       /* EM */
-      toColumn('Grid Squares', 'EMdataCollectionGroupCount', statsFormatter, getHeaderStats(), !isEMenabled),
+      toColumn('Grid Squares', 'EMdataCollectionGroupCount', statsFormatter, getHeaderStats(), !areEMColumnsVisible),
       {
         text: 'Comments',
         dataField: 'comments',
-        responsiveHeaderStyle: { xs: { hidden: true }, sm: { hidden: true }, md: { width: '140px' }, lg: { width: '20%' } }
-      }
+        responsiveHeaderStyle: { xs: { hidden: true }, sm: { hidden: true }, md: { width: '140px' }, lg: { width: '20%' } },
+      },
     ];
   }
 
@@ -134,7 +135,7 @@ export function SessionTable(props) {
       <ResponsiveTable
         rowStyle={rowStyle}
         pageOptions={{
-          sizePerPage: 100
+          sizePerPage: 100,
         }}
         search={false}
         keyField="id"

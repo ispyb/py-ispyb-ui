@@ -1,8 +1,6 @@
-import { SET_SESSIONS_MX_COLUMNS } from '../actiontypes';
-
-export function setVisibleSessionMxColumn(visible: boolean) {
+export function setTechniqueVisibleSessionTable(actionType, visible) {
   return {
-    type: SET_SESSIONS_MX_COLUMNS,
-    ui: { areMXSessionColumnsVisible: visible },
+    type: actionType,
+    visible,
   };
 }

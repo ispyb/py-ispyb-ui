@@ -1,9 +1,9 @@
 const UI = {
-  theme: 'slate',
-  status: {
-    offline: {
-      enabled: false,
-      message: "Sorry, we're down for scheduled maintenance until 14/01/2020 at 14:00.",
+  options: {
+    sessionsPage: {
+      areMXColumnsVisible: true,
+      areSAXSColumnsVisible: false,
+      areEMColumnsVisible: false,
     },
   },
   loginForm: {

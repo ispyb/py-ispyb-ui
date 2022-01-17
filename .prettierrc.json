@@ -13,6 +13,18 @@
       "options": {
         "printWidth": 180
       }
+    },
+    {
+      "files": "*.ts",
+      "options": {
+        "printWidth": 180
+      }
+    },
+    {
+      "files": "*.tsx",
+      "options": {
+        "printWidth": 180
+      }
     }
   ]
 }

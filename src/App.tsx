@@ -25,11 +25,7 @@ export default function App() {
     if (sites.length === 1) {
       dispatch(setSite(sites[0]));
     }
-    return (
-      <Alert variant="danger">
-        Application is not configured. Site configuration is missing
-      </Alert>
-    );
+    return <Alert variant="danger">Application is not configured. Site configuration is missing</Alert>;
   }
   if (!user.isAuthenticated) {
     return (

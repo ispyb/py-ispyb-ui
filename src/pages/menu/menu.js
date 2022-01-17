@@ -4,6 +4,7 @@ import { doLogOut } from 'redux/actions/user';
 import { Container, Navbar, Nav, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { Link } from 'react-router';
 
 function LogOut(props) {
   const { username } = props;
@@ -39,7 +40,7 @@ function EmptyMenu() {
  * Menu class which is used to render the app main top menu
  */
 function Menu() {
-  const user = useSelector(state => state.user);
+  const user = useSelector((state) => state.user);
   const { username } = user;
   if (!user.isAuthenticated) {
     return <EmptyMenu />;
