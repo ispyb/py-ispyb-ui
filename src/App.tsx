@@ -1,4 +1,5 @@
 import React from 'react';
+import { Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Alert } from 'react-bootstrap';
 import Menu from 'pages/menu/menu';
@@ -12,6 +13,7 @@ import PreparePage from 'pages/preparepage';
 import ErrorBoundary from 'components/errors/errorboundary';
 import Page from 'pages/page';
 import { useAppSelector, useAppDispatch } from 'hooks';
+import LoadingPanel from 'components/loading/loadingpanel';
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -41,19 +43,21 @@ export default function App() {
       <Menu />
       <Page>
         <ErrorBoundary>
-          <Routes>
-            <Route
-              path="/sessions"
-              element={
-                <>
-                  <SessionsPage />
-                </>
-              }
-            />
-            <Route path="/proposals" element={<ProposalsPage />} />
-            <Route path="/shipping" element={<ShippingPage />} />
-            <Route path="/prepare" element={<PreparePage />} />
-          </Routes>
+          <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+            <Routes>
+              <Route
+                path="/sessions"
+                element={
+                  <>
+                    <SessionsPage />
+                  </>
+                }
+              />
+              <Route path="/proposals" element={<ProposalsPage />} />
+              <Route path="/shipping" element={<ShippingPage />} />
+              <Route path="/prepare" element={<PreparePage />} />
+            </Routes>
+          </Suspense>
         </ErrorBoundary>
       </Page>
     </BrowserRouter>

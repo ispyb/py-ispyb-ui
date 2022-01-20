@@ -2,12 +2,14 @@ import React from 'react';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
 import 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit.min.css';
-
+import styles from './ResponsiveTable.module.css';
 import ToolkitProvider, { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit.min';
 
 import BootstrapTable2 from 'react-bootstrap-table-next';
 
 import paginationFactory from 'react-bootstrap-table2-paginator';
+
+const { SearchBar } = Search;
 
 export const ContainerWidth = {
   ExtraSmall: 768,
@@ -53,7 +55,7 @@ class ResponsiveTable extends React.Component {
       height: 182,
     };
 
-    //this.getSearchBar = this.getSearchBar.bind(this);
+    this.getSearchBar = this.getSearchBar.bind(this);
   }
 
   updateDimensions() {
@@ -133,12 +135,15 @@ class ResponsiveTable extends React.Component {
         keyField={this.props.keyField}
         data={this.props.data}
         columns={this.configure(this.props.columns)}
-        search
         filter={this.props.filter}
         expandRow={this.props.expandRow}
+        search={{
+          searchFormatted: true,
+        }}
       >
         {(props) => (
           <div>
+            {this.props.menu}
             <BootstrapTable2
               selectRow={this.props.selectRow}
               expandRow={this.props.expandRow}

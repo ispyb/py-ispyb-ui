@@ -132,6 +132,7 @@ export default function SessionTable(props) {
 
   return (
     <ResponsiveTable
+      menu={props.menu}
       rowStyle={rowStyle}
       pageOptions={{
         sizePerPage: 100,
