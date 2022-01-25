@@ -7,6 +7,8 @@ import LoginForm from 'components/login/loginform';
 
 function LoginTabs() {
   const site = useSelector((state) => state.site);
+
+  console.log(site.authentication);
   return (
     <Card>
       <Tabs id="login-tabs" transition={false} style={{ margin: '10px' }}>
