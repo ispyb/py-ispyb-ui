@@ -115,9 +115,8 @@ class ResponsiveTable extends React.Component {
 
   getSearchBar(props) {
     const { SearchBar } = Search;
-    if (this.props.search === false) {
-      return null;
-    }
+
+    debugger;
     return (
       <div style={this.getSearchBarStyle()}>
         <SearchBar {...props.searchProps} />
@@ -130,6 +129,7 @@ class ResponsiveTable extends React.Component {
       return null;
     }
 
+    debugger;
     return (
       <ToolkitProvider
         keyField={this.props.keyField}
@@ -143,7 +143,7 @@ class ResponsiveTable extends React.Component {
       >
         {(props) => (
           <div>
-            {this.props.menu}
+            {this.getSearchBar(props)}
             <BootstrapTable2
               selectRow={this.props.selectRow}
               expandRow={this.props.expandRow}

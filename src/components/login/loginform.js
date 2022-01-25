@@ -10,8 +10,7 @@ import ErrorUserMessage from 'components/usermessages/errorusermessage';
 
 function LoginForm(props) {
   const { plugin, site } = props;
-  const user = useSelector(state => state.user);
-
+  const user = useSelector((state) => state.user);
   const { isAuthenticating, isError } = user;
   const { register, handleSubmit } = useForm();
   const dispatch = useDispatch();
@@ -20,7 +19,7 @@ function LoginForm(props) {
     <Card style={{ padding: '20px 0 ' }}>
       <Form
         className="container-fluid"
-        onSubmit={handleSubmit(data => {
+        onSubmit={handleSubmit((data) => {
           dispatch(doSignIn(plugin, data.username, data.password, site));
         })}
       >

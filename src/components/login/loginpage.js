@@ -5,7 +5,7 @@ import LoginTabs from 'components/login/logintabs';
 import ErrorBoundary from 'components/errors/errorboundary';
 
 function LoginPage() {
-  const user = useSelector(state => state.user);
+  const user = useSelector((state) => state.user);
   if (user.token) {
     return null;
   }
