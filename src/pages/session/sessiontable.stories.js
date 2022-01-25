@@ -1,5 +1,7 @@
 import React from 'react';
 import SessionTable from 'pages/session/sessiontable';
+import { Provider } from 'react-redux';
+import { store } from 'store';
 
 const l = { title: 'SessionTable', component: SessionTable };
 export default l;
@@ -37,7 +39,11 @@ const data = [
     BLSession_startDate: 'Jan 17, 2022 12:00:00 AM',
   },
 ];
-const Story = (args) => <SessionTable {...args} />;
+const Story = (args) => (
+  <Provider store={store}>
+    <SessionTable {...args} />
+  </Provider>
+);
 
 export const AllSessionTable = Story.bind({});
 AllSessionTable.args = { data: data };

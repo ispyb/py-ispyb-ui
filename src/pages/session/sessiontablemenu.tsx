@@ -1,5 +1,5 @@
 import ActionToggleButton from 'components/buttons/actiontogglebutton';
-import { ButtonGroup, Form, FormControl, Button } from 'react-bootstrap';
+import { ButtonGroup, Form } from 'react-bootstrap';
 import Menu from 'components/menu/menu';
 import { ActionToggleButtonType } from 'components/buttons/actiontogglebutton';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
@@ -9,7 +9,7 @@ import React from 'react';
 
 interface SessionTableMenuType {
   items: Array<ActionToggleButtonType>;
-  SearchMenu: React.ElementType;
+  SearchMenu?: React.ElementType;
 }
 
 export default function SessionTableMenu({ items, SearchMenu }: SessionTableMenuType) {
@@ -21,9 +21,7 @@ export default function SessionTableMenu({ items, SearchMenu }: SessionTableMenu
         ))}
       </ButtonGroup>
 
-      <Form className="d-flex">
-        <SearchMenu />
-      </Form>
+      <Form className="d-flex">{SearchMenu}</Form>
     </Menu>
   );
 }
