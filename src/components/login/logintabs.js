@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import LoginForm from 'components/login/loginform';
+import SSO from 'components/login/sso';
 
 function LoginTabs() {
   const site = useSelector((state) => state.site);
@@ -13,8 +14,10 @@ function LoginTabs() {
     <Card>
       <Tabs id="login-tabs" transition={false} style={{ margin: '10px' }}>
         {site.authentication.sso.enabled !== 'false' && (
-          <Tab eventKey="sso" title="SSO" border="0">
-            SSo should be displayed here
+          <Tab eventKey="sso" title="SSO">
+            <Card className="tab-panel-fix">
+              <SSO />
+            </Card>
           </Tab>
         )}
         {site.authentication?.authenticators
