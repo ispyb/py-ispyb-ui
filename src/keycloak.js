@@ -1,6 +1,6 @@
 import Keycloak from 'keycloak-js';
 import sites from './config/sites';
-import differenceInMilliseconds from 'date-fns/difference_in_milliseconds';
+//import differenceInMilliseconds from 'date-fns/difference_in_milliseconds';
 import { store } from 'store';
 import { doLogOut, doSignIn } from 'redux/actions/user';
 
@@ -19,7 +19,8 @@ if (keycloak) {
 export default keycloak;
 
 export function getRemainingSessionTime(expirationTime) {
-  return differenceInMilliseconds(expirationTime, new Date());
+  //return differenceInMilliseconds(expirationTime, new Date());
+  return expirationTime.getTime() - new Date().getTime();
 }
 
 export function checkExpirationTime() {
