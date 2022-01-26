@@ -8,7 +8,7 @@ const sites = [
     authentication: {
       sso: {
         enabled: process.env.REACT_APP_SSO_AUTH_ENABLED === 'true',
-        plugin: 'esrf',
+        plugin: 'sso',
         configuration: {
           realm: 'ESRF',
           url: 'https://websso.esrf.fr/auth/',

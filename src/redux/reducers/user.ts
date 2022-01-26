@@ -4,25 +4,27 @@ interface User {
   username: string;
   roles: string;
   token: string;
-  isAuthenticated: boolean,
-  isAuthenticating: boolean,
-  isError: boolean,
-  type : string,
-  error : string
+  isAuthenticated: boolean;
+  isAuthenticating: boolean;
+  isError: boolean;
+  type: string;
+  error: string;
+  isSSO: boolean;
 }
 
 const initialState: User = {
-  username : "",
-  roles : "",
-  token : "",
+  username: '',
+  roles: '',
+  token: '',
   isAuthenticated: false,
   isAuthenticating: false,
   isError: false,
-  type : "",
-  error: ""
+  type: '',
+  error: '',
+  isSSO: true,
 };
 
-const user = (state = initialState,  action: User) => {
+const user = (state = initialState, action: User) => {
   switch (action.type) {
     case LOG_IN: {
       state = { ...initialState, username: action.username, isAuthenticated: false, isAuthenticating: true, isError: false };
@@ -35,19 +37,19 @@ const user = (state = initialState,  action: User) => {
         token: action.token,
         roles: action.roles,
         isAuthenticated: true,
-        isError: false
+        isError: false,
       };
       break;
     }
     case LOG_OUT: {
       state = {
         ...initialState,
-        username: "",
-        token: "",
-        roles: "",
+        username: '',
+        token: '',
+        roles: '',
         isAuthenticated: false,
         isAuthenticating: false,
-        isError: false
+        isError: false,
       };
       break;
     }

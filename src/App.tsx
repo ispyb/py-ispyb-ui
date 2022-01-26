@@ -31,10 +31,10 @@ export default function App() {
   }
   if (!user.isAuthenticated) {
     return (
-      <>
+      <BrowserRouter>
         <Menu />
         <LoginPage />
-      </>
+      </BrowserRouter>
     );
   }
 
