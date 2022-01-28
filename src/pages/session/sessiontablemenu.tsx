@@ -16,7 +16,8 @@ interface SessionTableMenuType {
 }
 
 export default function SessionTableMenu({ checkList, SearchMenu, showDatePicker }: SessionTableMenuType) {
-  const [setSearchParams] = useSearchParams();
+  // eslint-disable-next-line
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [startDate, setStartDate] = useState<Moment | null>(moment());
   const [focusedInput, setFocusedInput] = useState<boolean>(false);
