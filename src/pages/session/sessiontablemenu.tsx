@@ -4,7 +4,7 @@ import moment, { Moment } from 'moment';
 import { useSearchParams } from 'react-router-dom';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
-import { SingleDatePicker, FocusedInputShape } from 'react-dates';
+import { SingleDatePicker } from 'react-dates';
 import { ButtonGroup, Form } from 'react-bootstrap';
 import ActionToggleButton from 'components/buttons/actiontogglebutton';
 import { ActionToggleButtonType } from 'components/buttons/actiontogglebutton';
@@ -16,7 +16,7 @@ interface SessionTableMenuType {
 }
 
 export default function SessionTableMenu({ checkList, SearchMenu, showDatePicker }: SessionTableMenuType) {
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [setSearchParams] = useSearchParams();
 
   const [startDate, setStartDate] = useState<Moment | null>(moment());
   const [focusedInput, setFocusedInput] = useState<boolean>(false);
