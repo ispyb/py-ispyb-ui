@@ -8,10 +8,11 @@ import { useAppSelector } from 'hooks';
 import { setTechniqueVisibleSessionTable } from 'redux/actions/ui';
 import { SET_SESSIONS_MX_COLUMNS, SET_SESSIONS_SAXS_COLUMNS, SET_SESSIONS_EM_COLUMNS } from 'redux/actiontypes';
 import { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit.min';
+import UI from 'config/ui';
 
-const { SearchBar } = Search;
 export default function SessionsPage() {
-  const { areEMColumnsVisible, areMXColumnsVisible, areSAXSColumnsVisible } = useAppSelector((state) => state.ui.options.sessionsPage);
+  const { SearchBar } = Search;
+  const { areEMColumnsVisible, areMXColumnsVisible, areSAXSColumnsVisible } = useAppSelector((state) => state.ui.sessionsPage);
 
   const { startDate = format(new Date(), 'yyyyMMdd'), endDate = format(new Date(Date.now() + 3600 * 1000 * 24), 'yyyyMMdd') } = useQueryParams();
   const { data, error } = useSession(startDate, endDate);
@@ -31,12 +32,15 @@ export default function SessionsPage() {
   return (
     <>
       <SessionTable
+        startDate={startDate}
+        endDate={endDate}
         menu={menu}
         search={true}
         data={data}
         areEMColumnsVisible={areEMColumnsVisible}
         areMXColumnsVisible={areMXColumnsVisible}
         areSAXSColumnsVisible={areSAXSColumnsVisible}
+        userPortalLink={UI.sessionsPage.userPortalLink}
       ></SessionTable>
     </>
   );

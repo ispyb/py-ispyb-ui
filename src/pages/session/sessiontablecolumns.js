@@ -3,46 +3,60 @@ import { Badge } from 'react-bootstrap';
 import format from 'date-fns/format';
 import parse from 'date-fns/parse';
 import { toColumn } from 'components/table/helper';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBook } from '@fortawesome/free-solid-svg-icons';
+import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 
 const dateFormatter = (cell) => {
   return format(parse(cell, 'MMM d, yyyy h:mm:ss aaa', new Date()), 'dd/MM/yyyy');
 };
+
 const getProposalName = (row) => {
   return row.Proposal_proposalCode + row.Proposal_ProposalNumber;
 };
 const statsFormatter = (cell) => (cell !== null && cell !== 0 ? <Badge>{cell}</Badge> : null);
-const proposalFormatter = (cell, row, rowIndex, extraData) => (cell !== null ? extraData.getProposalName(row) : null);
+
+const proposalFormatter = (cell, row, rowIndex, extraData) => {
+  const { userPortalLink } = extraData;
+
+  const renderTooltip = (props) => (
+    <Tooltip id="button-tooltip" {...props}>
+      {userPortalLink.toolTip}
+    </Tooltip>
+  );
+
+  if (cell !== null) {
+    if (userPortalLink.visible) {
+      return (
+        <>
+          <OverlayTrigger placement="right" delay={{ show: 250, hide: 400 }} overlay={renderTooltip}>
+            <a href={userPortalLink.url + row.expSessionPk}>
+              <FontAwesomeIcon icon={faBook} style={{ marginRight: 10 }}></FontAwesomeIcon>
+            </a>
+          </OverlayTrigger>
+          {extraData.getProposalName(row)}
+        </>
+      );
+    }
+    return extraData.getProposalName(row);
+  }
+
+  return;
+};
+
 const getHeaderStats = () => {
   return { xs: { hidden: true }, sm: { hidden: true }, md: { width: '30px', textAlign: 'center' }, lg: { width: '60px', textAlign: 'center' } };
 };
 
-const isEmpty = (row) => {
-  function checkNonZero(value) {
-    return !value || value === 0;
-  }
-  return (
-    checkNonZero(row.energyScanCount) &&
-    checkNonZero(row.xrfSpectrumCount) &&
-    checkNonZero(row.EMdataCollectionGroupCount) &&
-    checkNonZero(row.hplcCount) &&
-    checkNonZero(row.sampleChangerCount) &&
-    checkNonZero(row.calibrationCount) &&
-    checkNonZero(row.dataCollectionGroupCount) &&
-    checkNonZero(row.testDataCollectionGroupCount) &&
-    checkNonZero(row.sampleCount) &&
-    checkNonZero(row.xrfSpectrumCount) &&
-    checkNonZero(row.energyScanCount)
-  );
-};
-
-export default function columns(props, areMXColumnsVisible, areSAXSColumnsVisible, areEMColumnsVisible) {
+export default function columns(props) {
+  const { areMXColumnsVisible, areSAXSColumnsVisible, areEMColumnsVisible, userPortalLink } = props;
   return [
     { text: 'id', dataField: 'id', hidden: true },
     {
       text: 'Date',
       dataField: 'BLSession_startDate',
+      sort: true,
       formatter: dateFormatter,
-      formatExtraData: { getProposalName, props, isEmpty },
       responsiveHeaderStyle: {
         xs: { width: '100px', textAlign: 'center' },
         sm: { width: '100px', textAlign: 'center' },
@@ -53,6 +67,7 @@ export default function columns(props, areMXColumnsVisible, areSAXSColumnsVisibl
     {
       text: 'Beamline',
       dataField: 'beamLineName',
+      sort: true,
       responsiveHeaderStyle: {
         xs: { width: '60px', textAlign: 'center' },
         sm: { width: '60px', textAlign: 'center' },
@@ -62,9 +77,10 @@ export default function columns(props, areMXColumnsVisible, areSAXSColumnsVisibl
     },
     {
       text: 'Proposal',
+      sort: true,
       dataField: 'Proposal_proposalCode',
       formatter: proposalFormatter,
-      formatExtraData: { getProposalName },
+      formatExtraData: { getProposalName, userPortalLink },
       responsiveHeaderStyle: {
         xs: { width: '100px', textAlign: 'center' },
         sm: { width: '100px', textAlign: 'center' },
@@ -72,8 +88,10 @@ export default function columns(props, areMXColumnsVisible, areSAXSColumnsVisibl
         lg: { width: '100px', textAlign: 'center' },
       },
     },
+
     {
       text: 'Local Contact',
+      sort: true,
       dataField: 'beamLineOperator',
       responsiveHeaderStyle: {
         xs: { hidden: true },

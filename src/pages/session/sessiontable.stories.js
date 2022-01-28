@@ -2,6 +2,7 @@ import React from 'react';
 import SessionTable from 'pages/session/sessiontable';
 import { Provider } from 'react-redux';
 import { store } from 'store';
+import { BrowserRouter } from 'react-router-dom';
 
 const l = { title: 'SessionTable', component: SessionTable };
 export default l;
@@ -41,7 +42,9 @@ const data = [
 ];
 const Story = (args) => (
   <Provider store={store}>
-    <SessionTable {...args} />
+    <BrowserRouter>
+      <SessionTable {...args} />
+    </BrowserRouter>
   </Provider>
 );
 
