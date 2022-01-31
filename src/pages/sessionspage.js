@@ -1,46 +1,40 @@
 import React from 'react';
-import { useSession } from 'hooks/ispyb';
-import SessionTable from 'pages/session/sessiontable';
-import format from 'date-fns/format';
-import useQueryParams from 'hooks/usequeyparams';
-import SessionTableMenu from 'pages/session/sessiontablemenu';
-import { useAppSelector } from 'hooks';
-import { setTechniqueVisibleSessionTable } from 'redux/actions/ui';
-import { SET_SESSIONS_MX_COLUMNS, SET_SESSIONS_SAXS_COLUMNS, SET_SESSIONS_EM_COLUMNS } from 'redux/actiontypes';
-import { Search } from 'react-bootstrap-table2-toolkit/dist/react-bootstrap-table2-toolkit.min';
 import UI from 'config/ui';
+import format from 'date-fns/format';
+import SessionTable from 'pages/session/sessiontable';
+import useQueryParams from 'hooks/usequeyparams';
+import { useSession } from 'hooks/ispyb';
+import { useAppSelector } from 'hooks';
+import { useBeamlines } from 'hooks/site';
 
 export default function SessionsPage() {
-  const { SearchBar } = Search;
   const { areEMColumnsVisible, areMXColumnsVisible, areSAXSColumnsVisible } = useAppSelector((state) => state.ui.sessionsPage);
 
   const { startDate = format(new Date(), 'yyyyMMdd'), endDate = format(new Date(Date.now() + 3600 * 1000 * 24), 'yyyyMMdd') } = useQueryParams();
   const { data, error } = useSession(startDate, endDate);
+  let beamlines = [];
+  if (areMXColumnsVisible) {
+    beamlines = beamlines.concat(useBeamlines('MX'));
+  }
 
+  if (areSAXSColumnsVisible) {
+    beamlines = beamlines.concat(useBeamlines('SAXS'));
+  }
+
+  if (areEMColumnsVisible) {
+    beamlines = beamlines.concat(useBeamlines('EM'));
+  }
   if (error) throw Error(error);
 
   return (
-    <>
-      <SessionTable
-        startDate={startDate}
-        endDate={endDate}
-        menu={
-          <SessionTableMenu
-            items={[
-              { text: 'MX', checked: areMXColumnsVisible, action: setTechniqueVisibleSessionTable, actionType: SET_SESSIONS_MX_COLUMNS },
-              { text: 'SAXS', checked: areSAXSColumnsVisible, action: setTechniqueVisibleSessionTable, actionType: SET_SESSIONS_SAXS_COLUMNS },
-              { text: 'EM', checked: areEMColumnsVisible, action: setTechniqueVisibleSessionTable, actionType: SET_SESSIONS_EM_COLUMNS },
-            ]}
-            SearchMenu={SearchBar}
-          />
-        }
-        search={true}
-        data={data}
-        areEMColumnsVisible={areEMColumnsVisible}
-        areMXColumnsVisible={areMXColumnsVisible}
-        areSAXSColumnsVisible={areSAXSColumnsVisible}
-        userPortalLink={UI.sessionsPage.userPortalLink}
-      ></SessionTable>
-    </>
+    <SessionTable
+      startDate={startDate}
+      endDate={endDate}
+      data={data.filter((d) => new Set(beamlines).has(d.beamLineName))}
+      areEMColumnsVisible={areEMColumnsVisible}
+      areMXColumnsVisible={areMXColumnsVisible}
+      areSAXSColumnsVisible={areSAXSColumnsVisible}
+      userPortalLink={UI.sessionsPage.userPortalLink}
+    ></SessionTable>
   );
 }

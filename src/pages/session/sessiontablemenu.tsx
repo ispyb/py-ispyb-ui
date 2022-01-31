@@ -11,11 +11,12 @@ import { ActionToggleButtonType } from 'components/buttons/actiontogglebutton';
 
 interface SessionTableMenuType {
   checkList: Array<ActionToggleButtonType>;
-  SearchMenu?: React.ElementType;
-  showDatePicker?: boolean;
+  searchMenu: React.ElementType;
+  showDatePicker: boolean;
 }
 
-export default function SessionTableMenu({ checkList, SearchMenu, showDatePicker }: SessionTableMenuType) {
+export default function SessionTableMenu(props: SessionTableMenuType) {
+  const { checkList, searchMenu, showDatePicker } = props;
   // eslint-disable-next-line
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -47,7 +48,7 @@ export default function SessionTableMenu({ checkList, SearchMenu, showDatePicker
         ></SingleDatePicker>
       )}
 
-      <Form className="d-flex">{SearchMenu}</Form>
+      <Form className="d-flex">{searchMenu}</Form>
     </Menu>
   );
 }

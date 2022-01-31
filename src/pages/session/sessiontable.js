@@ -24,18 +24,11 @@ export default function SessionTable(props) {
   );
 
   return (
-    <ToolkitProvider
-      keyField="id"
-      data={data}
-      columns={responsiveColumns}
-      search={{
-        searchFormatted: true,
-      }}
-    >
+    <ToolkitProvider keyField="SessionTableToolkitProvider" data={data} columns={responsiveColumns} search={{ searchFormatted: true }}>
       {(props) => (
         <>
           <SessionTableMenu
-            SearchMenu={<SearchBar {...props.searchProps} />}
+            searchMenu={<SearchBar {...props.searchProps} />}
             startDate={startDate}
             endDate={endDate}
             showDatePicker={true}
