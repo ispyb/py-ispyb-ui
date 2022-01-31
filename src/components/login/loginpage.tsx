@@ -3,14 +3,13 @@ import { useSelector } from 'react-redux';
 import { Col, Container, Row, Alert } from 'react-bootstrap';
 import LoginTabs from 'components/login/logintabs';
 import ErrorBoundary from 'components/errors/errorboundary';
+import { RootState } from 'store';
 
 function LoginPage() {
-  const user = useSelector((state) => state.user);
+  const user = useSelector((state: RootState) => state.user);
   if (user.token) {
     return null;
   }
-  const loginTabs = <LoginTabs />;
-
   return (
     <ErrorBoundary>
       <Container fluid>
@@ -27,7 +26,7 @@ function LoginPage() {
             </Alert>
           </Col>
           <Col xs={12} md={4}>
-            {loginTabs}
+            <LoginTabs />
           </Col>
         </Row>
       </Container>
