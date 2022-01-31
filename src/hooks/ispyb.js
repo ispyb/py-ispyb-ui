@@ -1,6 +1,6 @@
 import useSWR from 'swr';
 import axios from 'axios';
-import { getSessions } from 'api/ispyb';
+import { getSessions, getSessionById, getDataCollectionsBy } from 'api/ispyb';
 
 const fetcher = (url) => axios.get(url).then((res) => res.data);
 
@@ -14,10 +14,10 @@ function doGet(url) {
 }
 
 export function useSession(startDate, endDate) {
-  const { data, error } = doGet(getSessions(startDate, endDate).url);
-  return {
-    data,
-    isLoading: !error && !data,
-    isError: error,
-  };
+  return doGet(getSessions(startDate, endDate).url);
+}
+
+export function useDataCollection(proposalName, sessionId) {
+  const { data, error } = doGet(getDataCollectionsBy(proposalName, sessionId).url);
+  return { data, isLoading: !error && !data, isError: error };
 }

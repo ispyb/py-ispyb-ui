@@ -15,3 +15,11 @@ export function getLogin(site) {
 export function getSessions(startDate, endDate) {
   return { url: `${server}/${token}/proposal/session/date/${startDate}/${endDate}/list` };
 }
+
+export function getSessionById(sessionId) {
+  return { url: `${server}/${token}/proposal/session/${sessionId}/list` };
+}
+
+export function getDataCollectionsBy(proposalName, sessionId) {
+  return { url: `${server}/${token}/proposal/${proposalName}/em/datacollection/session/${sessionId}/list` };
+}
