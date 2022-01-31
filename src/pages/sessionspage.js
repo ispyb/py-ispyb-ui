@@ -19,22 +19,21 @@ export default function SessionsPage() {
 
   if (error) throw Error(error);
 
-  const menu = (
-    <SessionTableMenu
-      items={[
-        { text: 'MX', checked: areMXColumnsVisible, action: setTechniqueVisibleSessionTable, actionType: SET_SESSIONS_MX_COLUMNS },
-        { text: 'SAXS', checked: areSAXSColumnsVisible, action: setTechniqueVisibleSessionTable, actionType: SET_SESSIONS_SAXS_COLUMNS },
-        { text: 'EM', checked: areEMColumnsVisible, action: setTechniqueVisibleSessionTable, actionType: SET_SESSIONS_EM_COLUMNS },
-      ]}
-      SearchMenu={SearchBar}
-    />
-  );
   return (
     <>
       <SessionTable
         startDate={startDate}
         endDate={endDate}
-        menu={menu}
+        menu={
+          <SessionTableMenu
+            items={[
+              { text: 'MX', checked: areMXColumnsVisible, action: setTechniqueVisibleSessionTable, actionType: SET_SESSIONS_MX_COLUMNS },
+              { text: 'SAXS', checked: areSAXSColumnsVisible, action: setTechniqueVisibleSessionTable, actionType: SET_SESSIONS_SAXS_COLUMNS },
+              { text: 'EM', checked: areEMColumnsVisible, action: setTechniqueVisibleSessionTable, actionType: SET_SESSIONS_EM_COLUMNS },
+            ]}
+            SearchMenu={SearchBar}
+          />
+        }
         search={true}
         data={data}
         areEMColumnsVisible={areEMColumnsVisible}
