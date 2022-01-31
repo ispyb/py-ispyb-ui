@@ -22,7 +22,7 @@ export default function App() {
   const site = useAppSelector((state) => state.site);
 
   /** Check if there is a site configured */
-  if (Object.entries(site).length === 0) {
+  if (!site.authentication.sso.enabled && site.authentication.authenticators.length === 0) {
     /** In case a single site is configured that should be the most of the cases then trigger the actions */
     if (sites.length === 1) {
       dispatch(setSite(sites[0]));

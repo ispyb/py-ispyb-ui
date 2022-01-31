@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Badge } from 'react-bootstrap';
 import format from 'date-fns/format';
 import parse from 'date-fns/parse';
@@ -6,9 +7,12 @@ import { toColumn } from 'components/table/helper';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBook } from '@fortawesome/free-solid-svg-icons';
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
+import { useGetTechniqueByBeamline } from 'hooks/site';
 
-const dateFormatter = (cell) => {
-  return format(parse(cell, 'MMM d, yyyy h:mm:ss aaa', new Date()), 'dd/MM/yyyy');
+const dateFormatter = (cell, row) => {
+  const technique = useGetTechniqueByBeamline(row.beamLineName);
+  const url = `/${technique}/${row.sessionId}`;
+  return <Link to={url}>{format(parse(cell, 'MMM d, yyyy h:mm:ss aaa', new Date()), 'dd/MM/yyyy')}</Link>;
 };
 
 const getProposalName = (row) => {

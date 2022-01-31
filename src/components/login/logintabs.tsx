@@ -5,13 +5,15 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import LoginForm from 'components/login/loginform';
 import SSO from 'components/login/sso';
+import { Site } from 'models';
+import { RootState } from 'store';
 
 function LoginTabs() {
-  const site = useSelector((state) => state.site);
+  const site: Site = useSelector((state: RootState) => state.site);
   return (
     <Card>
       <Tabs id="login-tabs" transition={false} style={{ margin: '10px' }}>
-        {site.authentication.sso.enabled !== 'false' && (
+        {site.authentication.sso.enabled && (
           <Tab eventKey="sso" title="SSO">
             <Card className="tab-panel-fix">
               <SSO />
