@@ -1,9 +1,10 @@
+import UI from 'config/ui';
 import React from 'react';
 import { render } from 'react-dom';
 import App from './App';
 import { PersistGate } from 'redux-persist/integration/react';
 import reportWebVitals from './reportWebVitals';
-import 'bootswatch/dist/cerulean/bootstrap.min.css';
+require(`bootswatch/dist/${UI.theme}/bootstrap.min.css`);
 import './index.css';
 import { Provider } from 'react-redux';
 import { store, persistor } from './store';

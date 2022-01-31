@@ -8,12 +8,9 @@ const ui = (state = initialState, action) => {
     case SET_SESSIONS_MX_COLUMNS: {
       state = {
         ...initialState,
-        options: {
-          ...state.options,
-          sessionsPage: {
-            ...state.options.sessionsPage,
-            areMXColumnsVisible: action.visible,
-          },
+        sessionsPage: {
+          ...state.sessionsPage,
+          areMXColumnsVisible: action.visible,
         },
       };
       break;
@@ -21,12 +18,9 @@ const ui = (state = initialState, action) => {
     case SET_SESSIONS_SAXS_COLUMNS: {
       state = {
         ...initialState,
-        options: {
-          ...state.options,
-          sessionsPage: {
-            ...state.options.sessionsPage,
-            areSAXSColumnsVisible: action.visible,
-          },
+        sessionsPage: {
+          ...state.sessionsPage,
+          areSAXSColumnsVisible: action.visible,
         },
       };
       break;
@@ -34,12 +28,9 @@ const ui = (state = initialState, action) => {
     case SET_SESSIONS_EM_COLUMNS: {
       state = {
         ...initialState,
-        options: {
-          ...state.options,
-          sessionsPage: {
-            ...state.options.sessionsPage,
-            areEMColumnsVisible: action.visible,
-          },
+        sessionsPage: {
+          ...state.sessionsPage,
+          areEMColumnsVisible: action.visible,
         },
       };
       break;
