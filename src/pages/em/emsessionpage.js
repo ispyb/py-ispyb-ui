@@ -1,12 +1,28 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-import { useSession } from 'hooks/ispyb';
+import { useSession, useDataCollection } from 'hooks/ispyb';
+import GridSquarePanel from 'pages/em/gridsquarepanel';
+import { useDataCollectionToGridSquares } from 'pages/em/helper';
 
 export default function EMSessionPage() {
-  let params = useParams();
-  const { data, error } = useSession(params.sessionId);
+  const { sessionId } = useParams();
+  const { data, sessionError } = useSession({ sessionId });
+  if (sessionError) throw Error(sessionError);
 
-  console.log(data);
-  if (error) throw Error(error);
-  return <div>{data.length}</div>;
+  if (data.length > 0) {
+    const proposalName = `${data[0].Proposal_proposalCode}${data[0].Proposal_proposalNumber}`;
+    const dataCollectionResponse = useDataCollection({ proposalName, sessionId });
+    const sampleList = useDataCollectionToGridSquares(dataCollectionResponse.data, proposalName);
+    if (dataCollectionResponse.error) throw Error(dataCollectionResponse.error);
+
+    return (
+      <>
+        {sampleList.map((sample) => (
+          <GridSquarePanel sampleList={sample} />
+        ))}
+      </>
+    );
+  }
+
+  return <div>No data available</div>;
 }

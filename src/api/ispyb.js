@@ -23,3 +23,7 @@ export function getSessionById(sessionId) {
 export function getDataCollectionsBy(proposalName, sessionId) {
   return { url: `${server}/${token}/proposal/${proposalName}/em/datacollection/session/${sessionId}/list` };
 }
+
+export function getCrystalImage({ proposalName, dataCollectionId, imageIndex }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/mx/datacollection/${dataCollectionId}/crystalsnaphot/${imageIndex}/get` };
+}

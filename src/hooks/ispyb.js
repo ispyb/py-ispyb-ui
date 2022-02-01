@@ -13,11 +13,12 @@ function doGet(url) {
   };
 }
 
-export function useSession(startDate, endDate) {
+export function useSession({ startDate, endDate, sessionId }) {
+  if (sessionId) return doGet(getSessionById(sessionId).url);
   return doGet(getSessions(startDate, endDate).url);
 }
 
-export function useDataCollection(proposalName, sessionId) {
+export function useDataCollection({ proposalName, sessionId }) {
   const { data, error } = doGet(getDataCollectionsBy(proposalName, sessionId).url);
   return { data, isLoading: !error && !data, isError: error };
 }
