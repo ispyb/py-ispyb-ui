@@ -3,7 +3,7 @@ import { Col, Row, Table } from 'react-bootstrap';
 
 interface Parameter {
   key: string;
-  value: string;
+  value: string | number | null;
 }
 
 interface Props {

@@ -5,7 +5,21 @@ import { getCrystalImage } from 'api/ispyb.js';
 import 'react-medium-image-zoom/dist/styles.css';
 import 'pages/em/styles.css';
 
-export default function GridSquare({ startTime, proposalName, dataCollectionId, movieCount, progressMotionCor, progressCtf }) {
+export default function GridSquare({
+  startTime,
+  proposalName,
+  dataCollectionId,
+  movieCount,
+  progressMotionCor,
+  progressCtf,
+}: {
+  startTime: string;
+  proposalName: string;
+  dataCollectionId: number;
+  movieCount: number;
+  progressMotionCor: number;
+  progressCtf: number;
+}) {
   return (
     <Card style={{ width: '18rem' }}>
       <Zoom>

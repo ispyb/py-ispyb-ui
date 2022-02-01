@@ -1,7 +1,14 @@
 import { commaSeparatedToNumberArray } from 'helpers/numerictransformation';
+import { DataCollections, SampleList } from 'pages/em/model';
 
-export function useDataCollectionToGridSquares(dataCollections, proposalName) {
-  let sampleList = [];
+/**
+ * Basically this method parses dataCollection to SampleList
+ * @param dataCollections
+ * @param proposalName
+ * @returns
+ */
+export function useDataCollectionToGridSquares(dataCollections: DataCollections[], proposalName: string) {
+  const sampleList: SampleList[] = [];
   dataCollections.forEach((dataCollection) => {
     const {
       dataCollectionIdList,
@@ -13,15 +20,15 @@ export function useDataCollectionToGridSquares(dataCollections, proposalName) {
       DataCollection_xBeamPix: samplingRate,
       BLSample_name: sampleName,
     } = dataCollection;
-    let totalNumberOfMovies = statistics.map((stat) => stat.movieCount).reduce((total, num) => total + num);
+    const totalNumberOfMovies = statistics.map((stat) => stat.movieCount).reduce((total, num) => total + num);
     const noFrames = commaSeparatedToNumberArray(framesCount)[0];
     const dataCollectionIdArray = commaSeparatedToNumberArray(dataCollectionIdList);
-    let startTimeList = dataCollection.startTimeList.split(',');
+    const startTimeList = dataCollection.startTimeList.split(',');
     const magnificationArray = commaSeparatedToNumberArray(magnificationList);
     const progressMotionCorArray = [];
     const progressCtfArray = [];
 
-    let grids = [];
+    const grids = [];
     for (let i = 0; i < dataCollectionIdArray.length; i++) {
       if (statistics[i]) {
         const progressMotionCor = (statistics[i].motionCorrectionCount / statistics[i].movieCount) * 100;
@@ -31,7 +38,6 @@ export function useDataCollectionToGridSquares(dataCollections, proposalName) {
         grids.push({
           progressMotionCor: Math.round((statistics[i].motionCorrectionCount / statistics[i].movieCount) * 100),
           progressCtf: Math.round(progressCtf * 10) / 10,
-          url: `/sessions/em/proposal/{proposalName}/datacollection/${dataCollectionIdArray[i]}/movies`,
           dataCollectionId: dataCollectionIdArray[i],
           startTime: startTimeList[i],
           movieCount: statistics[i].movieCount,
@@ -40,7 +46,6 @@ export function useDataCollectionToGridSquares(dataCollections, proposalName) {
         grids.push({
           progressMotionCor: 0,
           progressCtf: 0,
-          url: `/sessions/em/proposal/{proposalName}/datacollection/${dataCollectionIdArray[i]}/movies`,
           dataCollectionId: dataCollectionIdArray[i],
           startTime: startTimeList[i],
           movieCount: statistics[i].movieCount,
@@ -55,7 +60,7 @@ export function useDataCollectionToGridSquares(dataCollections, proposalName) {
       totalNumberOfMovies,
       noFrames,
       voltage,
-      grids,
+      grids: grids.reverse(),
       magnification: magnificationArray[0] ? magnificationArray[0] : null,
       samplingRate,
     });

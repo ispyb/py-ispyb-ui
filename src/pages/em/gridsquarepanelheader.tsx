@@ -2,8 +2,9 @@ import { Col, Container, Row } from 'react-bootstrap';
 import React from 'react';
 import SimpleParameterTable from 'components/table/simpleparametertable';
 import 'react-medium-image-zoom/dist/styles.css';
+import { SampleList } from 'pages/em/model';
 
-export default function GridSquarePanelHeader({ sampleList }) {
+export default function GridSquarePanelHeader({ sampleList }: { sampleList: SampleList }) {
   const { samplingRate, sampleName, gridSquaresCount, magnification, noFrames, totalNumberOfMovies, voltage } = sampleList;
   return (
     <div>
