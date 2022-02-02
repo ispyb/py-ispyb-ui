@@ -9,9 +9,8 @@ import { useBeamlines } from 'hooks/site';
 
 export default function SessionsPage() {
   const { areEMColumnsVisible, areMXColumnsVisible, areSAXSColumnsVisible } = useAppSelector((state) => state.ui.sessionsPage);
-
   const { startDate = format(new Date(), 'yyyyMMdd'), endDate = format(new Date(Date.now() + 3600 * 1000 * 24), 'yyyyMMdd') } = useQueryParams();
-  const { data, error } = useSession(startDate, endDate);
+  const { data, error } = useSession({ startDate, endDate });
   let beamlines = [];
   if (areMXColumnsVisible) {
     beamlines = beamlines.concat(useBeamlines('MX'));
