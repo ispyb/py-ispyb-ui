@@ -1,6 +1,6 @@
 import useSWR from 'swr';
 import axios from 'axios';
-import { getSessions, getSessionById, getDataCollectionsBy } from 'api/ispyb';
+import { getSessions, getSessionById, getDataCollectionsBy, getEMStatisticsBy } from 'api/ispyb';
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
@@ -22,10 +22,14 @@ export function useSession(useSession: UseSession) {
   if (useSession.sessionId) return doGet(getSessionById(useSession.sessionId).url);
   return doGet(getSessions(useSession.startDate, useSession.endDate).url);
 }
-interface UseDataCollection {
+interface ProposalSessionId {
   proposalName: string;
   sessionId?: string;
 }
-export function useDataCollection(useDataCollection: UseDataCollection) {
-  return doGet(getDataCollectionsBy(useDataCollection.proposalName, useDataCollection.sessionId).url);
+export function useDataCollection({ proposalName, sessionId }: ProposalSessionId) {
+  return doGet(getDataCollectionsBy({ proposalName, sessionId }).url);
+}
+
+export function useEMStatistics({ proposalName, sessionId }: ProposalSessionId) {
+  return doGet(getEMStatisticsBy({ proposalName, sessionId }).url);
 }

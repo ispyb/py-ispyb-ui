@@ -36,6 +36,7 @@ interface Authentication {
 export interface Site {
   techniques: Record<string, Technique>;
   authentication: Authentication;
+  server: string;
 }
 /********************************************
  * Site 

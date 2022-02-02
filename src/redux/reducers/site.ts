@@ -9,6 +9,7 @@ interface Action {
 const initialState: Site = {
   authentication: { sso: { enabled: false }, authenticators: [] },
   techniques: {},
+  server: '',
 };
 
 const site = (state = initialState, action: Action) => {
