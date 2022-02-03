@@ -68,3 +68,102 @@ export function useDataCollectionToGridSquares(dataCollections: DataCollections[
 
   return sampleList;
 }
+
+function getLength(min: number, max: number, data: number[]) {
+  let count = 0;
+  for (let i = 0; i < data.length; i++) {
+    if (data[i] >= min && data[i] <= max) {
+      count = count + 1;
+    }
+  }
+  return count;
+}
+
+function getDistribution(data: number[]) {
+  const max = Math.max.apply(null, data);
+  const min = Math.min.apply(null, data);
+  const intervals = 50;
+  const distribution = [];
+  const size = (max - min) / intervals;
+
+  if (min > 0) {
+    distribution.push([0, 0]);
+  }
+  for (let i = min; i < max; i = i + size) {
+    const localmin = i;
+    const localmax = localmin + size;
+    distribution.push([localmin.toFixed(3), getLength(localmin, localmax, data)]);
+  }
+
+  return distribution;
+}
+
+interface Record {
+  movieId: number;
+  defocusU: string;
+  defocusV: string;
+  averageMotionPerFrame: string;
+  resolutionLimit: string;
+  angle: string;
+}
+
+export interface StatisticsPlotData {
+  movieNumber: number[];
+  averageData: number[];
+  defocusU: number[];
+  defocusV: number[];
+  resolution: number[];
+  resolutionDistribution: (number | string)[][];
+  defocusUDistribution: (number | string)[][];
+  defocusVDistribution: (number | string)[][];
+  angleDistribution: (number | string)[][];
+  angle: number[];
+  defocusDifference: number[];
+}
+export function useGridSquareStatisticsToPlot(data: Record[]): StatisticsPlotData {
+  const movieNumber = [];
+  const averageData = [];
+  const defocusU = [];
+  const defocusV = [];
+  const resolution = [];
+  const angle = [];
+  const defocusDifference = [];
+  let resolutionDistribution = [];
+  let defocusUDistribution = [];
+  let defocusVDistribution = [];
+  let angleDistribution = [];
+
+  data.sort(function (a, b) {
+    return a.movieId - b.movieId;
+  });
+  const startMovieId = data[0].movieId;
+  for (let i = 0; i < data.length; i++) {
+    movieNumber.push(data[i].movieId - startMovieId + 1);
+    averageData.push(parseFloat(data[i].averageMotionPerFrame));
+    const U = parseFloat(data[i].defocusU) / 10000.0;
+    const V = parseFloat(data[i].defocusV) / 10000.0;
+    defocusU.push(U);
+    defocusV.push(V);
+    defocusDifference.push(Math.abs(U - V) / ((U + V) / 2.0));
+    resolution.push(parseFloat(data[i].resolutionLimit));
+    angle.push(parseFloat(data[i].angle));
+  }
+  resolutionDistribution = getDistribution(resolution);
+  defocusUDistribution = getDistribution(defocusU);
+  defocusVDistribution = getDistribution(defocusV);
+  angleDistribution = getDistribution(angle);
+
+  return {
+    movieNumber,
+    averageData,
+    defocusU,
+    defocusV,
+    resolution,
+    resolutionDistribution,
+    defocusUDistribution,
+    defocusVDistribution,
+    angleDistribution,
+    angle,
+    defocusDifference,
+  };
+}

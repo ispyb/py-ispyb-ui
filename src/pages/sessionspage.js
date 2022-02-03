@@ -6,6 +6,7 @@ import useQueryParams from 'hooks/usequeyparams';
 import { useSession } from 'hooks/ispyb';
 import { useAppSelector } from 'hooks';
 import { useBeamlines } from 'hooks/site';
+import Page from 'pages/page';
 
 export default function SessionsPage() {
   const { areEMColumnsVisible, areMXColumnsVisible, areSAXSColumnsVisible } = useAppSelector((state) => state.ui.sessionsPage);
@@ -26,14 +27,16 @@ export default function SessionsPage() {
   if (error) throw Error(error);
 
   return (
-    <SessionTable
-      startDate={startDate}
-      endDate={endDate}
-      data={data.filter((d) => new Set(beamlines).has(d.beamLineName))}
-      areEMColumnsVisible={areEMColumnsVisible}
-      areMXColumnsVisible={areMXColumnsVisible}
-      areSAXSColumnsVisible={areSAXSColumnsVisible}
-      userPortalLink={UI.sessionsPage.userPortalLink}
-    ></SessionTable>
+    <Page>
+      <SessionTable
+        startDate={startDate}
+        endDate={endDate}
+        data={data.filter((d) => new Set(beamlines).has(d.beamLineName))}
+        areEMColumnsVisible={areEMColumnsVisible}
+        areMXColumnsVisible={areMXColumnsVisible}
+        areSAXSColumnsVisible={areSAXSColumnsVisible}
+        userPortalLink={UI.sessionsPage.userPortalLink}
+      ></SessionTable>
+    </Page>
   );
 }

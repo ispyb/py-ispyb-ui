@@ -21,7 +21,7 @@ const initialState: User = {
   isError: false,
   type: '',
   error: '',
-  isSSO: true,
+  isSSO: false,
 };
 
 const user = (state = initialState, action: User) => {
