@@ -37,7 +37,7 @@ export function matchAuthStateToSSO() {
 
   // If user is logged in to SSO but not to ICAT, log in to ICAT
   if (keycloak.authenticated && !sessionId) {
-    store.dispatch(doSignIn(sites[0].authentication.sso.plugin, null, keycloak.idToken));
+    store.dispatch(doSignIn(sites[0].authentication.sso.plugin, null, keycloak.token));
     return;
   }
   // If user is logged in to ICAT but logged out of SSO, log out of ICAT

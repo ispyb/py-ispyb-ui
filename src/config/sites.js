@@ -1,14 +1,14 @@
 const sites = [
   {
     name: 'ESRF',
-    //server: 'http://localhost:8080/ispyb/ispyb-ws/rest',
-    server: 'https://ispyb.esrf.fr/ispyb/ispyb-ws/rest',
+    server: 'http://lgaonach:5000/ispyb/api/v1/legacy',
+    //server: 'https://ispyb.esrf.fr/ispyb/ispyb-ws/rest',
     description: 'European Synchroton Radiation Facility',
     icon: '../images/site/esrf.png',
     authentication: {
       sso: {
         enabled: process.env.REACT_APP_SSO_AUTH_ENABLED === 'true',
-        plugin: 'sso',
+        plugin: 'keycloak',
         configuration: {
           realm: 'ESRF',
           url: 'https://websso.esrf.fr/auth/',

@@ -14,7 +14,8 @@ export function getLogin(site: Site) {
 }
 
 export function getSessions(startDate?: string, endDate?: string) {
-  return { url: `${server}/${token}/proposal/session/date/${startDate}/${endDate}/list` };
+  //return { url: `${server}/${token}/proposal/session/date/${startDate}/${endDate}/list` };
+  return { url: `${server}/${token}/proposal/1172/session/list` };
 }
 
 export function getSessionById(sessionId: string) {
