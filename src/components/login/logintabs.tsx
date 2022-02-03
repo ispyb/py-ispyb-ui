@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, Tab, Tabs, Alert } from 'react-bootstrap';
+import { Card, Tab, Tabs, Alert, DropdownButton, Dropdown } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
@@ -7,11 +7,17 @@ import LoginForm from 'components/login/loginform';
 import SSO from 'components/login/sso';
 import { Site } from 'models';
 import { RootState } from 'store';
+import sites from 'config/sites';
 
 function LoginTabs() {
   const site: Site = useSelector((state: RootState) => state.site);
   return (
     <Card>
+      <DropdownButton id="dropdown-item-button" title="Dropdown button">
+        {sites.map((s) => {
+          return <Dropdown.Item as="button">{s.name}</Dropdown.Item>;
+        })}
+      </DropdownButton>
       <Tabs id="login-tabs" transition={false} style={{ margin: '10px' }}>
         {site.authentication.sso.enabled && (
           <Tab eventKey="sso" title="SSO">
