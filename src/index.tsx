@@ -16,7 +16,6 @@ import { unregister } from 'registerserviceworker';
 function prepareAuth() {
   // If a persisted ICAT session was just restored, make sure it's not expired (or about to expire)
   checkExpirationTime();
-
   if (keycloak) {
     // When keycloak detects a log out or fails to refresh the access token, log out from ICAT
     keycloak.onAuthLogout = () => {
