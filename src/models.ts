@@ -26,6 +26,7 @@ interface Authenticator {
   server: string;
   enabled: boolean;
   site: string;
+  message?: string;
 }
 
 interface Authentication {
@@ -37,7 +38,21 @@ export interface Site {
   techniques: Record<string, Technique>;
   authentication: Authentication;
   server: string;
+  name: string;
 }
 /********************************************
- * Site 
+ * User 
  /******************************************/
+
+export interface User {
+  username: string;
+  roles: string;
+  token: string;
+  isAuthenticated: boolean;
+  isAuthenticating: boolean;
+  isError: boolean;
+  type: string;
+  error: string;
+  isSSO: boolean;
+  isManager: boolean;
+}

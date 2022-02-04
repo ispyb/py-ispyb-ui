@@ -25,7 +25,7 @@ export default function App() {
   /** Check if there is a site configured */
   if (!site.authentication.sso.enabled && site.authentication.authenticators.length === 0) {
     /** In case a single site is configured that should be the most of the cases then trigger the actions */
-    if (sites.length === 1) {
+    if (sites.length > 1) {
       dispatch(setSite(sites[0]));
     }
     return <Alert variant="danger">Application is not configured. Site configuration is missing</Alert>;
@@ -33,8 +33,10 @@ export default function App() {
   if (!user.isAuthenticated) {
     return (
       <BrowserRouter>
-        <Menu />
-        <LoginPage />
+        <ErrorBoundary>
+          <Menu />
+          <LoginPage />
+        </ErrorBoundary>
       </BrowserRouter>
     );
   }
@@ -46,11 +48,10 @@ export default function App() {
         <ErrorBoundary>
           <Suspense fallback={<LoadingPanel></LoadingPanel>}>
             <Routes>
-              <Route path="/sessions" element={<SessionsPage />} />
+              <Route path="/sessions" element={<SessionsPage user={user} />} />
               <Route path="/proposals" element={<ProposalsPage />} />
               <Route path="/shipping" element={<ShippingPage />} />
               <Route path="/prepare" element={<PreparePage />} />
-
               <Route path="EM">
                 <Route path=":sessionId" element={<EMSessionPage />} />
               </Route>

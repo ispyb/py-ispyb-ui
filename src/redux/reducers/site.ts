@@ -10,6 +10,7 @@ const initialState: Site = {
   authentication: { sso: { enabled: false }, authenticators: [] },
   techniques: {},
   server: '',
+  name: '',
 };
 
 const site = (state = initialState, action: Action) => {

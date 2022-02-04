@@ -17,14 +17,14 @@ export function doLogOut() {
  */
 export function doSignIn(plugin, username, password, site) {
   return function (dispatch) {
-    /* TODO: this should be called async */
-    //dispatch({ type: LOG_IN, username });
     axios
       .post(
         getLogin(site),
         qs.stringify({
+          plugin: plugin,
           login: username,
           password: password,
+          token: password,
         }),
         { 'content-type': 'application/json' }
       )
