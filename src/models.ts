@@ -26,6 +26,7 @@ interface Authenticator {
   server: string;
   enabled: boolean;
   site: string;
+  message?: string;
 }
 
 interface Authentication {
@@ -37,6 +38,7 @@ export interface Site {
   techniques: Record<string, Technique>;
   authentication: Authentication;
   server: string;
+  name: string;
 }
 /********************************************
  * Site 

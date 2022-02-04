@@ -12,8 +12,7 @@ import { useGetTechniqueByBeamline } from 'hooks/site';
 const dateFormatter = (cell, row) => {
   const technique = useGetTechniqueByBeamline(row.beamLineName);
   const url = `/${technique}/${row.sessionId}`;
-  //return <Link to={url}>{format(parse(cell, 'MMM d, yyyy h:mm:ss aaa', new Date()), 'dd/MM/yyyy')}</Link>;
-  return 'asd';
+  return <Link to={url}>{format(parse(cell, 'MMM d, yyyy h:mm:ss aaa', new Date()), 'dd/MM/yyyy')}</Link>;
 };
 
 const getProposalName = (row) => {
