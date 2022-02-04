@@ -13,12 +13,19 @@ export function getLogin(site: Site) {
   return `${server}/authenticate?site=${site}`;
 }
 
-export function getSessions(startDate?: string, endDate?: string) {
-  return { url: `${server}/${token}/proposal/session/date/${startDate}/${endDate}/list` };
-  //return { url: `${server}/${token}/proposal/1172/session/list` };
+export function getSessions({ startDate, endDate }: { startDate?: string; endDate?: string }) {
+  if (startDate && endDate) {
+    return { url: `${server}/${token}/proposal/session/date/${startDate}/${endDate}/list` };
+  }
+
+  return { url: `${server}/${token}/session/list` };
 }
 
-export function getSessionById(sessionId: string) {
+export function getProposal(proposalName?: string) {
+  return { url: `${server}/${token}/proposal/${proposalName}/info/get` };
+}
+
+export function getSessionById(sessionId: string | undefined) {
   return { url: `${server}/${token}/proposal/session/${sessionId}/list` };
 }
 

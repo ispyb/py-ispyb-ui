@@ -3,13 +3,17 @@ import { useLocation } from 'react-router';
 /**
  * Used to get the query params.
  * Example: const { startDate = format(new Date(), 'yyyyMMdd'), endDate } = useQueryParams();
- * @returns
+ * @returns dictionary with URLSearchParams entries
  */
-export default function useQueryParams() {
-  const dict = {};
-  for (const [key, value] of new URLSearchParams(useLocation().search).entries()) {
-    dict[key] = value;
+export default function useQueryParams(): Record<string, string> {
+  const dict: Record<string, string> = {};
+  console.log(new URLSearchParams(useLocation().search));
+  const entries: IterableIterator<[string, string]> = new URLSearchParams(useLocation().search).entries();
+
+  for (const entry of Array.from(entries)) {
+    dict[entry[0]] = entry[1];
   }
+
   return dict;
 }
 

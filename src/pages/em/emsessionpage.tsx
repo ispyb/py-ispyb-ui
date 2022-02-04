@@ -17,7 +17,8 @@ export default function EMSessionPage() {
   if (sessionError) throw Error(sessionError);
 
   if (data.length > 0) {
-    const proposalName = `${data[0].Proposal_proposalCode}${data[0].Proposal_proposalNumber}`;
+    const { Proposal_proposalCode, Proposal_proposalNumber } = data[0];
+    const proposalName = `${Proposal_proposalCode}${Proposal_proposalNumber}`;
     const dataCollectionResponse = useDataCollection({ proposalName, sessionId });
     const statsResponse = useEMStatistics({ proposalName, sessionId });
     const statisticsPlotData = useGridSquareStatisticsToPlot(statsResponse.data);

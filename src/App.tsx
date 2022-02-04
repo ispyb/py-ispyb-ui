@@ -48,11 +48,10 @@ export default function App() {
         <ErrorBoundary>
           <Suspense fallback={<LoadingPanel></LoadingPanel>}>
             <Routes>
-              <Route path="/sessions" element={<SessionsPage />} />
+              <Route path="/sessions" element={<SessionsPage user={user} />} />
               <Route path="/proposals" element={<ProposalsPage />} />
               <Route path="/shipping" element={<ShippingPage />} />
               <Route path="/prepare" element={<PreparePage />} />
-
               <Route path="EM">
                 <Route path=":sessionId" element={<EMSessionPage />} />
               </Route>

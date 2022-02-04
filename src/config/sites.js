@@ -45,8 +45,8 @@ const sites = [
     },
   },
   {
-    name: 'ESRF py-ispyb Test',
-    server: 'http://lgaonach:5000/ispyb/api/v1/legacy',
+    name: 'ESRF EM',
+    server: 'https://ispyb.esrf.fr/ispyb/ispyb-ws/rest',
     description: 'European Synchroton Radiation Facility',
     icon: '../images/site/esrf.png',
     authentication: {
@@ -72,20 +72,7 @@ const sites = [
     },
 
     techniques: {
-      SAXS: { beamlines: [{ name: 'BM29' }] },
       EM: { beamlines: [{ name: 'CM01' }] },
-      MX: {
-        beamlines: [
-          { name: 'ID23-1', sampleChangerType: 'FlexHCDDual' },
-          { name: 'ID23-2', sampleChangerType: 'FlexHCDUnipuckPlate' },
-          { name: 'ID29', sampleChangerType: 'FlexHCDDual' },
-          { name: 'ID30A-1', sampleChangerType: 'RoboDiffHCDSC3' },
-          { name: 'ID30A-2', sampleChangerType: 'FlexHCDDual' },
-          { name: 'ID30A-3', sampleChangerType: 'FlexHCDDual' },
-          { name: 'ID30B', sampleChangerType: 'FlexHCDDual' },
-          { name: 'BM30A', sampleChangerType: 'FlexHCDDual' },
-        ],
-      },
     },
   },
   {

@@ -10,6 +10,10 @@ import { useAppDispatch } from 'hooks';
 function SiteSelector() {
   const dispatch = useAppDispatch();
   const site: Site = useSelector((state: RootState) => state.site);
+  if (sites.length < 2) {
+    return <></>;
+  }
+
   return (
     <DropdownButton style={{ margin: 20 }} variant="info" id="dropdown-item-button" title={site.name}>
       {sites.map((s) => {

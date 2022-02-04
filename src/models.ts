@@ -41,5 +41,18 @@ export interface Site {
   name: string;
 }
 /********************************************
- * Site 
+ * User 
  /******************************************/
+
+export interface User {
+  username: string;
+  roles: string;
+  token: string;
+  isAuthenticated: boolean;
+  isAuthenticating: boolean;
+  isError: boolean;
+  type: string;
+  error: string;
+  isSSO: boolean;
+  isManager: boolean;
+}

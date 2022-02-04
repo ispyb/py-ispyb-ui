@@ -1,16 +1,5 @@
 import { LOGGED_IN, LOGIN_ERROR, LOG_IN, LOG_OUT } from '../actiontypes';
-
-interface User {
-  username: string;
-  roles: string;
-  token: string;
-  isAuthenticated: boolean;
-  isAuthenticating: boolean;
-  isError: boolean;
-  type: string;
-  error: string;
-  isSSO: boolean;
-}
+import { User } from 'models';
 
 const initialState: User = {
   username: '',
@@ -22,6 +11,7 @@ const initialState: User = {
   type: '',
   error: '',
   isSSO: false,
+  isManager: false,
 };
 
 const user = (state = initialState, action: User) => {
@@ -38,6 +28,7 @@ const user = (state = initialState, action: User) => {
         roles: action.roles,
         isAuthenticated: true,
         isError: false,
+        isManager: action.roles.toString().indexOf('Manager') != -1,
       };
       break;
     }
