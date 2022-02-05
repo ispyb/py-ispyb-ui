@@ -1,6 +1,6 @@
 import useSWR from 'swr';
 import axios from 'axios';
-import { getProposal, getSessions, getSessionById, getDataCollectionsBy, getEMStatisticsBy } from 'api/ispyb';
+import { getEmMoviesByDataCollectionId, getProposal, getSessions, getSessionById, getDataCollectionsBy, getEMStatisticsBy } from 'api/ispyb';
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
@@ -46,4 +46,8 @@ export function useDataCollection({ proposalName, sessionId }: ProposalSessionId
 
 export function useEMStatistics({ proposalName, sessionId }: ProposalSessionId) {
   return doGet(getEMStatisticsBy({ proposalName, sessionId }).url);
+}
+
+export function useMoviesByDataCollectionId({ proposalName, dataCollectionId }: { proposalName: string; dataCollectionId: number }) {
+  return doGet(getEmMoviesByDataCollectionId({ proposalName, dataCollectionId }).url);
 }

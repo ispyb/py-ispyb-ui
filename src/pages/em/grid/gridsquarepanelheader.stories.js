@@ -1,5 +1,5 @@
 import React from 'react';
-import GridSquarePanelHeader from 'pages/em/gridsquarepanelheader';
+import GridSquarePanelHeader from 'pages/em/grid/gridsquarepanelheader';
 
 const l = { title: 'GridSquarePanelHeader', component: GridSquarePanelHeader };
 export default l;

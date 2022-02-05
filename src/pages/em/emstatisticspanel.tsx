@@ -1,7 +1,7 @@
 import React from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import PlotWidget from 'components/plotting/plotwidget';
-import { StatisticsPlotData } from 'pages/em/helper';
+import { StatisticsPlotData } from 'pages/em/model';
 
 export default function EmStatisticsPanel({ statisticsPlotData }: { statisticsPlotData: StatisticsPlotData }) {
   const {

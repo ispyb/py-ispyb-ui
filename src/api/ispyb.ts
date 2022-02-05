@@ -40,3 +40,21 @@ export function getCrystalImage({ proposalName, dataCollectionId, imageIndex }: 
 export function getEMStatisticsBy({ proposalName, sessionId }: { proposalName: string; sessionId?: string }) {
   return { url: `${server}/${token}/proposal/${proposalName}/em/session/${sessionId}/stats` };
 }
+
+export function getEmMoviesByDataCollectionId({ dataCollectionId, proposalName }: { proposalName: string; dataCollectionId: number }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/em/datacollection/${dataCollectionId}/movie/all` };
+}
+export function getCTFThumbnail({ dataCollectionId, movieId, proposalName }: { proposalName: string; dataCollectionId: number; movieId: number }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/em/datacollection/${dataCollectionId}/movie/${movieId}/thumbnail` };
+}
+
+export function getMotionCorrectionDrift({ proposalName, dataCollectionId, movieId }: { proposalName: string; dataCollectionId: number; movieId: number }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/em/datacollection/${dataCollectionId}/movie/${movieId}/motioncorrection/drift` };
+}
+
+export function getMotionCorrectionThumbnail({ proposalName, dataCollectionId, movieId }: { proposalName: string; dataCollectionId: number; movieId: number }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/em/datacollection/${dataCollectionId}/movie/${movieId}/motioncorrection/thumbnail` };
+}
+export function getMovieThumbnail({ proposalName, dataCollectionId, movieId }: { proposalName: string; dataCollectionId: number; movieId: number }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/em/datacollection/${dataCollectionId}/movie/${movieId}/thumbnail` };
+}

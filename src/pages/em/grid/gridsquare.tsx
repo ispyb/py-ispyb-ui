@@ -4,6 +4,7 @@ import React from 'react';
 import { getCrystalImage } from 'api/ispyb';
 import 'react-medium-image-zoom/dist/styles.css';
 import 'pages/em/styles.css';
+import { useNavigate } from 'react-router';
 
 export default function GridSquare({
   startTime,
@@ -20,6 +21,7 @@ export default function GridSquare({
   progressMotionCor: number;
   progressCtf: number;
 }) {
+  const navigate = useNavigate();
   return (
     <Card style={{ width: '18rem' }}>
       <Zoom>
@@ -38,7 +40,9 @@ export default function GridSquare({
           </p>
           <ProgressBar style={{ height: 25 }} variant="success" now={progressCtf} label={`CTF: ${progressCtf}%`} />
         </Card.Text>
-        <Button variant="primary">Open</Button>
+        <Button variant="primary" onClick={() => navigate(`/${proposalName}/EM/${dataCollectionId}/movies`)}>
+          Open
+        </Button>
       </Card.Body>
     </Card>
   );

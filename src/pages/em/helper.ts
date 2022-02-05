@@ -1,6 +1,5 @@
 import { commaSeparatedToNumberArray } from 'helpers/numerictransformation';
-import { DataCollections, SampleList } from 'pages/em/model';
-
+import { StatisticsPlotData, Record, DataCollections, SampleList } from 'pages/em/model';
 /**
  * Basically this method parses dataCollection to SampleList
  * @param dataCollections
@@ -98,28 +97,6 @@ function getDistribution(data: number[]) {
   return distribution;
 }
 
-interface Record {
-  movieId: number;
-  defocusU: string;
-  defocusV: string;
-  averageMotionPerFrame: string;
-  resolutionLimit: string;
-  angle: string;
-}
-
-export interface StatisticsPlotData {
-  movieNumber: number[];
-  averageData: number[];
-  defocusU: number[];
-  defocusV: number[];
-  resolution: number[];
-  resolutionDistribution: (number | string)[][];
-  defocusUDistribution: (number | string)[][];
-  defocusVDistribution: (number | string)[][];
-  angleDistribution: (number | string)[][];
-  angle: number[];
-  defocusDifference: number[];
-}
 export function useGridSquareStatisticsToPlot(data: Record[]): StatisticsPlotData {
   const movieNumber = [];
   const averageData = [];

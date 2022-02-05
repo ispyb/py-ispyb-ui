@@ -1,17 +1,38 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { Tabs, Tab, Card } from 'react-bootstrap';
-import { useSession, useDataCollection, useEMStatistics } from 'hooks/ispyb';
-import GridSquarePanel from 'pages/em/gridsquarepanel';
-import { useGridSquareStatisticsToPlot, useDataCollectionToGridSquares } from 'pages/em/helper';
+//import { useSession, useDataCollection, useEMStatistics } from 'hooks/ispyb';
+import { useSession, useDataCollection } from 'hooks/ispyb';
+import GridSquarePanel from 'pages/em/grid/gridsquarepanel';
+import { getEMStatisticsBy } from 'api/ispyb';
+//import { useGridSquareStatisticsToPlot, useDataCollectionToGridSquares } from 'pages/em/helper';
+import { useDataCollectionToGridSquares } from 'pages/em/helper';
+
 import ErrorUserMessage from 'components/usermessages/errorusermessage';
-import EmStatisticsPanel from 'pages/em/emstatisticspanel';
+//import EmStatisticsPanel from 'pages/em/emstatisticspanel';
+//import { StatisticsPlotData } from 'pages/em/model';
 
 type Param = {
   sessionId?: string;
 };
 
 export default function EMSessionPage() {
+  /*
+  const [statisticsPlotData, setstatisticsPlotData] = useState<StatisticsPlotData>({
+    movieNumber: [],
+    averageData: [],
+    defocusU: [],
+    defocusV: [],
+    resolution: [],
+    resolutionDistribution: [],
+    defocusUDistribution: [],
+    defocusVDistribution: [],
+    angleDistribution: [],
+    angle: [],
+    defocusDifference: [],
+  });
+  */
+
   const { sessionId } = useParams<Param>();
   const { data, isError: sessionError } = useSession({ sessionId });
   if (sessionError) throw Error(sessionError);
@@ -20,13 +41,12 @@ export default function EMSessionPage() {
     const { Proposal_proposalCode, Proposal_proposalNumber } = data[0];
     const proposalName = `${Proposal_proposalCode}${Proposal_proposalNumber}`;
     const dataCollectionResponse = useDataCollection({ proposalName, sessionId });
-    const statsResponse = useEMStatistics({ proposalName, sessionId });
-    const statisticsPlotData = useGridSquareStatisticsToPlot(statsResponse.data);
-
-    if (dataCollectionResponse.isError) throw Error(dataCollectionResponse.isError);
-    if (statsResponse.isError) throw Error(statsResponse.isError);
-
     const sampleList = useDataCollectionToGridSquares(dataCollectionResponse.data, proposalName);
+
+    useEffect(() => {
+      fetch(getEMStatisticsBy({ proposalName, sessionId }).url).then((response) => response.json());
+      //.then((data) => setstatisticsPlotData(useGridSquareStatisticsToPlot(data)));
+    });
 
     return (
       <Card>
@@ -38,13 +58,11 @@ export default function EMSessionPage() {
               ))}
             </>
           </Tab>
-          <Tab eventKey="statistics" title="Statistics">
-            <EmStatisticsPanel statisticsPlotData={statisticsPlotData}></EmStatisticsPanel>
-          </Tab>
+          <Tab eventKey="statistics" title="Statistics"></Tab>
         </Tabs>
       </Card>
     );
   }
-
+  //<EmStatisticsPanel statisticsPlotData={statisticsPlotData}></EmStatisticsPanel>
   return <ErrorUserMessage title="No data was retrieved" />;
 }

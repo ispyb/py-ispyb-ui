@@ -7,6 +7,8 @@ import LoginPage from 'components/login/loginpage';
 import { setSite } from 'redux/actions/site';
 import sites from 'config/sites';
 import EMSessionPage from 'pages/em/emsessionpage';
+import EMMoviesPage from 'pages/em/emmoviespage';
+
 import SessionsPage from 'pages/sessionspage';
 import ProposalsPage from 'pages/proposalspage';
 import ShippingPage from 'pages/shippingpage';
@@ -45,19 +47,18 @@ export default function App() {
     <BrowserRouter>
       <Menu />
       <Page>
-        <ErrorBoundary>
-          <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+        <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+          <ErrorBoundary>
             <Routes>
               <Route path="/sessions" element={<SessionsPage user={user} />} />
               <Route path="/proposals" element={<ProposalsPage />} />
               <Route path="/shipping" element={<ShippingPage />} />
               <Route path="/prepare" element={<PreparePage />} />
-              <Route path="EM">
-                <Route path=":sessionId" element={<EMSessionPage />} />
-              </Route>
+              <Route path="/:proposalName/EM/:sessionId" element={<EMSessionPage />} />
+              <Route path="/:proposalName/EM/:dataCollectionId/movies" element={<EMMoviesPage />} />
             </Routes>
-          </Suspense>
-        </ErrorBoundary>
+          </ErrorBoundary>
+        </Suspense>
       </Page>
     </BrowserRouter>
   );
