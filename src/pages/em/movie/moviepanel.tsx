@@ -5,6 +5,7 @@ import ZoomImage from 'components/image/zoomimage';
 import SimpleParameterTable from 'components/table/simpleparametertable';
 import { convertToFixed, expo } from 'helpers/numerictransformation';
 import { Movie } from 'pages/em/model';
+import { isMotionThreshold, isResolutionLimitThreshold } from 'pages/em/movie/helper';
 
 interface Props {
   movie: Movie;
@@ -77,7 +78,7 @@ export default function MoviePanel(props: Props) {
           <SimpleParameterTable
             header="Motion Correction"
             parameters={[
-              { key: 'Total Motion', value: movie.MotionCorrection_totalMotion, className: parseFloat(movie.MotionCorrection_totalMotion) > 1000 ? 'text-danger' : '' },
+              { key: 'Total Motion', value: movie.MotionCorrection_totalMotion, className: isMotionThreshold(movie) ? 'text-danger' : '' },
               { key: 'Avg. Motion/frame', value: movie.MotionCorrection_averageMotionPerFrame },
               { key: 'Frame Range', value: movie.MotionCorrection_lastFrame },
               { key: 'Dose', value: movie.MotionCorrection_dosePerFrame },
@@ -89,7 +90,7 @@ export default function MoviePanel(props: Props) {
           <SimpleParameterTable
             header="CTF Results"
             parameters={[
-              { key: 'Resolution Limit:', value: convertToFixed(movie.CTF_resolutionLimit, 2), className: parseFloat(movie.CTF_resolutionLimit) > 5 ? 'text-danger' : '' },
+              { key: 'Resolution Limit:', value: convertToFixed(movie.CTF_resolutionLimit, 2), className: isResolutionLimitThreshold(movie) ? 'text-danger' : '' },
               { key: 'Correlation', value: convertToFixed(movie.CTF_crossCorrelationCoefficient, 3) },
               { key: 'Defocus U', value: convertToFixed(movie.CTF_defocusU, 0) },
               { key: 'Defocus V', value: convertToFixed(movie.CTF_defocusV, 0) },

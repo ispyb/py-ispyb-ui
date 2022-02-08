@@ -12,9 +12,10 @@ export interface ActionToggleButtonType {
   checked: boolean;
   actionType: string;
   action: DispacherType;
+  element?: JSX.IntrinsicElements;
 }
 
-export default function ActionToggleButton({ text, checked, action, actionType }: ActionToggleButtonType) {
+export default function ActionToggleButton({ element, text, checked, action, actionType }: ActionToggleButtonType) {
   const [isChecked = true, setisChecked] = useState(checked);
   const dispatch = useAppDispatch();
 
@@ -34,7 +35,7 @@ export default function ActionToggleButton({ text, checked, action, actionType }
         setisChecked(!isChecked);
       }}
     >
-      {text}
+      {text} {element}
     </ToggleButton>
   );
 }

@@ -27,7 +27,7 @@ export default function SimpleParameterTable({ parameters, header }: Props): JSX
           {
             return (
               <tr className={parameter.className}>
-                <td className={parameter.className ? parameter.className : 'text-info'}>{parameter.key}</td>
+                <td>{parameter.key}</td>
                 <td>
                   <strong>{parameter.value}</strong>
                 </td>
