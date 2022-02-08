@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useMoviesByDataCollectionId } from 'hooks/ispyb';
 import { Card, ButtonGroup, Badge, ToggleButton } from 'react-bootstrap';
 import MoviePanel from 'pages/em/movie/moviepanel';
 import Menu from 'components/menu/menu';
-import { createImageNumberAndFileName, isMotionThreshold, isResolutionLimitThreshold } from 'pages/em/movie/helper';
+import { createImageNumberAndFileName } from 'pages/em/movie/helper';
 import { Movie } from 'pages/em/model';
 
 export default function MoviesPage() {
@@ -16,27 +16,24 @@ export default function MoviesPage() {
   /** Recalculation imageNumber and File name */
   const parsedMovies = createImageNumberAndFileName(movies);
 
-  const moviesReachingResolutionLimitThreshold = movies.filter((movie: Movie) => isResolutionLimitThreshold(movie));
-  const moviesReachingMoviewThreshold = movies.filter((movie: Movie) => isMotionThreshold(movie));
+  //const moviesReachingResolutionLimitThreshold = movies.filter((movie: Movie) => isResolutionLimitThreshold(movie));
+  //const moviesReachingMoviewThreshold = movies.filter((movie: Movie) => isMotionThreshold(movie));
 
-  const e = <Badge bg="danger">{moviesReachingMoviewThreshold.length}</Badge>;
+  //const e = <Badge bg="danger">{moviesReachingMoviewThreshold.length}</Badge>;
   return (
     <div style={{ marginBottom: '100px' }}>
       <Menu>
         <ButtonGroup className="mb-2">
-          <ToggleButton id="tbg-btn-1" value={1} style={{ margin: 1 }} size="sm" type="checkbox">
-            Option 1
+          <ToggleButton id="tbg-btn-1" value={1} style={{ margin: 1 }} size="sm" type="checkbox" onClick={() => alert('test')}>
+            Motion Threshold <Badge bg="warning">asdsad</Badge>
           </ToggleButton>
-          <ToggleButton id="tbg-btn-2" value={2} style={{ margin: 1 }} size="sm" type="checkbox">
-            Option 2
-          </ToggleButton>
-          <ToggleButton id="tbg-btn-3" value={3} style={{ margin: 1 }} size="sm" type="checkbox">
-            Option 3
+          <ToggleButton id="tbg-btn-2" value={2} style={{ margin: 1 }} size="sm" type="checkbox" onClick={() => alert('test')}>
+            Resolution Threshold
           </ToggleButton>
         </ButtonGroup>
       </Menu>
 
-      {movies.map((movie: Movie) => (
+      {parsedMovies.map((movie: Movie) => (
         <Card style={{ margin: 3 }}>
           <Card.Body>
             <MoviePanel movie={movie} proposalName={proposalName} dataCollectionId={parseFloat(dataCollectionId)}></MoviePanel>

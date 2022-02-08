@@ -8,7 +8,7 @@ export function isMotionThreshold(movie: Movie) {
 }
 
 export function isResolutionLimitThreshold(movie: Movie) {
-  return parseFloat(movie.CTF_resolutionLimit) > 5;
+  return parseFloat(movie.CTF_resolutionLimit) > RESOLUTION_THRESHOLD;
 }
 
 export function createImageNumberAndFileName(movies: Movie[]) {
