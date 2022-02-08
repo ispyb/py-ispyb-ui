@@ -7,7 +7,7 @@ const sites = [
     icon: '../images/site/esrf.png',
     authentication: {
       sso: {
-        enabled: process.env.REACT_APP_SSO_AUTH_ENABLED === 'true',
+        enabled: false,
         plugin: 'keycloak',
         configuration: {
           realm: 'ESRF',
@@ -76,13 +76,19 @@ const sites = [
     },
   },
   {
-    name: 'No SSO',
+    name: 'Mael SSO',
     server: 'http://lgaonach:5000/ispyb/api/v1/legacy',
     description: 'European Synchroton Radiation Facility',
     icon: '../images/site/esrf.png',
     authentication: {
       sso: {
-        enabled: false,
+        enabled: process.env.REACT_APP_SSO_AUTH_ENABLED === 'true',
+        plugin: 'keycloak',
+        configuration: {
+          realm: 'ESRF',
+          url: 'https://websso.esrf.fr/auth/',
+          clientId: 'icat',
+        },
       },
       authenticators: [
         {

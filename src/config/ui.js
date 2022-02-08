@@ -1,5 +1,5 @@
 const UI = {
-  theme: 'cerulean', //(examples: darkly, slate, cosmo, spacelab, and superhero, minty, flatly. See https://bootswatch.com/ for current theme names.
+  theme: 'flatly', //(examples: darkly, slate, cosmo, spacelab, and superhero, minty, flatly. See https://bootswatch.com/ for current theme names.
   sessionsPage: {
     areMXColumnsVisible: true,
     areSAXSColumnsVisible: false,

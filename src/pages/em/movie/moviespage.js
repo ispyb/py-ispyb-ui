@@ -1,10 +1,8 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useMoviesByDataCollectionId } from 'hooks/ispyb';
-import { Container, Row, Col, Card } from 'react-bootstrap';
-import InstrumentMicrograph from 'pages/em/movie/micrograph/instrumentmicrograph';
-import MotionCorrection from 'pages/em/movie/motion/motioncorrection';
-import MotionCorrectionMicrograph from 'pages/em/movie/motion/motioncorrectionmicrograph';
+import { Card } from 'react-bootstrap';
+import MoviePanel from 'pages/em/movie/moviepanel';
 
 function createImageNumberAndFileName(movies) {
   if (movies.length > 0) {
@@ -24,35 +22,20 @@ function createImageNumberAndFileName(movies) {
   return movies.reverse();
 }
 
-export default function EMMoviesPage() {
+export default function MoviesPage() {
   const { dataCollectionId, proposalName } = useParams();
 
   let { data: movies, isError: sessionError } = useMoviesByDataCollectionId({ proposalName, dataCollectionId });
   if (sessionError) throw Error(sessionError);
 
   movies = createImageNumberAndFileName(movies);
-  console.log(movies);
+
   return (
     <div style={{ marginBottom: '100px' }}>
       {movies.map((movie) => (
-        <Card>
+        <Card style={{ margin: 3 }}>
           <Card.Body>
-            <Container fluid>
-              <Row>
-                <Col xs={3} style={{ backgroundColor: 'gray' }}>
-                  <InstrumentMicrograph movie={movie} proposalName={proposalName} dataCollectionId={dataCollectionId}></InstrumentMicrograph>
-                </Col>
-                <Col xs={4} style={{ backgroundColor: 'red' }}>
-                  <MotionCorrection movie={movie} proposalName={proposalName} dataCollectionId={dataCollectionId}></MotionCorrection>
-                </Col>
-                <Col xs={4} style={{ backgroundColor: 'gray' }}>
-                  <MotionCorrectionMicrograph movie={movie} proposalName={proposalName} dataCollectionId={dataCollectionId}></MotionCorrectionMicrograph>
-                </Col>
-                <Col xs={4} style={{ backgroundColor: 'blue' }}>
-                  Last
-                </Col>
-              </Row>
-            </Container>
+            <MoviePanel movie={movie} proposalName={proposalName} dataCollectionId={dataCollectionId}></MoviePanel>
           </Card.Body>
           <Card.Footer>
             <strong>{getDirectory(movies)}</strong>

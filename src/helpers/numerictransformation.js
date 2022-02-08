@@ -22,6 +22,10 @@ export function convertToFixed(value, fixed) {
   return '';
 }
 
+export function expo(x, f) {
+  return Number.parseFloat(x).toExponential(f);
+}
+
 export function convertToExponential(value) {
   if (value) {
     try {

@@ -45,7 +45,7 @@ export function getEmMoviesByDataCollectionId({ dataCollectionId, proposalName }
   return { url: `${server}/${token}/proposal/${proposalName}/em/datacollection/${dataCollectionId}/movie/all` };
 }
 export function getCTFThumbnail({ dataCollectionId, movieId, proposalName }: { proposalName: string; dataCollectionId: number; movieId: number }) {
-  return { url: `${server}/${token}/proposal/${proposalName}/em/datacollection/${dataCollectionId}/movie/${movieId}/thumbnail` };
+  return { url: `${server}/${token}/proposal/${proposalName}/em/datacollection/${dataCollectionId}/movie/${movieId}/ctf/thumbnail` };
 }
 
 export function getMotionCorrectionDrift({ proposalName, dataCollectionId, movieId }: { proposalName: string; dataCollectionId: number; movieId: number }) {

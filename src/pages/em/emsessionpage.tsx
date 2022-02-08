@@ -32,7 +32,6 @@ export default function EMSessionPage() {
     defocusDifference: [],
   });
   */
-
   const { sessionId } = useParams<Param>();
   const { data, isError: sessionError } = useSession({ sessionId });
   if (sessionError) throw Error(sessionError);
@@ -40,6 +39,7 @@ export default function EMSessionPage() {
   if (data.length > 0) {
     const { Proposal_proposalCode, Proposal_proposalNumber } = data[0];
     const proposalName = `${Proposal_proposalCode}${Proposal_proposalNumber}`;
+
     const dataCollectionResponse = useDataCollection({ proposalName, sessionId });
     const sampleList = useDataCollectionToGridSquares(dataCollectionResponse.data, proposalName);
 
