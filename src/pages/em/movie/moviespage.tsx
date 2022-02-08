@@ -22,12 +22,16 @@ export default function MoviesPage() {
   const moviesReachingResolutionLimitThreshold = parsedMovies.filter((movie: Movie) => isResolutionLimitThreshold(movie));
   const moviesReachingMoviewThreshold = parsedMovies.filter((movie: Movie) => isMotionThreshold(movie));
 
-  if (isMotion) {
+  if (isMotion && !isResolution) {
     parsedMovies = moviesReachingMoviewThreshold;
   }
 
-  if (isResolution) {
+  if (isResolution && !isMotion) {
     parsedMovies = moviesReachingResolutionLimitThreshold;
+  }
+
+  if (isResolution && isMotion) {
+    parsedMovies = parsedMovies.filter((movie: Movie) => isResolutionLimitThreshold(movie) && isMotionThreshold(movie));
   }
 
   return (
