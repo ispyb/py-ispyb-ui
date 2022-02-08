@@ -4,6 +4,7 @@ import { useMoviesByDataCollectionId } from 'hooks/ispyb';
 import { Container, Row, Col, Card } from 'react-bootstrap';
 import InstrumentMicrograph from 'pages/em/movie/micrograph/instrumentmicrograph';
 import MotionCorrection from 'pages/em/movie/motion/motioncorrection';
+import MotionCorrectionMicrograph from 'pages/em/movie/motion/motioncorrectionmicrograph';
 
 function createImageNumberAndFileName(movies) {
   if (movies.length > 0) {
@@ -34,27 +35,29 @@ export default function EMMoviesPage() {
   return (
     <div style={{ marginBottom: '100px' }}>
       {movies.map((movie) => (
-        <Container fluid>
-          <Row>
-            <Card>
-              <Card.Body>
-                <Container>
-                  <Row>
-                    <Col>
-                      <InstrumentMicrograph movie={movie} proposalName={proposalName} dataCollectionId={dataCollectionId}></InstrumentMicrograph>
-                    </Col>
-                    <Col>
-                      <MotionCorrection movie={movie} proposalName={proposalName} dataCollectionId={dataCollectionId}></MotionCorrection>
-                    </Col>
-                  </Row>
-                </Container>
-              </Card.Body>
-              <Card.Footer>
-                <strong>{getDirectory(movies)}</strong>
-              </Card.Footer>
-            </Card>
-          </Row>
-        </Container>
+        <Card>
+          <Card.Body>
+            <Container fluid>
+              <Row>
+                <Col xs={3} style={{ backgroundColor: 'gray' }}>
+                  <InstrumentMicrograph movie={movie} proposalName={proposalName} dataCollectionId={dataCollectionId}></InstrumentMicrograph>
+                </Col>
+                <Col xs={4} style={{ backgroundColor: 'red' }}>
+                  <MotionCorrection movie={movie} proposalName={proposalName} dataCollectionId={dataCollectionId}></MotionCorrection>
+                </Col>
+                <Col xs={4} style={{ backgroundColor: 'gray' }}>
+                  <MotionCorrectionMicrograph movie={movie} proposalName={proposalName} dataCollectionId={dataCollectionId}></MotionCorrectionMicrograph>
+                </Col>
+                <Col xs={4} style={{ backgroundColor: 'blue' }}>
+                  Last
+                </Col>
+              </Row>
+            </Container>
+          </Card.Body>
+          <Card.Footer>
+            <strong>{getDirectory(movies)}</strong>
+          </Card.Footer>
+        </Card>
       ))}
     </div>
   );

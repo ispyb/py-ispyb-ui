@@ -17,16 +17,16 @@ export default function InstrumentMicrograph(props: Props) {
   return (
     <Container>
       <Row>
-        <Col md={6}>
+        <Col md={10}>
           <InstrumentMicrographParameters {...props}></InstrumentMicrographParameters>
         </Col>
 
-        <Col md={6}>
+        <Col md={2}>
           <Card style={{ width: '18rem', margin: 5 }}>
             <div style={{ margin: 5 }}>
               <Zoom>
                 <Image
-                  fluid
+                  //style={{ width: 50 }}
                   thumbnail
                   src={
                     getMovieThumbnail({
