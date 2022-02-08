@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Row, Col, Card } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import { getMovieThumbnail, getMotionCorrectionDrift, getMotionCorrectionThumbnail, getCTFThumbnail } from 'api/ispyb';
 import ZoomImage from 'components/image/zoomimage';
 import SimpleParameterTable from 'components/table/simpleparametertable';

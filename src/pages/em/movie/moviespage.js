@@ -1,8 +1,10 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useMoviesByDataCollectionId } from 'hooks/ispyb';
-import { Card } from 'react-bootstrap';
+import { Card, ButtonGroup } from 'react-bootstrap';
+import ActionToggleButton from 'components/buttons/actiontogglebutton';
 import MoviePanel from 'pages/em/movie/moviepanel';
+import Menu from 'components/menu/menu';
 
 function createImageNumberAndFileName(movies) {
   if (movies.length > 0) {
@@ -32,6 +34,12 @@ export default function MoviesPage() {
 
   return (
     <div style={{ marginBottom: '100px' }}>
+      <Menu>
+        <ButtonGroup className="mb-2">
+          <ActionToggleButton text="Test" checked={false} action={alert('asdadsa')} actionType={''} />
+        </ButtonGroup>
+      </Menu>
+
       {movies.map((movie) => (
         <Card style={{ margin: 3 }}>
           <Card.Body>
