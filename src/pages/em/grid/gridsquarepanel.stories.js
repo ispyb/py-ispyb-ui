@@ -1,5 +1,5 @@
 import React from 'react';
-import GridSquarePanel from 'pages/em/gridsquarepanel';
+import GridSquarePanel from 'pages/em/grid/gridsquarepanel';
 
 const l = { title: 'GridSquarePanel', component: GridSquarePanel };
 export default l;
