@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Col, Container, Row, Alert, Carousel } from 'react-bootstrap';
+import { Col, Container, Row, Card, Carousel, Button } from 'react-bootstrap';
 import LoginTabs from 'components/login/logintabs';
 import { RootState } from 'store';
 import Page from 'pages/page';
@@ -16,27 +16,34 @@ function LoginPage() {
         <Row>
           <Col md={8}>
             <Carousel fade variant="dark">
-              <Carousel.Item>
-                <img className="d-block w-100" src="https://exi.esrf.fr/images/transparent_logo_exi.png" alt="First slide" />
+              <Carousel.Item style={{ textAlign: 'center' }}>
+                <img className="w-75" src="/images/carousel/sessions_cosmo_reduced.png" alt="Second slide" />
                 <Carousel.Caption>
-                  <h3>First slide label</h3>
-                  <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+                  <h3>Welcome to ISPyB</h3>
+                  <p>This is the most recent interface to ISPyB. It's compatible with ISPyB and the newest py-ISPyB.</p>
                 </Carousel.Caption>
               </Carousel.Item>
-              <Carousel.Item>
-                <img className="d-block w-100" src="https://react-bootstrap.github.io/components/carousel/holder.js/800x400?text=Second slide&bg=282c34" alt="Second slide" />
+
+              <Carousel.Item style={{ textAlign: 'center' }}>
+                <img className="w-50" src="/images/carousel/statistics_reduced.jpeg" alt="Second slide" />
 
                 <Carousel.Caption>
-                  <h3>Second slide label</h3>
-                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+                  <h3>Monitor your experiment in real time</h3>
+                  <p>Real time statistics helps with the decision-making during the experiment</p>
                 </Carousel.Caption>
               </Carousel.Item>
-              <Carousel.Item>
-                <img className="d-block w-100" src="https://react-bootstrap.github.io/components/carousel/holder.js/800x400?text=Third slide&bg=20232a" alt="Third slide" />
 
-                <Carousel.Caption>
-                  <h3>Third slide label</h3>
-                  <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>
+              <Carousel.Item style={{ textAlign: 'center', margin: '-50' }}>
+                <img
+                  className="w-50"
+                  src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.g2crowd.com%2Fuploads%2Fproduct%2Fimage%2Fsocial_landscape%2Fsocial_landscape_048daf32d4748a4dcd8a38617af4ff85%2Fkeycloak.png&f=1&nofb=1"
+                  alt="Second slide"
+                />
+                <br />
+                <Carousel.Caption style={{ textAlign: 'center', margin: '-50' }}>
+                  <br />
+                  <h3>Multiple authentication plugins</h3>
+                  <p>Authenticate users with openId or LDAP out of the box</p>
                 </Carousel.Caption>
               </Carousel.Item>
             </Carousel>
