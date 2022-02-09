@@ -29,7 +29,11 @@ export function getSessionById(sessionId: string | undefined) {
   return { url: `${server}/${token}/proposal/session/${sessionId}/list` };
 }
 
-export function getDataCollectionsBy({ proposalName, sessionId }: { proposalName: string; sessionId?: string }) {
+export function getMXDataCollectionsBy({ proposalName, sessionId }: { proposalName: string; sessionId?: string }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/mx/datacollection/session/${sessionId}/list` };
+}
+
+export function getEMDataCollectionsBy({ proposalName, sessionId }: { proposalName: string; sessionId?: string }) {
   return { url: `${server}/${token}/proposal/${proposalName}/em/datacollection/session/${sessionId}/list` };
 }
 

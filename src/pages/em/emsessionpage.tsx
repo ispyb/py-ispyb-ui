@@ -2,7 +2,7 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import EMPage from 'pages/em/empage';
 import { Card } from 'react-bootstrap';
-import { useDataCollection } from 'hooks/ispyb';
+import { useEMDataCollectionsBy } from 'hooks/ispyb';
 import GridSquarePanel from 'pages/em/grid/gridsquarepanel';
 import { useDataCollectionToGridSquares } from 'pages/em/helper';
 
@@ -13,7 +13,7 @@ type Param = {
 
 export default function EMSessionPage() {
   const { sessionId, proposalName = '' } = useParams<Param>();
-  const dataCollectionResponse = useDataCollection({ proposalName, sessionId });
+  const dataCollectionResponse = useEMDataCollectionsBy({ proposalName, sessionId });
   const sampleList = useDataCollectionToGridSquares(dataCollectionResponse.data, proposalName);
 
   return (
