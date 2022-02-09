@@ -34,6 +34,16 @@ function LoginPage() {
               </Carousel.Item>
 
               <Carousel.Item style={{ textAlign: 'center', margin: '-50' }}>
+                <img className="w-50" src="/images/carousel/2dclassification.gif" alt="Second slide" />
+                <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br /> <br />
+                <Carousel.Caption style={{ textAlign: 'center', margin: '-50' }}>
+                  <br />
+                  <h3>EM 2d Classification</h3>
+                  <p>Cluster analysis with resolution filtering</p>
+                </Carousel.Caption>
+              </Carousel.Item>
+
+              <Carousel.Item style={{ textAlign: 'center', margin: '-50' }}>
                 <img
                   className="w-50"
                   src="https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Fimages.g2crowd.com%2Fuploads%2Fproduct%2Fimage%2Fsocial_landscape%2Fsocial_landscape_048daf32d4748a4dcd8a38617af4ff85%2Fkeycloak.png&f=1&nofb=1"
