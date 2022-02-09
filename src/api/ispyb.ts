@@ -41,6 +41,10 @@ export function getEMStatisticsBy({ proposalName, sessionId }: { proposalName: s
   return { url: `${server}/${token}/proposal/${proposalName}/em/session/${sessionId}/stats` };
 }
 
+export function getEMClassificationBy({ proposalName, sessionId }: { proposalName: string; sessionId?: string }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/em/session/${sessionId}/classification` };
+}
+
 export function getEmMoviesByDataCollectionId({ dataCollectionId, proposalName }: { proposalName: string; dataCollectionId: number }) {
   return { url: `${server}/${token}/proposal/${proposalName}/em/datacollection/${dataCollectionId}/movie/all` };
 }
@@ -57,4 +61,8 @@ export function getMotionCorrectionThumbnail({ proposalName, dataCollectionId, m
 }
 export function getMovieThumbnail({ proposalName, dataCollectionId, movieId }: { proposalName: string; dataCollectionId: number; movieId: number }) {
   return { url: `${server}/${token}/proposal/${proposalName}/em/datacollection/${dataCollectionId}/movie/${movieId}/thumbnail` };
+}
+
+export function getClassificationThumbnail({ proposalName, particleClassificationId }: { proposalName: string; particleClassificationId: number }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/em/classification/${particleClassificationId}/thumbnail` };
 }

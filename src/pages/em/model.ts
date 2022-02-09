@@ -1,3 +1,20 @@
+export interface Classification {
+  classDistribution: number;
+  classImageFullPath: string;
+  classNumber: number;
+  estimatedResolution: number;
+  imageDirectory: string;
+  numberOfParticles: number;
+  overallFourierCompleteness: number;
+  particleClassificationGroupId: number;
+  particleClassificationId: number;
+  particlePickerId: number;
+  particlesPerClass: number;
+  proposalId: number;
+  rotationAccuracy: number;
+  sessionId: number;
+  translationAccuracy: number;
+}
 export interface Movie {
   MotionCorrection_movieId: number;
   MotionCorrection_totalMotion: string;
