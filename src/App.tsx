@@ -7,6 +7,8 @@ import LoginPage from 'components/login/loginpage';
 import { setSite } from 'redux/actions/site';
 import sites from 'config/sites';
 import EMSessionPage from 'pages/em/emsessionpage';
+import SessionStatisticsPage from 'pages/em/sessionstatisticspage';
+import SessionClassificationPage from 'pages/em/classification/sessionclassificationpage';
 import MoviesPage from 'pages/em/movie/moviespage';
 import SessionsPage from 'pages/sessionspage';
 import ProposalsPage from 'pages/proposalspage';
@@ -55,6 +57,8 @@ export default function App() {
               <Route path="/shipping" element={<ShippingPage />} />
               <Route path="/prepare" element={<PreparePage />} />
               <Route path="/:proposalName/EM/:sessionId" element={<EMSessionPage />} />
+              <Route path="/:proposalName/EM/:sessionId/classification" element={<SessionClassificationPage />} />
+              <Route path="/:proposalName/EM/:sessionId/statistics" element={<SessionStatisticsPage />} />
               <Route path="/:proposalName/EM/:dataCollectionId/movies" element={<MoviesPage />} />
             </Routes>
           </ErrorBoundary>

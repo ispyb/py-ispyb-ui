@@ -1,6 +1,6 @@
 import useSWR from 'swr';
 import axios from 'axios';
-import { getEmMoviesByDataCollectionId, getProposal, getSessions, getSessionById, getDataCollectionsBy, getEMStatisticsBy } from 'api/ispyb';
+import { getEMClassificationBy, getEmMoviesByDataCollectionId, getProposal, getSessions, getSessionById, getDataCollectionsBy, getEMStatisticsBy } from 'api/ispyb';
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
@@ -21,6 +21,11 @@ interface UseSession {
   username?: string;
 }
 
+interface ProposalSessionId {
+  proposalName: string;
+  sessionId?: string;
+}
+
 export function useProposal(props: UseSession) {
   return doGet(getProposal(props.username).url);
 }
@@ -36,10 +41,7 @@ export function useSession(props: UseSession) {
   }
   return doGet(getSessions({}).url);
 }
-interface ProposalSessionId {
-  proposalName: string;
-  sessionId?: string;
-}
+
 export function useDataCollection({ proposalName, sessionId }: ProposalSessionId) {
   return doGet(getDataCollectionsBy({ proposalName, sessionId }).url);
 }
@@ -50,4 +52,8 @@ export function useEMStatistics({ proposalName, sessionId }: ProposalSessionId) 
 
 export function useMoviesByDataCollectionId({ proposalName, dataCollectionId }: { proposalName: string; dataCollectionId: number }) {
   return doGet(getEmMoviesByDataCollectionId({ proposalName, dataCollectionId }).url);
+}
+
+export function useEMClassification({ proposalName, sessionId }: ProposalSessionId) {
+  return doGet(getEMClassificationBy({ proposalName, sessionId }).url);
 }
