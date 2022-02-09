@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { Col, Container, Row, Card, Carousel, Button } from 'react-bootstrap';
+import { Col, Container, Row, Carousel } from 'react-bootstrap';
 import LoginTabs from 'components/login/logintabs';
 import { RootState } from 'store';
 import Page from 'pages/page';
