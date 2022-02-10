@@ -6,7 +6,7 @@ import Menu from 'pages/menu/menu';
 import LoginPage from 'components/login/loginpage';
 import { setSite } from 'redux/actions/site';
 import sites from 'config/sites';
-import MXSessionPage from 'pages/mx/datacollection/mxdatacollectionpage';
+import MXDataCollectionGroupPage from 'pages/mx/datacollection/mxdatacollectiongrouppage';
 import EMSessionPage from 'pages/em/emsessionpage';
 import SessionStatisticsPage from 'pages/em/sessionstatisticspage';
 import SessionClassificationPage from 'pages/em/classification/sessionclassificationpage';
@@ -62,7 +62,7 @@ export default function App() {
               <Route path="/:proposalName/EM/:sessionId/statistics" element={<SessionStatisticsPage />} />
               <Route path="/:proposalName/EM/:dataCollectionId/movies" element={<MoviesPage />} />
 
-              <Route path="/:proposalName/MX/:sessionId" element={<MXSessionPage />} />
+              <Route path="/:proposalName/MX/:sessionId" element={<MXDataCollectionGroupPage />} />
             </Routes>
           </ErrorBoundary>
         </Suspense>

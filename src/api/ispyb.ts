@@ -70,3 +70,11 @@ export function getMovieThumbnail({ proposalName, dataCollectionId, movieId }: {
 export function getClassificationThumbnail({ proposalName, particleClassificationId }: { proposalName: string; particleClassificationId: number }) {
   return { url: `${server}/${token}/proposal/${proposalName}/em/classification/${particleClassificationId}/thumbnail` };
 }
+
+export function getDiffrationThumbnail({ proposalName, imageId }: { proposalName: string; imageId: number }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/mx/image/${imageId}/thumbnail` };
+}
+
+export function getDozorPlot({ dataCollectionId, proposalName }: { proposalName: string; dataCollectionId: number }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/mx/datacollection/${dataCollectionId}/qualityindicatorplot` };
+}

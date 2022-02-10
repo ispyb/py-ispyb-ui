@@ -11,3 +11,39 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/* https://bitsofco.de/styling-broken-images/ */
+img {
+  /* Same as first example */
+  min-height: 50px;
+  min-width: '100%';
+}
+
+img:before {
+  content: ' ';
+  display: block;
+
+  position: absolute;
+  top: 0px;
+  left: 0;
+  height: calc(100% + 10px);
+  width: 100%;
+  background-color: rgb(245, 243, 243);
+  border: 2px dotted rgb(200, 200, 200);
+  border-radius: 5px;
+}
+
+img:after {
+  content: '\f127'' No ' attr(alt);
+  display: block;
+  font-size: xx=small;
+  font-style: normal;
+  font-family: FontAwesome;
+  color: rgb(100, 100, 100);
+
+  position: absolute;
+  top: 5px;
+  left: 0;
+  width: 100%;
+  text-align: center;
+}

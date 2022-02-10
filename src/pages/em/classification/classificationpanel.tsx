@@ -16,7 +16,7 @@ export default function ClassificationPanel({ classification, proposalName }: Pr
     <Card>
       <Card.Header># Class {classNumber}</Card.Header>
       <Card.Body>
-        <ImageZoom src={getClassificationThumbnail({ proposalName, particleClassificationId }).url} />
+        <ImageZoom alt="Classification" src={getClassificationThumbnail({ proposalName, particleClassificationId }).url} />
         <Card.Text>
           <SimpleParameterTable
             parameters={[

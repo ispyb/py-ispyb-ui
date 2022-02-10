@@ -28,8 +28,8 @@ export default function SimpleParameterTable({ parameters, header }: Props): JSX
           {
             return (
               <tr className={parameter.className}>
-                <td>{parameter.key}</td>
-                <td>
+                <td style={{ fontSize: 'smaller' }}>{parameter.key}</td>
+                <td style={{ fontSize: 'x-small' }}>
                   <strong>{parameter.value} </strong> {parameter.units ? parameter.units : ''}
                 </td>
               </tr>
