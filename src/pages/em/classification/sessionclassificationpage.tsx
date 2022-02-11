@@ -49,7 +49,7 @@ export default function SessionClassificationPage() {
               <Accordion.Item eventKey={i.toString()}>
                 <Accordion.Header>
                   <span>
-                    Classification #{i + 1}: {group.length} classes
+                    Classification #{i + 1}: {group.length} classes {group[0] ? `(${group[0].numberOfParticles} particles)` : ''}
                   </span>
                 </Accordion.Header>
                 <Accordion.Body>
