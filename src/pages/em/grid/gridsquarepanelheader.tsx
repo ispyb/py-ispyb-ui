@@ -15,7 +15,7 @@ export default function GridSquarePanelHeader({ sampleList }: { sampleList: Samp
             <SimpleParameterTable
               parameters={[
                 { key: 'Total number of movies', value: totalNumberOfMovies },
-                { key: 'Total number of movies', value: magnification },
+                { key: 'Magnification', value: magnification },
               ]}
             />
           </Col>

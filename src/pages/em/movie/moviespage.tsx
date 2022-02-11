@@ -71,7 +71,11 @@ export default function MoviesPage() {
             <MoviePanel movie={movie} proposalName={proposalName} dataCollectionId={parseFloat(dataCollectionId)}></MoviePanel>
           </Card.Body>
           <Card.Footer>
-            <strong>{getDirectory(movies)}</strong>
+            <p className="text-secondary" style={{ fontSize: 'smaller' }}>
+              {getDirectory(movies)}
+              <br />
+              {movie.Movie_movieFullPath}
+            </p>
           </Card.Footer>
         </Card>
       ))}
