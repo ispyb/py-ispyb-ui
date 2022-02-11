@@ -1,0 +1,7 @@
+ul.nav.nav-tabs {
+  display: flex;
+  justify-content: right;
+  align-items: right;
+  flex-wrap: wrap;
+  padding: 10px;
+}

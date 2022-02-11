@@ -11,12 +11,12 @@ export default function SessionTabMenu({ proposalName, sessionId }: { proposalNa
         </LinkContainer>
       </Nav.Item>
       <Nav.Item>
-        <LinkContainer to={`/${proposalName}/MX/${sessionId}/statistics`}>
+        <LinkContainer to={`/${proposalName}/MX/${sessionId}/energy`}>
           <Nav.Link>Energy Scans</Nav.Link>
         </LinkContainer>
       </Nav.Item>
       <Nav.Item>
-        <LinkContainer to={`/${proposalName}/MX/${sessionId}/classification`}>
+        <LinkContainer to={`/${proposalName}/MX/${sessionId}/xrf`}>
           <Nav.Link>Flourescence Spectra</Nav.Link>
         </LinkContainer>
       </Nav.Item>

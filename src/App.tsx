@@ -6,7 +6,7 @@ import Menu from 'pages/menu/menu';
 import LoginPage from 'components/login/loginpage';
 import { setSite } from 'redux/actions/site';
 import sites from 'config/sites';
-import MXDataCollectionGroupPage from 'pages/mx/datacollection/mxdatacollectiongrouppage';
+import MXDataCollectionGroupPage from 'pages/mx/datacollectiongroup/mxdatacollectiongrouppage';
 import EMSessionPage from 'pages/em/emsessionpage';
 import SessionStatisticsPage from 'pages/em/sessionstatisticspage';
 import SessionClassificationPage from 'pages/em/classification/sessionclassificationpage';
@@ -29,7 +29,7 @@ export default function App() {
   /** Check if there is a site configured */
   if (!site.authentication.sso.enabled && site.authentication.authenticators.length === 0) {
     /** In case a single site is configured that should be the most of the cases then trigger the actions */
-    if (sites.length > 1) {
+    if (sites.length > 0) {
       dispatch(setSite(sites[0]));
     }
     return <Alert variant="danger">Application is not configured. Site configuration is missing</Alert>;
@@ -61,7 +61,6 @@ export default function App() {
               <Route path="/:proposalName/EM/:sessionId/classification" element={<SessionClassificationPage />} />
               <Route path="/:proposalName/EM/:sessionId/statistics" element={<SessionStatisticsPage />} />
               <Route path="/:proposalName/EM/:dataCollectionId/movies" element={<MoviesPage />} />
-
               <Route path="/:proposalName/MX/:sessionId" element={<MXDataCollectionGroupPage />} />
             </Routes>
           </ErrorBoundary>

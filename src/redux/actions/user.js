@@ -31,7 +31,6 @@ export function doSignIn(plugin, username, password, site) {
       .then((response) => {
         /** ISPYB  does not respond with an error code when authentication is failed this is why it is checked if token and roles and retrieved **/
         const { token, roles } = response.data;
-        debugger;
         if (token && roles) {
           return dispatch({ type: LOGGED_IN, username, token, roles });
         }
