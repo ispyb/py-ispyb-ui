@@ -1,7 +1,5 @@
 import React from 'react';
 import SummaryDataCollectionGroupPanel from 'pages/mx/datacollectiongroup/summarydatacollectiongroup/summarydatacollectiongrouppanel';
-import { Props } from 'pages/mx/datacollectiongroup/summarydatacollectiongroup/summarydatacollectiongrouppanel';
-import { DataCollectionGroup } from 'pages/mx/model';
 
 const dataCollectionGroup = {
   DataCollection_runStatus: 'Data collection successful',
