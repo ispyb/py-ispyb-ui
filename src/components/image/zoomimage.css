@@ -1,0 +1,28 @@
+.zoom-image-alt {
+  margin: 5px;
+
+  border-radius: 5px;
+  border: 5px double white;
+
+  background: rgb(236, 236, 236);
+
+  color: grey;
+  font-weight: bold;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.zoom-image-alt::before {
+  content: '';
+  float: left;
+  width: 1px;
+  margin-left: -1px;
+  padding-top: 100%;
+}
+.zoom-image-alt::after {
+  content: '';
+  display: table;
+  clear: both;
+}
