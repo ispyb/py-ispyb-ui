@@ -73,7 +73,14 @@ export default function AutoprocIntegrationSection({ bestResult }: { bestResult:
           )}
         </tbody>
       </Table>
-      <UnitCellSection innerShell={bestResult.shells.innerShell}></UnitCellSection>
+      <UnitCellSection
+        cell_a={bestResult.shells.innerShell.cell_a}
+        cell_b={bestResult.shells.innerShell.cell_b}
+        cell_c={bestResult.shells.innerShell.cell_c}
+        cell_alpha={bestResult.shells.innerShell.cell_alpha}
+        cell_beta={bestResult.shells.innerShell.cell_beta}
+        cell_gamma={bestResult.shells.innerShell.cell_gamma}
+      ></UnitCellSection>
     </div>
   );
 }

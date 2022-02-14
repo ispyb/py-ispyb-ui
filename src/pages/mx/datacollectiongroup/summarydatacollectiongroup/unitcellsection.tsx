@@ -1,8 +1,21 @@
 import React from 'react';
-import { Shell } from 'helpers/mx/resultparser';
 import { Table } from 'react-bootstrap';
 
-export default function UnitCellSection({ innerShell }: { innerShell: Shell }) {
+export default function UnitCellSection({
+  cell_a,
+  cell_b,
+  cell_c,
+  cell_alpha,
+  cell_beta,
+  cell_gamma,
+}: {
+  cell_a: string | undefined;
+  cell_b: string | undefined;
+  cell_c: string | undefined;
+  cell_alpha: string | undefined;
+  cell_beta: string | undefined;
+  cell_gamma: string | undefined;
+}) {
   return (
     <Table responsive style={{ fontSize: '9px', textAlign: 'center' }}>
       <tbody>
@@ -13,13 +26,13 @@ export default function UnitCellSection({ innerShell }: { innerShell: Shell }) {
         </tr>
         <tr>
           <td>
-            <b>{innerShell.cell_a} Å</b>
+            <b>{cell_a} Å</b>
           </td>
           <td>
-            <b>{innerShell.cell_b} Å</b>
+            <b>{cell_b} Å</b>
           </td>
           <td>
-            <b>{innerShell.cell_c} Å</b>
+            <b>{cell_c} Å</b>
           </td>
         </tr>
         <tr>
@@ -29,13 +42,13 @@ export default function UnitCellSection({ innerShell }: { innerShell: Shell }) {
         </tr>
         <tr>
           <td>
-            <b>{innerShell.cell_alpha} °</b>
+            <b>{cell_alpha} °</b>
           </td>
           <td>
-            <b>{innerShell.cell_beta} °</b>
+            <b>{cell_beta} °</b>
           </td>
           <td>
-            <b>{innerShell.cell_gamma} °</b>
+            <b>{cell_gamma} °</b>
           </td>
         </tr>
       </tbody>

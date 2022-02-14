@@ -10,5 +10,5 @@ export default function ThirdSection({ dataCollectionGroup }: { dataCollectionGr
   if (bestResult) {
     return <AutoprocIntegrationSection bestResult={bestResult}></AutoprocIntegrationSection>;
   }
-  return <ScreeningSection></ScreeningSection>;
+  return <ScreeningSection dataCollectionGroup={dataCollectionGroup}></ScreeningSection>;
 }
