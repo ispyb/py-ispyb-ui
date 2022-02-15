@@ -16,13 +16,13 @@ export default function SummaryDataCollectionGroupPanel({ proposalName, dataColl
   return (
     <Container fluid>
       <Row>
-        <Col sm={12} md={2}>
+        <Col md="auto">
           <FirstSection dataCollectionGroup={dataCollectionGroup}></FirstSection>
         </Col>
-        <Col>
+        <Col md="auto">
           <SecondSection dataCollectionGroup={dataCollectionGroup}></SecondSection>
         </Col>
-        <Col>
+        <Col md="auto">
           <ThirdSection dataCollectionGroup={dataCollectionGroup}></ThirdSection>
         </Col>
         <Col>
@@ -34,6 +34,10 @@ export default function SummaryDataCollectionGroupPanel({ proposalName, dataColl
         <Col>
           <ZoomImage alt="Dozor" src={getDozorPlot({ proposalName, dataCollectionId: dataCollectionGroup.DataCollection_dataCollectionId }).url}></ZoomImage>
         </Col>
+      </Row>
+      <Row>
+        <h6>Comments</h6>
+        <p>{dataCollectionGroup.DataCollectionGroup_comments}</p>
       </Row>
     </Container>
   );

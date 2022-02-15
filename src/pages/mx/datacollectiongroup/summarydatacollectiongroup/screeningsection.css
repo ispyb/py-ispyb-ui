@@ -8,7 +8,7 @@
     linear,
     left top,
     left bottom,
-    from(rgb(168, 255, 168)),
+    from(#caffca),
     to(#64fe2e)
   );
   box-shadow: 0 2px 4px #000;

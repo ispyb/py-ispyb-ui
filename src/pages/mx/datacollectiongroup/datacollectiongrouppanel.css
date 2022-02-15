@@ -1,7 +1,12 @@
 .tabs-datacollectiongroup-panel {
-  display: flex;
   justify-content: right;
-  align-items: right;
-  flex-wrap: wrap;
-  padding: 10px;
+  margin-bottom: 0px !important;
+}
+
+.card-datacollectiongroup-panel .card-body {
+  padding: 0px;
+}
+
+.card-datacollectiongroup-panel .card-header {
+  padding-bottom: 0px;
 }
