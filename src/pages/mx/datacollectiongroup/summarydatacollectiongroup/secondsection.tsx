@@ -37,8 +37,8 @@ export default function SecondSection({ dataCollectionGroup }: { dataCollectionG
           value: `${convertToFixed(DataCollection_axisStart, 2)} ° (${convertToFixed(axisRange, 2)})`,
         },
         { key: 'Exposure Time', value: DataCollection_exposureTime, units: 's' },
-        { key: 'Flux start', value: convertToExponential(DataCollection_flux), units: 'ph/sec' },
-        { key: 'Flux end', value: convertToExponential(DataCollection_flux_end), units: 'ph/sec' },
+        { key: 'Flux start', value: convertToExponential(DataCollection_flux, 2), units: 'ph/sec' },
+        { key: 'Flux end', value: convertToExponential(DataCollection_flux_end, 2), units: 'ph/sec' },
       ]}
     ></SimpleParameterTable>
   );
