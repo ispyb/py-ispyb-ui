@@ -20,10 +20,10 @@ export default function ZoomImage({ src, alt }: props) {
     );
   }
   return (
-    <div style={{ margin: 5 }}>
+    <div className="zoomimage" style={{ margin: 5 }}>
       <LazyLoad height="100%" offset={300}>
         <Zoom>
-          <Image thumbnail src={src} alt={alt} onError={() => setError(true)} />
+          <Image width="100%" thumbnail src={src} alt={alt} onError={() => setError(true)} />
         </Zoom>
       </LazyLoad>
     </div>
