@@ -17,23 +17,23 @@ export default function SummaryDataCollectionGroupPanel({ proposalName, dataColl
   return (
     <Container fluid>
       <Row>
-        <Col md="auto">
+        <Col xs={12} sm={6} md={'auto'}>
           <FirstSection dataCollectionGroup={dataCollectionGroup}></FirstSection>
         </Col>
-        <Col md="auto">
+        <Col xs={12} sm={6} md={'auto'}>
           <SecondSection dataCollectionGroup={dataCollectionGroup}></SecondSection>
         </Col>
-        <Col md="auto">
+        <Col xs={12} sm={12} md={'auto'}>
           <ThirdSection dataCollectionGroup={dataCollectionGroup}></ThirdSection>
         </Col>
-        <Col>
+        <Col xs={12} sm={6} md={true}>
           <ZoomImage alt="Diffraction" src={getDiffrationThumbnail({ proposalName, imageId: dataCollectionGroup.firstImageId }).url}></ZoomImage>
         </Col>
-        <Col>
+        <Col xs={12} sm={6} md={true}>
           <ZoomImage alt="Crystal" src={getCrystalImage({ proposalName, dataCollectionId: dataCollectionGroup.DataCollection_dataCollectionId, imageIndex: 1 }).url}></ZoomImage>
         </Col>
         {UI.MX.showQualityIndicatorPlot && (
-          <Col>
+          <Col xs={12} sm={6} md={true}>
             <ZoomImage alt="Dozor" src={getDozorPlot({ proposalName, dataCollectionId: dataCollectionGroup.DataCollection_dataCollectionId }).url}></ZoomImage>
           </Col>
         )}

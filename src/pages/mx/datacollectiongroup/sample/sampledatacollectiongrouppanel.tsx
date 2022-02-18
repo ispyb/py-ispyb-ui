@@ -19,7 +19,7 @@ export default function SampleDataCollectionGroupPanel({ dataCollectionGroup }: 
   return (
     <>
       <Row>
-        <Col>
+        <Col xs={12} sm={12} md={4}>
           <SimpleParameterTable
             parameters={[
               { key: 'Protein', value: Protein_acronym },
@@ -32,22 +32,22 @@ export default function SampleDataCollectionGroupPanel({ dataCollectionGroup }: 
             ]}
           ></SimpleParameterTable>
         </Col>
-        <Col>
+        <Col xs={12} sm={6} md={2}>
           {UI.MX.showCrystalSnapshot1 && (
             <ZoomImage alt="Crystal 1" src={getCrystalImage({ proposalName, dataCollectionId: dataCollectionGroup.DataCollection_dataCollectionId, imageIndex: 1 }).url} />
           )}
         </Col>
-        <Col>
+        <Col xs={12} sm={6} md={2}>
           {UI.MX.showCrystalSnapshot2 && (
             <ZoomImage alt="Crystal 2" src={getCrystalImage({ proposalName, dataCollectionId: dataCollectionGroup.DataCollection_dataCollectionId, imageIndex: 2 }).url} />
           )}
         </Col>
-        <Col>
+        <Col xs={12} sm={6} md={2}>
           {UI.MX.showCrystalSnapshot3 && (
             <ZoomImage alt="Crystal 3" src={getCrystalImage({ proposalName, dataCollectionId: dataCollectionGroup.DataCollection_dataCollectionId, imageIndex: 3 }).url} />
           )}
         </Col>
-        <Col>
+        <Col xs={12} sm={6} md={2}>
           {UI.MX.showCrystalSnapshot4 && (
             <ZoomImage alt="Crystal 4" src={getCrystalImage({ proposalName, dataCollectionId: dataCollectionGroup.DataCollection_dataCollectionId, imageIndex: 4 }).url} />
           )}

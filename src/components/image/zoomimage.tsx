@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import './zoomimage.css';
 import LazyWrapper from 'components/loading/lazywrapper';
+import { CSSProperties } from 'react';
 
 const placeholder = (
   <div className="zoom-image-placeholder">
@@ -14,8 +15,9 @@ const placeholder = (
 interface props {
   src: string;
   alt?: string;
+  style?: CSSProperties;
 }
-export default function ZoomImage({ src, alt }: props) {
+export default function ZoomImage({ src, alt, style }: props) {
   const [error, setError] = useState(false);
 
   const [loaded, setLoaded] = useState(false);
@@ -24,23 +26,23 @@ export default function ZoomImage({ src, alt }: props) {
 
   if (error) {
     return (
-      <div className="zoom-image-alt">
+      <div style={style} className="zoom-image-alt">
         <p>{alt} not found</p>
       </div>
     );
   }
   if (!loaded) {
     return (
-      <>
+      <div style={style}>
         {placeholder}
         <LazyWrapper>
           <div style={{ display: 'none' }}>{img}</div>
         </LazyWrapper>
-      </>
+      </div>
     );
   }
   return (
-    <div className="zoomimage" style={{ margin: 5 }}>
+    <div className="zoomimage" style={{ margin: 5, ...style }}>
       <LazyWrapper placeholder={placeholder}>
         <Zoom>{img}</Zoom>
       </LazyWrapper>

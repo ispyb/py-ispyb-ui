@@ -16,22 +16,22 @@ export default function BeamlineDataCollectionGroupPanel({ dataCollectionGroup }
   return (
     <Container fluid>
       <Row>
-        <Col>
+        <Col xs={12} sm={6} lg={4} xl={2}>
           <FirstSection dataCollectionGroup={dataCollectionGroup}></FirstSection>
         </Col>
-        <Col>
+        <Col xs={12} sm={6} lg={4} xl={2}>
           <SecondSection dataCollectionGroup={dataCollectionGroup}></SecondSection>
         </Col>
-        <Col>
+        <Col xs={12} sm={6} lg={4} xl={2}>
           <ThirdSection dataCollectionGroup={dataCollectionGroup}></ThirdSection>
         </Col>
-        <Col>
+        <Col xs={12} sm={6} lg={4} xl={2}>
           <FourthSection dataCollectionGroup={dataCollectionGroup}></FourthSection>
         </Col>
-        <Col>
+        <Col xs={12} sm={6} lg={4} xl={2}>
           <FifthSection dataCollectionGroup={dataCollectionGroup}></FifthSection>
         </Col>
-        <Col>
+        <Col xs={12} sm={6} lg={4} xl={2}>
           <SixthSection dataCollectionGroup={dataCollectionGroup}></SixthSection>
         </Col>
       </Row>

@@ -19,6 +19,7 @@ import ErrorBoundary from 'components/errors/errorboundary';
 import Page from 'pages/page';
 import { useAppSelector, useAppDispatch } from 'hooks';
 import LoadingPanel from 'components/loading/loadingpanel';
+import 'App.css';
 
 export default function App() {
   const dispatch = useAppDispatch();

@@ -55,7 +55,7 @@ function getColumns(proposalName: string): ColumnDescription<DataCollection>[] {
       text: 'Indicators',
       dataField: 'Indicators',
       formatter: function (cell, row) {
-        return <ZoomImage src={getDozorPlot({ dataCollectionId: row.dataCollectionId, proposalName }).url} />;
+        return <ZoomImage style={{ maxWidth: 110 }} src={getDozorPlot({ dataCollectionId: row.dataCollectionId, proposalName }).url} />;
       },
     },
     {
@@ -90,5 +90,5 @@ export default function CollectionsDataCollectionGroupPanel({ dataCollectionGrou
   if (isError) throw Error(isError);
   console.log(dataCollections);
   //return
-  return <BootstrapTable keyField="dataCollectionId" data={dataCollections} columns={getColumns(proposalName)} />;
+  return <BootstrapTable bootstrap4 wrapperClasses="table-responsive" keyField="dataCollectionId" data={dataCollections} columns={getColumns(proposalName)} />;
 }
