@@ -33,6 +33,10 @@ export function getMXDataCollectionsBy({ proposalName, sessionId }: { proposalNa
   return { url: `${server}/${token}/proposal/${proposalName}/mx/datacollection/session/${sessionId}/list` };
 }
 
+export function getMxDataCollectionsByGroupId({ proposalName, dataCollectionGroupId }: { proposalName: string; dataCollectionGroupId: string }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/mx/datacollection/datacollectiongroupid/${dataCollectionGroupId}/list` };
+}
+
 export function getEMDataCollectionsBy({ proposalName, sessionId }: { proposalName: string; sessionId?: string }) {
   return { url: `${server}/${token}/proposal/${proposalName}/em/datacollection/session/${sessionId}/list` };
 }

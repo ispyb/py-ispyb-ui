@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Card, Tab, Row, Col, Nav, Container } from 'react-bootstrap';
 
 import { DataCollectionGroup } from 'pages/mx/model';
 import SummaryDataCollectionGroupPanel from 'pages/mx/datacollectiongroup/summarydatacollectiongroup/summarydatacollectiongrouppanel';
 import BeamlineDataCollectionGroupPanel from 'pages/mx/datacollectiongroup/beamline/beamlinedatacollectiongrouppanel';
 import './datacollectiongrouppanel.css';
+import CollectionsDataCollectionGroupPanel from './collections/collectionsdatacollectiongrouppanel';
+import LoadingPanel from 'components/loading/loadingpanel';
+import LazyWrapper from 'components/loading/lazywrapper';
 
 type Props = {
   sessionId: string;
@@ -59,7 +62,11 @@ export default function DataCollectionGroupPanel({ proposalName, dataCollectionG
               <BeamlineDataCollectionGroupPanel dataCollectionGroup={dataCollectionGroup}></BeamlineDataCollectionGroupPanel>
             </Tab.Pane>
             <Tab.Pane eventKey="Data" title="Data Collections">
-              <p>TODO</p>
+              <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+                <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+                  <CollectionsDataCollectionGroupPanel dataCollectionGroup={dataCollectionGroup}></CollectionsDataCollectionGroupPanel>
+                </Suspense>
+              </LazyWrapper>
             </Tab.Pane>
             <Tab.Pane eventKey="Sample" title="Sample">
               <p>TODO</p>

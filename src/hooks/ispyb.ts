@@ -9,6 +9,7 @@ import {
   getSessionById,
   getEMDataCollectionsBy,
   getEMStatisticsBy,
+  getMxDataCollectionsByGroupId,
 } from 'api/ispyb';
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
@@ -57,6 +58,9 @@ export function useEMDataCollectionsBy({ proposalName, sessionId }: ProposalSess
 
 export function useMXDataCollectionsBy({ proposalName, sessionId }: ProposalSessionId) {
   return doGet(getMXDataCollectionsBy({ proposalName, sessionId }).url);
+}
+export function useMxDataCollectionsByGroupId({ proposalName, dataCollectionGroupId }: { proposalName: string; dataCollectionGroupId: string }) {
+  return doGet(getMxDataCollectionsByGroupId({ proposalName, dataCollectionGroupId }).url);
 }
 
 export function useEMStatistics({ proposalName, sessionId }: ProposalSessionId) {

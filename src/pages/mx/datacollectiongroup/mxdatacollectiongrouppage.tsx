@@ -15,7 +15,6 @@ export default function MXDataCollectionGroupPage() {
   const { sessionId = '', proposalName = '' } = useParams<Param>();
   const { data: dataCollectionGroups, isError } = useMXDataCollectionsBy({ proposalName, sessionId });
   if (isError) throw Error(isError);
-  debugger;
   return (
     <MXPage sessionId={sessionId} proposalName={proposalName}>
       <Card>
