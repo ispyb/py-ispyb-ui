@@ -11,6 +11,7 @@ import LazyWrapper from 'components/loading/lazywrapper';
 import _ from 'lodash';
 import SampleDataCollectionGroupPanel from './sample/sampledatacollectiongrouppanel';
 import UI from 'config/ui';
+import WorkflowDataCollectionGroupPanel from './workflow/workflowdatacollectiongrouppanel';
 
 type Props = {
   sessionId: string;
@@ -99,7 +100,7 @@ export default function DataCollectionGroupPanel({ proposalName, dataCollectionG
               <p>TODO</p>
             </Tab.Pane>
             <Tab.Pane eventKey="Workflow" title="Workflow">
-              <p>TODO</p>
+              <WorkflowDataCollectionGroupPanel dataCollectionGroup={dataCollectionGroup}></WorkflowDataCollectionGroupPanel>
             </Tab.Pane>
           </Tab.Content>
         </Card.Body>

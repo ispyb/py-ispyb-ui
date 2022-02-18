@@ -82,3 +82,7 @@ export function getDiffrationThumbnail({ proposalName, imageId }: { proposalName
 export function getDozorPlot({ dataCollectionId, proposalName }: { proposalName: string; dataCollectionId: number }) {
   return { url: `${server}/${token}/proposal/${proposalName}/mx/datacollection/${dataCollectionId}/qualityindicatorplot` };
 }
+
+export function getWorkflowImage({ stepId, proposalName }: { proposalName: string; stepId: string }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/mx/workflow/step/${stepId}/image` };
+}
