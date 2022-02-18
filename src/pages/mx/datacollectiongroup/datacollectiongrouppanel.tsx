@@ -1,5 +1,5 @@
 import React, { Suspense } from 'react';
-import { Card, Tab, Row, Col, Nav, Container } from 'react-bootstrap';
+import { Card, Tab, Row, Col, Nav, Container, Badge } from 'react-bootstrap';
 
 import { DataCollectionGroup } from 'pages/mx/model';
 import SummaryDataCollectionGroupPanel from 'pages/mx/datacollectiongroup/summarydatacollectiongroup/summarydatacollectiongrouppanel';
@@ -8,12 +8,21 @@ import './datacollectiongrouppanel.css';
 import CollectionsDataCollectionGroupPanel from './collections/collectionsdatacollectiongrouppanel';
 import LoadingPanel from 'components/loading/loadingpanel';
 import LazyWrapper from 'components/loading/lazywrapper';
+import _ from 'lodash';
 
 type Props = {
   sessionId: string;
   proposalName: string;
   dataCollectionGroup: DataCollectionGroup;
 };
+
+function getUniqueCount(commaSeparatedList?: string): number {
+  if (commaSeparatedList) {
+    const splitted = commaSeparatedList.split(',');
+    return _.uniq(splitted).length;
+  }
+  return 0;
+}
 
 export default function DataCollectionGroupPanel({ proposalName, dataCollectionGroup }: Props) {
   return (
@@ -37,16 +46,25 @@ export default function DataCollectionGroupPanel({ proposalName, dataCollectionG
                     <Nav.Link eventKey="Beamline">Beamline Parameters</Nav.Link>
                   </Nav.Item>
                   <Nav.Item>
-                    <Nav.Link eventKey="Data">Data Collections</Nav.Link>
+                    <Nav.Link eventKey="Data">
+                      Data Collections
+                      <Badge bg="info">{dataCollectionGroup.totalNumberOfDataCollections}</Badge>
+                    </Nav.Link>
                   </Nav.Item>
                   <Nav.Item>
                     <Nav.Link eventKey="Sample">Sample</Nav.Link>
                   </Nav.Item>
                   <Nav.Item>
-                    <Nav.Link eventKey="Results">Results</Nav.Link>
+                    <Nav.Link eventKey="Results">
+                      Results
+                      <Badge bg="info">{getUniqueCount(dataCollectionGroup.autoProcIntegrationId)}</Badge>
+                    </Nav.Link>
                   </Nav.Item>
                   <Nav.Item>
-                    <Nav.Link eventKey="Workflow">Workflow</Nav.Link>
+                    <Nav.Link eventKey="Workflow">
+                      Workflow
+                      <Badge bg="info">{getUniqueCount(dataCollectionGroup.WorkflowStep_workflowStepId)}</Badge>
+                    </Nav.Link>
                   </Nav.Item>
                 </Nav>
               </Col>
