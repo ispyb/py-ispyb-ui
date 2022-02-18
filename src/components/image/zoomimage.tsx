@@ -1,9 +1,15 @@
 import Zoom from 'react-medium-image-zoom';
 import { Image } from 'react-bootstrap';
-import LazyLoad from 'react-lazyload';
 import { useState } from 'react';
 
 import './zoomimage.css';
+import LazyWrapper from 'components/loading/lazywrapper';
+
+const placeholder = (
+  <div className="zoom-image-placeholder">
+    <p>Loading...</p>
+  </div>
+);
 
 interface props {
   src: string;
@@ -12,6 +18,10 @@ interface props {
 export default function ZoomImage({ src, alt }: props) {
   const [error, setError] = useState(false);
 
+  const [loaded, setLoaded] = useState(false);
+
+  const [img] = useState(<Image width="100%" thumbnail src={src} alt={alt} onLoad={() => setLoaded(true)} onError={() => setError(true)} />);
+
   if (error) {
     return (
       <div className="zoom-image-alt">
@@ -19,13 +29,21 @@ export default function ZoomImage({ src, alt }: props) {
       </div>
     );
   }
+  if (!loaded) {
+    return (
+      <>
+        {placeholder}
+        <LazyWrapper>
+          <div style={{ display: 'none' }}>{img}</div>
+        </LazyWrapper>
+      </>
+    );
+  }
   return (
     <div className="zoomimage" style={{ margin: 5 }}>
-      <LazyLoad height="100%" offset={300}>
-        <Zoom>
-          <Image width="100%" thumbnail src={src} alt={alt} onError={() => setError(true)} />
-        </Zoom>
-      </LazyLoad>
+      <LazyWrapper placeholder={placeholder}>
+        <Zoom>{img}</Zoom>
+      </LazyWrapper>
     </div>
   );
 }
