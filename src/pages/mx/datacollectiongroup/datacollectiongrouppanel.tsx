@@ -9,6 +9,8 @@ import CollectionsDataCollectionGroupPanel from './collections/collectionsdataco
 import LoadingPanel from 'components/loading/loadingpanel';
 import LazyWrapper from 'components/loading/lazywrapper';
 import _ from 'lodash';
+import SampleDataCollectionGroupPanel from './sample/sampledatacollectiongrouppanel';
+import UI from 'config/ui';
 
 type Props = {
   sessionId: string;
@@ -45,12 +47,14 @@ export default function DataCollectionGroupPanel({ proposalName, dataCollectionG
                   <Nav.Item>
                     <Nav.Link eventKey="Beamline">Beamline Parameters</Nav.Link>
                   </Nav.Item>
-                  <Nav.Item>
-                    <Nav.Link eventKey="Data">
-                      Data Collections
-                      <Badge bg="info">{dataCollectionGroup.totalNumberOfDataCollections}</Badge>
-                    </Nav.Link>
-                  </Nav.Item>
+                  {UI.MX.showCollectionTab && (
+                    <Nav.Item>
+                      <Nav.Link eventKey="Data">
+                        Data Collections
+                        <Badge bg="info">{dataCollectionGroup.totalNumberOfDataCollections}</Badge>
+                      </Nav.Link>
+                    </Nav.Item>
+                  )}
                   <Nav.Item>
                     <Nav.Link eventKey="Sample">Sample</Nav.Link>
                   </Nav.Item>
@@ -79,15 +83,17 @@ export default function DataCollectionGroupPanel({ proposalName, dataCollectionG
             <Tab.Pane eventKey="Beamline" title="Beamline Parameters">
               <BeamlineDataCollectionGroupPanel dataCollectionGroup={dataCollectionGroup}></BeamlineDataCollectionGroupPanel>
             </Tab.Pane>
-            <Tab.Pane eventKey="Data" title="Data Collections">
-              <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-                  <CollectionsDataCollectionGroupPanel dataCollectionGroup={dataCollectionGroup}></CollectionsDataCollectionGroupPanel>
-                </Suspense>
-              </LazyWrapper>
-            </Tab.Pane>
+            {UI.MX.showCollectionTab && (
+              <Tab.Pane eventKey="Data" title="Data Collections">
+                <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+                  <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+                    <CollectionsDataCollectionGroupPanel dataCollectionGroup={dataCollectionGroup}></CollectionsDataCollectionGroupPanel>
+                  </Suspense>
+                </LazyWrapper>
+              </Tab.Pane>
+            )}
             <Tab.Pane eventKey="Sample" title="Sample">
-              <p>TODO</p>
+              <SampleDataCollectionGroupPanel dataCollectionGroup={dataCollectionGroup}></SampleDataCollectionGroupPanel>
             </Tab.Pane>
             <Tab.Pane eventKey="Results" title="Results">
               <p>TODO</p>

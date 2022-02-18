@@ -1,5 +1,5 @@
 import Zoom from 'react-medium-image-zoom';
-import { Image } from 'react-bootstrap';
+import { Image, Spinner } from 'react-bootstrap';
 import { useState } from 'react';
 
 import './zoomimage.css';
@@ -7,7 +7,7 @@ import LazyWrapper from 'components/loading/lazywrapper';
 
 const placeholder = (
   <div className="zoom-image-placeholder">
-    <p>Loading...</p>
+    <Spinner animation="border" role="status" variant="dark"></Spinner>
   </div>
 );
 
