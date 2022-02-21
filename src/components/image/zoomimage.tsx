@@ -42,7 +42,7 @@ export default function ZoomImage({ src, alt, style }: props) {
     );
   }
   return (
-    <div className="zoomimage" style={{ margin: 5, ...style }}>
+    <div className="zoomimage" style={style}>
       <LazyWrapper placeholder={placeholder}>
         <Zoom>{img}</Zoom>
       </LazyWrapper>
