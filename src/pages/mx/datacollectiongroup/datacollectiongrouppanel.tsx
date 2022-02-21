@@ -82,7 +82,9 @@ export default function DataCollectionGroupPanel({ proposalName, dataCollectionG
               <SummaryDataCollectionGroupPanel proposalName={proposalName} dataCollectionGroup={dataCollectionGroup}></SummaryDataCollectionGroupPanel>
             </Tab.Pane>
             <Tab.Pane eventKey="Beamline" title="Beamline Parameters">
-              <BeamlineDataCollectionGroupPanel dataCollectionGroup={dataCollectionGroup}></BeamlineDataCollectionGroupPanel>
+              <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+                <BeamlineDataCollectionGroupPanel dataCollectionGroup={dataCollectionGroup}></BeamlineDataCollectionGroupPanel>
+              </LazyWrapper>
             </Tab.Pane>
             {UI.MX.showCollectionTab && (
               <Tab.Pane eventKey="Data" title="Data Collections">
@@ -94,13 +96,19 @@ export default function DataCollectionGroupPanel({ proposalName, dataCollectionG
               </Tab.Pane>
             )}
             <Tab.Pane eventKey="Sample" title="Sample">
-              <SampleDataCollectionGroupPanel dataCollectionGroup={dataCollectionGroup}></SampleDataCollectionGroupPanel>
+              <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+                <SampleDataCollectionGroupPanel dataCollectionGroup={dataCollectionGroup}></SampleDataCollectionGroupPanel>
+              </LazyWrapper>
             </Tab.Pane>
             <Tab.Pane eventKey="Results" title="Results">
-              <p>TODO</p>
+              <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+                <p>TODO</p>
+              </LazyWrapper>
             </Tab.Pane>
             <Tab.Pane eventKey="Workflow" title="Workflow">
-              <WorkflowDataCollectionGroupPanel dataCollectionGroup={dataCollectionGroup}></WorkflowDataCollectionGroupPanel>
+              <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+                <WorkflowDataCollectionGroupPanel dataCollectionGroup={dataCollectionGroup}></WorkflowDataCollectionGroupPanel>
+              </LazyWrapper>
             </Tab.Pane>
           </Tab.Content>
         </Card.Body>

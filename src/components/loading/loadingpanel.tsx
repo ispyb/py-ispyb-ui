@@ -9,7 +9,7 @@ export default function LoadingPanel({ children, text }: LoadingPanelType) {
   return (
     <div>
       <Card className="text-center">
-        <Card.Body>
+        <Card.Body style={{ paddingTop: 200, paddingBottom: 200 }}>
           <Card.Text>
             <span>
               <Spinner animation="border" role="status">

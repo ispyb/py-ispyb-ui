@@ -5,6 +5,8 @@ import { Card } from 'react-bootstrap';
 import { useMXDataCollectionsBy } from 'hooks/ispyb';
 import DataCollectionGroupPanel from 'pages/mx/datacollectiongroup/datacollectiongrouppanel';
 import { DataCollectionGroup } from 'pages/mx/model';
+import LazyWrapper from 'components/loading/lazywrapper';
+import LoadingPanel from 'components/loading/loadingpanel';
 
 type Param = {
   sessionId: string;
@@ -20,7 +22,9 @@ export default function MXDataCollectionGroupPage() {
       <Card>
         {dataCollectionGroups.map((dataCollectionGroup: DataCollectionGroup) => (
           <div style={{ margin: 5 }}>
-            <DataCollectionGroupPanel dataCollectionGroup={dataCollectionGroup} proposalName={proposalName} sessionId={sessionId}></DataCollectionGroupPanel>
+            <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+              <DataCollectionGroupPanel dataCollectionGroup={dataCollectionGroup} proposalName={proposalName} sessionId={sessionId}></DataCollectionGroupPanel>
+            </LazyWrapper>
           </div>
         ))}
       </Card>
