@@ -37,6 +37,10 @@ export function getMxDataCollectionsByGroupId({ proposalName, dataCollectionGrou
   return { url: `${server}/${token}/proposal/${proposalName}/mx/datacollection/datacollectiongroupid/${dataCollectionGroupId}/list` };
 }
 
+export function getMxWorkflow({ proposalName, stepId }: { proposalName: string; stepId: string }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/mx/workflow/step/${stepId}/result` };
+}
+
 export function getEMDataCollectionsBy({ proposalName, sessionId }: { proposalName: string; sessionId?: string }) {
   return { url: `${server}/${token}/proposal/${proposalName}/em/datacollection/session/${sessionId}/list` };
 }

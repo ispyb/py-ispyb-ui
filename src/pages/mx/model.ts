@@ -224,3 +224,32 @@ export interface DataCollection {
   xtalSnapshotFullPath4: string;
   yBeam: number;
 }
+export interface WorkflowStep {
+  title: string;
+  type: string;
+  version: number;
+  items: WorkflowStepItem[];
+}
+
+export interface WorkflowStepItem {
+  type: 'table' | 'warning' | 'info' | 'images' | 'logFile';
+  title?: string;
+  orientation?: string;
+  columns?: string[];
+  data?: string[][];
+  value?: string;
+  items?: {
+    suffix: string;
+    thumbnailSuffix: string;
+    thumbnailValue: string;
+    thumbnailXsize: number;
+    thumbnailYsize: number;
+    title: string;
+    type: 'image';
+    value: string;
+    xsize: number;
+    ysize: number;
+  }[];
+  linkText?: string;
+  logText?: string;
+}

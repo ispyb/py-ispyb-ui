@@ -107,7 +107,7 @@ export default function DataCollectionGroupPanel({ proposalName, dataCollectionG
             </Tab.Pane>
             <Tab.Pane eventKey="Workflow" title="Workflow">
               <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                <WorkflowDataCollectionGroupPanel dataCollectionGroup={dataCollectionGroup}></WorkflowDataCollectionGroupPanel>
+                <WorkflowDataCollectionGroupPanel proposalName={proposalName} dataCollectionGroup={dataCollectionGroup}></WorkflowDataCollectionGroupPanel>
               </LazyWrapper>
             </Tab.Pane>
           </Tab.Content>

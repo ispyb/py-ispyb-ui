@@ -2,14 +2,19 @@ import { getWorkflowImage } from 'api/ispyb';
 import ZoomImage from 'components/image/zoomimage';
 import _ from 'lodash';
 import { DataCollectionGroup } from 'pages/mx/model';
+import { useState } from 'react';
 import { Col, Row, Button, Badge, Container } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
+import WorkflowModal from './workflowmodal';
 
-export default function WorkflowDataCollectionGroupPanel({ dataCollectionGroup }: { dataCollectionGroup: DataCollectionGroup }) {
+export default function WorkflowDataCollectionGroupPanel({ dataCollectionGroup, proposalName }: { dataCollectionGroup: DataCollectionGroup; proposalName: string }) {
   if (dataCollectionGroup.Workflow_workflowId) {
     const [thumbnails, descriptions] = _(dataCollectionGroup.WorkflowStep_workflowStepId?.split(',') || [])
       .zip(dataCollectionGroup.WorkflowStep_workflowStepType?.split(',') || [], dataCollectionGroup.WorkflowStep_status?.split(',') || [])
-      .map(([id, type, status]) => [<WorkflowThumbnail id={id}></WorkflowThumbnail>, <WorkflowDescription type={type} status={status}></WorkflowDescription>])
+      .map(([id, type, status]) => [
+        <WorkflowThumbnail id={id}></WorkflowThumbnail>,
+        <WorkflowDescription id={id} proposalName={proposalName} dataCollectionGroup={dataCollectionGroup} type={type} status={status}></WorkflowDescription>,
+      ])
       .unzip()
       .value();
 
@@ -38,22 +43,42 @@ function WorkflowThumbnail({ id }: { id: string | undefined }) {
   return null;
 }
 
-function WorkflowDescription({ type, status }: { type: string | undefined; status: string | undefined }) {
+function WorkflowDescription({
+  proposalName,
+  type,
+  status,
+  dataCollectionGroup,
+  id,
+}: {
+  proposalName: string;
+  type: string | undefined;
+  status: string | undefined;
+  dataCollectionGroup: DataCollectionGroup;
+  id: string | undefined;
+}) {
+  const [modalShow, setModalShow] = useState(false);
+
   if (type && status) {
+    const url = `/${proposalName}/MX/${dataCollectionGroup.BLSession_sessionId}/workflow/${dataCollectionGroup.Workflow_workflowId}/steps/${dataCollectionGroup.WorkflowStep_workflowStepId}?select=${id}`;
     return (
-      <Col style={{ textAlign: 'center', marginBottom: 10 }}>
-        <Row>
-          <h5>{type}</h5>
-        </Row>
-        <Row>
-          <span>
-            <Badge style={{ margin: 10, marginTop: 0 }} bg={getBadgeColor(status)}>
-              {status}
-            </Badge>
-          </span>
-        </Row>
-        <Button color="primary">Open</Button>
-      </Col>
+      <>
+        <Col style={{ textAlign: 'center', marginBottom: 10 }}>
+          <Row>
+            <h5>{type}</h5>
+          </Row>
+          <Row>
+            <span>
+              <Badge style={{ margin: 10, marginTop: 0 }} bg={getBadgeColor(status)}>
+                {status}
+              </Badge>
+            </span>
+          </Row>
+          <Button color="primary" onClick={() => setModalShow(true)}>
+            Open
+          </Button>
+        </Col>
+        <WorkflowModal proposalName={proposalName} step={id} type={type} url={url} show={modalShow} onHide={() => setModalShow(false)}></WorkflowModal>
+      </>
     );
   }
   return null;

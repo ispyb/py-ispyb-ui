@@ -20,6 +20,7 @@ import Page from 'pages/page';
 import { useAppSelector, useAppDispatch } from 'hooks';
 import LoadingPanel from 'components/loading/loadingpanel';
 import 'App.css';
+import MXWorkflowPage from 'pages/mx/workflow/mxworkflowpage';
 
 export default function App() {
   const dispatch = useAppDispatch();
@@ -63,6 +64,7 @@ export default function App() {
               <Route path="/:proposalName/EM/:sessionId/statistics" element={<SessionStatisticsPage />} />
               <Route path="/:proposalName/EM/:dataCollectionId/movies" element={<MoviesPage />} />
               <Route path="/:proposalName/MX/:sessionId" element={<MXDataCollectionGroupPage />} />
+              <Route path="/:proposalName/MX/:sessionId/workflow/:workflowId/steps/:stepsIds" element={<MXWorkflowPage />} />
             </Routes>
           </ErrorBoundary>
         </Suspense>

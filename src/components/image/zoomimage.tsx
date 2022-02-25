@@ -16,8 +16,10 @@ interface props {
   src: string;
   alt?: string;
   style?: CSSProperties;
+  lazy?: boolean;
+  legend?: string;
 }
-export default function ZoomImage({ src, alt, style }: props) {
+export default function ZoomImage({ src, alt, style, lazy = true, legend }: props) {
   const [error, setError] = useState(false);
 
   const [loaded, setLoaded] = useState(false);
@@ -26,15 +28,19 @@ export default function ZoomImage({ src, alt, style }: props) {
 
   if (error) {
     return (
-      <div style={style} className="zoom-image-alt">
-        <p>{alt} not found</p>
-      </div>
+      <>
+        <div style={style} className="zoom-image-alt">
+          <p>{alt} not found</p>
+        </div>
+        {legend && <span>{legend}</span>}
+      </>
     );
   }
-  if (!loaded) {
+  if (lazy && !loaded) {
     return (
       <div style={style}>
         {placeholder}
+        {legend && <span>{legend}</span>}
         <LazyWrapper>
           <div style={{ display: 'none' }}>{img}</div>
         </LazyWrapper>
@@ -44,6 +50,7 @@ export default function ZoomImage({ src, alt, style }: props) {
   return (
     <div className="zoomimage" style={style}>
       <Zoom>{img}</Zoom>
+      {legend && <span>{legend}</span>}
     </div>
   );
 }
