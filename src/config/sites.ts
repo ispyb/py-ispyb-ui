@@ -1,4 +1,6 @@
-const sites = [
+import { Site } from 'models';
+
+const sites: Site[] = [
   {
     name: 'ESRF',
     //server: 'http://lgaonach:5000/ispyb/api/v1/legacy',

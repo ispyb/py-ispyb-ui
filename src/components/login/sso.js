@@ -1,7 +1,7 @@
 import React from 'react';
 import UI from '../../config/ui';
 import ErrorUserMessage from 'components/usermessages/errorusermessage';
-import keycloak from 'keycloak';
+import { keycloakLogin } from 'keycloak';
 import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router';
 import { Button, Alert } from 'react-bootstrap';
@@ -18,9 +18,9 @@ function SSO() {
       const redirectPath = `${pathname}${search}${hash}`;
       const redirectUri = `${window.location.origin}/login${redirectPath === '/' ? '' : `?to=${encodeURIComponent(redirectPath)}`}`;
 
-      keycloak.login({ redirectUri });
+      keycloakLogin({ redirectUri });
     } else {
-      keycloak.login();
+      keycloakLogin();
     }
   }
 
