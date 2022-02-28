@@ -3,7 +3,7 @@ import { DataCollectionGroup } from 'pages/mx/model';
 import SimpleParameterTable from 'components/table/simpleparametertable';
 import { convertToFixed, wavelengthToEnergy, convertToExponential } from 'helpers/numerictransformation';
 
-export default function SecondSection({ dataCollectionGroup }: { dataCollectionGroup: DataCollectionGroup }) {
+export default function SecondSection({ dataCollectionGroup, compact = false }: { dataCollectionGroup: DataCollectionGroup; compact?: boolean }) {
   const {
     DataCollection_axisStart = 0,
     DataCollection_axisEnd = 0,
@@ -18,9 +18,19 @@ export default function SecondSection({ dataCollectionGroup }: { dataCollectionG
   } = dataCollectionGroup;
   const axisRange = DataCollection_axisEnd - DataCollection_axisStart;
 
-  return (
-    <SimpleParameterTable
-      parameters={[
+  const parameters = compact
+    ? [
+        {
+          key: 'Res. (corner)',
+          value: `${convertToFixed(DataCollection_resolution, 2)}  Å (${convertToFixed(DataCollection_resolutionAtCorner, 2)}  Å )`,
+        },
+
+        {
+          key: 'En. (Wave.)',
+          value: `${convertToFixed(wavelengthToEnergy(DataCollection_wavelength), 3)}  KeV (${convertToFixed(DataCollection_wavelength, 4)} )`,
+        },
+      ]
+    : [
         {
           key: 'Res. (corner)',
           value: `${convertToFixed(DataCollection_resolution, 2)}  Å (${convertToFixed(DataCollection_resolutionAtCorner, 2)}  Å )`,
@@ -39,7 +49,6 @@ export default function SecondSection({ dataCollectionGroup }: { dataCollectionG
         { key: 'Exposure Time', value: DataCollection_exposureTime, units: 's' },
         { key: 'Flux start', value: convertToExponential(DataCollection_flux, 2), units: 'ph/sec' },
         { key: 'Flux end', value: convertToExponential(DataCollection_flux_end, 2), units: 'ph/sec' },
-      ]}
-    ></SimpleParameterTable>
-  );
+      ];
+  return <SimpleParameterTable parameters={parameters}></SimpleParameterTable>;
 }

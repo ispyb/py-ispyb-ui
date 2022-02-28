@@ -17,6 +17,7 @@ type Props = {
   sessionId: string;
   proposalName: string;
   dataCollectionGroup: DataCollectionGroup;
+  compact: boolean;
 };
 
 function getUniqueCount(commaSeparatedList?: string): number {
@@ -27,21 +28,21 @@ function getUniqueCount(commaSeparatedList?: string): number {
   return 0;
 }
 
-export default function DataCollectionGroupPanel({ proposalName, dataCollectionGroup }: Props) {
+export default function DataCollectionGroupPanel({ proposalName, dataCollectionGroup, compact }: Props) {
   return (
     <Tab.Container defaultActiveKey="Summary">
       <Card className="card-datacollectiongroup-panel">
-        <Card.Header>
+        <Card.Header style={compact ? { padding: 0 } : undefined}>
           <Container fluid>
             <Row>
               <Col md="auto">
-                <h5>
+                <h5 style={compact ? { fontSize: 15, margin: 5 } : undefined}>
                   {dataCollectionGroup.startTimeList?.split(',')[0]} - {dataCollectionGroup.DataCollectionGroup_experimentType}
                 </h5>
               </Col>
               <Col></Col>
               <Col md="auto">
-                <Nav className="tabs-datacollectiongroup-panel" variant="tabs">
+                <Nav className="tabs-datacollectiongroup-panel" style={compact ? { fontSize: 10 } : undefined} variant="tabs">
                   <Nav.Item>
                     <Nav.Link eventKey="Summary">Summary</Nav.Link>
                   </Nav.Item>
@@ -79,7 +80,7 @@ export default function DataCollectionGroupPanel({ proposalName, dataCollectionG
         <Card.Body>
           <Tab.Content>
             <Tab.Pane eventKey="Summary" title="Summary">
-              <SummaryDataCollectionGroupPanel proposalName={proposalName} dataCollectionGroup={dataCollectionGroup}></SummaryDataCollectionGroupPanel>
+              <SummaryDataCollectionGroupPanel compact={compact} proposalName={proposalName} dataCollectionGroup={dataCollectionGroup}></SummaryDataCollectionGroupPanel>
             </Tab.Pane>
             <Tab.Pane eventKey="Beamline" title="Beamline Parameters">
               <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>

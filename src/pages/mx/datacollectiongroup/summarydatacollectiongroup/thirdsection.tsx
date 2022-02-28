@@ -4,11 +4,11 @@ import ScreeningSection from './screeningsection';
 import AutoprocIntegrationSection from './autoprocintegrationsection';
 import { getBestResult } from 'helpers/mx/resultparser';
 
-export default function ThirdSection({ dataCollectionGroup }: { dataCollectionGroup: DataCollectionGroup }) {
+export default function ThirdSection({ dataCollectionGroup, compact = false }: { dataCollectionGroup: DataCollectionGroup; compact?: boolean }) {
   const bestResult = getBestResult(dataCollectionGroup);
 
   if (bestResult) {
-    return <AutoprocIntegrationSection bestResult={bestResult}></AutoprocIntegrationSection>;
+    return <AutoprocIntegrationSection compact={compact} bestResult={bestResult}></AutoprocIntegrationSection>;
   }
-  return <ScreeningSection dataCollectionGroup={dataCollectionGroup}></ScreeningSection>;
+  return <ScreeningSection compact={compact} dataCollectionGroup={dataCollectionGroup}></ScreeningSection>;
 }

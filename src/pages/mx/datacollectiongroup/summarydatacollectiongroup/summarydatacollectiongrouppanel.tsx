@@ -11,37 +11,48 @@ import UI from 'config/ui';
 export interface Props {
   proposalName: string;
   dataCollectionGroup: DataCollectionGroup;
+  compact: boolean;
 }
 
-export default function SummaryDataCollectionGroupPanel({ proposalName, dataCollectionGroup }: Props) {
+export default function SummaryDataCollectionGroupPanel({ proposalName, dataCollectionGroup, compact }: Props) {
   return (
     <Container fluid>
       <Row>
         <Col xs={12} sm={6} md={'auto'}>
-          <FirstSection dataCollectionGroup={dataCollectionGroup}></FirstSection>
+          <FirstSection compact={compact} dataCollectionGroup={dataCollectionGroup}></FirstSection>
         </Col>
         <Col xs={12} sm={6} md={'auto'}>
-          <SecondSection dataCollectionGroup={dataCollectionGroup}></SecondSection>
+          <SecondSection compact={compact} dataCollectionGroup={dataCollectionGroup}></SecondSection>
         </Col>
         <Col xs={12} sm={12} md={'auto'}>
-          <ThirdSection dataCollectionGroup={dataCollectionGroup}></ThirdSection>
+          <ThirdSection compact={compact} dataCollectionGroup={dataCollectionGroup}></ThirdSection>
         </Col>
-        <Col xs={12} sm={6} md={true}>
-          <ZoomImage alt="Diffraction" src={getDiffrationThumbnail({ proposalName, imageId: dataCollectionGroup.firstImageId }).url}></ZoomImage>
-        </Col>
-        <Col xs={12} sm={6} md={true}>
-          <ZoomImage alt="Crystal" src={getCrystalImage({ proposalName, dataCollectionId: dataCollectionGroup.DataCollection_dataCollectionId, imageIndex: 1 }).url}></ZoomImage>
-        </Col>
+        {!compact && (
+          <Col xs={12} sm={6} md={true}>
+            <ZoomImage alt="Diffraction" src={getDiffrationThumbnail({ proposalName, imageId: dataCollectionGroup.firstImageId }).url}></ZoomImage>
+          </Col>
+        )}
+        {!compact && (
+          <Col xs={12} sm={6} md={true}>
+            <ZoomImage alt="Crystal" src={getCrystalImage({ proposalName, dataCollectionId: dataCollectionGroup.DataCollection_dataCollectionId, imageIndex: 1 }).url}></ZoomImage>
+          </Col>
+        )}
         {UI.MX.showQualityIndicatorPlot && (
           <Col xs={12} sm={6} md={true}>
-            <ZoomImage alt="Dozor" src={getDozorPlot({ proposalName, dataCollectionId: dataCollectionGroup.DataCollection_dataCollectionId }).url}></ZoomImage>
+            <ZoomImage
+              style={compact ? { maxWidth: 150 } : undefined}
+              alt="Dozor"
+              src={getDozorPlot({ proposalName, dataCollectionId: dataCollectionGroup.DataCollection_dataCollectionId }).url}
+            ></ZoomImage>
           </Col>
         )}
       </Row>
-      <Row>
-        <h6>Comments</h6>
-        <p>{dataCollectionGroup.DataCollectionGroup_comments}</p>
-      </Row>
+      {!compact && (
+        <Row>
+          <h6>Comments</h6>
+          <p>{dataCollectionGroup.DataCollectionGroup_comments}</p>
+        </Row>
+      )}
     </Container>
   );
 }
