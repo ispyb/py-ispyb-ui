@@ -26,10 +26,10 @@ export function expo(x, f) {
   return Number.parseFloat(x).toExponential(f);
 }
 
-export function convertToExponential(value) {
+export function convertToExponential(value, decimals) {
   if (value) {
     try {
-      return parseFloat(value).toExponential();
+      return parseFloat(value).toExponential(decimals);
     } catch (e) {
       return 'NA';
     }

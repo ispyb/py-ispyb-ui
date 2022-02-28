@@ -18,6 +18,15 @@ const UI = {
     usernameLabel: 'Username',
     ssoBtnLabel: 'Sign in with ESRF SSO',
   },
+
+  MX: {
+    showQualityIndicatorPlot: true, // It shows or hides the quality indicator plot from the summary tab of a datacollection
+    showCollectionTab: true,
+    showCrystalSnapshot1: true,
+    showCrystalSnapshot2: true,
+    showCrystalSnapshot3: true,
+    showCrystalSnapshot4: true,
+  },
 };
 
 export default UI;

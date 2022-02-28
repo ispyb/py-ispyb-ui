@@ -29,7 +29,19 @@ export function getSessionById(sessionId: string | undefined) {
   return { url: `${server}/${token}/proposal/session/${sessionId}/list` };
 }
 
-export function getDataCollectionsBy({ proposalName, sessionId }: { proposalName: string; sessionId?: string }) {
+export function getMXDataCollectionsBy({ proposalName, sessionId }: { proposalName: string; sessionId?: string }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/mx/datacollection/session/${sessionId}/list` };
+}
+
+export function getMxDataCollectionsByGroupId({ proposalName, dataCollectionGroupId }: { proposalName: string; dataCollectionGroupId: string }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/mx/datacollection/datacollectiongroupid/${dataCollectionGroupId}/list` };
+}
+
+export function getMxWorkflow({ proposalName, stepId }: { proposalName: string; stepId: string }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/mx/workflow/step/${stepId}/result` };
+}
+
+export function getEMDataCollectionsBy({ proposalName, sessionId }: { proposalName: string; sessionId?: string }) {
   return { url: `${server}/${token}/proposal/${proposalName}/em/datacollection/session/${sessionId}/list` };
 }
 
@@ -65,4 +77,16 @@ export function getMovieThumbnail({ proposalName, dataCollectionId, movieId }: {
 
 export function getClassificationThumbnail({ proposalName, particleClassificationId }: { proposalName: string; particleClassificationId: number }) {
   return { url: `${server}/${token}/proposal/${proposalName}/em/classification/${particleClassificationId}/thumbnail` };
+}
+
+export function getDiffrationThumbnail({ proposalName, imageId }: { proposalName: string; imageId: number }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/mx/image/${imageId}/thumbnail` };
+}
+
+export function getDozorPlot({ dataCollectionId, proposalName }: { proposalName: string; dataCollectionId: number }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/mx/datacollection/${dataCollectionId}/qualityindicatorplot` };
+}
+
+export function getWorkflowImage({ stepId, proposalName }: { proposalName: string; stepId: string }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/mx/workflow/step/${stepId}/image` };
 }

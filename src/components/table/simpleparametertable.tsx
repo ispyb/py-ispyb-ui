@@ -3,8 +3,9 @@ import { Table } from 'react-bootstrap';
 
 interface Parameter {
   key: string;
-  value: string | number | null;
+  value: string | number | undefined | null;
   className?: string;
+  units?: string;
 }
 
 interface Props {
@@ -27,9 +28,9 @@ export default function SimpleParameterTable({ parameters, header }: Props): JSX
           {
             return (
               <tr className={parameter.className}>
-                <td>{parameter.key}</td>
-                <td>
-                  <strong>{parameter.value}</strong>
+                <td style={{ fontSize: 'smaller' }}>{parameter.key}</td>
+                <td style={{ fontSize: 'x-small' }}>
+                  <strong>{parameter.value} </strong> {parameter.units ? parameter.units : ''}
                 </td>
               </tr>
             );

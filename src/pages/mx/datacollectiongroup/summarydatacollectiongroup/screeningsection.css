@@ -1,0 +1,31 @@
+.summary_datacollection_success {
+  width: 10px;
+  height: 10px;
+  border-radius: 99px;
+  -moz-border-radius: 99px;
+  -webkit-border-radius: 99px;
+  background: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    from(#caffca),
+    to(#64fe2e)
+  );
+  box-shadow: 0 2px 4px #000;
+}
+
+.summary_datacollection_failed {
+  width: 10px;
+  height: 10px;
+  border-radius: 99px;
+  -moz-border-radius: 99px;
+  -webkit-border-radius: 99px;
+  background: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    from(#f5a9a9),
+    to(#fe2e2e)
+  );
+  box-shadow: 0 2px 4px #000;
+}
