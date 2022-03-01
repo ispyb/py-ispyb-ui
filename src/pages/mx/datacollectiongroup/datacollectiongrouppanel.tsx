@@ -31,7 +31,7 @@ function getUniqueCount(commaSeparatedList?: string): number {
 export default function DataCollectionGroupPanel({ proposalName, dataCollectionGroup, compact }: Props) {
   return (
     <Tab.Container defaultActiveKey="Summary">
-      <Card className="card-datacollectiongroup-panel">
+      <Card className="themed-card card-datacollectiongroup-panel">
         <Card.Header style={compact ? { padding: 0 } : undefined}>
           <Container fluid>
             <Row>

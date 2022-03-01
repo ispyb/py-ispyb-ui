@@ -5,7 +5,7 @@ import UnitCellSection from './unitcellsection';
 
 function getColorProgressBarByCompleness(completeness: string) {
   if (parseFloat(completeness) > 90) {
-    return 'primary';
+    return 'info';
   }
   if (parseFloat(completeness) > 50) {
     return 'warning';
