@@ -9,6 +9,7 @@ import LazyWrapper from 'components/loading/lazywrapper';
 import LoadingPanel from 'components/loading/loadingpanel';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faListAlt, faListUl } from '@fortawesome/free-solid-svg-icons';
+import { Subject } from 'rxjs';
 
 type Param = {
   sessionId: string;
@@ -20,6 +21,7 @@ export default function MXDataCollectionGroupPage() {
   const { data: dataCollectionGroups, isError } = useMXDataCollectionsBy({ proposalName, sessionId });
   if (isError) throw Error(isError);
   const [compact, setCompact] = useState(false);
+  const compactToggle = new Subject<boolean>();
   return (
     <MXPage sessionId={sessionId} proposalName={proposalName}>
       <Card>
@@ -34,6 +36,7 @@ export default function MXDataCollectionGroupPage() {
               checked={!compact}
               onClick={() => {
                 setCompact(false);
+                compactToggle.next(false);
               }}
               value={''}
             >
@@ -51,6 +54,7 @@ export default function MXDataCollectionGroupPage() {
                 checked={compact}
                 onClick={() => {
                   setCompact(true);
+                  compactToggle.next(true);
                 }}
                 value={''}
               >
@@ -62,7 +66,13 @@ export default function MXDataCollectionGroupPage() {
         {dataCollectionGroups.map((dataCollectionGroup: DataCollectionGroup) => (
           <div style={compact ? { margin: 1 } : { margin: 5 }}>
             <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-              <DataCollectionGroupPanel compact={compact} dataCollectionGroup={dataCollectionGroup} proposalName={proposalName} sessionId={sessionId}></DataCollectionGroupPanel>
+              <DataCollectionGroupPanel
+                compactToggle={compactToggle}
+                defaultCompact={compact}
+                dataCollectionGroup={dataCollectionGroup}
+                proposalName={proposalName}
+                sessionId={sessionId}
+              ></DataCollectionGroupPanel>
             </LazyWrapper>
           </div>
         ))}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
 import { DataCollectionGroup } from 'pages/mx/model';
 import { getDiffrationThumbnail, getCrystalImage, getDozorPlot } from 'api/ispyb';
 import ZoomImage from 'components/image/zoomimage';
@@ -16,7 +16,7 @@ export interface Props {
 
 export default function SummaryDataCollectionGroupPanel({ proposalName, dataCollectionGroup, compact }: Props) {
   return (
-    <Container fluid>
+    <>
       <Row>
         <Col xs={12} sm={6} md={3}>
           <FirstSection compact={compact} dataCollectionGroup={dataCollectionGroup}></FirstSection>
@@ -57,6 +57,6 @@ export default function SummaryDataCollectionGroupPanel({ proposalName, dataColl
           <p>{dataCollectionGroup.DataCollectionGroup_comments}</p>
         </Row>
       )}
-    </Container>
+    </>
   );
 }
