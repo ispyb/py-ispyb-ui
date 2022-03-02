@@ -17,41 +17,38 @@ export default function UnitCellSection({
   cell_gamma: string | undefined;
 }) {
   return (
-    <Table responsive style={{ fontSize: '9px', textAlign: 'center' }}>
-      <tbody>
-        <tr>
-          <td>a</td>
-          <td>b</td>
-          <td>c</td>
-        </tr>
-        <tr>
-          <td>
-            <b>{cell_a} Å</b>
-          </td>
-          <td>
-            <b>{cell_b} Å</b>
-          </td>
-          <td>
-            <b>{cell_c} Å</b>
-          </td>
-        </tr>
-        <tr>
-          <td>α</td>
-          <td>β</td>
-          <td>γ</td>
-        </tr>
-        <tr>
-          <td>
-            <b>{cell_alpha} °</b>
-          </td>
-          <td>
-            <b>{cell_beta} °</b>
-          </td>
-          <td>
-            <b>{cell_gamma} °</b>
-          </td>
-        </tr>
-      </tbody>
-    </Table>
+    <>
+      <Table responsive size="sm" style={{ whiteSpace: 'nowrap', textAlign: 'center' }}>
+        <thead>
+          <tr>
+            <td>a</td>
+            <td>b</td>
+            <td>c</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{cell_a} Å</td>
+            <td>{cell_b} Å</td>
+            <td>{cell_c} Å</td>
+          </tr>
+        </tbody>
+
+        <thead style={{ borderTop: 'none' }}>
+          <tr>
+            <td>α</td>
+            <td>β</td>
+            <td>γ</td>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{cell_alpha} °</td>
+            <td>{cell_beta} °</td>
+            <td>{cell_gamma} °</td>
+          </tr>
+        </tbody>
+      </Table>
+    </>
   );
 }
