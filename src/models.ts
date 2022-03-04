@@ -3,7 +3,7 @@
  /******************************************/
 interface Beamline {
   name: string;
-  sampleChangerType: string;
+  sampleChangerType?: string;
 }
 
 interface Technique {
@@ -39,6 +39,8 @@ export interface Site {
   authentication: Authentication;
   server: string;
   name: string;
+  description: string;
+  icon: string;
 }
 /********************************************
  * User 

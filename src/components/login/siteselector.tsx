@@ -3,9 +3,9 @@ import { DropdownButton, Dropdown } from 'react-bootstrap';
 import { useSelector } from 'react-redux';
 import { Site } from 'models';
 import { RootState } from 'store';
-import sites from 'config/sites';
 import { setSite } from 'redux/actions/site';
 import { useAppDispatch } from 'hooks';
+import sites from 'config/sites';
 
 function SiteSelector() {
   const dispatch = useAppDispatch();

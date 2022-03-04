@@ -36,9 +36,27 @@ export default function MoviePanel(props: Props) {
             parameters={[
               { key: 'Number', value: movie.Movie_movieNumber },
               { key: 'Time', value: movie.Movie_createdTimeStamp },
-              { key: 'Movie File Name', value: movie.Movie_fileName },
-              { key: 'Average motion/frame', value: movie.MotionCorrection_averageMotionPerFrame },
-              { key: 'Resolution', value: movie.CTF_resolutionLimit },
+              { key: 'Movie File Name', value: movie.Movie_fileName, valueTooltip: movie.Movie_movieFullPath },
+            ]}
+          ></SimpleParameterTable>
+          <SimpleParameterTable
+            header="Position"
+            parameters={[
+              { key: 'X', value: expo(movie.Movie_positionX, 3) },
+              { key: 'Y', value: expo(movie.Movie_positionY, 3) },
+            ]}
+          ></SimpleParameterTable>
+        </Col>
+
+        <Col xs={2}>
+          <SimpleParameterTable
+            header="Motion Correction"
+            parameters={[
+              { key: 'Total Motion', value: movie.MotionCorrection_totalMotion, className: isMotionThreshold(movie) ? 'text-danger' : '' },
+              { key: 'Avg. Motion/frame', value: movie.MotionCorrection_averageMotionPerFrame },
+              { key: 'Frame Range', value: movie.MotionCorrection_lastFrame },
+              { key: 'Dose/frame', value: movie.MotionCorrection_dosePerFrame },
+              { key: 'Total dose', value: movie.Movie_dosePerImage },
             ]}
           ></SimpleParameterTable>
         </Col>
@@ -66,26 +84,6 @@ export default function MoviePanel(props: Props) {
             />
           </div>
         </Col>
-
-        <Col xs={2}>
-          <SimpleParameterTable
-            header="Motion Correction"
-            parameters={[
-              { key: 'X', value: expo(movie.Movie_positionX, 3) },
-              { key: 'Y', value: expo(movie.Movie_positionY, 3) },
-            ]}
-          ></SimpleParameterTable>
-          <SimpleParameterTable
-            header="Motion Correction"
-            parameters={[
-              { key: 'Total Motion', value: movie.MotionCorrection_totalMotion, className: isMotionThreshold(movie) ? 'text-danger' : '' },
-              { key: 'Avg. Motion/frame', value: movie.MotionCorrection_averageMotionPerFrame },
-              { key: 'Frame Range', value: movie.MotionCorrection_lastFrame },
-              { key: 'Dose', value: movie.MotionCorrection_dosePerFrame },
-            ]}
-          ></SimpleParameterTable>
-        </Col>
-
         <Col xs={2}>
           <SimpleParameterTable
             header="CTF Results"
