@@ -18,6 +18,7 @@ import { useAppSelector } from 'hooks';
 import LoadingPanel from 'components/loading/loadingpanel';
 import 'App.css';
 import MXWorkflowPage from 'pages/mx/workflow/mxworkflowpage';
+import MXDataCollectionGroupPage from 'pages/mx/datacollectiongroup/mxdatacollectiongrouppage';
 
 export default function App() {
   const user = useAppSelector((state) => state.user);
