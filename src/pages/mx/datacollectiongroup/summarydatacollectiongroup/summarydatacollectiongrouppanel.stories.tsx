@@ -167,5 +167,5 @@ const l = { title: 'SummaryDataCollectionGroupPanel', component: SummaryDataColl
 export default l;
 
 export const SimpleSummaryDataCollectionGroupPanel = () => (
-  <SummaryDataCollectionGroupPanel proposalName={'M0000'} dataCollectionGroup={dataCollectionGroup}></SummaryDataCollectionGroupPanel>
+  <SummaryDataCollectionGroupPanel compact={false} proposalName={'M0000'} dataCollectionGroup={dataCollectionGroup}></SummaryDataCollectionGroupPanel>
 );

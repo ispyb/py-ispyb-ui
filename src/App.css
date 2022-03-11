@@ -40,3 +40,19 @@
 .react-bootstrap-table table {
   table-layout: auto !important;
 }
+
+.themed-card .card-header {
+  background-color: #739393 !important;
+}
+
+.themed-card .card-header h5 {
+  color: white;
+}
+
+.themed-card .card-header .nav-link {
+  color: white;
+}
+
+.themed-card .card-body {
+  background-color: #8080800a;
+}

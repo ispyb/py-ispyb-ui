@@ -17,7 +17,7 @@ export default function LazyWrapper({ children, placeholder }: LazyWrapperType) 
     // LazyLoad only takes into account scroll events -> elements do not load on tab change
     // ===> fix by combination with VisibilitySensor
     <VisibilitySensor onChange={forceCheckIfVisible}>
-      <LazyLoad placeholder={placeholder} offset={500}>
+      <LazyLoad once placeholder={placeholder} offset={500}>
         {children}
       </LazyLoad>
     </VisibilitySensor>

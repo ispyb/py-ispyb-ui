@@ -2,7 +2,7 @@ import React from 'react';
 import { DataCollectionGroup } from 'pages/mx/model';
 import SimpleParameterTable from 'components/table/simpleparametertable';
 
-export default function FirstSection({ dataCollectionGroup }: { dataCollectionGroup: DataCollectionGroup }) {
+export default function FirstSection({ dataCollectionGroup, compact = false }: { dataCollectionGroup: DataCollectionGroup; compact?: boolean }) {
   const {
     Workflow_workflowType,
     Protein_acronym,
@@ -13,10 +13,13 @@ export default function FirstSection({ dataCollectionGroup }: { dataCollectionGr
     transmission,
     DataCollection_numberOfPasses,
   } = dataCollectionGroup;
-
-  return (
-    <SimpleParameterTable
-      parameters={[
+  const parameters = compact
+    ? [
+        { key: 'Protein', value: Protein_acronym },
+        { key: 'Prefix', value: DataCollection_imagePrefix },
+        { key: '# Images (Total)', value: `${DataCollection_numberOfImages} (${totalNumberOfImages})` },
+      ]
+    : [
         { key: 'Workflow', value: Workflow_workflowType },
         { key: 'Protein', value: Protein_acronym },
         { key: 'Sample', value: BLSample_name },
@@ -24,7 +27,6 @@ export default function FirstSection({ dataCollectionGroup }: { dataCollectionGr
         { key: 'Run', value: DataCollection_numberOfPasses },
         { key: '# Images (Total)', value: `${DataCollection_numberOfImages} (${totalNumberOfImages})` },
         { key: 'Transmission', value: transmission, units: '%' },
-      ]}
-    ></SimpleParameterTable>
-  );
+      ];
+  return <SimpleParameterTable parameters={parameters}></SimpleParameterTable>;
 }

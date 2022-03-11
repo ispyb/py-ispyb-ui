@@ -1,11 +1,11 @@
 import { Shells } from 'helpers/mx/resultparser';
 import React from 'react';
-import { ProgressBar, Table } from 'react-bootstrap';
+import { Col, ProgressBar, Row, Table } from 'react-bootstrap';
 import UnitCellSection from './unitcellsection';
 
 function getColorProgressBarByCompleness(completeness: string) {
   if (parseFloat(completeness) > 90) {
-    return 'primary';
+    return 'info';
   }
   if (parseFloat(completeness) > 50) {
     return 'warning';
@@ -29,18 +29,16 @@ function getShellStatistics(
       <td>
         <ProgressBar variant={getColorProgressBarByCompleness(completeness)} now={parseFloat(completeness)} label={completeness + '%'} />{' '}
       </td>
-      <td>
-        {resolutionLimitLow} - {resolutionLimitHigh}
-      </td>
+      <td>{`${resolutionLimitLow} - ${resolutionLimitHigh}`}</td>
       <td>{rMerge}</td>
     </tr>
   );
 }
 
-export default function AutoprocIntegrationSection({ bestResult }: { bestResult: Shells }) {
-  return (
-    <div>
-      <Table responsive className="parameterKey">
+export default function AutoprocIntegrationSection({ bestResult, compact }: { bestResult: Shells; compact: boolean }) {
+  const content = [
+    <Col>
+      <Table size="sm" style={{ whiteSpace: 'nowrap' }} responsive className="parameterKey">
         <thead>
           <tr>
             <td className="parameterValue">{bestResult.refShell.v_datacollection_summary_phasing_autoproc_space_group}</td>
@@ -73,6 +71,8 @@ export default function AutoprocIntegrationSection({ bestResult }: { bestResult:
           )}
         </tbody>
       </Table>
+    </Col>,
+    <Col>
       <UnitCellSection
         cell_a={bestResult.shells.innerShell.cell_a}
         cell_b={bestResult.shells.innerShell.cell_b}
@@ -81,6 +81,7 @@ export default function AutoprocIntegrationSection({ bestResult }: { bestResult:
         cell_beta={bestResult.shells.innerShell.cell_beta}
         cell_gamma={bestResult.shells.innerShell.cell_gamma}
       ></UnitCellSection>
-    </div>
-  );
+    </Col>,
+  ];
+  return compact ? <Row>{content}</Row> : <Col>{content}</Col>;
 }

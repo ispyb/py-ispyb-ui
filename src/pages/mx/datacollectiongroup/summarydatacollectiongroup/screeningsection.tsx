@@ -1,6 +1,6 @@
 import { DataCollectionGroup } from 'pages/mx/model';
 import React from 'react';
-import { Table } from 'react-bootstrap';
+import { Col, Row, Table } from 'react-bootstrap';
 import UnitCellSection from './unitcellsection';
 
 import './screeningsection.css';
@@ -55,25 +55,38 @@ function getStrategyOsc(datacollectiongroup: DataCollectionGroup) {
   }
 }
 
-export default function ScreeningSection({ dataCollectionGroup }: { dataCollectionGroup: DataCollectionGroup }) {
-  return (
-    <div>
-      <Table responsive className="parameterKey">
+export default function ScreeningSection({ dataCollectionGroup, compact }: { dataCollectionGroup: DataCollectionGroup; compact: boolean }) {
+  const content = [
+    <Col>
+      <Table responsive className="parameterKey" style={{ marginBottom: 0 }}>
         <tbody>
           <Indexed dataCollectionGroup={dataCollectionGroup}></Indexed>
           <StrategyHeader dataCollectionGroup={dataCollectionGroup}></StrategyHeader>
+        </tbody>
+      </Table>
+    </Col>,
+    <Col>
+      <Table responsive className="parameterKey" style={{ marginBottom: 0 }}>
+        <tbody>
           {getRankingResolution(dataCollectionGroup)}
           {getStrategyOsc(dataCollectionGroup)}
           <StrategyImages dataCollectionGroup={dataCollectionGroup}></StrategyImages>
+        </tbody>
+      </Table>
+    </Col>,
+    <Col>
+      <Table responsive className="parameterKey">
+        <tbody>
           <StrategyOscRange dataCollectionGroup={dataCollectionGroup}></StrategyOscRange>
 
           <StrategyTransmission dataCollectionGroup={dataCollectionGroup}></StrategyTransmission>
           <StrategyExpTime dataCollectionGroup={dataCollectionGroup}></StrategyExpTime>
         </tbody>
       </Table>
-      {getUnitCellSection(dataCollectionGroup)}
-    </div>
-  );
+    </Col>,
+    <Col>{getUnitCellSection(dataCollectionGroup)}</Col>,
+  ];
+  return compact ? <Row>{content}</Row> : <Col>{content}</Col>;
 }
 
 function Indexed({ dataCollectionGroup }: { dataCollectionGroup: DataCollectionGroup }) {
