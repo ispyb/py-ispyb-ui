@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import { ToggleButton } from 'react-bootstrap';
 import { useAppDispatch } from 'hooks';
 
-interface DispacherType {
+export interface DispacherType {
   // eslint-disable-next-line
-  (action: string, b: boolean): boolean;
+  (action: string, b: boolean): {
+    type: string;
+    visible: boolean;
+  };
 }
 
 export interface ActionToggleButtonType {

@@ -10,11 +10,22 @@ import { isMatch } from 'date-fns';
  * @returns
  */
 export function formatDateTo(dateTime: string, outputFormat: string): string {
+  return format(parseDate(dateTime), outputFormat);
+}
+
+export function dateToTimestamp(dateTime?: string): number {
+  if (dateTime) {
+    return parseDate(dateTime).getTime();
+  }
+  return 0;
+}
+
+export function parseDate(dateTime: string): Date {
   const formats = ['MMM d, yyyy h:mm:ss aaa'];
   for (const myFormat of formats) {
     if (isMatch(dateTime, myFormat)) {
-      return format(parse(dateTime, myFormat, new Date()), outputFormat);
+      return parse(dateTime, myFormat, new Date());
     }
   }
-  return format(parseISO(dateTime), outputFormat);
+  return parseISO(dateTime);
 }
