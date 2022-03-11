@@ -19,6 +19,7 @@ import LoadingPanel from 'components/loading/loadingpanel';
 import 'App.css';
 import MXWorkflowPage from 'pages/mx/workflow/mxworkflowpage';
 import MXDataCollectionGroupPage from 'pages/mx/datacollectiongroup/mxdatacollectiongrouppage';
+import ProposalSessionsPage from 'pages/proposalsessionspage';
 
 export default function App() {
   const user = useAppSelector((state) => state.user);
@@ -48,6 +49,7 @@ export default function App() {
             <Routes>
               <Route path="/" element={<SessionsPage user={user} />} />
               <Route path="/sessions" element={<SessionsPage user={user} />} />
+              <Route path="/:proposalName/sessions" element={<ProposalSessionsPage user={user} />} />
               <Route path="/proposals" element={<ProposalsPage />} />
               <Route path="/shipping" element={<ShippingPage />} />
               <Route path="/prepare" element={<PreparePage />} />

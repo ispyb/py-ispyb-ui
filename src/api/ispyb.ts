@@ -21,8 +21,16 @@ export function getSessions({ startDate, endDate }: { startDate?: string; endDat
   return { url: `${server}/${token}/session/list` };
 }
 
+export function getProposalSessions(proposalName: string) {
+  return { url: `${server}/${token}/proposal/${proposalName}/session/list` };
+}
+
 export function getProposal(proposalName?: string) {
   return { url: `${server}/${token}/proposal/${proposalName}/info/get` };
+}
+
+export function getProposals() {
+  return { url: `${server}/${token}/proposal/list` };
 }
 
 export function getSessionById(sessionId: string | undefined) {

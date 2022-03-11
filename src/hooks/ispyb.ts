@@ -1,18 +1,22 @@
 import useSWR from 'swr';
 import axios from 'axios';
 import {
-  getEMClassificationBy,
   getMXDataCollectionsBy,
+  getProposalSessions,
+  getEMClassificationBy,
   getEmMoviesByDataCollectionId,
   getProposal,
   getSessions,
   getSessionById,
   getEMDataCollectionsBy,
-  getEMStatisticsBy,
   getMxDataCollectionsByGroupId,
   getMxWorkflow,
+  getProposals,
+  getEMStatisticsBy,
 } from 'api/ispyb';
 import { WorkflowStep } from 'pages/mx/model';
+
+import { Proposal } from 'pages/model';
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
@@ -41,19 +45,29 @@ interface ProposalSessionId {
 }
 
 export function useProposal(props: UseSession) {
-  return doGet(getProposal(props.username).url);
+  return doGet(getProposal(props.proposalName).url);
+}
+
+export function useProposals() {
+  return doGet<Proposal[]>(getProposals().url);
+}
+
+export function useSessions(props: UseSession) {
+  const { startDate, endDate, isManager, proposalName } = props;
+  if (proposalName) {
+    return doGet(getProposalSessions(proposalName).url);
+  }
+  if (isManager && (!startDate || !endDate)) {
+    return { data: undefined, isError: 'Manager mush provide start and end dates' }; //would be too heavy
+  }
+  return doGet(getSessions({ startDate, endDate }).url);
 }
 
 export function useSession(props: UseSession) {
-  const { sessionId, startDate, endDate, isManager } = props;
+  const { sessionId } = props;
   if (sessionId) {
     return doGet(getSessionById(sessionId).url);
   }
-  if (isManager) {
-    if (sessionId) return doGet(getSessionById(sessionId).url);
-    return doGet(getSessions({ startDate, endDate }).url);
-  }
-  return doGet(getSessions({}).url);
 }
 
 export function useEMDataCollectionsBy({ proposalName, sessionId }: ProposalSessionId) {
