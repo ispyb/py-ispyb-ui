@@ -1,50 +1,47 @@
+@import 'bootstrap/scss/bootstrap';
+
 circle.sampleCollected {
   stroke: #000;
   stroke-width: 2;
-  fill: rgba(65, 65, 236, 0.753);
+  fill: $primary;
 }
 circle.sampleCollectedSelected {
   stroke: #000;
   stroke-width: 2;
-  fill: rgb(255, 252, 71);
+  fill: $warning;
 }
 circle.sampleFilled {
-  fill: rgba(65, 65, 236, 0.39);
+  fill: $secondary;
 }
 circle.sampleCollected:hover {
-  stroke: rgb(255, 252, 71);
+  stroke: $warning;
   stroke-width: 3;
 }
 circle.sampleEmpty {
-  fill: rgb(121, 121, 121);
+  fill: $light;
 }
 
 text.sampleCollected {
-  fill: white;
+  fill: color-contrast($primary);
   font-size: 8.25px;
   text-anchor: middle;
   pointer-events: none;
 }
 text.sampleCollectedSelected {
-  fill: black;
+  fill: color-contrast($warning);
   font-size: 8.25px;
   text-anchor: middle;
   pointer-events: none;
 }
 text.sampleFilled {
-  fill: white;
+  fill: color-contrast($secondary);
   font-size: 8.25px;
   text-anchor: middle;
   pointer-events: none;
 }
-text.sampleCollected:hover {
-  fill: white;
-  font-size: 8.25px;
-  text-anchor: middle;
-  pointer-events: none;
-}
+
 text.sampleEmpty {
-  fill: white;
+  fill: color-contrast($light);
   font-size: 8.25px;
   text-anchor: middle;
   pointer-events: none;

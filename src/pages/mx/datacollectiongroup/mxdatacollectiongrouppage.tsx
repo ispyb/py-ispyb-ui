@@ -82,8 +82,8 @@ export default function MXDataCollectionGroupPage() {
                   style={{ margin: 1 }}
                   size="sm"
                   type="checkbox"
-                  variant={selectMultiple ? 'outline-primary' : 'light'}
-                  checked={filterContainers && selectMultiple}
+                  variant={filterContainers && selectMultiple ? 'outline-primary' : 'light'}
+                  checked={true}
                   disabled={!filterContainers}
                   onClick={() => {
                     if (selectMultiple) {
@@ -106,7 +106,7 @@ export default function MXDataCollectionGroupPage() {
                   disabled={!filterContainers}
                   onClick={() => {
                     setSelectMultiple(true);
-                    setSelectedGroups(dataCollectionGroups.map((g) => g.DataCollectionGroup_dataCollectionGroupId || 0));
+                    setSelectedGroups(dataCollectionGroups.filter((g) => Boolean(g.Container_containerId)).map((g) => g.DataCollectionGroup_dataCollectionGroupId || 0));
                   }}
                   value={''}
                 >

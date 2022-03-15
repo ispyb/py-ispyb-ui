@@ -3,7 +3,7 @@ import { useMXContainers } from 'hooks/ispyb';
 import _ from 'lodash';
 import { range } from 'lodash';
 import { Badge, OverlayTrigger, Tooltip } from 'react-bootstrap';
-import './mxcontainer.css';
+import './mxcontainer.scss';
 
 export const positionsUni = [
   { x: '75', y: '47.72727272727273' },
@@ -145,7 +145,7 @@ export function MXContainer({
           return (
             <>
               <circle className="sampleEmpty" cx={position.x} cy={position.y} r="13.138736566410419"></circle>
-              <text x={position.x} y={position.y} fill="white" font-size="8.25" text-anchor="middle" pointer-events="none">
+              <text x={position.x} y={position.y} className="sampleEmpty">
                 <tspan dx="0" dy="3" pointer-events="none">
                   {n}
                 </tspan>

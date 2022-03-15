@@ -109,7 +109,7 @@ export default function DataCollectionGroupPanel({ proposalName, dataCollectionG
                 </Button>
               </OverlayTrigger>
             </Col>
-            <Col>
+            <Col style={compact ? undefined : { marginTop: 20 }}>
               <Tab.Content>
                 <Tab.Pane eventKey="Summary" title="Summary">
                   <SummaryDataCollectionGroupPanel compact={compact} proposalName={proposalName} dataCollectionGroup={dataCollectionGroup}></SummaryDataCollectionGroupPanel>
