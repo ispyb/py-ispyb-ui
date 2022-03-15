@@ -41,7 +41,7 @@ export default function AutoprocIntegrationSection({ bestResult, compact }: { be
       <Table size="sm" style={{ whiteSpace: 'nowrap' }} responsive className="parameterKey">
         <thead>
           <tr>
-            <td className="parameterValue">{bestResult.refShell.v_datacollection_summary_phasing_autoproc_space_group}</td>
+            <td className="parameterValue">{bestResult.refShell.spaceGroup}</td>
             <td className="parameterValue">Completeness</td>
             <td className="parameterValue">Res.</td>
             <td className="parameterValue">Rmerge</td>
