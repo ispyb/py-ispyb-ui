@@ -49,6 +49,10 @@ export function getMxWorkflow({ proposalName, stepId }: { proposalName: string; 
   return { url: `${server}/${token}/proposal/${proposalName}/mx/workflow/step/${stepId}/result` };
 }
 
+export function getMXContainers({ proposalName, containerIds }: { proposalName: string; containerIds: string[] }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/mx/sample/containerid/${containerIds.join(',')}/list` };
+}
+
 export function getEMDataCollectionsBy({ proposalName, sessionId }: { proposalName: string; sessionId?: string }) {
   return { url: `${server}/${token}/proposal/${proposalName}/em/datacollection/session/${sessionId}/list` };
 }

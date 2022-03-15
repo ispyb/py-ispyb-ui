@@ -1,0 +1,56 @@
+circle.sampleCollected {
+  stroke: #000;
+  stroke-width: 2;
+  fill: rgba(65, 65, 236, 0.753);
+}
+circle.sampleCollectedSelected {
+  stroke: #000;
+  stroke-width: 2;
+  fill: rgb(255, 252, 71);
+}
+circle.sampleFilled {
+  fill: rgba(65, 65, 236, 0.39);
+}
+circle.sampleCollected:hover {
+  stroke: rgb(255, 252, 71);
+  stroke-width: 3;
+}
+circle.sampleEmpty {
+  fill: rgb(121, 121, 121);
+}
+
+text.sampleCollected {
+  fill: white;
+  font-size: 8.25px;
+  text-anchor: middle;
+  pointer-events: none;
+}
+text.sampleCollectedSelected {
+  fill: black;
+  font-size: 8.25px;
+  text-anchor: middle;
+  pointer-events: none;
+}
+text.sampleFilled {
+  fill: white;
+  font-size: 8.25px;
+  text-anchor: middle;
+  pointer-events: none;
+}
+text.sampleCollected:hover {
+  fill: white;
+  font-size: 8.25px;
+  text-anchor: middle;
+  pointer-events: none;
+}
+text.sampleEmpty {
+  fill: white;
+  font-size: 8.25px;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.puck {
+  stroke: #000;
+  stroke-width: 1;
+}

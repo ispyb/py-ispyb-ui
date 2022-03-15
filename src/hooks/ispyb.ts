@@ -13,8 +13,9 @@ import {
   getMxWorkflow,
   getProposals,
   getEMStatisticsBy,
+  getMXContainers,
 } from 'api/ispyb';
-import { WorkflowStep } from 'pages/mx/model';
+import { WorkflowStep, Sample, DataCollectionGroup } from 'pages/mx/model';
 
 import { Proposal } from 'pages/model';
 
@@ -75,7 +76,7 @@ export function useEMDataCollectionsBy({ proposalName, sessionId }: ProposalSess
 }
 
 export function useMXDataCollectionsBy({ proposalName, sessionId }: ProposalSessionId) {
-  return doGet(getMXDataCollectionsBy({ proposalName, sessionId }).url);
+  return doGet<DataCollectionGroup[]>(getMXDataCollectionsBy({ proposalName, sessionId }).url);
 }
 export function useMxDataCollectionsByGroupId({ proposalName, dataCollectionGroupId }: { proposalName: string; dataCollectionGroupId: string }) {
   return doGet(getMxDataCollectionsByGroupId({ proposalName, dataCollectionGroupId }).url);
@@ -83,6 +84,10 @@ export function useMxDataCollectionsByGroupId({ proposalName, dataCollectionGrou
 
 export function useMxWorkflow({ proposalName, stepId }: { proposalName: string; stepId: string }) {
   return doGet<WorkflowStep>(getMxWorkflow({ proposalName, stepId }).url);
+}
+
+export function useMXContainers({ proposalName, containerIds }: { proposalName: string; containerIds: string[] }) {
+  return doGet<Sample[]>(getMXContainers({ proposalName, containerIds }).url);
 }
 
 export function useEMStatistics({ proposalName, sessionId }: ProposalSessionId) {
