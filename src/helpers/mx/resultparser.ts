@@ -1,28 +1,28 @@
 import { spaceGroupLongNames, spaceGroupShortNames } from 'constants/spacegroups';
 import { convertToFixed } from 'helpers/numerictransformation';
-import _ from 'lodash';
+import _, { trim } from 'lodash';
 import { Dictionary } from 'lodash';
 import { DataCollectionGroup } from 'pages/mx/model';
 
 export interface Shell {
-  label?: string;
-  programId?: string;
-  v_datacollection_processingStatus?: string;
-  processingProgram?: string;
-  processingProgramId?: string;
+  autoProcId?: string;
   scalingStatisticsType?: string;
-  rMerge?: string;
   completeness?: string;
   resolutionLimitHigh?: string;
   resolutionLimitLow?: string;
+  rMerge?: string;
+  meanIOverSigI?: string;
+  ccHalf?: string;
+  spaceGroup?: string;
   cell_a?: string;
   cell_b?: string;
   cell_c?: string;
   cell_alpha?: string;
   cell_beta?: string;
   cell_gamma?: string;
-  v_datacollection_summary_phasing_anomalous?: boolean;
-  v_datacollection_summary_phasing_autoproc_space_group?: string;
+  anomalous?: boolean;
+  status?: string;
+  progam?: string;
 }
 
 export interface Shells {
@@ -30,32 +30,17 @@ export interface Shells {
   shells: Dictionary<Shell>;
 }
 
-function getArrayValue(array: string | undefined, index: number): string | undefined {
-  if (array) {
-    try {
-      return array.split(',')[index].trim();
-    } catch (e) {
-      return undefined;
-    }
+export function prepareArray(arrayString?: string) {
+  if (arrayString) {
+    return _(arrayString).split(',').map(trim);
   }
-}
-
-function getAnomalousArrayValue(array: string | undefined, index: number): boolean | undefined {
-  const anomalous = getArrayValue(array, index);
-  if (anomalous === '0') {
-    return false;
-  }
-  if (anomalous === '1') {
-    return true;
-  }
-  return undefined;
-}
-function notEmpty<TValue>(value: TValue | null | undefined): value is TValue {
-  return value !== null && value !== undefined;
+  const a: string[] = [];
+  return _(a);
 }
 
 export function parseResults(dataCollectionGroup: DataCollectionGroup): Shells[] {
   const {
+    autoProcIntegrationId,
     autoProcIds,
     processingStatus,
     processingPrograms,
@@ -74,58 +59,101 @@ export function parseResults(dataCollectionGroup: DataCollectionGroup): Shells[]
     scalingStatisticsTypes,
   } = dataCollectionGroup;
   const results: Shells[] = [];
-  if (autoProcIds) {
-    /** in this array each program is triple because of inner, overall and outer shells */
-    const programIds = autoProcIds.split(',');
+  if (!autoProcIntegrationId) {
+    return results;
+  }
+  const autoProcIntegrationId_array = prepareArray(autoProcIntegrationId).value();
+  const autoProcIds_array = prepareArray(autoProcIds).value();
 
-    /** statisticsTypePrograms will contain every entry for type of shell and program */
-    const statisticsTypePrograms: Shell[] = [];
-    /** Creating container for programs */
+  if (!autoProcIntegrationId_array || !autoProcIds_array) {
+    return results;
+  }
 
-    for (let i = 0; i < programIds.length; i++) {
-      statisticsTypePrograms.push({
-        programId: programIds[i].trim(),
-        v_datacollection_processingStatus: getArrayValue(processingStatus, i),
-        processingProgram: getArrayValue(processingPrograms, i),
-        processingProgramId: getArrayValue(autoProcIds, i),
-        scalingStatisticsType: getArrayValue(scalingStatisticsTypes, i),
-        rMerge: convertToFixed(getArrayValue(rMerges, i), 1),
-        completeness: convertToFixed(getArrayValue(completenessList, i), 1),
-        resolutionLimitHigh: convertToFixed(getArrayValue(resolutionsLimitHigh, i), 1),
-        resolutionLimitLow: convertToFixed(getArrayValue(resolutionsLimitLow, i), 1),
-        cell_a: convertToFixed(getArrayValue(Autoprocessing_cell_a, i), 1),
-        cell_b: convertToFixed(getArrayValue(Autoprocessing_cell_b, i), 1),
-        cell_c: convertToFixed(getArrayValue(Autoprocessing_cell_c, i), 1),
-        cell_alpha: convertToFixed(getArrayValue(Autoprocessing_cell_alpha, i), 1),
-        cell_beta: convertToFixed(getArrayValue(Autoprocessing_cell_beta, i), 1),
-        cell_gamma: convertToFixed(getArrayValue(Autoprocessing_cell_gamma, i), 1),
-        v_datacollection_summary_phasing_anomalous: getAnomalousArrayValue(Autoprocessing_anomalous, i),
-        v_datacollection_summary_phasing_autoproc_space_group: getArrayValue(AutoProc_spaceGroups, i),
-      });
-    }
+  const processingStatus_array = prepareArray(processingStatus).value();
+  const processingPrograms_array = prepareArray(processingPrograms).value();
+  const rMerges_array = prepareArray(rMerges).value();
+  const completenessList_array = prepareArray(completenessList).value();
+  const resolutionsLimitHigh_array = prepareArray(resolutionsLimitHigh).value();
+  const resolutionsLimitLow_array = prepareArray(resolutionsLimitLow).value();
+  const Autoprocessing_cell_alpha_array = prepareArray(Autoprocessing_cell_alpha).value();
+  const Autoprocessing_cell_beta_array = prepareArray(Autoprocessing_cell_beta).value();
+  const Autoprocessing_cell_gamma_array = prepareArray(Autoprocessing_cell_gamma).value();
+  const Autoprocessing_cell_a_array = prepareArray(Autoprocessing_cell_a).value();
+  const Autoprocessing_cell_b_array = prepareArray(Autoprocessing_cell_b).value();
+  const Autoprocessing_cell_c_array = prepareArray(Autoprocessing_cell_c).value();
+  const Autoprocessing_anomalous_array = prepareArray(Autoprocessing_anomalous).value();
+  const AutoProc_spaceGroups_array = prepareArray(AutoProc_spaceGroups).value();
+  const scalingStatisticsTypes_array = prepareArray(scalingStatisticsTypes).value();
 
-    const groupedByProgramId = _.groupBy(statisticsTypePrograms, (v) => v.programId);
-    const mapped_scalingStatisticsTypes = _.filter(_.uniq(_.map(statisticsTypePrograms, (value) => value.scalingStatisticsType)), notEmpty);
-    groupedByProgramId;
-    for (const programId in groupedByProgramId) {
-      try {
-        const group = groupedByProgramId[programId];
-        group;
-        const keyByScalingStatisticsType = _.keyBy(group, 'scalingStatisticsType');
-        results.push({
-          refShell: keyByScalingStatisticsType[mapped_scalingStatisticsTypes[0]],
-          shells: keyByScalingStatisticsType,
-        });
-      } catch (e) {
-        console.log(e);
+  //Build autoProcIntegration objects
+  const autoProcIntegrations = _(autoProcIntegrationId_array)
+    .map((id, index) => {
+      return { id: id, status: processingStatus_array[index], anomalous: Autoprocessing_anomalous_array[index] === '1', progam: processingPrograms_array[index] };
+    })
+    .value();
+
+  //Count number of autoProcIntegration for each id
+  const autoProcIntegrationsCount = _(autoProcIntegrations)
+    .groupBy((v) => v.id)
+    .mapValues((v) => {
+      return v.length;
+    })
+    .value();
+
+  //Keep only those with SUCCESS and 3 occurences
+  const filteredautoProcIntegrations = _(autoProcIntegrations)
+    .filter((v) => v.status === 'SUCCESS')
+    .filter((v) => {
+      if (v.id) {
+        return autoProcIntegrationsCount[v.id] == 3;
       }
+      return false;
+    })
+    .value();
+
+  // Build AutoProc object for each program id
+  const groupedByProgramId = _(autoProcIds_array)
+    .map((id, index) => {
+      const r: Shell = {
+        autoProcId: id,
+        scalingStatisticsType: scalingStatisticsTypes_array[index],
+        completeness: convertToFixed(completenessList_array[index], 1),
+        resolutionLimitHigh: convertToFixed(resolutionsLimitHigh_array[index], 1),
+        resolutionLimitLow: convertToFixed(resolutionsLimitLow_array[index], 1),
+        rMerge: convertToFixed(rMerges_array[index], 1),
+        spaceGroup: AutoProc_spaceGroups_array[index],
+        cell_a: convertToFixed(Autoprocessing_cell_a_array[index], 1),
+        cell_b: convertToFixed(Autoprocessing_cell_b_array[index], 1),
+        cell_c: convertToFixed(Autoprocessing_cell_c_array[index], 1),
+        cell_alpha: convertToFixed(Autoprocessing_cell_alpha_array[index], 1),
+        cell_beta: convertToFixed(Autoprocessing_cell_beta_array[index], 1),
+        cell_gamma: convertToFixed(Autoprocessing_cell_gamma_array[index], 1),
+        ...filteredautoProcIntegrations[index],
+      };
+      return r;
+    })
+    .groupBy((v) => v.autoProcId)
+    .value();
+
+  // Build result
+  for (const programId in groupedByProgramId) {
+    try {
+      const group = groupedByProgramId[programId];
+      group;
+      const keyByScalingStatisticsType = _.keyBy(group, 'scalingStatisticsType');
+      results.push({
+        refShell: keyByScalingStatisticsType['innerShell'],
+        shells: keyByScalingStatisticsType,
+      });
+    } catch (e) {
+      console.log(e);
     }
   }
+
   return results;
 }
 
-// eslint-disable-next-line no-unused-vars
-function sort(array: Shells[], spacegroudFieldSelector: (res: Shell) => string) {
+function sort(array: Shells[]) {
   /** First sorting autoprocessing with rMerge < 10 */
   const minus10Rmerge = _.filter(array, function (o) {
     if (o.shells.innerShell) {
@@ -151,8 +179,8 @@ function sort(array: Shells[], spacegroudFieldSelector: (res: Shell) => string) 
   });
 
   function sortByHighestSymmetry(a: Shells, b: Shells) {
-    const spaceGroupA = spacegroudFieldSelector(a.refShell).replace(/\s/g, '');
-    const spaceGroupB = spacegroudFieldSelector(b.refShell).replace(/\s/g, '');
+    const spaceGroupA = a.refShell.spaceGroup?.replace(/\s/g, '');
+    const spaceGroupB = a.refShell.spaceGroup?.replace(/\s/g, '');
 
     let indexOfSpaceGroupA = _.indexOf(spaceGroupShortNames, spaceGroupA);
     if (indexOfSpaceGroupA === -1) {
@@ -178,36 +206,29 @@ function sort(array: Shells[], spacegroudFieldSelector: (res: Shell) => string) 
   minus10Rmerge.sort(sortByHighestSymmetry);
   plus10Rmerge.sort(sortByrMerge);
 
-  /** Setting lables */
-  if (plus10Rmerge) {
-    for (let i = 0; i < plus10Rmerge.length; i++) {
-      plus10Rmerge[i].refShell.label = 'rMerge > 10';
-    }
-  }
-
   return _.concat(minus10Rmerge, plus10Rmerge);
 }
 
 function rank(results: Shells[]): Shells[] {
   const anomalous = _.filter(results, function (os) {
     const o = os.refShell;
-    return o.v_datacollection_summary_phasing_anomalous === true && (o.v_datacollection_processingStatus === 'SUCCESS' || o.v_datacollection_processingStatus === '1');
+    return o.anomalous === true && (o.status === 'SUCCESS' || o.status === '1');
   });
   const nonanomalous = _.filter(results, function (os) {
     const o = os.refShell;
-    return o.v_datacollection_summary_phasing_anomalous === false && (o.v_datacollection_processingStatus === 'SUCCESS' || o.v_datacollection_processingStatus === '1');
+    return o.anomalous === false && (o.status === 'SUCCESS' || o.status === '1');
   });
   const running = _.filter(results, function (os) {
     const o = os.refShell;
-    return o.v_datacollection_processingStatus === 'RUNNING';
+    return o.status === 'RUNNING';
   });
   const failed = _.filter(results, function (os) {
     const o = os.refShell;
-    return o.v_datacollection_processingStatus === 'FAILED' || o.v_datacollection_processingStatus === '0';
+    return o.status === 'FAILED' || o.status === '0';
   });
 
-  const anomalousdata = sort(anomalous, (res) => res.v_datacollection_summary_phasing_autoproc_space_group || '');
-  const nonanomalousdata = sort(nonanomalous, (res) => res.v_datacollection_summary_phasing_autoproc_space_group || '');
+  const anomalousdata = sort(anomalous);
+  const nonanomalousdata = sort(nonanomalous);
 
   return _.concat(nonanomalousdata, anomalousdata, running, failed);
 }

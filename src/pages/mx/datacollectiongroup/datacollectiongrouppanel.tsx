@@ -15,6 +15,7 @@ import WorkflowDataCollectionGroupPanel from './workflow/workflowdatacollectiong
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons';
 import { Subject } from 'rxjs';
+import moment from 'moment';
 
 type Props = {
   sessionId: string;
@@ -51,7 +52,8 @@ export default function DataCollectionGroupPanel({ proposalName, dataCollectionG
               <Row>
                 <Col md="auto">
                   <h5 style={compact ? { fontSize: 15, margin: 5 } : undefined}>
-                    {dataCollectionGroup.startTimeList?.split(',')[0]} - {dataCollectionGroup.DataCollectionGroup_experimentType}
+                    {moment(dataCollectionGroup.DataCollectionGroup_startTime, 'MMMM Do YYYY, h:mm:ss A').format('DD/MM/YYYY HH:mm:ss')}
+                    <Badge bg="info">{dataCollectionGroup.DataCollectionGroup_experimentType}</Badge>
                   </h5>
                 </Col>
                 <Col></Col>
