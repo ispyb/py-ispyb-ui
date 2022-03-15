@@ -56,10 +56,10 @@ export default function SampleDataCollectionGroupPanel({ dataCollectionGroup }: 
         )}
       </Col>
       <Col xs={12} sm={6} md={true}>
-        {dataCollectionGroup.DataCollection_dataCollectionGroupId && (
+        {dataCollectionGroup.Container_containerId && (
           <Suspense fallback={<LoadingPanel></LoadingPanel>}>
             <MXContainer
-              selectedGroups={[dataCollectionGroup.DataCollection_dataCollectionGroupId]}
+              selectedGroups={[dataCollectionGroup.DataCollection_dataCollectionGroupId || 0]}
               containerId={String(dataCollectionGroup.Container_containerId)}
               sessionId={sessionId}
               proposalName={proposalName}
