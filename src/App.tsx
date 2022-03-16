@@ -16,7 +16,7 @@ import ErrorBoundary from 'components/errors/errorboundary';
 import Page from 'pages/page';
 import { useAppSelector } from 'hooks';
 import LoadingPanel from 'components/loading/loadingpanel';
-import 'App.css';
+import 'App.scss';
 import MXWorkflowPage from 'pages/mx/workflow/mxworkflowpage';
 import MXDataCollectionGroupPage from 'pages/mx/datacollectiongroup/mxdatacollectiongrouppage';
 import ProposalSessionsPage from 'pages/proposalsessionspage';

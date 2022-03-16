@@ -73,7 +73,7 @@ function WorkflowDescription({
               </Badge>
             </span>
           </Row>
-          <Button color="primary" onClick={() => setModalShow(true)}>
+          <Button variant="dark" onClick={() => setModalShow(true)}>
             Open
           </Button>
         </Col>
