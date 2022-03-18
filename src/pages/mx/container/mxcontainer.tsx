@@ -7,36 +7,26 @@ import { Badge, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Sample } from '../model';
 import './mxcontainer.scss';
 
-export const positionsUni = [
-  { x: '75', y: '47.72727272727273' },
-  { x: '49.062095010132175', y: '66.57226378977415' },
-  { x: '58.96949311929619', y: '97.06409984658947' },
-  { x: '91.03050688070381', y: '97.06409984658947' },
-  { x: '100.93790498986783', y: '66.57226378977417' },
-  { x: '75', y: '18.75' },
-  { x: '44.588954018122635', y: '27.67948877824606' },
-  { x: '23.833200261308342', y: '51.63290551864389' },
-  { x: '19.32254389419753', y: '83.00520965287228' },
-  { x: '32.48908644257297', y: '111.83591628442228' },
-  { x: '59.152543677669584', y: '128.97147976581547' },
-  { x: '90.8474563223304', y: '128.97147976581547' },
-  { x: '117.51091355742702', y: '111.8359162844223' },
-  { x: '130.67745610580246', y: '83.0052096528723' },
-  { x: '126.16679973869167', y: '51.63290551864391' },
-  { x: '105.41104598187735', y: '27.67948877824606' },
-];
-export const positionsSpine = [
-  { x: '75', y: '18.75' },
-  { x: '41.93707955854838', y: '29.492794066409203' },
-  { x: '21.503070958397615', y: '57.6177940664092' },
-  { x: '21.503070958397608', y: '92.3822059335908' },
-  { x: '41.93707955854838', y: '120.5072059335908' },
-  { x: '75', y: '131.25' },
-  { x: '108.06292044145161', y: '120.5072059335908' },
-  { x: '128.49692904160239', y: '92.3822059335908' },
-  { x: '128.49692904160239', y: '57.6177940664092' },
-  { x: '108.06292044145162', y: '29.492794066409203' },
-];
+const containerRadius = 75;
+
+function computePos(radiusRatio: number, maxPosition: number, position: number): { x: number | string; y: number | string } {
+  const radius = radiusRatio * containerRadius;
+  const step = (Math.PI * 2) / maxPosition;
+  const angle = -(position - 1) * step;
+  const x = Math.sin(angle) * radius + containerRadius;
+  const y = containerRadius - Math.cos(angle) * radius;
+  return { x, y };
+}
+function computePosUni(position: number): { x: number | string; y: number | string } {
+  if (position < 6) {
+    return computePos(0.36, 5, position);
+  }
+  return computePos(0.76, 11, position - 5);
+}
+
+function computePosSpine(position: number): { x: number | string; y: number | string } {
+  return computePos(0.76, 10, position);
+}
 
 export function MXContainer({
   proposalName,
@@ -68,12 +58,12 @@ export function MXContainer({
   } else {
     maxPosition = 16;
   }
-  const positions = maxPosition == 10 ? positionsSpine : positionsUni;
+  const positions = maxPosition == 10 ? computePosSpine : computePosUni;
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <ContainerSVG maxPosition={maxPosition}>
         {range(1, maxPosition + 1).map((n) => {
-          const position = positions[n - 1];
+          const position = positions(n);
 
           const sampleArray = sampleByPosition[String(n)];
 
@@ -121,16 +111,16 @@ export function MXContainer({
   );
 }
 
-export function ContainerSVG({ maxPosition, children }: PropsWithChildren<{ maxPosition: number }>) {
+function ContainerSVG({ maxPosition, children }: PropsWithChildren<{ maxPosition: number }>) {
   return (
-    <svg style={{ maxWidth: 200 }} viewBox="-5 -5 160 160">
-      <circle cx="75" cy="75" r="75" fill="#CCCCCC" className="puck"></circle>
+    <svg style={{ maxWidth: 200 }} viewBox={`-5 -5 ${2 * containerRadius + 10} ${2 * containerRadius + 10}`}>
+      <circle cx={containerRadius} cy={containerRadius} r={containerRadius} fill="#CCCCCC" className="puck"></circle>
       {maxPosition == 16 && (
         <g fill="#888888" stroke="#888888" pointer-events="none">
-          <circle cx="75" cy="78.75" r="7.5"></circle>
-          <circle cx="67.5" cy="71.25" r="3.75" stroke-width="1"></circle>
-          <circle cx="82.5" cy="71.25" r="3.75" stroke-width="1"></circle>
-          <circle cx="75" cy="112.5" r="7.5"></circle>
+          <circle cx={containerRadius} cy={containerRadius * 1.05} r={containerRadius * 0.1}></circle>
+          <circle cx={containerRadius * 0.9} cy={containerRadius * 0.95} r={containerRadius * 0.05} stroke-width="1"></circle>
+          <circle cx={containerRadius * 1.1} cy={containerRadius * 0.95} r={containerRadius * 0.05} stroke-width="1"></circle>
+          <circle cx={containerRadius} cy={containerRadius * 1.5} r={containerRadius * 0.05} stroke-width="1"></circle>
         </g>
       )}
       {children}
@@ -138,7 +128,7 @@ export function ContainerSVG({ maxPosition, children }: PropsWithChildren<{ maxP
   );
 }
 
-export function SampleSVG({
+function SampleSVG({
   position,
   n,
   refSample,
@@ -146,7 +136,7 @@ export function SampleSVG({
   selected,
   onClick,
 }: {
-  position: { x: string; y: string };
+  position: { x: string | number; y: string | number };
   n: number;
   refSample?: Sample;
   collected: boolean;
@@ -176,7 +166,7 @@ export function SampleSVG({
             </Tooltip>
           }
         >
-          <circle onClick={onClick} className={className} cx={position.x} cy={position.y} r="13.138736566410419"></circle>
+          <circle onClick={onClick} className={className} cx={position.x} cy={position.y} r={containerRadius * 0.175}></circle>
         </OverlayTrigger>
         <text className={className} x={position.x} y={position.y}>
           <tspan dx="0" dy="3" pointer-events="none">
@@ -188,7 +178,7 @@ export function SampleSVG({
   }
   return (
     <>
-      <circle className="sampleEmpty" cx={position.x} cy={position.y} r="13.138736566410419"></circle>
+      <circle className="sampleEmpty" cx={position.x} cy={position.y} r={containerRadius * 0.175}></circle>
       <text x={position.x} y={position.y} className="sampleEmpty">
         <tspan dx="0" dy="3" pointer-events="none">
           {n}
