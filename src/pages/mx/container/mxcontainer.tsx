@@ -2,7 +2,9 @@ import SimpleParameterTable from 'components/table/simpleparametertable';
 import { useMXContainers } from 'hooks/ispyb';
 import _ from 'lodash';
 import { range } from 'lodash';
+import { PropsWithChildren } from 'react';
 import { Badge, OverlayTrigger, Tooltip } from 'react-bootstrap';
+import { Sample } from '../model';
 import './mxcontainer.scss';
 
 export const positionsUni = [
@@ -69,24 +71,15 @@ export function MXContainer({
   const positions = maxPosition == 10 ? positionsSpine : positionsUni;
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <svg style={{ maxWidth: 200 }} viewBox="-5 -5 160 160">
-        <circle cx="75" cy="75" r="75" fill="#CCCCCC" className="puck"></circle>
-        {maxPosition == 16 && (
-          <g fill="#888888" stroke="#888888" pointer-events="none">
-            <circle cx="75" cy="78.75" r="7.5"></circle>
-            <circle cx="67.5" cy="71.25" r="3.75" stroke-width="1"></circle>
-            <circle cx="82.5" cy="71.25" r="3.75" stroke-width="1"></circle>
-            <circle cx="75" cy="112.5" r="7.5"></circle>
-          </g>
-        )}
-
+      <ContainerSVG maxPosition={maxPosition}>
         {range(1, maxPosition + 1).map((n) => {
           const position = positions[n - 1];
+
           const sampleArray = sampleByPosition[String(n)];
 
           const collected = sampleArray && sampleArray.length && sampleArray.filter((s) => Number(sessionId) == s?.sessionId);
+
           const collectionIds = collected && collected.length && collected.map((s) => s.DataCollectionGroup_dataCollectionGroupId).filter((id) => id);
-          //   const collectionIdsString = collectionIds && collectionIds.length && collectionIds.join(',');
 
           const selected =
             collectionIds &&
@@ -95,65 +88,27 @@ export function MXContainer({
               .map((i) => selectedGroups.includes(i))
               .reduce((a, b) => a && b, true);
 
-          const refSample = collected && collected.length ? collected[0] : sampleArray && sampleArray.length && sampleArray[0];
+          const refSample = collected && collected.length ? collected[0] : sampleArray && sampleArray.length ? sampleArray[0] : undefined;
 
-          if (refSample) {
-            const className = collected && collected.length ? (selected ? 'sampleCollectedSelected' : 'sampleCollected') : 'sampleFilled';
-            return (
-              <>
-                <OverlayTrigger
-                  placement="bottom"
-                  overlay={
-                    <Tooltip>
-                      Protein
-                      <p>
-                        <Badge style={{ margin: 0 }} bg="info">
-                          {refSample.Protein_acronym}
-                        </Badge>
-                      </p>
-                      Sample
-                      <p>
-                        <Badge style={{ margin: 0 }} bg="info">
-                          {refSample.BLSample_name}
-                        </Badge>
-                      </p>
-                    </Tooltip>
-                  }
-                >
-                  {/* <a href={refSample.sessionId ? `/${proposalName}/MX/${refSample.sessionId}?groups=${collectionIds}` : undefined}> */}
-                  <circle
-                    onClick={() => {
-                      if (collectionIds) {
-                        selected ? removeSelectedGroups(collectionIds) : addSelectedGroups(collectionIds);
-                      }
-                    }}
-                    className={className}
-                    cx={position.x}
-                    cy={position.y}
-                    r="13.138736566410419"
-                  ></circle>
-                  {/* </a> */}
-                </OverlayTrigger>
-                <text className={className} x={position.x} y={position.y}>
-                  <tspan dx="0" dy="3" pointer-events="none">
-                    {n}
-                  </tspan>
-                </text>
-              </>
-            );
-          }
+          const onClick = () => {
+            if (collectionIds) {
+              selected ? removeSelectedGroups(collectionIds) : addSelectedGroups(collectionIds);
+            }
+          };
+
           return (
-            <>
-              <circle className="sampleEmpty" cx={position.x} cy={position.y} r="13.138736566410419"></circle>
-              <text x={position.x} y={position.y} className="sampleEmpty">
-                <tspan dx="0" dy="3" pointer-events="none">
-                  {n}
-                </tspan>
-              </text>
-            </>
+            <SampleSVG
+              position={position}
+              n={n}
+              refSample={refSample}
+              collected={Boolean(collected && collected.length)}
+              selected={Boolean(selected)}
+              onClick={onClick}
+            ></SampleSVG>
           );
         })}
-      </svg>
+      </ContainerSVG>
+
       <div>
         <SimpleParameterTable
           parameters={[
@@ -163,5 +118,82 @@ export function MXContainer({
         ></SimpleParameterTable>
       </div>
     </div>
+  );
+}
+
+export function ContainerSVG({ maxPosition, children }: PropsWithChildren<{ maxPosition: number }>) {
+  return (
+    <svg style={{ maxWidth: 200 }} viewBox="-5 -5 160 160">
+      <circle cx="75" cy="75" r="75" fill="#CCCCCC" className="puck"></circle>
+      {maxPosition == 16 && (
+        <g fill="#888888" stroke="#888888" pointer-events="none">
+          <circle cx="75" cy="78.75" r="7.5"></circle>
+          <circle cx="67.5" cy="71.25" r="3.75" stroke-width="1"></circle>
+          <circle cx="82.5" cy="71.25" r="3.75" stroke-width="1"></circle>
+          <circle cx="75" cy="112.5" r="7.5"></circle>
+        </g>
+      )}
+      {children}
+    </svg>
+  );
+}
+
+export function SampleSVG({
+  position,
+  n,
+  refSample,
+  collected,
+  selected,
+  onClick,
+}: {
+  position: { x: string; y: string };
+  n: number;
+  refSample?: Sample;
+  collected: boolean;
+  selected: boolean;
+  onClick: () => void;
+}) {
+  if (refSample) {
+    const className = collected ? (selected ? 'sampleCollectedSelected' : 'sampleCollected') : 'sampleFilled';
+    return (
+      <>
+        <OverlayTrigger
+          placement="bottom"
+          overlay={
+            <Tooltip>
+              Protein
+              <p>
+                <Badge style={{ margin: 0 }} bg="info">
+                  {refSample.Protein_acronym}
+                </Badge>
+              </p>
+              Sample
+              <p>
+                <Badge style={{ margin: 0 }} bg="info">
+                  {refSample.BLSample_name}
+                </Badge>
+              </p>
+            </Tooltip>
+          }
+        >
+          <circle onClick={onClick} className={className} cx={position.x} cy={position.y} r="13.138736566410419"></circle>
+        </OverlayTrigger>
+        <text className={className} x={position.x} y={position.y}>
+          <tspan dx="0" dy="3" pointer-events="none">
+            {n}
+          </tspan>
+        </text>
+      </>
+    );
+  }
+  return (
+    <>
+      <circle className="sampleEmpty" cx={position.x} cy={position.y} r="13.138736566410419"></circle>
+      <text x={position.x} y={position.y} className="sampleEmpty">
+        <tspan dx="0" dy="3" pointer-events="none">
+          {n}
+        </tspan>
+      </text>
+    </>
   );
 }
