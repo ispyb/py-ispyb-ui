@@ -102,8 +102,8 @@ export function MXContainer({
       <div>
         <SimpleParameterTable
           parameters={[
-            { key: 'Container', value: samples ? samples[0].Container_code : undefined },
-            { key: 'Location', value: samples ? samples[0].Container_sampleChangerLocation : undefined },
+            { key: 'Container', value: samples && samples.length ? samples[0].Container_code : 'unknown' },
+            { key: 'Location', value: samples && samples.length ? samples[0].Container_sampleChangerLocation : 'unknown' },
           ]}
         ></SimpleParameterTable>
       </div>
