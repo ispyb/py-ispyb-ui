@@ -1,3 +1,5 @@
+@import 'theme.scss';
+
 .summary_datacollection_success {
   width: 10px;
   height: 10px;
@@ -8,8 +10,8 @@
     linear,
     left top,
     left bottom,
-    from(#caffca),
-    to(#64fe2e)
+    from(lighten($success, 30%)),
+    to($success)
   );
   box-shadow: 0 2px 4px #000;
 }
@@ -24,8 +26,8 @@
     linear,
     left top,
     left bottom,
-    from(#f5a9a9),
-    to(#fe2e2e)
+    from(lighten($danger, 30%)),
+    to($danger)
   );
   box-shadow: 0 2px 4px #000;
 }

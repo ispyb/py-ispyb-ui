@@ -1,6 +1,6 @@
 import Zoom from 'react-medium-image-zoom';
 import { Image, Spinner } from 'react-bootstrap';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import './zoomimage.css';
 import LazyWrapper from 'components/loading/lazywrapper';
@@ -24,7 +24,12 @@ export default function ZoomImage({ src, alt, style, lazy = true, legend }: prop
 
   const [loaded, setLoaded] = useState(false);
 
-  const [img] = useState(<Image width="100%" thumbnail src={src} alt={alt} onLoad={() => setLoaded(true)} onError={() => setError(true)} />);
+  const [img, setImg] = useState<JSX.Element | undefined>(undefined);
+
+  useEffect(() => {
+    setLoaded(false);
+    setImg(<Image width="100%" thumbnail src={src} alt={alt} onLoad={() => setLoaded(true)} onError={() => setError(true)} />);
+  }, [src]);
 
   if (error) {
     return (

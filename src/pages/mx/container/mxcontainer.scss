@@ -1,0 +1,53 @@
+@import 'theme.scss';
+
+circle.sampleCollected {
+  stroke: #000;
+  stroke-width: 2;
+  fill: $primary;
+}
+circle.sampleCollectedSelected {
+  stroke: #000;
+  stroke-width: 2;
+  fill: $warning;
+}
+circle.sampleFilled {
+  fill: $secondary;
+}
+circle.sampleCollected:hover {
+  stroke: $warning;
+  stroke-width: 3;
+}
+circle.sampleEmpty {
+  fill: $light;
+}
+
+text.sampleCollected {
+  fill: color-contrast($primary);
+  font-size: 8.25px;
+  text-anchor: middle;
+  pointer-events: none;
+}
+text.sampleCollectedSelected {
+  fill: color-contrast($warning);
+  font-size: 8.25px;
+  text-anchor: middle;
+  pointer-events: none;
+}
+text.sampleFilled {
+  fill: color-contrast($secondary);
+  font-size: 8.25px;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+text.sampleEmpty {
+  fill: color-contrast($light);
+  font-size: 8.25px;
+  text-anchor: middle;
+  pointer-events: none;
+}
+
+.puck {
+  stroke: #000;
+  stroke-width: 1;
+}

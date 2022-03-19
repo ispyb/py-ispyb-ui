@@ -43,6 +43,7 @@
     "redux-promise-middleware": "^6.1.2",
     "redux-thunk": "^2.4.1",
     "rxjs": "^7.5.4",
+    "sass": "^1.49.9",
     "source-map-explorer": "^2.5.2",
     "swr": "^1.1.2",
     "web-vitals": "^2.1.3"

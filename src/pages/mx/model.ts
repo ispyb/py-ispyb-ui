@@ -253,3 +253,52 @@ export interface WorkflowStepItem {
   linkText?: string;
   logText?: string;
 }
+
+export interface Sample {
+  BLSample_SMILES: string;
+  BLSample_blSampleId: number;
+  BLSample_blSampleStatus?: string;
+  BLSample_code?: string;
+  BLSample_comments: string;
+  BLSample_completionStage?: string;
+  BLSample_containerId: number;
+  BLSample_crystalId: number;
+  BLSample_diffractionPlanId: number;
+  BLSample_holderLength?: string;
+  BLSample_isInSampleChanger?: string;
+  BLSample_lastKnownCenteringPosition?: string;
+  BLSample_location: string;
+  BLSample_loopLength?: string;
+  BLSample_loopType?: string;
+  BLSample_name: string;
+  BLSample_publicationComments?: string;
+  BLSample_publicationStage?: string;
+  BLSample_recordTimeStamp: string;
+  BLSample_structureStage?: string;
+  BLSample_wireWidth?: string;
+  BLSession_beamLineName: string;
+  BLSession_startDate: string;
+  Container_beamlineLocation: string;
+  Container_code: string;
+  Container_containerId: number;
+  Container_containerStatus: string;
+  Container_containerType: string;
+  Container_sampleChangerLocation: string;
+  DataCollectionGroup_dataCollectionGroupId: number;
+  Dewar_barCode?: string;
+  Dewar_code: string;
+  Dewar_dewarId: number;
+  Dewar_dewarStatus: string;
+  Dewar_storageLocation?: string;
+  Person_emailAddress: string;
+  Person_familyName: string;
+  Person_givenName?: string;
+  Person_personId: number;
+  Protein_acronym: string;
+  Protein_name: string;
+  Protein_proposalId: number;
+  Protein_proteinId: number;
+  Protein_proteinType?: string;
+  Shipping_shippingId: number;
+  sessionId: number;
+}

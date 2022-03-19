@@ -3,8 +3,7 @@ import { render } from 'react-dom';
 import App from './App';
 import { PersistGate } from 'redux-persist/integration/react';
 import reportWebVitals from './reportWebVitals';
-require(`bootswatch/dist/flatly/bootstrap.min.css`);
-import './index.css';
+import './index.scss';
 import { Provider } from 'react-redux';
 import { store, persistor } from './store';
 

@@ -4,7 +4,7 @@ import { OverlayTrigger, Tooltip, Card, Tab, Row, Col, Nav, Container, Badge, Bu
 import { DataCollectionGroup } from 'pages/mx/model';
 import SummaryDataCollectionGroupPanel from 'pages/mx/datacollectiongroup/summarydatacollectiongroup/summarydatacollectiongrouppanel';
 import BeamlineDataCollectionGroupPanel from 'pages/mx/datacollectiongroup/beamline/beamlinedatacollectiongrouppanel';
-import './datacollectiongrouppanel.css';
+import './datacollectiongrouppanel.scss';
 import CollectionsDataCollectionGroupPanel from './collections/collectionsdatacollectiongrouppanel';
 import LoadingPanel from 'components/loading/loadingpanel';
 import LazyWrapper from 'components/loading/lazywrapper';
@@ -109,7 +109,7 @@ export default function DataCollectionGroupPanel({ proposalName, dataCollectionG
                 </Button>
               </OverlayTrigger>
             </Col>
-            <Col>
+            <Col style={compact ? undefined : { marginTop: 20 }}>
               <Tab.Content>
                 <Tab.Pane eventKey="Summary" title="Summary">
                   <SummaryDataCollectionGroupPanel compact={compact} proposalName={proposalName} dataCollectionGroup={dataCollectionGroup}></SummaryDataCollectionGroupPanel>

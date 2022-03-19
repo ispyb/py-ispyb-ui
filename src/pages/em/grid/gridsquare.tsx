@@ -3,7 +3,7 @@ import Zoom from 'react-medium-image-zoom';
 import React from 'react';
 import { getCrystalImage } from 'api/ispyb';
 import 'react-medium-image-zoom/dist/styles.css';
-import 'pages/em/styles.css';
+import 'pages/em/styles.scss';
 import { useNavigate } from 'react-router';
 
 export default function GridSquare({

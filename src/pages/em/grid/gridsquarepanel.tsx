@@ -2,7 +2,7 @@ import { Col, Container, Row } from 'react-bootstrap';
 import React from 'react';
 import GridSquarePanelHeader from 'pages/em/grid/gridsquarepanelheader';
 import 'react-medium-image-zoom/dist/styles.css';
-import 'pages/em/styles.css';
+import 'pages/em/styles.scss';
 import GridSquare from 'pages/em/grid/gridsquare';
 import { SampleList } from 'pages/em/model';
 
