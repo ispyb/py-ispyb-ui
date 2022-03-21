@@ -1,0 +1,29 @@
+.elementName {
+  height: 100%;
+  display: flex;
+  padding: 10px;
+}
+.elementName p {
+  background: lightgray;
+  border: 1px solid black;
+  border-radius: 20%;
+
+  padding: 20px;
+  color: black;
+  margin: auto;
+  margin-top: auto;
+  margin-bottom: auto;
+  font-size: xx-large;
+}
+
+.card-energyscan-panel .card-body {
+  padding: 0px;
+}
+
+.card-energyscan-panel .card-header {
+  padding-bottom: 0px;
+}
+
+.badge {
+  margin-left: 10px;
+}

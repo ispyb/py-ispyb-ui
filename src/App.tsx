@@ -20,6 +20,8 @@ import 'App.scss';
 import MXWorkflowPage from 'pages/mx/workflow/mxworkflowpage';
 import MXDataCollectionGroupPage from 'pages/mx/datacollectiongroup/mxdatacollectiongrouppage';
 import ProposalSessionsPage from 'pages/proposalsessionspage';
+import MXEnergyScanPage from 'pages/mx/energyscan/mxenergyscanpage';
+import MXFluorescencePage from 'pages/mx/fluorescence/fluorescencepage';
 
 export default function App() {
   const user = useAppSelector((state) => state.user);
@@ -58,6 +60,8 @@ export default function App() {
               <Route path="/:proposalName/EM/:sessionId/statistics" element={<SessionStatisticsPage />} />
               <Route path="/:proposalName/EM/:dataCollectionId/movies" element={<MoviesPage />} />
               <Route path="/:proposalName/MX/:sessionId" element={<MXDataCollectionGroupPage />} />
+              <Route path="/:proposalName/MX/:sessionId/energy" element={<MXEnergyScanPage />} />
+              <Route path="/:proposalName/MX/:sessionId/xrf" element={<MXFluorescencePage />} />
               <Route path="/:proposalName/MX/:sessionId/workflow/:workflowId/steps/:stepsIds" element={<MXWorkflowPage />} />
             </Routes>
           </ErrorBoundary>

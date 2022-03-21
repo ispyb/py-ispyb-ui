@@ -14,8 +14,10 @@ import {
   getProposals,
   getEMStatisticsBy,
   getMXContainers,
+  getMXEnergyScans,
+  getMXFluorescenceSpectras,
 } from 'api/ispyb';
-import { WorkflowStep, Sample, DataCollectionGroup } from 'pages/mx/model';
+import { EnergyScan, WorkflowStep, FluorescenceSpectra, Sample, DataCollectionGroup } from 'pages/mx/model';
 
 import { Proposal } from 'pages/model';
 
@@ -80,6 +82,13 @@ export function useMXDataCollectionsBy({ proposalName, sessionId }: ProposalSess
 }
 export function useMxDataCollectionsByGroupId({ proposalName, dataCollectionGroupId }: { proposalName: string; dataCollectionGroupId: string }) {
   return doGet(getMxDataCollectionsByGroupId({ proposalName, dataCollectionGroupId }).url);
+}
+
+export function useMXEnergyScans({ proposalName, sessionId }: { proposalName: string; sessionId: string }) {
+  return doGet<EnergyScan[]>(getMXEnergyScans({ proposalName, sessionId }).url);
+}
+export function useMXFluorescenceSpectras({ proposalName, sessionId }: { proposalName: string; sessionId: string }) {
+  return doGet<FluorescenceSpectra[]>(getMXFluorescenceSpectras({ proposalName, sessionId }).url);
 }
 
 export function useMxWorkflow({ proposalName, stepId }: { proposalName: string; stepId: string }) {

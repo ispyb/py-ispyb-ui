@@ -302,3 +302,72 @@ export interface Sample {
   Shipping_shippingId: number;
   sessionId: number;
 }
+
+export interface EnergyScan {
+  BLSample_sampleId?: string;
+  BLSession_proposalId: number;
+  acronym?: string;
+  beamSizeHorizontal: number;
+  beamSizeVertical: number;
+  blSampleId?: string;
+  choochFileFullPath?: string;
+  code?: string;
+  comments: string;
+  crystalClass?: string;
+  edgeEnergy: string;
+  element: string;
+  endEnergy: number;
+  endTime: string;
+  energyScanId: number;
+  exposureTime: number;
+  filename: string;
+  fluorescenceDetector: string;
+  flux?: string;
+  flux_end?: string;
+  inflectionEnergy: number;
+  inflectionFDoublePrime: number;
+  inflectionFPrime: number;
+  jpegChoochFileFullPath: string;
+  name?: string;
+  peakEnergy: number;
+  peakFDoublePrime: number;
+  peakFPrime: number;
+  remoteEnergy?: string;
+  remoteFDoublePrime?: string;
+  remoteFPrime?: string;
+  scanFileFullPath: string;
+  sessionId: number;
+  startEnergy: number;
+  startTime: string;
+  synchrotronCurrent?: string;
+  temperature?: string;
+  transmissionFactor: number;
+  xrayDose?: string;
+}
+
+export interface FluorescenceSpectra {
+  acronym?: string;
+  name?: string;
+  BLSample_sampleId?: string;
+  BLSession_proposalId: number;
+  annotatedPymcaXfeSpectrum: string;
+  beamSizeHorizontal: number;
+  beamSizeVertical: number;
+  beamTransmission: number;
+  blSampleId?: string;
+  comments?: string;
+  crystalClass?: string;
+  endTime: string;
+  energy: number;
+  exposureTime: number;
+  filename: string;
+  fittedDataFileFullPath: string;
+  flux: number;
+  flux_end?: string;
+  jpegScanFileFullPath: string;
+  scanFileFullPath: string;
+  sessionId: number;
+  startTime: string;
+  workingDirectory?: string;
+  xfeFluorescenceSpectrumId: number;
+}

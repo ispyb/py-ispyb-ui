@@ -45,6 +45,13 @@ export function getMxDataCollectionsByGroupId({ proposalName, dataCollectionGrou
   return { url: `${server}/${token}/proposal/${proposalName}/mx/datacollection/datacollectiongroupid/${dataCollectionGroupId}/list` };
 }
 
+export function getMXEnergyScans({ proposalName, sessionId }: { proposalName: string; sessionId: string }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/mx/energyscan/session/${sessionId}/list` };
+}
+export function getMXFluorescenceSpectras({ proposalName, sessionId }: { proposalName: string; sessionId: string }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/mx/xrfscan/session/${sessionId}/list` };
+}
+
 export function getMxWorkflow({ proposalName, stepId }: { proposalName: string; stepId: string }) {
   return { url: `${server}/${token}/proposal/${proposalName}/mx/workflow/step/${stepId}/result` };
 }
@@ -99,6 +106,13 @@ export function getDozorPlot({ dataCollectionId, proposalName }: { proposalName:
   return { url: `${server}/${token}/proposal/${proposalName}/mx/datacollection/${dataCollectionId}/qualityindicatorplot` };
 }
 
+export function getJpegchooch({ energyscanId, proposalName }: { proposalName: string; energyscanId: number }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/mx/energyscan/energyscanId/${energyscanId}/jpegchooch` };
+}
+
+export function getJpegxrfscan({ proposalName, xfeFluorescenceSpectrumId }: { proposalName: string; xfeFluorescenceSpectrumId: number }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/mx/xrfscan/xrfscanId/${xfeFluorescenceSpectrumId}/image/jpegScanFileFullPath/get` };
+}
 export function getWorkflowImage({ stepId, proposalName }: { proposalName: string; stepId: string }) {
   return { url: `${server}/${token}/proposal/${proposalName}/mx/workflow/step/${stepId}/image` };
 }
