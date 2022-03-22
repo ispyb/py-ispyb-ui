@@ -1,4 +1,4 @@
-import { Col, Row } from 'react-bootstrap';
+import { Button, Col, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import BootstrapTable, { ColumnDescription } from 'react-bootstrap-table-next';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import 'react-bootstrap-table2-filter/dist/react-bootstrap-table2-filter.min.css';
@@ -11,6 +11,12 @@ import _ from 'lodash';
 import { Dewar } from 'pages/model';
 import './prepareexperimentpage.scss';
 import { formatDateTo, parseDate } from 'helpers/dateparser';
+import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import axios from 'axios';
+import { updateShippingStatus } from 'api/ispyb';
+import { KeyedMutator } from 'swr';
+import produce from 'immer';
 
 const dateFormatter = (cell: string) => {
   if (cell) {
@@ -52,7 +58,7 @@ interface Shipment {
 
 export default function PrepareExperimentPage() {
   const { proposalName = '' } = useParams<Param>();
-  const { data, isError } = useDewars({ proposalName });
+  const { data, isError, mutate } = useDewars({ proposalName });
   if (isError) throw Error(isError);
   if (!data) throw Error('error while fetching dewars');
 
@@ -69,11 +75,21 @@ export default function PrepareExperimentPage() {
   const columns: ColumnDescription<Shipment>[] = [
     { text: 'id', dataField: 'shippingId', hidden: true },
     {
+      text: '',
+      dataField: 'shippingId',
+      formatter: (cell, row) => {
+        return <ToggleShipmentStatus proposalName={proposalName} shipment={row} mutate={mutate}></ToggleShipmentStatus>;
+      },
+      headerStyle: { width: 40 },
+      style: { verticalAlign: 'middle', textAlign: 'center' },
+    },
+    {
       text: 'Name',
       dataField: 'name',
       filter: textFilter({
         placeholder: 'Search...',
       }),
+      style: { verticalAlign: 'middle' },
     },
     {
       text: 'Status',
@@ -81,6 +97,7 @@ export default function PrepareExperimentPage() {
       filter: textFilter({
         placeholder: 'Search...',
       }),
+      style: { verticalAlign: 'middle' },
     },
     {
       text: 'Created on',
@@ -89,8 +106,8 @@ export default function PrepareExperimentPage() {
       filter: textFilter({
         placeholder: 'Search...',
       }),
+      style: { verticalAlign: 'middle' },
     },
-    // { text: 'id', dataField: 'dewarId', hidden: true }
   ];
 
   return (
@@ -106,6 +123,8 @@ export default function PrepareExperimentPage() {
             rowClasses={(row: Shipment) => {
               return shipmentIsProcessing(row) ? 'processing' : '';
             }}
+            condensed
+            striped
             pagination={paginationFactory({ sizePerPage: 20, showTotal: true, hideSizePerPage: true, hidePageListOnlyOnePage: true })}
             filter={filterFactory()}
           />
@@ -115,5 +134,39 @@ export default function PrepareExperimentPage() {
         <p>t</p>
       </Col>
     </Row>
+  );
+}
+
+export function ToggleShipmentStatus({ shipment, proposalName, mutate }: { shipment: Shipment; proposalName: string; mutate: KeyedMutator<Dewar[]> }) {
+  const isProcessing = shipmentIsProcessing(shipment);
+  const newStatus = isProcessing ? 'at_ESRF' : 'processing';
+  const onClick = () => {
+    mutate(
+      produce((dewarsDraft: Dewar[] | undefined) => {
+        if (dewarsDraft) {
+          for (const dewarDraft of dewarsDraft) {
+            if (dewarDraft.shippingId == shipment.shippingId) {
+              dewarDraft.shippingStatus = newStatus;
+            }
+          }
+        }
+      }),
+      false
+    );
+    axios.get(updateShippingStatus({ proposalName, shippingId: shipment.shippingId, status: newStatus }).url).then(
+      () => {
+        mutate();
+      },
+      () => {
+        mutate();
+      }
+    );
+  };
+  return (
+    <OverlayTrigger placement="right" overlay={<Tooltip>Set status to '{newStatus}'</Tooltip>}>
+      <Button style={{ padding: 0 }} variant="link" onClick={onClick}>
+        <FontAwesomeIcon icon={isProcessing ? faTimes : faPlus}></FontAwesomeIcon>
+      </Button>
+    </OverlayTrigger>
   );
 }

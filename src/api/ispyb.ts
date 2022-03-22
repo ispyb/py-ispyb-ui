@@ -120,3 +120,7 @@ export function getWorkflowImage({ stepId, proposalName }: { proposalName: strin
 export function getDewars({ proposalName }: { proposalName: string }) {
   return { url: `${server}/${token}/proposal/${proposalName}/dewar/list` };
 }
+
+export function updateShippingStatus({ proposalName, shippingId, status }: { proposalName: string; shippingId: number; status: string }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/shipping/${shippingId}/status/${status}/update` };
+}

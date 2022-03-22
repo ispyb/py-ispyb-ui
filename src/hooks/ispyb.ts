@@ -26,11 +26,12 @@ const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 function doGet<T = any>(url: string, suspense = true) {
-  const { data, error } = useSWR<T>(url, fetcher, { suspense: suspense });
+  const { data, error, mutate } = useSWR<T>(url, fetcher, { suspense: suspense });
   return {
     data,
     isLoading: !error && !data,
     isError: error,
+    mutate,
   };
 }
 
