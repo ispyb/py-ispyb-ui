@@ -102,3 +102,10 @@ export interface Dewar {
   transportValue: number;
   type: string;
 }
+export interface Shipment {
+  shippingId: number;
+  name: string;
+  status: string;
+  creationDate: string;
+  dewars: Dewar[];
+}

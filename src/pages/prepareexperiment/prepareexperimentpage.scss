@@ -6,3 +6,6 @@
   --bs-table-striped-color: none !important;
   --bs-table-striped-bg: rgba(0, 0, 0, 0.1) !important;
 }
+.processing button {
+  color: color-contrast($info) !important;
+}

@@ -11,12 +11,15 @@ import _ from 'lodash';
 import { Dewar } from 'pages/model';
 import './prepareexperimentpage.scss';
 import { formatDateTo, parseDate } from 'helpers/dateparser';
-import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faSearch, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 import { updateShippingStatus } from 'api/ispyb';
 import { KeyedMutator } from 'swr';
 import produce from 'immer';
+import { useState } from 'react';
+import LoadSampleChanger from './loadsamplechanger';
+import { Shipment } from 'pages/model';
 
 const dateFormatter = (cell: string) => {
   if (cell) {
@@ -48,14 +51,6 @@ type Param = {
   proposalName: string;
 };
 
-interface Shipment {
-  shippingId: number;
-  name: string;
-  status: string;
-  creationDate: string;
-  dewars: Dewar[];
-}
-
 export default function PrepareExperimentPage() {
   const { proposalName = '' } = useParams<Param>();
   const { data, isError, mutate } = useDewars({ proposalName });
@@ -70,6 +65,12 @@ export default function PrepareExperimentPage() {
       const res: Shipment = { shippingId: d.shippingId, name: d.shippingName, status: d.shippingStatus, creationDate: d.creationDate, dewars: dewars };
       return res;
     })
+    .value();
+
+  const processingDewars = _(shipments)
+    .filter((s) => Boolean(shipmentIsProcessing(s)))
+    .flatMap((s) => s.dewars)
+    .filter((d) => d.containerId != undefined)
     .value();
 
   const columns: ColumnDescription<Shipment>[] = [
@@ -112,26 +113,28 @@ export default function PrepareExperimentPage() {
 
   return (
     <Row>
-      <Col>
-        <Row style={{ maxWidth: 600, margin: 'auto' }}>
-          <BootstrapTable
-            bootstrap4
-            wrapperClasses="table-responsive"
-            keyField="Id"
-            data={shipments.sort(sortShipments)}
-            columns={columns}
-            rowClasses={(row: Shipment) => {
-              return shipmentIsProcessing(row) ? 'processing' : '';
-            }}
-            condensed
-            striped
-            pagination={paginationFactory({ sizePerPage: 20, showTotal: true, hideSizePerPage: true, hidePageListOnlyOnePage: true })}
-            filter={filterFactory()}
-          />
+      <Col md={'auto'}>
+        <Row>
+          <div style={{ maxWidth: 550 }}>
+            <BootstrapTable
+              bootstrap4
+              wrapperClasses="table-responsive"
+              keyField="Id"
+              data={shipments.sort(sortShipments)}
+              columns={columns}
+              rowClasses={(row: Shipment) => {
+                return shipmentIsProcessing(row) ? 'processing' : '';
+              }}
+              condensed
+              striped
+              pagination={paginationFactory({ sizePerPage: 20, showTotal: true, hideSizePerPage: true, hidePageListOnlyOnePage: true })}
+              filter={filterFactory()}
+            />
+          </div>
         </Row>
       </Col>
       <Col>
-        <p>t</p>
+        <LoadSampleChanger proposalName={proposalName} dewars={processingDewars}></LoadSampleChanger>
       </Col>
     </Row>
   );
