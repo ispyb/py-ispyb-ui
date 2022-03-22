@@ -16,10 +16,11 @@ import {
   getMXContainers,
   getMXEnergyScans,
   getMXFluorescenceSpectras,
+  getDewars,
 } from 'api/ispyb';
 import { EnergyScan, WorkflowStep, FluorescenceSpectra, Sample, DataCollectionGroup } from 'pages/mx/model';
 
-import { Proposal } from 'pages/model';
+import { Dewar, Proposal } from 'pages/model';
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
@@ -109,4 +110,8 @@ export function useMoviesByDataCollectionId({ proposalName, dataCollectionId }: 
 
 export function useEMClassification({ proposalName, sessionId }: ProposalSessionId) {
   return doGet(getEMClassificationBy({ proposalName, sessionId }).url);
+}
+
+export function useDewars({ proposalName }: { proposalName: string }) {
+  return doGet<Dewar[]>(getDewars({ proposalName }).url);
 }
