@@ -83,7 +83,7 @@ export function MXContainer({
   selectedGroups = [],
 }: {
   proposalName: string;
-  sessionId: string;
+  sessionId?: string;
   containerId: string;
   containerType?: string;
   selectedGroups?: number[];
@@ -107,10 +107,12 @@ export function MXContainer({
 
           const sampleArray = sampleByPosition[String(n)];
 
-          const collected = sampleArray && sampleArray.length && sampleArray.filter((s) => Number(sessionId) == s?.sessionId);
+          let collected: 0 | Sample[] = sampleArray;
 
+          if (sessionId) {
+            collected = sampleArray && sampleArray.length && sampleArray.filter((s) => Number(sessionId) == s?.sessionId);
+          }
           const collectionIds = collected && collected.length && collected.map((s) => s.DataCollectionGroup_dataCollectionGroupId).filter((id) => id);
-
           const selected =
             collectionIds &&
             collectionIds.length &&

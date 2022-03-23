@@ -18,12 +18,7 @@ export default function LoadSampleChanger({ dewars, proposalName }: { dewars?: D
       <Card.Body>
         {container ? (
           <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-            <MXContainer
-              containerType={container.containerType}
-              sessionId={container.sessionId || ''}
-              proposalName={proposalName}
-              containerId={String(container.containerId)}
-            ></MXContainer>
+            <MXContainer containerType={container.containerType} proposalName={proposalName} containerId={String(container.containerId)}></MXContainer>
           </Suspense>
         ) : (
           'You must select a shipment first'
