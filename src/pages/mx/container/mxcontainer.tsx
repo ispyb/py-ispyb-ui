@@ -40,7 +40,7 @@ function getContainerType(type: string | undefined) {
   if (type === 'Unipuck') {
     return containerTypes.Unipuck;
   }
-  if (type === 'Spinepuck') {
+  if (type === 'Spinepuck' || type === 'Puck') {
     return containerTypes.Spinepuck;
   }
   return undefined;
@@ -101,58 +101,54 @@ export function MXContainer({
     .value();
 
   const type = findContainerType(containerType, samples, sampleByPosition);
+  const svg = (
+    <ContainerSVG maxPosition={type.maxPos}>
+      {range(1, type.maxPos + 1).map((n) => {
+        const position = type.computePos(n);
+
+        const sampleArray = sampleByPosition[String(n)];
+
+        let collected: 0 | Sample[] = sampleArray;
+
+        if (sessionId) {
+          collected = sampleArray && sampleArray.length && sampleArray.filter((s) => Number(sessionId) == s?.sessionId);
+        }
+        const collectionIds = collected && collected.length && collected.map((s) => s.DataCollectionGroup_dataCollectionGroupId).filter((id) => id);
+        const selected =
+          collectionIds &&
+          collectionIds.length &&
+          _(collectionIds)
+            .map((i) => selectedGroups.includes(i))
+            .reduce((a, b) => a && b, true);
+
+        const refSample = collected && collected.length ? collected[0] : sampleArray && sampleArray.length ? sampleArray[0] : undefined;
+
+        const onClick = () => {
+          if (collectionIds) {
+            selected ? removeSelectedGroups(collectionIds) : addSelectedGroups(collectionIds);
+          }
+        };
+
+        return (
+          <SampleSVG position={position} n={n} refSample={refSample} collected={Boolean(collected && collected.length)} selected={Boolean(selected)} onClick={onClick}></SampleSVG>
+        );
+      })}
+    </ContainerSVG>
+  );
+  if (!showInfo) {
+    return svg;
+  }
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <ContainerSVG maxPosition={type.maxPos}>
-        {range(1, type.maxPos + 1).map((n) => {
-          const position = type.computePos(n);
-
-          const sampleArray = sampleByPosition[String(n)];
-
-          let collected: 0 | Sample[] = sampleArray;
-
-          if (sessionId) {
-            collected = sampleArray && sampleArray.length && sampleArray.filter((s) => Number(sessionId) == s?.sessionId);
-          }
-          const collectionIds = collected && collected.length && collected.map((s) => s.DataCollectionGroup_dataCollectionGroupId).filter((id) => id);
-          const selected =
-            collectionIds &&
-            collectionIds.length &&
-            _(collectionIds)
-              .map((i) => selectedGroups.includes(i))
-              .reduce((a, b) => a && b, true);
-
-          const refSample = collected && collected.length ? collected[0] : sampleArray && sampleArray.length ? sampleArray[0] : undefined;
-
-          const onClick = () => {
-            if (collectionIds) {
-              selected ? removeSelectedGroups(collectionIds) : addSelectedGroups(collectionIds);
-            }
-          };
-
-          return (
-            <SampleSVG
-              position={position}
-              n={n}
-              refSample={refSample}
-              collected={Boolean(collected && collected.length)}
-              selected={Boolean(selected)}
-              onClick={onClick}
-            ></SampleSVG>
-          );
-        })}
-      </ContainerSVG>
-
-      {showInfo && (
-        <div>
-          <SimpleParameterTable
-            parameters={[
-              { key: 'Container', value: samples && samples.length ? samples[0].Container_code : 'unknown' },
-              { key: 'Location', value: samples && samples.length ? samples[0].Container_sampleChangerLocation : 'unknown' },
-            ]}
-          ></SimpleParameterTable>
-        </div>
-      )}
+      {svg}
+      <div>
+        <SimpleParameterTable
+          parameters={[
+            { key: 'Container', value: samples && samples.length ? samples[0].Container_code : 'unknown' },
+            { key: 'Location', value: samples && samples.length ? samples[0].Container_sampleChangerLocation : 'unknown' },
+          ]}
+        ></SimpleParameterTable>
+      </div>
     </div>
   );
 }

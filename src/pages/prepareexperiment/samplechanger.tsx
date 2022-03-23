@@ -1,17 +1,42 @@
 import { range } from 'lodash';
-import { EmptyContainer } from 'pages/mx/container/mxcontainer';
+import { Dewar } from 'pages/model';
+import { EmptyContainer, MXContainer } from 'pages/mx/container/mxcontainer';
 import { PropsWithChildren } from 'react';
+import { Col, Row } from 'react-bootstrap';
 import './samplechanger.scss';
 
 const containerRadius = 100;
 
-export default function SampleChanger() {
+function getContainersForCell(containers: Dewar[] | undefined, cell: number, beamline?: string) {
+  if (!containers) {
+    return [undefined, undefined, undefined];
+  }
+  return range(1, 4).map((n) => {
+    const location = 3 * (cell - 1) + n;
+    for (const c of containers) {
+      if (c.beamlineLocation === beamline && Number(c.sampleChangerLocation) == location) {
+        return c;
+      }
+    }
+    return undefined;
+  });
+}
+
+export default function SampleChanger({ beamline, containers, proposalName }: { beamline?: string; proposalName: string; containers?: Dewar[] }) {
   return (
-    <ChangerSVG>
-      {range(1, 9).map((n) => (
-        <CellSection n={n}></CellSection>
-      ))}
-    </ChangerSVG>
+    <Col>
+      <Row>
+        <h5 style={{ textAlign: 'center' }}>{beamline}</h5>
+      </Row>
+      <Row>
+        <ChangerSVG>
+          {range(1, 9).map((n) => {
+            const containersCell = getContainersForCell(containers, n, beamline);
+            return <CellSection proposalName={proposalName} containers={containersCell} n={n}></CellSection>;
+          })}
+        </ChangerSVG>
+      </Row>
+    </Col>
   );
 }
 
@@ -60,7 +85,7 @@ function ChangerSVG({ children }: PropsWithChildren<unknown>) {
   );
 }
 
-function CellSection({ n }: { n: number }) {
+function CellSection({ n, containers, proposalName }: { n: number; proposalName: string; containers: (Dewar | undefined)[] }) {
   const angle = getSectionAnle(n);
   const c1 = containerRadius * 0.45;
   const c2 = containerRadius * 0.75;
@@ -73,7 +98,11 @@ function CellSection({ n }: { n: number }) {
       {range(0, 3).map((pos) => {
         return (
           <svg x={x[pos] - r} y={y[pos] - r} width={2 * r} height={2 * r}>
-            <EmptyContainer></EmptyContainer>
+            {containers[pos] ? (
+              <MXContainer showInfo={false} proposalName={proposalName} containerId={String(containers[pos]?.containerId)}></MXContainer>
+            ) : (
+              <EmptyContainer></EmptyContainer>
+            )}
           </svg>
         );
       })}

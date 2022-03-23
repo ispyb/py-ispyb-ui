@@ -6,7 +6,7 @@ import { MXContainer } from 'pages/mx/container/mxcontainer';
 import { Suspense, useState } from 'react';
 import { Button, Card, Col, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import BootstrapTable, { ColumnDescription } from 'react-bootstrap-table-next';
-import filterFactory from 'react-bootstrap-table2-filter';
+import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 
 import './loadsamplechanger.scss';
@@ -28,14 +28,14 @@ export default function LoadSampleChanger({ dewars, proposalName }: { dewars?: D
                 </Row>
                 <Row>
                   <div style={{ maxWidth: 200, margin: 'auto' }}>
-                    <MXContainer showInfo={false} containerType={container.containerType} proposalName={proposalName} containerId={String(container.containerId)}></MXContainer>
+                    <MXContainer containerType={container.containerType} proposalName={proposalName} containerId={String(container.containerId)}></MXContainer>
                   </div>
                 </Row>
               </Col>
               <Col>
                 <Row>
                   <div style={{ maxWidth: 400, margin: 'auto' }}>
-                    <SampleChanger></SampleChanger>
+                    <SampleChanger proposalName={proposalName} beamline={container.beamlineLocation} containers={dewars}></SampleChanger>
                   </div>
                 </Row>
               </Col>
@@ -53,10 +53,34 @@ export default function LoadSampleChanger({ dewars, proposalName }: { dewars?: D
 export function ContainerTable({ dewars, setContainer, selected }: { dewars: Dewar[]; setContainer: (c: Dewar) => void; selected?: Dewar }) {
   const columns: ColumnDescription<Dewar>[] = [
     { text: 'id', dataField: 'containerId', hidden: true },
-    { text: 'Shipment', dataField: 'shippingName', hidden: false },
-    { text: 'Container', dataField: 'containerCode', hidden: false },
-    { text: 'Type', dataField: 'containerType', hidden: false },
-    { text: 'Beamline', dataField: 'beamlineLocation', hidden: false },
+    {
+      text: 'Shipment',
+      dataField: 'shippingName',
+      filter: textFilter({
+        placeholder: 'Search...',
+      }),
+    },
+    {
+      text: 'Container',
+      dataField: 'containerCode',
+      filter: textFilter({
+        placeholder: 'Search...',
+      }),
+    },
+    {
+      text: 'Type',
+      dataField: 'containerType',
+      filter: textFilter({
+        placeholder: 'Search...',
+      }),
+    },
+    {
+      text: 'Beamline',
+      dataField: 'beamlineLocation',
+      filter: textFilter({
+        placeholder: 'Search...',
+      }),
+    },
     {
       text: 'Position',
       dataField: 'sampleChangerLocation',
@@ -106,7 +130,7 @@ export function ContainerTable({ dewars, setContainer, selected }: { dewars: Dew
 
 // eslint-disable-next-line no-unused-vars
 export function SelectContainer({ container, setContainer }: { container: Dewar; setContainer: (c: Dewar) => void }) {
-  if (!['Spinepuck', 'Unipuck'].includes(container.containerType)) {
+  if (!['Spinepuck', 'Unipuck', 'Puck'].includes(container.containerType)) {
     return <></>;
   }
 
