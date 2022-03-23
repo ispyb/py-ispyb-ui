@@ -81,12 +81,14 @@ export function MXContainer({
   removeSelectedGroups = () => undefined,
   addSelectedGroups = () => undefined,
   selectedGroups = [],
+  showInfo = true,
 }: {
   proposalName: string;
   sessionId?: string;
   containerId: string;
   containerType?: string;
   selectedGroups?: number[];
+  showInfo?: boolean;
   // eslint-disable-next-line no-unused-vars
   removeSelectedGroups?: (ids: number[]) => void;
   // eslint-disable-next-line no-unused-vars
@@ -141,15 +143,29 @@ export function MXContainer({
         })}
       </ContainerSVG>
 
-      <div>
-        <SimpleParameterTable
-          parameters={[
-            { key: 'Container', value: samples && samples.length ? samples[0].Container_code : 'unknown' },
-            { key: 'Location', value: samples && samples.length ? samples[0].Container_sampleChangerLocation : 'unknown' },
-          ]}
-        ></SimpleParameterTable>
-      </div>
+      {showInfo && (
+        <div>
+          <SimpleParameterTable
+            parameters={[
+              { key: 'Container', value: samples && samples.length ? samples[0].Container_code : 'unknown' },
+              { key: 'Location', value: samples && samples.length ? samples[0].Container_sampleChangerLocation : 'unknown' },
+            ]}
+          ></SimpleParameterTable>
+        </div>
+      )}
     </div>
+  );
+}
+
+export function EmptyContainer() {
+  return (
+    <ContainerSVG maxPosition={16}>
+      {range(1, 17).map((n) => {
+        const position = containerTypes.Unipuck.computePos(n);
+
+        return <SampleSVG position={position} n={n} collected={false} selected={false} onClick={() => undefined}></SampleSVG>;
+      })}
+    </ContainerSVG>
   );
 }
 

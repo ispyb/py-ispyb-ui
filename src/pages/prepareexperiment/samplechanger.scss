@@ -1,0 +1,21 @@
+@import 'theme.scss';
+
+.cell {
+  fill: rgb(50, 50, 50);
+}
+
+.cellNumber {
+  font-size: 8.25px;
+  text-anchor: middle;
+  pointer-events: none;
+  fill: white;
+}
+
+.cellPositionNumber {
+  font-size: 8.25px;
+  text-anchor: middle;
+  pointer-events: none;
+}
+.cellPosition {
+  fill: $light;
+}
