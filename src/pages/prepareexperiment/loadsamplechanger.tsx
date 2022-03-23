@@ -24,7 +24,7 @@ export default function LoadSampleChanger({ dewars, proposalName }: { dewars?: D
             <Row>
               <Col>
                 <Row>
-                  <h5 style={{ textAlign: 'center' }}>Placing sample: </h5>
+                  <h5 style={{ textAlign: 'center' }}>Positioning container: </h5>
                 </Row>
                 <Row>
                   <div style={{ maxWidth: 200, margin: 'auto' }}>
