@@ -17,21 +17,67 @@ function computePos(radiusRatio: number, maxPosition: number, position: number):
   const y = containerRadius - Math.cos(angle) * radius;
   return { x, y };
 }
-function computePosUni(position: number): { x: number | string; y: number | string } {
-  if (position < 6) {
-    return computePos(0.36, 5, position);
+
+const containerTypes = {
+  Spinepuck: {
+    computePos: (position: number) => {
+      return computePos(0.76, 10, position);
+    },
+    maxPos: 10,
+  },
+  Unipuck: {
+    computePos: (position: number) => {
+      if (position < 6) {
+        return computePos(0.36, 5, position);
+      }
+      return computePos(0.76, 11, position - 5);
+    },
+    maxPos: 16,
+  },
+};
+
+function getContainerType(type: string | undefined) {
+  if (type === 'Unipuck') {
+    return containerTypes.Unipuck;
   }
-  return computePos(0.76, 11, position - 5);
+  if (type === 'Spinepuck') {
+    return containerTypes.Spinepuck;
+  }
+  return undefined;
 }
 
-function computePosSpine(position: number): { x: number | string; y: number | string } {
-  return computePos(0.76, 10, position);
+function findContainerType(typeParam: string | undefined, samples: Sample[] | undefined, sampleByPosition: _.Dictionary<[Sample, ...Sample[]]>) {
+  // First look for type in params
+  let type = getContainerType(typeParam);
+  if (type == undefined) {
+    // If not found, look for type in data
+    type = getContainerType(samples?.length ? samples[0].Container_containerType : undefined);
+  }
+  if (type == undefined) {
+    // If not found, try to guess type
+    let maxPosition = _(Object.keys(sampleByPosition))
+      .map((n) => Number(n))
+      .max();
+    if (!maxPosition || maxPosition <= 10) {
+      maxPosition = 10;
+    } else {
+      maxPosition = 16;
+    }
+    type = maxPosition == 10 ? containerTypes.Spinepuck : containerTypes.Unipuck;
+  }
+  if (type == undefined) {
+    //Default type Unipuck
+    return containerTypes.Spinepuck;
+  } else {
+    return type;
+  }
 }
 
 export function MXContainer({
   proposalName,
   sessionId,
   containerId,
+  containerType,
   removeSelectedGroups = () => undefined,
   addSelectedGroups = () => undefined,
   selectedGroups = [],
@@ -39,6 +85,7 @@ export function MXContainer({
   proposalName: string;
   sessionId: string;
   containerId: string;
+  containerType?: string;
   selectedGroups?: number[];
   // eslint-disable-next-line no-unused-vars
   removeSelectedGroups?: (ids: number[]) => void;
@@ -50,20 +97,13 @@ export function MXContainer({
   const sampleByPosition = _(samples)
     .groupBy((s) => s.BLSample_location)
     .value();
-  let maxPosition = _(Object.keys(sampleByPosition))
-    .map((n) => Number(n))
-    .max();
-  if (!maxPosition || maxPosition <= 10) {
-    maxPosition = 10;
-  } else {
-    maxPosition = 16;
-  }
-  const positions = maxPosition == 10 ? computePosSpine : computePosUni;
+
+  const type = findContainerType(containerType, samples, sampleByPosition);
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-      <ContainerSVG maxPosition={maxPosition}>
-        {range(1, maxPosition + 1).map((n) => {
-          const position = positions(n);
+      <ContainerSVG maxPosition={type.maxPos}>
+        {range(1, type.maxPos + 1).map((n) => {
+          const position = type.computePos(n);
 
           const sampleArray = sampleByPosition[String(n)];
 
