@@ -1,15 +1,13 @@
-import { faTimes, faPlus, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Dewar, Shipment } from 'pages/model';
+import LoadingPanel from 'components/loading/loadingpanel';
+import { Dewar } from 'pages/model';
 import { MXContainer } from 'pages/mx/container/mxcontainer';
-import { Container } from 'postcss';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { Button, Card, Col, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import BootstrapTable, { ColumnDescription } from 'react-bootstrap-table-next';
 import filterFactory from 'react-bootstrap-table2-filter';
 import paginationFactory from 'react-bootstrap-table2-paginator';
-import { mutate } from 'swr';
-import { ToggleShipmentStatus } from './prepareexperimentpage';
 
 export default function LoadSampleChanger({ dewars, proposalName }: { dewars?: Dewar[]; proposalName: string }) {
   const [container, setContainer] = useState<Dewar | undefined>(undefined);
@@ -19,7 +17,14 @@ export default function LoadSampleChanger({ dewars, proposalName }: { dewars?: D
       <Card.Body>{dewars ? <ContainerTable dewars={dewars} setContainer={setContainer}></ContainerTable> : 'You must select a shipment first'}</Card.Body>
       <Card.Body>
         {container ? (
-          <MXContainer sessionId={container.sessionId || ''} proposalName={proposalName} containerId={String(container.containerId)}></MXContainer>
+          <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+            <MXContainer
+              containerType={container.containerType}
+              sessionId={container.sessionId || ''}
+              proposalName={proposalName}
+              containerId={String(container.containerId)}
+            ></MXContainer>
+          </Suspense>
         ) : (
           'You must select a shipment first'
         )}
@@ -28,9 +33,12 @@ export default function LoadSampleChanger({ dewars, proposalName }: { dewars?: D
   );
 }
 
+// eslint-disable-next-line no-unused-vars
 export function ContainerTable({ dewars, setContainer }: { dewars: Dewar[]; setContainer: (c: Dewar) => void }) {
   const columns: ColumnDescription<Dewar>[] = [
     { text: 'id', dataField: 'containerId', hidden: false },
+    { text: 'Type', dataField: 'containerType', hidden: false },
+    { text: 'Code', dataField: 'containerCode', hidden: false },
     {
       text: '',
       dataField: 'shippingId',
@@ -61,6 +69,7 @@ export function ContainerTable({ dewars, setContainer }: { dewars: Dewar[]; setC
   );
 }
 
+// eslint-disable-next-line no-unused-vars
 export function SelectContainer({ container, setContainer }: { container: Dewar; setContainer: (c: Dewar) => void }) {
   const onClick = () => {
     setContainer(container);

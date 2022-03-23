@@ -11,13 +11,12 @@ import _ from 'lodash';
 import { Dewar } from 'pages/model';
 import './prepareexperimentpage.scss';
 import { formatDateTo, parseDate } from 'helpers/dateparser';
-import { faPlus, faSearch, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 import { updateShippingStatus } from 'api/ispyb';
 import { KeyedMutator } from 'swr';
 import produce from 'immer';
-import { useState } from 'react';
 import LoadSampleChanger from './loadsamplechanger';
 import { Shipment } from 'pages/model';
 
