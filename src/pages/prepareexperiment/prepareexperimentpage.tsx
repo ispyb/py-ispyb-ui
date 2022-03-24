@@ -56,6 +56,22 @@ export default function PrepareExperimentPage() {
   if (isError) throw Error(isError);
   if (!data) throw Error('error while fetching dewars');
 
+  const setContainerPosition = (containerId: number, beamline: string, position: string) => {
+    mutate(
+      produce((dewarsDraft: Dewar[] | undefined) => {
+        if (dewarsDraft) {
+          for (const dewarDraft of dewarsDraft) {
+            if (dewarDraft.containerId == containerId) {
+              dewarDraft.beamlineLocation = beamline;
+              dewarDraft.sampleChangerLocation = position;
+            }
+          }
+        }
+      }),
+      false
+    );
+  };
+
   const shipments = _(data)
     .groupBy((d) => d.shippingId)
     .filter((dewars: Dewar[]) => dewars.length > 0)
@@ -138,7 +154,7 @@ export default function PrepareExperimentPage() {
         </Row>
       </Col>
       <Col>
-        <LoadSampleChanger proposalName={proposalName} dewars={processingDewars}></LoadSampleChanger>
+        <LoadSampleChanger setContainerPosition={setContainerPosition} proposalName={proposalName} dewars={processingDewars}></LoadSampleChanger>
       </Col>
     </Row>
   );

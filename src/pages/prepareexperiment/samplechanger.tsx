@@ -22,7 +22,18 @@ function getContainersForCell(containers: Dewar[] | undefined, cell: number, bea
   });
 }
 
-export default function SampleChanger({ beamline, containers, proposalName }: { beamline?: string; proposalName: string; containers?: Dewar[] }) {
+export default function SampleChanger({
+  beamline,
+  containers,
+  proposalName,
+  setContainerPosition,
+}: {
+  beamline?: string;
+  proposalName: string;
+  containers?: Dewar[];
+  // eslint-disable-next-line no-unused-vars
+  setContainerPosition: (containerId: number, beamline: string, position: string) => void;
+}) {
   return (
     <Col>
       <Row>
@@ -32,7 +43,7 @@ export default function SampleChanger({ beamline, containers, proposalName }: { 
         <ChangerSVG>
           {range(1, 9).map((n) => {
             const containersCell = getContainersForCell(containers, n, beamline);
-            return <CellSection proposalName={proposalName} containers={containersCell} n={n}></CellSection>;
+            return <CellSection setContainerPosition={setContainerPosition} proposalName={proposalName} containers={containersCell} n={n}></CellSection>;
           })}
         </ChangerSVG>
       </Row>
@@ -85,7 +96,18 @@ function ChangerSVG({ children }: PropsWithChildren<unknown>) {
   );
 }
 
-function CellSection({ n, containers, proposalName }: { n: number; proposalName: string; containers: (Dewar | undefined)[] }) {
+function CellSection({
+  n,
+  containers,
+  proposalName,
+  setContainerPosition,
+}: {
+  n: number;
+  proposalName: string;
+  containers: (Dewar | undefined)[];
+  // eslint-disable-next-line no-unused-vars
+  setContainerPosition: (containerId: number, beamline: string, position: string) => void;
+}) {
   const angle = getSectionAnle(n);
 
   const c1 = containerRadius * 0.45;
@@ -114,9 +136,43 @@ function CellSection({ n, containers, proposalName }: { n: number; proposalName:
             <text className="cellPositionNumber" x={xtxt[pos]} y={ytxt[pos] + 3}>
               {pos + 1}
             </text>
+            <DroppablePosition setContainerPosition={setContainerPosition} position={3 * (n - 1) + 1 + pos} x={x[pos]} y={y[pos]} r={r}></DroppablePosition>
           </g>
         );
       })}
     </g>
   );
+}
+import { useDrop } from 'react-dnd';
+import { ItemTypes } from './loadsamplechanger';
+
+function DroppablePosition({
+  x,
+  y,
+  r,
+  position,
+  setContainerPosition,
+}: {
+  x: number;
+  y: number;
+  r: number;
+  position: number;
+  // eslint-disable-next-line no-unused-vars
+  setContainerPosition: (containerId: number, beamline: string, position: string) => void;
+}) {
+  const [{ isOver, canDrop }, drop] = useDrop(
+    () => ({
+      accept: ItemTypes.CONTAINER,
+      drop: (item: Dewar) => {
+        setContainerPosition(item.containerId, 'ID30A-1', String(position));
+      },
+      canDrop: () => true,
+      collect: (monitor) => ({
+        isOver: !!monitor.isOver(),
+        canDrop: !!monitor.canDrop(),
+      }),
+    }),
+    [x, y]
+  );
+  return <circle ref={drop} cx={x} cy={y} r={r} stroke={isOver ? 'red' : canDrop ? 'yellow' : 'none'} fill={'transparent'}></circle>;
 }

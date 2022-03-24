@@ -1,6 +1,7 @@
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LoadingPanel from 'components/loading/loadingpanel';
+import SimpleParameterTable from 'components/table/simpleparametertable';
 import { Dewar } from 'pages/model';
 import { MXContainer } from 'pages/mx/container/mxcontainer';
 import { Suspense, useState } from 'react';
@@ -8,17 +9,33 @@ import { Alert, Button, Card, Col, OverlayTrigger, Row, Tooltip } from 'react-bo
 import BootstrapTable, { ColumnDescription } from 'react-bootstrap-table-next';
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 import paginationFactory from 'react-bootstrap-table2-paginator';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { useDrag } from 'react-dnd';
 
 import './loadsamplechanger.scss';
 import SampleChanger from './samplechanger';
 
-export default function LoadSampleChanger({ dewars, proposalName }: { dewars?: Dewar[]; proposalName: string }) {
-  const [container, setContainer] = useState<Dewar | undefined>(undefined);
+export const ItemTypes = {
+  CONTAINER: 'container',
+};
+
+export default function LoadSampleChanger({
+  dewars,
+  proposalName,
+  setContainerPosition,
+}: {
+  dewars?: Dewar[];
+  proposalName: string;
+  setContainerPosition: (containerId: number, beamline: string, position: string) => void;
+}) {
+  // const [container, setContainer] = useState<Dewar | undefined>(undefined);
   return (
-    <Card>
-      <Card.Header>2. Load sample changer</Card.Header>
-      <Card.Body>{dewars ? <ContainerTable selected={container} dewars={dewars} setContainer={setContainer}></ContainerTable> : 'You must select a shipment first'}</Card.Body>
-      <Card.Body>
+    <DndProvider backend={HTML5Backend}>
+      <Card>
+        <Card.Header>2. Load sample changer</Card.Header>
+        {/* <Card.Body>{dewars ? <ContainerTable selected={container} dewars={dewars} setContainer={setContainer}></ContainerTable> : 'You must select a shipment first'}</Card.Body> */}
+        {/* <Card.Body>
         {container ? (
           <Suspense fallback={<LoadingPanel></LoadingPanel>}>
             <Row>
@@ -53,8 +70,59 @@ export default function LoadSampleChanger({ dewars, proposalName }: { dewars?: D
         ) : (
           <Alert variant="info">You must select a container to load</Alert>
         )}
-      </Card.Body>
-    </Card>
+      </Card.Body> */}
+        <Card.Body>
+          <Row>
+            {dewars?.map((d) => {
+              return (
+                <Col md={'auto'}>
+                  <DragableContainer d={d} proposalName={proposalName}></DragableContainer>
+                </Col>
+              );
+            })}
+          </Row>
+        </Card.Body>
+        <Card.Body>
+          <Row>
+            <div style={{ width: 450, margin: 'auto' }}>
+              <SampleChanger setContainerPosition={setContainerPosition} proposalName={proposalName} beamline={'ID30A-1'} containers={dewars}></SampleChanger>
+            </div>
+          </Row>
+        </Card.Body>
+      </Card>
+    </DndProvider>
+  );
+}
+
+export function DragableContainer({ d, proposalName }: { d: Dewar; proposalName: string }) {
+  const [{ isDragging }, drag] = useDrag(() => ({
+    type: ItemTypes.CONTAINER,
+    item: d,
+    collect: (monitor) => ({
+      isDragging: !!monitor.isDragging(),
+    }),
+  }));
+  return (
+    <div>
+      <div
+        ref={drag}
+        style={{
+          cursor: 'move',
+          opacity: isDragging ? 0.5 : 1,
+        }}
+      >
+        <MXContainer showInfo={false} containerType={d.containerType} proposalName={proposalName} containerId={String(d.containerId)}></MXContainer>
+      </div>
+      <SimpleParameterTable
+        parameters={[
+          { key: 'Shipment', value: d.shippingName },
+          { key: 'Container', value: d.containerCode },
+          { key: 'Type', value: d.containerType },
+          { key: 'Beamline', value: d.beamlineLocation },
+          { key: 'sampleChangerLocation', value: d.sampleChangerLocation },
+        ]}
+      ></SimpleParameterTable>
+    </div>
   );
 }
 
