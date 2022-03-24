@@ -46,7 +46,7 @@ export function getSectionAnle(n: number) {
 
 function ChangerSVG({ children }: PropsWithChildren<unknown>) {
   return (
-    <svg style={{ maxWidth: 400 }} viewBox={`-${containerRadius + 5} -${containerRadius + 5} ${2 * (containerRadius + 5)} ${2 * (containerRadius + 5)}`}>
+    <svg style={{ maxWidth: 500 }} viewBox={`-${containerRadius + 5} -${containerRadius + 5} ${2 * (containerRadius + 5)} ${2 * (containerRadius + 5)}`}>
       <g>
         <circle cx={0} cy={0} r={containerRadius} stroke={'#000'} fill="#CCCCCC"></circle>
         {[0, Math.PI / 2, Math.PI / 4, (3 * Math.PI) / 4].map((angle) => {
@@ -87,23 +87,34 @@ function ChangerSVG({ children }: PropsWithChildren<unknown>) {
 
 function CellSection({ n, containers, proposalName }: { n: number; proposalName: string; containers: (Dewar | undefined)[] }) {
   const angle = getSectionAnle(n);
+
   const c1 = containerRadius * 0.45;
   const c2 = containerRadius * 0.75;
   const r = containerRadius / 8;
   const x = [c2 * Math.sin(angle - Math.PI / 16), c2 * Math.sin(angle + Math.PI / 16), c1 * Math.sin(angle)];
   const y = [-c2 * Math.cos(angle - Math.PI / 16), -c2 * Math.cos(angle + Math.PI / 16), -c1 * Math.cos(angle)];
 
+  const ctxt1 = containerRadius * 0.29;
+  const ctxt2 = containerRadius * 0.91;
+  const xtxt = [ctxt2 * Math.sin(angle - Math.PI / 16), ctxt2 * Math.sin(angle + Math.PI / 16), ctxt1 * Math.sin(angle)];
+  const ytxt = [-ctxt2 * Math.cos(angle - Math.PI / 16), -ctxt2 * Math.cos(angle + Math.PI / 16), -ctxt1 * Math.cos(angle)];
+
   return (
     <g>
       {range(0, 3).map((pos) => {
         return (
-          <svg x={x[pos] - r} y={y[pos] - r} width={2 * r} height={2 * r}>
-            {containers[pos] ? (
-              <MXContainer showInfo={false} proposalName={proposalName} containerId={String(containers[pos]?.containerId)}></MXContainer>
-            ) : (
-              <EmptyContainer></EmptyContainer>
-            )}
-          </svg>
+          <g>
+            <svg x={x[pos] - r} y={y[pos] - r} width={2 * r} height={2 * r}>
+              {containers[pos] ? (
+                <MXContainer showInfo={false} proposalName={proposalName} containerId={String(containers[pos]?.containerId)}></MXContainer>
+              ) : (
+                <EmptyContainer></EmptyContainer>
+              )}
+            </svg>
+            <text className="cellPositionNumber" x={xtxt[pos]} y={ytxt[pos] + 3}>
+              {pos + 1}
+            </text>
+          </g>
         );
       })}
     </g>

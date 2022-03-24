@@ -34,7 +34,7 @@ export default function LoadSampleChanger({ dewars, proposalName }: { dewars?: D
               </Col>
               <Col>
                 <Row>
-                  <div style={{ maxWidth: 400, margin: 'auto' }}>
+                  <div style={{ width: 450, margin: 'auto' }}>
                     <SampleChanger proposalName={proposalName} beamline={container.beamlineLocation} containers={dewars}></SampleChanger>
                   </div>
                 </Row>
