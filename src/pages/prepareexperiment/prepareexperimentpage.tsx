@@ -1,4 +1,4 @@
-import { Button, Col, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
+import { Button, Card, Col, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import BootstrapTable, { ColumnDescription } from 'react-bootstrap-table-next';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import 'react-bootstrap-table2-filter/dist/react-bootstrap-table2-filter.min.css';
@@ -115,20 +115,25 @@ export default function PrepareExperimentPage() {
       <Col md={'auto'}>
         <Row>
           <div style={{ maxWidth: 550 }}>
-            <BootstrapTable
-              bootstrap4
-              wrapperClasses="table-responsive"
-              keyField="Id"
-              data={shipments.sort(sortShipments)}
-              columns={columns}
-              rowClasses={(row: Shipment) => {
-                return shipmentIsProcessing(row) ? 'processing' : '';
-              }}
-              condensed
-              striped
-              pagination={paginationFactory({ sizePerPage: 20, showTotal: true, hideSizePerPage: true, hidePageListOnlyOnePage: true })}
-              filter={filterFactory()}
-            />
+            <Card style={{ border: 'none' }}>
+              <Card.Header>1. Select shipments</Card.Header>
+              <Card.Body style={{ padding: 0 }}>
+                <BootstrapTable
+                  bootstrap4
+                  wrapperClasses="table-responsive"
+                  keyField="Id"
+                  data={shipments.sort(sortShipments)}
+                  columns={columns}
+                  rowClasses={(row: Shipment) => {
+                    return shipmentIsProcessing(row) ? 'processing' : '';
+                  }}
+                  condensed
+                  striped
+                  pagination={paginationFactory({ sizePerPage: 20, showTotal: true, hideSizePerPage: true, hidePageListOnlyOnePage: true })}
+                  filter={filterFactory()}
+                />
+              </Card.Body>
+            </Card>
           </div>
         </Row>
       </Col>

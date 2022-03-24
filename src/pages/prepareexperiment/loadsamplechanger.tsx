@@ -4,7 +4,7 @@ import LoadingPanel from 'components/loading/loadingpanel';
 import { Dewar } from 'pages/model';
 import { MXContainer } from 'pages/mx/container/mxcontainer';
 import { Suspense, useState } from 'react';
-import { Button, Card, Col, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
+import { Alert, Button, Card, Col, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
 import BootstrapTable, { ColumnDescription } from 'react-bootstrap-table-next';
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 import paginationFactory from 'react-bootstrap-table2-paginator';
@@ -16,21 +16,30 @@ export default function LoadSampleChanger({ dewars, proposalName }: { dewars?: D
   const [container, setContainer] = useState<Dewar | undefined>(undefined);
   return (
     <Card>
-      <Card.Header>Load sample changer</Card.Header>
+      <Card.Header>2. Load sample changer</Card.Header>
       <Card.Body>{dewars ? <ContainerTable selected={container} dewars={dewars} setContainer={setContainer}></ContainerTable> : 'You must select a shipment first'}</Card.Body>
       <Card.Body>
         {container ? (
           <Suspense fallback={<LoadingPanel></LoadingPanel>}>
             <Row>
-              <Col>
-                <Row>
-                  <h5 style={{ textAlign: 'center' }}>Positioning container: </h5>
+              <Col style={{ display: 'flex' }}>
+                <Row style={{ margin: 'auto' }}>
+                  <Col>
+                    <Row>
+                      <h5 style={{ textAlign: 'center' }}>Positioning container: </h5>
+                    </Row>
+                    <Row>
+                      <div>
+                        <MXContainer containerType={container.containerType} proposalName={proposalName} containerId={String(container.containerId)}></MXContainer>
+                      </div>
+                    </Row>
+                  </Col>
                 </Row>
-                <Row>
-                  <div style={{ maxWidth: 200, margin: 'auto' }}>
-                    <MXContainer containerType={container.containerType} proposalName={proposalName} containerId={String(container.containerId)}></MXContainer>
-                  </div>
-                </Row>
+              </Col>
+              <Col md={'auto'} style={{ width: 1, padding: 0, backgroundColor: 'gray' }}>
+                <p style={{ position: 'relative', top: '49%', left: -30, width: 60, textAlign: 'center', background: 'white' }}>
+                  <strong>to beamline</strong>
+                </p>
               </Col>
               <Col>
                 <Row>
@@ -42,7 +51,7 @@ export default function LoadSampleChanger({ dewars, proposalName }: { dewars?: D
             </Row>{' '}
           </Suspense>
         ) : (
-          'You must select a shipment first'
+          <Alert variant="info">You must select a container to load</Alert>
         )}
       </Card.Body>
     </Card>
@@ -82,16 +91,24 @@ export function ContainerTable({ dewars, setContainer, selected }: { dewars: Dew
       }),
     },
     {
+      text: 'Cell',
+      dataField: 'sampleChangerLocation',
+      formatter: (cell) => {
+        if (!cell || isNaN(Number(cell))) {
+          return '';
+        }
+        return `${Math.floor(Number(cell) / 3) + 1}`;
+      },
+      hidden: false,
+    },
+    {
       text: 'Position',
       dataField: 'sampleChangerLocation',
       formatter: (cell) => {
-        if (!cell) {
+        if (!cell || isNaN(Number(cell))) {
           return '';
         }
-        if (isNaN(cell)) {
-          return cell;
-        }
-        return `${Math.floor(cell / 3) + 1} - ${cell % 3}`;
+        return `${Number(cell) % 3}`;
       },
       hidden: false,
     },
