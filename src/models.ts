@@ -1,12 +1,12 @@
 /********************************************
  * Site: this model descript config/site.js
  /******************************************/
-interface Beamline {
+export interface Beamline {
   name: string;
   sampleChangerType?: string;
 }
 
-interface Technique {
+export interface Technique {
   beamlines: Array<Beamline>;
 }
 

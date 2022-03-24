@@ -24,6 +24,7 @@ const containerTypes = {
       return computePos(0.76, 10, position);
     },
     maxPos: 10,
+    name: 'Spinepuck',
   },
   Unipuck: {
     computePos: (position: number) => {
@@ -33,10 +34,11 @@ const containerTypes = {
       return computePos(0.76, 11, position - 5);
     },
     maxPos: 16,
+    name: 'Unipuck',
   },
 };
 
-function getContainerType(type: string | undefined) {
+export function getContainerType(type: string | undefined) {
   if (type === 'Unipuck') {
     return containerTypes.Unipuck;
   }
@@ -153,16 +155,20 @@ export function MXContainer({
   );
 }
 
-export function EmptyContainer() {
-  return (
-    <ContainerSVG maxPosition={16}>
-      {range(1, 17).map((n) => {
-        const position = containerTypes.Unipuck.computePos(n);
+export function EmptyContainer({ containerType }: { containerType: 'Spinepuck' | 'Unipuck' }) {
+  const type = getContainerType(containerType);
+  if (type) {
+    return (
+      <ContainerSVG maxPosition={type.maxPos}>
+        {range(1, type.maxPos + 1).map((n) => {
+          const position = type.computePos(n);
 
-        return <SampleSVG position={position} n={n} collected={false} selected={false} onClick={() => undefined}></SampleSVG>;
-      })}
-    </ContainerSVG>
-  );
+          return <SampleSVG position={position} n={n} collected={false} selected={false} onClick={() => undefined}></SampleSVG>;
+        })}
+      </ContainerSVG>
+    );
+  }
+  return <></>;
 }
 
 function ContainerSVG({ maxPosition, children }: PropsWithChildren<{ maxPosition: number }>) {

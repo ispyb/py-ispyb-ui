@@ -37,7 +37,7 @@ const sites: Site[] = [
           { name: 'ID23-1', sampleChangerType: 'FlexHCDDual' },
           { name: 'ID23-2', sampleChangerType: 'FlexHCDUnipuckPlate' },
           { name: 'ID29', sampleChangerType: 'FlexHCDDual' },
-          { name: 'ID30A-1', sampleChangerType: 'RoboDiffHCDSC3' },
+          { name: 'ID30A-1', sampleChangerType: 'FlexHCDUnipuckPlate' },
           { name: 'ID30A-2', sampleChangerType: 'FlexHCDDual' },
           { name: 'ID30A-3', sampleChangerType: 'FlexHCDDual' },
           { name: 'ID30B', sampleChangerType: 'FlexHCDDual' },

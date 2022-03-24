@@ -19,6 +19,7 @@ import { KeyedMutator } from 'swr';
 import produce from 'immer';
 import LoadSampleChanger from './loadsamplechanger';
 import { Shipment } from 'pages/model';
+import { useBeamlinesObjects } from 'hooks/site';
 
 const dateFormatter = (cell: string) => {
   if (cell) {

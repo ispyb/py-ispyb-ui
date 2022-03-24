@@ -13,6 +13,17 @@ export function useBeamlines(technique: string): Array<string> {
 }
 
 /**
+ * It returns the beamline objects per technique as it is defined in config/sites.hs
+ * @param {*} technique MX, SAXS, EM, etc..
+ * @returns Array with the  beamlines
+ */
+export function useBeamlinesObjects(technique: string) {
+  const site: Site = store.getState().site;
+  if (!site.techniques[technique]) return [];
+  return site.techniques[technique].beamlines;
+}
+
+/**
  * It returns the name of the technique for a beamline
  * @param {*} beamline MX, SAXS, EM, etc..
  * @returns Name of the beamline. Example: ID29

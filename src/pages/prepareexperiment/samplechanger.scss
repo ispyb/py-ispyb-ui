@@ -19,3 +19,18 @@
 .cellPosition {
   fill: $light;
 }
+
+.removeContainerBtnTxt {
+  font-size: 8.25px;
+  text-anchor: middle;
+  pointer-events: none;
+  fill: white;
+}
+
+.removeContainerBtn {
+  fill: $info;
+}
+.removeContainerBtn:hover {
+  fill: $danger;
+  cursor: pointer;
+}
