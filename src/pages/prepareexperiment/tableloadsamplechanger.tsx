@@ -11,7 +11,6 @@ import { findBestDefaultBeamline } from './dndloadsamplechanger';
 
 export default function TableLoadSampleChanger({
   dewars,
-  proposalName,
   setContainerPosition,
   setContainerBeamline,
   beamlines,
@@ -168,6 +167,7 @@ export function BeamLineSelector({
 }: {
   beamline?: Beamline;
   beamlines: Beamline[];
+  // eslint-disable-next-line no-unused-vars
   setBeamline: (b: Beamline) => void;
   size?: 'sm' | 'lg' | undefined;
   variant?: string | undefined;
@@ -199,6 +199,7 @@ export function PositionSelector({
 }: {
   beamline?: Beamline;
   container: ContainerDewar;
+  // eslint-disable-next-line no-unused-vars
   setPosition: (pos: string) => void;
   size?: 'sm' | 'lg' | undefined;
   variant?: string | undefined;

@@ -15,6 +15,7 @@ export default function LoadSampleChanger({
 }: {
   dewars?: ContainerDewar[];
   proposalName: string;
+  // eslint-disable-next-line no-unused-vars
   setContainerPosition: (containerId: number, position: string) => void;
   // eslint-disable-next-line no-unused-vars
   setContainerBeamline: (containerId: number, beamline: string) => void;
