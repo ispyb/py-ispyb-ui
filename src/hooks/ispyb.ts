@@ -58,9 +58,12 @@ export function useProposals() {
 }
 
 export function useSessions(props: UseSession) {
-  const { startDate, endDate, isManager, proposalName } = props;
+  const { startDate, endDate, isManager, proposalName, username } = props;
   if (proposalName) {
     return doGet(getProposalSessions(proposalName).url);
+  }
+  if (!isManager && username) {
+    return doGet(getProposalSessions(username).url);
   }
   if (isManager && (!startDate || !endDate)) {
     return { data: undefined, isError: 'Manager mush provide start and end dates' }; //would be too heavy
