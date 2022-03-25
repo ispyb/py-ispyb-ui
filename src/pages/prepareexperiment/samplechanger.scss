@@ -28,9 +28,24 @@
 }
 
 .removeContainerBtn {
-  fill: $info;
+  fill: $danger;
 }
 .removeContainerBtn:hover {
-  fill: $danger;
+  fill: $warning;
+  cursor: pointer;
+}
+
+.infoContainerBtnTxt {
+  font-size: 7px;
+  text-anchor: middle;
+  pointer-events: none;
+  fill: white;
+}
+
+.infoContainerBtn {
+  fill: $info;
+}
+.infoContainerBtn:hover {
+  fill: $warning;
   cursor: pointer;
 }

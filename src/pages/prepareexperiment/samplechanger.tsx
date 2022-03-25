@@ -216,7 +216,7 @@ function InfoContainerBtn({ cx, cy, cr, container }: { cx: number; cy: number; c
   const y = cy + cr * Math.sin(Math.PI / 4);
 
   const popover = (
-    <Popover id="popover-basic">
+    <Popover id="popover-basic" style={{ width: 300 }}>
       <Popover.Header as="h3">Container</Popover.Header>
       <Popover.Body>
         <MXContainer containerType={String(container.containerType)} showInfo={true} proposalName={'MX415'} containerId={String(container.containerId)}></MXContainer>
@@ -227,8 +227,8 @@ function InfoContainerBtn({ cx, cy, cr, container }: { cx: number; cy: number; c
   return (
     <OverlayTrigger show={show} key={'bottom'} placement={'bottom'} overlay={popover}>
       <g>
-        <circle onClick={() => setShow(!show)} className="removeContainerBtn" cx={x} cy={y} r={r}></circle>
-        <text className="removeContainerBtnTxt" x={x} y={y + 2.5}>
+        <circle onClick={() => setShow(!show)} className="infoContainerBtn" cx={x} cy={y} r={r}></circle>
+        <text className="infoContainerBtnTxt" x={x} y={y + 2.5}>
           i
         </text>
       </g>
@@ -237,7 +237,7 @@ function InfoContainerBtn({ cx, cy, cr, container }: { cx: number; cy: number; c
 }
 
 import { useDrop } from 'react-dnd';
-import { ItemTypes } from './loadsamplechanger';
+import { ItemTypes } from './dndloadsamplechanger';
 import { Beamline } from 'models';
 
 function DroppablePosition({
