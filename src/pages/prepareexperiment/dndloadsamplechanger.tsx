@@ -18,33 +18,6 @@ import { getContainerPosition, getContainerType } from 'helpers/mx/samplehelper'
 
 import './dndloadsamplechanger.scss';
 
-function findBestDefaultBeamline(beamlines: Beamline[], containers?: ContainerDewar[]) {
-  if (containers) {
-    //first look for beamline with a sample that has a location defined
-    for (const container of containers) {
-      if (container.beamlineLocation && getContainerPosition(container.sampleChangerLocation)) {
-        for (const beamline of beamlines) {
-          if (container.beamlineLocation === beamline.name) {
-            return beamline;
-          }
-        }
-      }
-    }
-    //if not found look for beamline with a sample that has no location defined
-    for (const container of containers) {
-      if (container.beamlineLocation) {
-        for (const beamline of beamlines) {
-          if (container.beamlineLocation === beamline.name) {
-            return beamline;
-          }
-        }
-      }
-    }
-  }
-  //default to first
-  return beamlines[0];
-}
-
 export default function DnDLoadSampleChanger({
   dewars,
   proposalName,
@@ -77,8 +50,8 @@ export default function DnDLoadSampleChanger({
             <Row>
               {dewars?.map((d) => {
                 return (
-                  <Col md={'auto'}>
-                    <div>
+                  <Col style={{ display: 'flex' }}>
+                    <div style={{ margin: 'auto' }}>
                       <DragableContainer d={d} proposalName={proposalName}></DragableContainer>
                     </div>
                   </Col>
@@ -115,6 +88,33 @@ export default function DnDLoadSampleChanger({
       </Row>
     </Col>
   );
+}
+
+function findBestDefaultBeamline(beamlines: Beamline[], containers?: ContainerDewar[]) {
+  if (containers) {
+    //first look for beamline with a sample that has a location defined
+    for (const container of containers) {
+      if (container.beamlineLocation && getContainerPosition(container.sampleChangerLocation)) {
+        for (const beamline of beamlines) {
+          if (container.beamlineLocation === beamline.name) {
+            return beamline;
+          }
+        }
+      }
+    }
+    //if not found look for beamline with a sample that has no location defined
+    for (const container of containers) {
+      if (container.beamlineLocation) {
+        for (const beamline of beamlines) {
+          if (container.beamlineLocation === beamline.name) {
+            return beamline;
+          }
+        }
+      }
+    }
+  }
+  //default to first
+  return beamlines[0];
 }
 
 function DragableContainer({ d, proposalName }: { d: ContainerDewar; proposalName: string }) {
