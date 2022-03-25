@@ -53,7 +53,7 @@ export interface Session {
   xrfSpectrumCount: number;
 }
 
-export interface Dewar {
+export interface ContainerDewar {
   Shipping_comments: string;
   barCode: string;
   beamLineOperator?: string;
@@ -107,5 +107,5 @@ export interface Shipment {
   name: string;
   status: string;
   creationDate: string;
-  dewars: Dewar[];
+  dewars: ContainerDewar[];
 }

@@ -1,5 +1,4 @@
-import { Dewar } from 'pages/model';
-import { useState } from 'react';
+import { ContainerDewar } from 'pages/model';
 import { Card } from 'react-bootstrap';
 
 import './loadsamplechanger.scss';
@@ -12,7 +11,7 @@ export default function LoadSampleChanger({
   proposalName,
   setContainerPosition,
 }: {
-  dewars?: Dewar[];
+  dewars?: ContainerDewar[];
   proposalName: string;
   // eslint-disable-next-line no-unused-vars
   setContainerPosition: (containerId: number, beamline: string, position: string) => void;

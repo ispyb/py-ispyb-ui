@@ -23,7 +23,7 @@ export function getDragLayerStyles(initialOffset: XYCoord | null, currentOffset:
   };
 }
 
-export function CustomDragLayer() {
+export function CustomDragLayer({ proposalName }: { proposalName: string }) {
   const { itemType, isDragging, item, initialOffset, currentOffset } = useDragLayer((monitor) => ({
     item: monitor.getItem(),
     itemType: monitor.getItemType(),
@@ -33,13 +33,11 @@ export function CustomDragLayer() {
   }));
 
   const renderItem = () => {
-    debugger;
-    console.log(itemType);
     switch (itemType) {
       case ItemTypes.CONTAINER:
         return (
           <div className="dragitem">
-            <MXContainer showInfo={false} proposalName={'MX415'} containerType={item.containerType} containerId={item.containerId}></MXContainer>
+            <MXContainer showInfo={false} proposalName={proposalName} containerType={item.containerType} containerId={item.containerId}></MXContainer>
           </div>
         );
       default:

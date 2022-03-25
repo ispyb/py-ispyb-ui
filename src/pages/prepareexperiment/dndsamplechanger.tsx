@@ -1,7 +1,7 @@
 import { range } from 'lodash';
-import { Dewar } from 'pages/model';
-import { EmptyContainer, getContainerType, MXContainer } from 'pages/mx/container/mxcontainer';
-import { PropsWithChildren, useRef, useState } from 'react';
+import { ContainerDewar } from 'pages/model';
+import { EmptyContainer, MXContainer } from 'pages/mx/container/mxcontainer';
+import { PropsWithChildren, useState } from 'react';
 import { Col, OverlayTrigger, Popover, Row } from 'react-bootstrap';
 
 import { useDrop } from 'react-dnd';
@@ -9,23 +9,11 @@ import { ItemTypes } from './dndlayer';
 import { Beamline } from 'models';
 
 import './dndsamplechanger.scss';
+import { getContainerTypes, getContainerType } from 'helpers/mx/samplehelper';
 
-function getContainerTypes(type?: string): ('Spinepuck' | 'Unipuck' | undefined)[] {
-  if (type === 'FlexHCDDual') {
-    return ['Spinepuck', 'Unipuck', 'Spinepuck', 'Unipuck', 'Unipuck', 'Unipuck', 'Unipuck', 'Unipuck'];
-  }
-  if (type === 'FlexHCDUnipuckPlate') {
-    return ['Unipuck', 'Unipuck', 'Unipuck', 'Unipuck', 'Unipuck', 'Unipuck', 'Unipuck', 'Unipuck'];
-  }
-  if (type === 'RoboDiffHCDSC3') {
-    return ['Unipuck', 'Unipuck', 'Unipuck', 'Unipuck', 'Unipuck', 'Unipuck', 'Unipuck', 'Unipuck'];
-  }
-  return range(0, 8).map(() => undefined);
-}
+const sampleChangerRadius = 100;
 
-const containerRadius = 100;
-
-function getContainersForCell(containers: Dewar[] | undefined, cell: number, beamline: Beamline) {
+function getContainersForCell(containers: ContainerDewar[] | undefined, cell: number, beamline: Beamline) {
   if (!containers) {
     return [undefined, undefined, undefined];
   }
@@ -48,7 +36,7 @@ export default function DnDSampleChanger({
 }: {
   beamline: Beamline;
   proposalName: string;
-  containers?: Dewar[];
+  containers?: ContainerDewar[];
   // eslint-disable-next-line no-unused-vars
   setContainerPosition: (containerId: number, beamline: string, position: string) => void;
 }) {
@@ -83,18 +71,18 @@ export function getSectionAnle(n: number) {
 
 function ChangerSVG({ children }: PropsWithChildren<unknown>) {
   return (
-    <svg style={{ maxWidth: 500 }} viewBox={`-${containerRadius + 5} -${containerRadius + 5} ${2 * (containerRadius + 5)} ${2 * (containerRadius + 5)}`}>
+    <svg style={{ maxWidth: 500 }} viewBox={`-${sampleChangerRadius + 5} -${sampleChangerRadius + 5} ${2 * (sampleChangerRadius + 5)} ${2 * (sampleChangerRadius + 5)}`}>
       <g>
-        <circle cx={0} cy={0} r={containerRadius} stroke={'#000'} fill="#CCCCCC"></circle>
+        <circle cx={0} cy={0} r={sampleChangerRadius} stroke={'#000'} fill="#CCCCCC"></circle>
         {[0, Math.PI / 2, Math.PI / 4, (3 * Math.PI) / 4].map((angle) => {
           return (
             <line
               stroke={'#000'}
               strokeWidth={0.6}
-              x1={containerRadius * Math.sin(angle)}
-              y1={containerRadius * Math.cos(angle)}
-              x2={containerRadius * Math.sin(angle + Math.PI)}
-              y2={containerRadius * Math.cos(angle + Math.PI)}
+              x1={sampleChangerRadius * Math.sin(angle)}
+              y1={sampleChangerRadius * Math.cos(angle)}
+              x2={sampleChangerRadius * Math.sin(angle + Math.PI)}
+              y2={sampleChangerRadius * Math.cos(angle + Math.PI)}
             ></line>
           );
         })}
@@ -104,13 +92,13 @@ function ChangerSVG({ children }: PropsWithChildren<unknown>) {
             <g>
               <circle
                 className="cell"
-                cx={containerRadius * Math.sin(angle)}
-                cy={-containerRadius * Math.cos(angle)}
-                r={containerRadius / 10}
+                cx={sampleChangerRadius * Math.sin(angle)}
+                cy={-sampleChangerRadius * Math.cos(angle)}
+                r={sampleChangerRadius / 10}
                 stroke={'#000'}
                 fill="#FFFF"
               ></circle>
-              <text className="cellNumber" x={containerRadius * Math.sin(angle)} y={-containerRadius * Math.cos(angle) + 3}>
+              <text className="cellNumber" x={sampleChangerRadius * Math.sin(angle)} y={-sampleChangerRadius * Math.cos(angle) + 3}>
                 {n + 1}
               </text>
             </g>
@@ -132,7 +120,7 @@ function CellSection({
 }: {
   n: number;
   proposalName: string;
-  containers: (Dewar | undefined)[];
+  containers: (ContainerDewar | undefined)[];
   containerType?: 'Spinepuck' | 'Unipuck';
   beamline: Beamline;
   // eslint-disable-next-line no-unused-vars
@@ -140,14 +128,14 @@ function CellSection({
 }) {
   const angle = getSectionAnle(n);
 
-  const c1 = containerRadius * 0.45;
-  const c2 = containerRadius * 0.75;
-  const r = containerRadius / 8;
+  const c1 = sampleChangerRadius * 0.45;
+  const c2 = sampleChangerRadius * 0.75;
+  const r = sampleChangerRadius / 8;
   const x = [c2 * Math.sin(angle - Math.PI / 16), c2 * Math.sin(angle + Math.PI / 16), c1 * Math.sin(angle)];
   const y = [-c2 * Math.cos(angle - Math.PI / 16), -c2 * Math.cos(angle + Math.PI / 16), -c1 * Math.cos(angle)];
 
-  const ctxt1 = containerRadius * 0.28;
-  const ctxt2 = containerRadius * 0.92;
+  const ctxt1 = sampleChangerRadius * 0.28;
+  const ctxt2 = sampleChangerRadius * 0.92;
   const xtxt = [ctxt2 * Math.sin(angle - Math.PI / 16), ctxt2 * Math.sin(angle + Math.PI / 16), ctxt1 * Math.sin(angle)];
   const ytxt = [-ctxt2 * Math.cos(angle - Math.PI / 16), -ctxt2 * Math.cos(angle + Math.PI / 16), -ctxt1 * Math.cos(angle)];
 
@@ -159,7 +147,12 @@ function CellSection({
           <g>
             <svg x={x[pos] - r} y={y[pos] - r} width={2 * r} height={2 * r}>
               {container ? (
-                <MXContainer containerType={String(container.containerType)} showInfo={false} proposalName={proposalName} containerId={String(container.containerId)}></MXContainer>
+                <MXContainer
+                  containerType={getContainerType(container.containerType)}
+                  showInfo={false}
+                  proposalName={proposalName}
+                  containerId={String(container.containerId)}
+                ></MXContainer>
               ) : (
                 <EmptyContainer containerType={containerType}></EmptyContainer>
               )}
@@ -178,7 +171,7 @@ function CellSection({
                   cy={y[pos]}
                   cr={r}
                 ></RemoveContainerBtn>
-                <InfoContainerBtn container={container} cx={x[pos]} cy={y[pos]} cr={r}></InfoContainerBtn>
+                <InfoContainerBtn proposalName={proposalName} container={container} cx={x[pos]} cy={y[pos]} cr={r}></InfoContainerBtn>
               </g>
             ) : (
               <DroppablePosition
@@ -212,25 +205,29 @@ function RemoveContainerBtn({ cx, cy, cr, onClick }: { cx: number; cy: number; c
   );
 }
 
-function InfoContainerBtn({ cx, cy, cr, container }: { cx: number; cy: number; cr: number; container: Dewar }) {
+function InfoContainerBtn({ cx, cy, cr, container, proposalName }: { cx: number; cy: number; cr: number; container: ContainerDewar; proposalName: string }) {
   const [show, setShow] = useState(false);
-  const target = useRef(null);
 
   const r = cr / 3;
   const x = cx + cr * Math.cos(Math.PI / 4);
   const y = cy + cr * Math.sin(Math.PI / 4);
 
   const popover = (
-    <Popover id="popover-basic" style={{ width: 300 }}>
+    <Popover style={{ width: 300 }}>
       <Popover.Header as="h3">Container</Popover.Header>
       <Popover.Body>
-        <MXContainer containerType={String(container.containerType)} showInfo={true} proposalName={'MX415'} containerId={String(container.containerId)}></MXContainer>
+        <MXContainer
+          containerType={getContainerType(container.containerType)}
+          showInfo={true}
+          proposalName={proposalName}
+          containerId={String(container.containerId)}
+        ></MXContainer>
       </Popover.Body>
     </Popover>
   );
 
   return (
-    <OverlayTrigger show={show} key={'bottom'} placement={'bottom'} overlay={popover}>
+    <OverlayTrigger show={show} key={'bottom'} placement={'left'} overlay={popover}>
       <g>
         <circle onClick={() => setShow(!show)} className="infoContainerBtn" cx={x} cy={y} r={r}></circle>
         <text className="infoContainerBtnTxt" x={x} y={y + 2.5}>
@@ -262,13 +259,12 @@ function DroppablePosition({
   const [{ isOver, canDrop }, drop] = useDrop(
     () => ({
       accept: ItemTypes.CONTAINER,
-      drop: (item: Dewar) => {
+      drop: (item: ContainerDewar) => {
         setContainerPosition(item.containerId, beamline.name, String(position));
       },
-      canDrop: (item: Dewar) => {
-        // return true;
+      canDrop: (item: ContainerDewar) => {
         const type = getContainerType(item.containerType);
-        return type != undefined && type.name === containerType;
+        return type != undefined && type === containerType;
       },
       collect: (monitor) => ({
         isOver: !!monitor.isOver(),

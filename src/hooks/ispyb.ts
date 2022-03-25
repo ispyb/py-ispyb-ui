@@ -20,7 +20,7 @@ import {
 } from 'api/ispyb';
 import { EnergyScan, WorkflowStep, FluorescenceSpectra, Sample, DataCollectionGroup } from 'pages/mx/model';
 
-import { Dewar, Proposal } from 'pages/model';
+import { ContainerDewar, Proposal } from 'pages/model';
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
@@ -114,5 +114,5 @@ export function useEMClassification({ proposalName, sessionId }: ProposalSession
 }
 
 export function useDewars({ proposalName }: { proposalName: string }) {
-  return doGet<Dewar[]>(getDewars({ proposalName }).url);
+  return doGet<ContainerDewar[]>(getDewars({ proposalName }).url);
 }

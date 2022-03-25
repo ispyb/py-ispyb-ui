@@ -8,7 +8,7 @@ import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 import { useDewars } from 'hooks/ispyb';
 import { useParams } from 'react-router-dom';
 import _ from 'lodash';
-import { Dewar } from 'pages/model';
+import { ContainerDewar } from 'pages/model';
 import './prepareexperimentpage.scss';
 import { formatDateTo, parseDate } from 'helpers/dateparser';
 import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
@@ -19,33 +19,6 @@ import { KeyedMutator } from 'swr';
 import produce from 'immer';
 import LoadSampleChanger from './loadsamplechanger';
 import { Shipment } from 'pages/model';
-import { useBeamlinesObjects } from 'hooks/site';
-
-const dateFormatter = (cell: string) => {
-  if (cell) {
-    return `${formatDateTo(cell, 'dd/MM/yyyy')}`;
-  }
-  return cell;
-};
-
-const shipmentIsProcessing = (s: Shipment) => {
-  return s.status && s.status.toLowerCase().includes('processing') ? 1 : 0;
-};
-
-const sortShipments = (a: Shipment, b: Shipment) => {
-  const aN = shipmentIsProcessing(a);
-  const bN = shipmentIsProcessing(b);
-  if (aN == bN) {
-    if (a.creationDate && b.creationDate) {
-      return parseDate(b.creationDate).getTime() - parseDate(a.creationDate).getTime();
-    }
-    if (a.creationDate) {
-      return -1;
-    }
-    return 1;
-  }
-  return bN - aN;
-};
 
 type Param = {
   proposalName: string;
@@ -59,7 +32,7 @@ export default function PrepareExperimentPage() {
 
   const setContainerPosition = (containerId: number, beamline: string, position: string) => {
     mutate(
-      produce((dewarsDraft: Dewar[] | undefined) => {
+      produce((dewarsDraft: ContainerDewar[] | undefined) => {
         if (dewarsDraft) {
           for (const dewarDraft of dewarsDraft) {
             if (dewarDraft.containerId == containerId) {
@@ -75,8 +48,8 @@ export default function PrepareExperimentPage() {
 
   const shipments = _(data)
     .groupBy((d) => d.shippingId)
-    .filter((dewars: Dewar[]) => dewars.length > 0)
-    .map((dewars: Dewar[]) => {
+    .filter((dewars: ContainerDewar[]) => dewars.length > 0)
+    .map((dewars: ContainerDewar[]) => {
       const d = dewars[0];
       const res: Shipment = { shippingId: d.shippingId, name: d.shippingName, status: d.shippingStatus, creationDate: d.creationDate, dewars: dewars };
       return res;
@@ -161,12 +134,37 @@ export default function PrepareExperimentPage() {
   );
 }
 
-export function ToggleShipmentStatus({ shipment, proposalName, mutate }: { shipment: Shipment; proposalName: string; mutate: KeyedMutator<Dewar[]> }) {
+const dateFormatter = (cell: string) => {
+  if (cell) {
+    return `${formatDateTo(cell, 'dd/MM/yyyy')}`;
+  }
+  return cell;
+};
+
+const shipmentIsProcessing = (s: Shipment) => {
+  return s.status && s.status.toLowerCase().includes('processing') ? 1 : 0;
+};
+
+const sortShipments = (a: Shipment, b: Shipment) => {
+  const aN = shipmentIsProcessing(a);
+  const bN = shipmentIsProcessing(b);
+  if (aN == bN) {
+    if (a.creationDate && b.creationDate) {
+      return parseDate(b.creationDate).getTime() - parseDate(a.creationDate).getTime();
+    }
+    if (a.creationDate) {
+      return -1;
+    }
+    return 1;
+  }
+  return bN - aN;
+};
+export function ToggleShipmentStatus({ shipment, proposalName, mutate }: { shipment: Shipment; proposalName: string; mutate: KeyedMutator<ContainerDewar[]> }) {
   const isProcessing = shipmentIsProcessing(shipment);
   const newStatus = isProcessing ? 'at_ESRF' : 'processing';
   const onClick = () => {
     mutate(
-      produce((dewarsDraft: Dewar[] | undefined) => {
+      produce((dewarsDraft: ContainerDewar[] | undefined) => {
         if (dewarsDraft) {
           for (const dewarDraft of dewarsDraft) {
             if (dewarDraft.shippingId == shipment.shippingId) {
