@@ -1,22 +1,18 @@
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
 import { Dewar } from 'pages/model';
 import { MXContainer } from 'pages/mx/container/mxcontainer';
 import { useState, useEffect } from 'react';
-import { Button, Col, Dropdown, DropdownButton, OverlayTrigger, Row, Tooltip } from 'react-bootstrap';
+import { Col, Dropdown, DropdownButton, Row } from 'react-bootstrap';
 
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDrag } from 'react-dnd';
-import { XYCoord, useDragLayer } from 'react-dnd';
+
+import { getEmptyImage } from 'react-dnd-html5-backend';
+import { Beamline } from 'models';
+import { CustomDragLayer, ItemTypes } from './dndlayer';
+import DnDSampleChanger from './dndsamplechanger';
 
 import './dndloadsamplechanger.scss';
-import SampleChanger from './samplechanger';
-
-export const ItemTypes = {
-  CONTAINER: 'container',
-};
 
 export default function DnDLoadSampleChanger({
   dewars,
@@ -65,62 +61,12 @@ export default function DnDLoadSampleChanger({
         </Row>
         <Row>
           <div style={{ width: 450, margin: 'auto' }}>
-            <SampleChanger beamline={beamline} setContainerPosition={setContainerPosition} proposalName={proposalName} containers={dewars}></SampleChanger>
+            <DnDSampleChanger beamline={beamline} setContainerPosition={setContainerPosition} proposalName={proposalName} containers={dewars}></DnDSampleChanger>
           </div>
         </Row>
       </div>
       <CustomDragLayer></CustomDragLayer>
     </DndProvider>
-  );
-}
-
-function getDragLayerStyles(initialOffset: XYCoord | null, currentOffset: XYCoord | null) {
-  if (!initialOffset || !currentOffset) {
-    return {
-      display: 'none',
-    };
-  }
-
-  const { x, y } = currentOffset;
-
-  const transform = `translate(${x}px, ${y}px)`;
-  return {
-    transform,
-    WebkitTransform: transform,
-  };
-}
-
-function CustomDragLayer() {
-  const { itemType, isDragging, item, initialOffset, currentOffset } = useDragLayer((monitor) => ({
-    item: monitor.getItem(),
-    itemType: monitor.getItemType(),
-    initialOffset: monitor.getInitialSourceClientOffset(),
-    currentOffset: monitor.getSourceClientOffset(),
-    isDragging: monitor.isDragging(),
-  }));
-
-  const renderItem = () => {
-    console.log(itemType);
-    switch (itemType) {
-      case ItemTypes.CONTAINER:
-        return (
-          <div className="dragitem">
-            <MXContainer showInfo={false} proposalName={'MX415'} containerType={item.containerType} containerId={item.containerId}></MXContainer>
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
-
-  if (!isDragging) {
-    return null;
-  }
-
-  return (
-    <div className="draglayer">
-      <div style={getDragLayerStyles(initialOffset, currentOffset)}>{renderItem()}</div>
-    </div>
   );
 }
 
@@ -130,10 +76,8 @@ function getPosition(n: undefined | string) {
   }
   return [Math.floor(Number(n) / 3) + 1, Number(n) % 3];
 }
-import { getEmptyImage } from 'react-dnd-html5-backend';
-import { Beamline } from 'models';
 
-export function DragableContainer({ d, proposalName }: { d: Dewar; proposalName: string }) {
+function DragableContainer({ d, proposalName }: { d: Dewar; proposalName: string }) {
   const [{ isDragging }, drag, preview] = useDrag(() => ({
     type: ItemTypes.CONTAINER,
     item: d,
@@ -176,23 +120,5 @@ export function DragableContainer({ d, proposalName }: { d: Dewar; proposalName:
         </Col>
       )}
     </div>
-  );
-}
-
-// eslint-disable-next-line no-unused-vars
-export function SelectContainer({ container, setContainer }: { container: Dewar; setContainer: (c: Dewar) => void }) {
-  if (!['Spinepuck', 'Unipuck', 'Puck'].includes(container.containerType)) {
-    return <></>;
-  }
-
-  const onClick = () => {
-    setContainer(container);
-  };
-  return (
-    <OverlayTrigger placement="right" overlay={<Tooltip>Place container</Tooltip>}>
-      <Button style={{ padding: 0 }} variant="link" onClick={onClick}>
-        <FontAwesomeIcon icon={faSearch}></FontAwesomeIcon>
-      </Button>
-    </OverlayTrigger>
   );
 }

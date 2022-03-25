@@ -2,8 +2,13 @@ import { range } from 'lodash';
 import { Dewar } from 'pages/model';
 import { EmptyContainer, getContainerType, MXContainer } from 'pages/mx/container/mxcontainer';
 import { PropsWithChildren, useRef, useState } from 'react';
-import { Col, OverlayTrigger, Popover, Row, Tooltip } from 'react-bootstrap';
-import './samplechanger.scss';
+import { Col, OverlayTrigger, Popover, Row } from 'react-bootstrap';
+
+import { useDrop } from 'react-dnd';
+import { ItemTypes } from './dndlayer';
+import { Beamline } from 'models';
+
+import './dndsamplechanger.scss';
 
 function getContainerTypes(type?: string): ('Spinepuck' | 'Unipuck' | undefined)[] {
   if (type === 'FlexHCDDual') {
@@ -35,7 +40,7 @@ function getContainersForCell(containers: Dewar[] | undefined, cell: number, bea
   });
 }
 
-export default function SampleChanger({
+export default function DnDSampleChanger({
   beamline,
   containers,
   proposalName,
@@ -235,10 +240,6 @@ function InfoContainerBtn({ cx, cy, cr, container }: { cx: number; cy: number; c
     </OverlayTrigger>
   );
 }
-
-import { useDrop } from 'react-dnd';
-import { ItemTypes } from './dndloadsamplechanger';
-import { Beamline } from 'models';
 
 function DroppablePosition({
   x,

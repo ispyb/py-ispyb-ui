@@ -23,7 +23,7 @@ export default function LoadSampleChanger({
     <Card>
       <Card.Header>2. Load sample changer</Card.Header>
       <Card.Body>
-        <DnDLoadSampleChanger beamlines={beamlines} setContainerPosition={setContainerPosition} proposalName={proposalName} dewars={dewars}></DnDLoadSampleChanger>;
+        <DnDLoadSampleChanger beamlines={beamlines} setContainerPosition={setContainerPosition} proposalName={proposalName} dewars={dewars}></DnDLoadSampleChanger>
       </Card.Body>
     </Card>
   );
