@@ -1,11 +1,6 @@
 @import 'theme.scss';
 
-.selectedforplacement {
-  background-color: $info;
-  color: color-contrast($info) !important;
-  --bs-table-striped-color: none !important;
-  --bs-table-striped-bg: rgba(0, 0, 0, 0.1) !important;
-}
-.selectedforplacement button {
-  color: color-contrast($info) !important;
+.tabs-loadsamplechanger {
+  justify-content: right;
+  margin-bottom: 0px !important;
 }

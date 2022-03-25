@@ -44,8 +44,12 @@
 
 .infoContainerBtn {
   fill: $info;
+  cursor: pointer;
+}
+.infoContainerBtnClicked {
+  fill: $warning;
+  cursor: pointer;
 }
 .infoContainerBtn:hover {
   fill: $warning;
-  cursor: pointer;
 }

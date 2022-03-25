@@ -31,3 +31,11 @@ export function getContainerPosition(n: undefined | string) {
   const i = Number(n) - 1;
   return { cell: Math.floor(i / 3) + 1, position: (i % 3) + 1 };
 }
+
+export function containerCanGoInPosition(changerType?: sampleChangerType, containerType?: string, position?: string) {
+  const pos = getContainerPosition(position);
+  if (pos) {
+    return getContainerTypes(changerType)[pos.cell - 1] === getContainerType(containerType);
+  }
+  return false;
+}

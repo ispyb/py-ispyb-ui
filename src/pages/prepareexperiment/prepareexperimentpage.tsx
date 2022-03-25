@@ -30,13 +30,12 @@ export default function PrepareExperimentPage() {
   if (isError) throw Error(isError);
   if (!data) throw Error('error while fetching dewars');
 
-  const setContainerPosition = (containerId: number, beamline: string, position: string) => {
+  const setContainerPosition = (containerId: number, position: string) => {
     mutate(
       produce((dewarsDraft: ContainerDewar[] | undefined) => {
         if (dewarsDraft) {
           for (const dewarDraft of dewarsDraft) {
             if (dewarDraft.containerId == containerId) {
-              dewarDraft.beamlineLocation = beamline;
               dewarDraft.sampleChangerLocation = position;
             }
           }
@@ -45,7 +44,21 @@ export default function PrepareExperimentPage() {
       false
     );
   };
-
+  const setContainerBeamline = (containerId: number, beamline: string) => {
+    mutate(
+      produce((dewarsDraft: ContainerDewar[] | undefined) => {
+        if (dewarsDraft) {
+          for (const dewarDraft of dewarsDraft) {
+            if (dewarDraft.containerId == containerId) {
+              dewarDraft.beamlineLocation = beamline;
+            }
+          }
+        }
+      }),
+      false
+    );
+    setContainerPosition(containerId, '');
+  };
   const shipments = _(data)
     .groupBy((d) => d.shippingId)
     .filter((dewars: ContainerDewar[]) => dewars.length > 0)
@@ -106,7 +119,9 @@ export default function PrepareExperimentPage() {
         <Row>
           <div style={{ maxWidth: 550 }}>
             <Card style={{ border: 'none' }}>
-              <Card.Header>1. Select shipments</Card.Header>
+              <Card.Header>
+                <h6 style={{ margin: 5 }}>1. Select shipments</h6>
+              </Card.Header>
               <Card.Body style={{ padding: 0 }}>
                 <BootstrapTable
                   bootstrap4
@@ -128,7 +143,12 @@ export default function PrepareExperimentPage() {
         </Row>
       </Col>
       <Col>
-        <LoadSampleChanger setContainerPosition={setContainerPosition} proposalName={proposalName} dewars={processingDewars}></LoadSampleChanger>
+        <LoadSampleChanger
+          setContainerPosition={setContainerPosition}
+          setContainerBeamline={setContainerBeamline}
+          proposalName={proposalName}
+          dewars={processingDewars}
+        ></LoadSampleChanger>
       </Col>
     </Row>
   );

@@ -17,17 +17,18 @@ import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { getContainerPosition, getContainerType } from 'helpers/mx/samplehelper';
 
 import './dndloadsamplechanger.scss';
+import { BeamLineSelector } from './tableloadsamplechanger';
 
 export default function DnDLoadSampleChanger({
   dewars,
   proposalName,
-  setContainerPosition,
+  setContainerLocation,
   beamlines,
 }: {
   dewars?: ContainerDewar[];
   proposalName: string;
   // eslint-disable-next-line no-unused-vars
-  setContainerPosition: (containerId: number, beamline: string, position: string) => void;
+  setContainerLocation: (containerId: number, beamline: string, position: string) => void;
   beamlines: Beamline[];
 }) {
   const [beamline, setBeamline] = useState(findBestDefaultBeamline(beamlines, dewars));
@@ -61,25 +62,13 @@ export default function DnDLoadSampleChanger({
             <Row>
               <Col></Col>
               <Col md={'auto'}>
-                <DropdownButton id="dropdown-beamline" title={beamline.name}>
-                  {beamlines.map((b) => {
-                    return (
-                      <Dropdown.Item
-                        onClick={() => {
-                          setBeamline(b);
-                        }}
-                      >
-                        {b.name}
-                      </Dropdown.Item>
-                    );
-                  })}
-                </DropdownButton>
+                <BeamLineSelector beamline={beamline} beamlines={beamlines} setBeamline={setBeamline}></BeamLineSelector>
               </Col>
               <Col></Col>
             </Row>
             <Row>
               <div style={{ width: 400, margin: 'auto' }}>
-                <DnDSampleChanger beamline={beamline} setContainerPosition={setContainerPosition} proposalName={proposalName} containers={dewars}></DnDSampleChanger>
+                <DnDSampleChanger beamline={beamline} setContainerLocation={setContainerLocation} proposalName={proposalName} containers={dewars}></DnDSampleChanger>
               </div>
             </Row>
           </div>
@@ -90,7 +79,7 @@ export default function DnDLoadSampleChanger({
   );
 }
 
-function findBestDefaultBeamline(beamlines: Beamline[], containers?: ContainerDewar[]) {
+export function findBestDefaultBeamline(beamlines: Beamline[], containers?: ContainerDewar[]) {
   if (containers) {
     //first look for beamline with a sample that has a location defined
     for (const container of containers) {

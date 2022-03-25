@@ -32,13 +32,13 @@ export default function DnDSampleChanger({
   beamline,
   containers,
   proposalName,
-  setContainerPosition,
+  setContainerLocation,
 }: {
   beamline: Beamline;
   proposalName: string;
   containers?: ContainerDewar[];
   // eslint-disable-next-line no-unused-vars
-  setContainerPosition: (containerId: number, beamline: string, position: string) => void;
+  setContainerLocation: (containerId: number, beamline: string, position: string) => void;
 }) {
   const type = getContainerTypes(beamline.sampleChangerType);
   return (
@@ -52,7 +52,7 @@ export default function DnDSampleChanger({
               <CellSection
                 beamline={beamline}
                 containerType={type[n]}
-                setContainerPosition={setContainerPosition}
+                setContainerLocation={setContainerLocation}
                 proposalName={proposalName}
                 containers={containersCell}
                 n={n}
@@ -116,7 +116,7 @@ function CellSection({
   proposalName,
   containerType = 'Spinepuck',
   beamline,
-  setContainerPosition,
+  setContainerLocation,
 }: {
   n: number;
   proposalName: string;
@@ -124,7 +124,7 @@ function CellSection({
   containerType?: 'Spinepuck' | 'Unipuck';
   beamline: Beamline;
   // eslint-disable-next-line no-unused-vars
-  setContainerPosition: (containerId: number, beamline: string, position: string) => void;
+  setContainerLocation: (containerId: number, beamline: string, position: string) => void;
 }) {
   const angle = getSectionAnle(n);
 
@@ -165,7 +165,7 @@ function CellSection({
                 <circle cx={x[pos]} cy={y[pos]} r={r} stroke="black" fill="transparent"></circle>
                 <RemoveContainerBtn
                   onClick={() => {
-                    setContainerPosition(container.containerId, '', '');
+                    setContainerLocation(container.containerId, '', '');
                   }}
                   cx={x[pos]}
                   cy={y[pos]}
@@ -177,7 +177,7 @@ function CellSection({
               <DroppablePosition
                 containerType={containerType}
                 beamline={beamline}
-                setContainerPosition={setContainerPosition}
+                setContainerLocation={setContainerLocation}
                 position={3 * n + 1 + pos}
                 x={x[pos]}
                 y={y[pos]}
@@ -229,7 +229,7 @@ function InfoContainerBtn({ cx, cy, cr, container, proposalName }: { cx: number;
   return (
     <OverlayTrigger show={show} key={'bottom'} placement={'left'} overlay={popover}>
       <g>
-        <circle onClick={() => setShow(!show)} className="infoContainerBtn" cx={x} cy={y} r={r}></circle>
+        <circle onClick={() => setShow(!show)} className={show ? 'infoContainerBtnClicked' : 'infoContainerBtn'} cx={x} cy={y} r={r}></circle>
         <text className="infoContainerBtnTxt" x={x} y={y + 2.5}>
           i
         </text>
@@ -245,7 +245,7 @@ function DroppablePosition({
   position,
   beamline,
   containerType,
-  setContainerPosition,
+  setContainerLocation,
 }: {
   x: number;
   y: number;
@@ -254,13 +254,13 @@ function DroppablePosition({
   beamline: Beamline;
   containerType: 'Spinepuck' | 'Unipuck';
   // eslint-disable-next-line no-unused-vars
-  setContainerPosition: (containerId: number, beamline: string, position: string) => void;
+  setContainerLocation: (containerId: number, beamline: string, position: string) => void;
 }) {
   const [{ isOver, canDrop }, drop] = useDrop(
     () => ({
       accept: ItemTypes.CONTAINER,
       drop: (item: ContainerDewar) => {
-        setContainerPosition(item.containerId, beamline.name, String(position));
+        setContainerLocation(item.containerId, beamline.name, String(position));
       },
       canDrop: (item: ContainerDewar) => {
         const type = getContainerType(item.containerType);
