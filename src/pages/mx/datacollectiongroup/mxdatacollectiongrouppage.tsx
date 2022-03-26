@@ -1,17 +1,17 @@
-import React, { Suspense, useState } from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import MXPage from 'pages/mx/mxpage';
-import { ButtonGroup, Card, Col, OverlayTrigger, Row, ToggleButton, Tooltip } from 'react-bootstrap';
+import { ButtonGroup, Card, OverlayTrigger, ToggleButton, Tooltip } from 'react-bootstrap';
 import { useMXDataCollectionsBy } from 'hooks/ispyb';
 import DataCollectionGroupPanel from 'pages/mx/datacollectiongroup/datacollectiongrouppanel';
 import { DataCollectionGroup } from 'pages/mx/model';
 import LazyWrapper from 'components/loading/lazywrapper';
 import LoadingPanel from 'components/loading/loadingpanel';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheckCircle, faCheckDouble, faListAlt, faListUl, faTimesCircle, faVial } from '@fortawesome/free-solid-svg-icons';
+import { faDotCircle, faListAlt, faListUl } from '@fortawesome/free-solid-svg-icons';
 import { Subject } from 'rxjs';
 import _ from 'lodash';
-import { MXContainer } from '../container/mxcontainer';
+import ContainerFilter from '../container/containerfilter';
 
 type Param = {
   sessionId: string;
@@ -25,7 +25,6 @@ export default function MXDataCollectionGroupPage() {
   const [compact, setCompact] = useState(false);
   const compactToggle = new Subject<boolean>();
   const [filterContainers, setFilterContainers] = useState(false);
-  const [selectMultiple, setSelectMultiple] = useState(false);
   const [selectedGroups, setSelectedGroups] = useState([] as number[]);
 
   if (dataCollectionGroups && dataCollectionGroups.length) {
@@ -39,30 +38,12 @@ export default function MXDataCollectionGroupPage() {
       ? dataCollectionGroups.filter((g) => g.DataCollection_dataCollectionGroupId && selectedGroups.includes(g.DataCollection_dataCollectionGroupId))
       : dataCollectionGroups;
 
-    const addSelectedGroups = (ids: number[]) => {
-      const newSelected = selectMultiple ? selectedGroups.slice() : [];
-      newSelected.push(...ids);
-      setSelectedGroups(newSelected);
-    };
-
-    const removeSelectedGroups = (ids: number[]) => {
-      if (selectMultiple) {
-        const newSelected = selectedGroups.slice();
-        for (const i of ids) {
-          newSelected.splice(newSelected.indexOf(i), 1);
-        }
-        setSelectedGroups(newSelected);
-      } else {
-        setSelectedGroups([]);
-      }
-    };
-
     return (
       <MXPage sessionId={sessionId} proposalName={proposalName}>
         <Card>
-          <div style={{ position: 'relative', top: -39, height: 0, alignSelf: 'end' }}>
+          <div style={{ position: 'relative', top: -39, height: 0, alignSelf: 'flex-end' }}>
             <ButtonGroup style={{ marginRight: 50 }}>
-              <OverlayTrigger key={'bottom'} placement={'bottom'} overlay={<Tooltip id={`tooltip-bottom`}>Toggle sample filtering</Tooltip>}>
+              <OverlayTrigger key={'bottom'} placement={'bottom'} overlay={<Tooltip id={`tooltip-bottom`}>Toggle container filtering</Tooltip>}>
                 <ToggleButton
                   style={{ margin: 1 }}
                   size="sm"
@@ -74,59 +55,7 @@ export default function MXDataCollectionGroupPage() {
                   }}
                   value={''}
                 >
-                  <FontAwesomeIcon icon={faVial}></FontAwesomeIcon>
-                </ToggleButton>
-              </OverlayTrigger>
-              <OverlayTrigger key={'bottom'} placement={'bottom'} overlay={<Tooltip id={`tooltip-bottom`}>Toggle multiple selection</Tooltip>}>
-                <ToggleButton
-                  style={{ margin: 1 }}
-                  size="sm"
-                  type="checkbox"
-                  variant={filterContainers && selectMultiple ? 'outline-primary' : 'light'}
-                  checked={true}
-                  disabled={!filterContainers}
-                  onClick={() => {
-                    if (selectMultiple) {
-                      setSelectedGroups([]);
-                    }
-                    setSelectMultiple(!selectMultiple);
-                  }}
-                  value={''}
-                >
-                  <FontAwesomeIcon icon={faCheckDouble}></FontAwesomeIcon>
-                </ToggleButton>
-              </OverlayTrigger>
-              <OverlayTrigger key={'bottom'} placement={'bottom'} overlay={<Tooltip id={`tooltip-bottom`}>Select all</Tooltip>}>
-                <ToggleButton
-                  style={{ margin: 1 }}
-                  size="sm"
-                  type="checkbox"
-                  variant={'light'}
-                  checked={true}
-                  disabled={!filterContainers}
-                  onClick={() => {
-                    setSelectMultiple(true);
-                    setSelectedGroups(dataCollectionGroups.filter((g) => Boolean(g.Container_containerId)).map((g) => g.DataCollectionGroup_dataCollectionGroupId || 0));
-                  }}
-                  value={''}
-                >
-                  <FontAwesomeIcon icon={faCheckCircle}></FontAwesomeIcon>
-                </ToggleButton>
-              </OverlayTrigger>
-              <OverlayTrigger key={'bottom'} placement={'bottom'} overlay={<Tooltip id={`tooltip-bottom`}>Unselect all</Tooltip>}>
-                <ToggleButton
-                  style={{ margin: 1 }}
-                  size="sm"
-                  type="checkbox"
-                  variant={'light'}
-                  checked={true}
-                  disabled={!filterContainers}
-                  onClick={() => {
-                    setSelectedGroups([]);
-                  }}
-                  value={''}
-                >
-                  <FontAwesomeIcon icon={faTimesCircle}></FontAwesomeIcon>
+                  <FontAwesomeIcon style={{ marginRight: 5 }} icon={faDotCircle}></FontAwesomeIcon>Containers
                 </ToggleButton>
               </OverlayTrigger>
             </ButtonGroup>
@@ -169,28 +98,14 @@ export default function MXDataCollectionGroupPage() {
             </ButtonGroup>
           </div>
           {filterContainers && (
-            <Row style={{ margin: 10 }}>
-              {containerIds.map((id) => {
-                return (
-                  id && (
-                    <Col>
-                      <LazyWrapper>
-                        <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-                          <MXContainer
-                            addSelectedGroups={addSelectedGroups}
-                            removeSelectedGroups={removeSelectedGroups}
-                            selectedGroups={selectedGroups}
-                            containerId={String(id)}
-                            sessionId={sessionId}
-                            proposalName={proposalName}
-                          ></MXContainer>
-                        </Suspense>
-                      </LazyWrapper>
-                    </Col>
-                  )
-                );
-              })}
-            </Row>
+            <ContainerFilter
+              setSelectedGroups={setSelectedGroups}
+              dataCollectionGroups={dataCollectionGroups}
+              selectedGroups={selectedGroups}
+              containerIds={containerIds}
+              sessionId={sessionId}
+              proposalName={proposalName}
+            ></ContainerFilter>
           )}
           {filteredDataCollectionGroups.map((dataCollectionGroup: DataCollectionGroup) => (
             <div style={compact ? { margin: 1 } : { margin: 5 }}>
