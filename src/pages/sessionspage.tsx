@@ -35,7 +35,7 @@ export default function SessionsPage({ user }: { user: User }) {
         endDate={endDate}
         setEndDate={setEndDate}
         // eslint-disable-next-line
-        data={data.filter((d: any) => new Set(beamlines).has(d.beamLineName))}
+        data={data?.filter((d: any) => new Set(beamlines).has(d.beamLineName))}
         areEMColumnsVisible={areEMColumnsVisible}
         areMXColumnsVisible={areMXColumnsVisible}
         areSAXSColumnsVisible={areSAXSColumnsVisible}
