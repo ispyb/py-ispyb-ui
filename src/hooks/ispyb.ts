@@ -28,7 +28,7 @@ import { parse } from 'date-fns';
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any,no-unused-vars
+// eslint-disable-next-line no-unused-vars,@typescript-eslint/no-explicit-any
 function doGet<T = any>(url: string, editData: (data: T) => T = (d) => d, suspense = true) {
   const { data, error, mutate } = useSWR<T>(url, fetcher, { suspense: suspense });
   return {

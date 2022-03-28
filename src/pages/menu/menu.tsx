@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react';
+import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { doLogOut } from 'redux/actions/user';
 import { Container, Navbar, Nav, Button, Col, Row } from 'react-bootstrap';
@@ -19,62 +19,6 @@ function LogOut(props: { user: User }) {
     </Button>
   );
 }
-
-// function NavBarMenu(props: PropsWithChildren<unknown>) {
-//   const user = useSelector((state: RootState) => state.user);
-//   const { username } = user;
-//   return (
-//     <Navbar bg="light" variant="light" fixed="top">
-//       <Container>
-//         <Col>
-//           <Row>
-//             <Navbar.Brand href="#home">ISPyB</Navbar.Brand>
-//             <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-//             <Navbar.Collapse id="responsive-navbar-nav">
-//               {props.children}
-//               <Nav>
-//                 <Nav.Link>
-//                   <LogOut username={username} />
-//                 </Nav.Link>
-//               </Nav>
-//             </Navbar.Collapse>
-//           </Row>
-//         </Col>
-//       </Container>
-//     </Navbar>
-//   );
-// }
-
-// function EmptyMenu() {
-//   return (
-//     <NavBarMenu>
-//       <Navbar.Brand href="#home">ISPyB</Navbar.Brand>
-//       <Navbar.Toggle />
-//     </NavBarMenu>
-//   );
-// }
-
-// /**
-//  * Menu class which is used to render the app main top menu
-//  */
-// function Menu() {
-//   const user = useSelector((state: RootState) => state.user);
-//   const { username } = user;
-//   if (!user.isAuthenticated) {
-//     return <EmptyMenu />;
-//   }
-//   return (
-//     <NavBarMenu>
-//       <Nav className="me-auto">
-//
-//       </Nav>
-//     </NavBarMenu>
-//   );
-// }
-
-// //const MenuWithRouter = withRouter(Menu);
-// //export default MenuWithRouter;
-// export default Menu;
 
 export default function Menu() {
   const user = useSelector((state: RootState) => state.user);
@@ -134,7 +78,6 @@ export function ProposalMenu({ user }: { user: User }) {
   if (!proposalName) {
     return <></>;
   }
-  // return <ProposalOverlay></ProposalOverlay>;
   return (
     <Navbar style={{ maxHeight: 30, borderTop: '1px solid black' }} bg="light" variant="light">
       <Container>
