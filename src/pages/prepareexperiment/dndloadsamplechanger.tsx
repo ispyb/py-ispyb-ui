@@ -28,7 +28,7 @@ export default function DnDLoadSampleChanger({
   dewars?: ContainerDewar[];
   proposalName: string;
   // eslint-disable-next-line no-unused-vars
-  setContainerLocation: (containerId: number, beamline: string, position: string) => void;
+  setContainerLocation: (containerId: number, beamline: string | undefined, position: string | undefined) => void;
   beamlines: Beamline[];
 }) {
   const [beamline, setBeamline] = useState(findBestDefaultBeamline(beamlines, dewars));
@@ -59,7 +59,7 @@ export default function DnDLoadSampleChanger({
                 );
               })}
             </Row>
-            <Row>
+            <Row style={{ marginTop: 20 }}>
               <Col></Col>
               <Col md={'auto'}>
                 <BeamLineSelector beamline={beamline} beamlines={beamlines} setBeamline={setBeamline}></BeamLineSelector>
@@ -67,7 +67,7 @@ export default function DnDLoadSampleChanger({
               <Col></Col>
             </Row>
             <Row>
-              <div style={{ width: 400, margin: 'auto', marginTop: 20, marginBottom: 20 }}>
+              <div style={{ width: 400, margin: 'auto', marginTop: 10, marginBottom: 20 }}>
                 <DnDSampleChanger beamline={beamline} setContainerLocation={setContainerLocation} proposalName={proposalName} containers={dewars}></DnDSampleChanger>
               </div>
             </Row>

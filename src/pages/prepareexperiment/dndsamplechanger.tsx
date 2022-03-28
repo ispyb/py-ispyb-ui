@@ -38,7 +38,7 @@ export default function DnDSampleChanger({
   proposalName: string;
   containers?: ContainerDewar[];
   // eslint-disable-next-line no-unused-vars
-  setContainerLocation: (containerId: number, beamline: string, position: string) => void;
+  setContainerLocation: (containerId: number, beamline: string | undefined, position: string | undefined) => void;
 }) {
   const type = getContainerTypes(beamline.sampleChangerType);
   return (
@@ -124,7 +124,7 @@ function CellSection({
   containerType?: 'Spinepuck' | 'Unipuck';
   beamline: Beamline;
   // eslint-disable-next-line no-unused-vars
-  setContainerLocation: (containerId: number, beamline: string, position: string) => void;
+  setContainerLocation: (containerId: number, beamline: string | undefined, position: string | undefined) => void;
 }) {
   const angle = getSectionAnle(n);
 
@@ -165,7 +165,7 @@ function CellSection({
                 <circle cx={x[pos]} cy={y[pos]} r={r} stroke="black" fill="transparent"></circle>
                 <RemoveContainerBtn
                   onClick={() => {
-                    setContainerLocation(container.containerId, '', '');
+                    setContainerLocation(container.containerId, undefined, '');
                   }}
                   cx={x[pos]}
                   cy={y[pos]}

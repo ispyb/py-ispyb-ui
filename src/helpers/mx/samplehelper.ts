@@ -32,7 +32,7 @@ export function getContainerPosition(n: undefined | string) {
   return { cell: Math.floor(i / 3) + 1, position: (i % 3) + 1 };
 }
 
-export function containerCanGoInPosition(changerType?: sampleChangerType, containerType?: string, position?: string) {
+export function containerCanGoInPosition(changerType: sampleChangerType | undefined, containerType: string | undefined, position: string | undefined) {
   const pos = getContainerPosition(position);
   if (pos) {
     return getContainerTypes(changerType)[pos.cell - 1] === getContainerType(containerType);

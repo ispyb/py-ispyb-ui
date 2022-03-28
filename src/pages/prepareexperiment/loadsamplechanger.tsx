@@ -10,22 +10,14 @@ import TableLoadSampleChanger from './tableloadsamplechanger';
 export default function LoadSampleChanger({
   dewars,
   proposalName,
-  setContainerPosition,
-  setContainerBeamline,
+  setContainerLocation,
 }: {
   dewars?: ContainerDewar[];
   proposalName: string;
   // eslint-disable-next-line no-unused-vars
-  setContainerPosition: (containerId: number, position: string) => void;
-  // eslint-disable-next-line no-unused-vars
-  setContainerBeamline: (containerId: number, beamline: string) => void;
+  setContainerLocation: (containerId: number, beamline: string | undefined, position: string | undefined) => void;
 }) {
   const beamlines = useBeamlinesObjects('MX');
-
-  const setContainerLocation = (containerId: number, beamline: string, position: string) => {
-    setContainerBeamline(containerId, beamline);
-    setContainerPosition(containerId, position);
-  };
 
   return (
     <Tab.Container defaultActiveKey="visual">
@@ -54,13 +46,7 @@ export default function LoadSampleChanger({
               <DnDLoadSampleChanger beamlines={beamlines} setContainerLocation={setContainerLocation} proposalName={proposalName} dewars={dewars}></DnDLoadSampleChanger>
             </Tab.Pane>
             <Tab.Pane eventKey="table">
-              <TableLoadSampleChanger
-                beamlines={beamlines}
-                setContainerPosition={setContainerPosition}
-                setContainerBeamline={setContainerBeamline}
-                proposalName={proposalName}
-                dewars={dewars}
-              ></TableLoadSampleChanger>
+              <TableLoadSampleChanger beamlines={beamlines} setContainerLocation={setContainerLocation} proposalName={proposalName} dewars={dewars}></TableLoadSampleChanger>
             </Tab.Pane>
           </Tab.Content>
         </Card.Body>

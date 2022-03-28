@@ -124,3 +124,10 @@ export function getDewars({ proposalName }: { proposalName: string }) {
 export function updateShippingStatus({ proposalName, shippingId, status }: { proposalName: string; shippingId: number; status: string }) {
   return { url: `${server}/${token}/proposal/${proposalName}/shipping/${shippingId}/status/${status}/update` };
 }
+
+export function updateSampleChangerLocation({ proposalName, containerId, beamline, position }: { proposalName: string; containerId: number; beamline: string; position?: string }) {
+  return {
+    url: `${server}/${token}/proposal/${proposalName}/container/${containerId}/beamline/${beamline}/samplechangerlocation/update`,
+    data: `sampleChangerLocation=${position}`,
+  };
+}

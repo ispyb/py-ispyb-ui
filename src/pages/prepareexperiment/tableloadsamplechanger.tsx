@@ -8,27 +8,26 @@ import BootstrapTable, { ColumnDescription } from 'react-bootstrap-table-next';
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import { findBestDefaultBeamline } from './dndloadsamplechanger';
+import Select from 'react-select';
 
 import './tableloadsamplechanger.scss';
 
 export default function TableLoadSampleChanger({
   dewars,
-  setContainerPosition,
-  setContainerBeamline,
+  setContainerLocation,
   beamlines,
 }: {
   dewars?: ContainerDewar[];
   proposalName: string;
   // eslint-disable-next-line no-unused-vars
-  setContainerPosition: (containerId: number, position: string) => void;
-  // eslint-disable-next-line no-unused-vars
-  setContainerBeamline: (containerId: number, beamline: string) => void;
+  setContainerLocation: (containerId: number, beamline: string | undefined, position: string | undefined) => void;
+
   beamlines: Beamline[];
 }) {
   // eslint-disable-next-line no-unused-vars
 
   if (dewars) {
-    return <ContainerTable setContainerPosition={setContainerPosition} setContainerBeamline={setContainerBeamline} beamlines={beamlines} dewars={dewars}></ContainerTable>;
+    return <ContainerTable setContainerLocation={setContainerLocation} beamlines={beamlines} dewars={dewars}></ContainerTable>;
   }
   return <Alert variant="info">No container found in selected shipments</Alert>;
 }
@@ -36,22 +35,19 @@ export default function TableLoadSampleChanger({
 export function ContainerTable({
   dewars,
   beamlines,
-  setContainerPosition,
-  setContainerBeamline,
+  setContainerLocation,
 }: {
   dewars: ContainerDewar[];
   beamlines: Beamline[];
   // eslint-disable-next-line no-unused-vars
-  setContainerPosition: (containerId: number, position: string) => void;
-  // eslint-disable-next-line no-unused-vars
-  setContainerBeamline: (containerId: number, beamline: string) => void;
+  setContainerLocation: (containerId: number, beamline: string | undefined, position: string | undefined) => void;
 }) {
   const [beamline, setBeamline] = useState(findBestDefaultBeamline(beamlines, dewars));
 
   const setBeamlineForAll = () => {
     for (const dewar of dewars) {
       if (dewar.beamlineLocation != beamline.name) {
-        setContainerBeamline(dewar.containerId, beamline.name);
+        setContainerLocation(dewar.containerId, beamline.name, undefined);
       }
     }
   };
@@ -97,7 +93,7 @@ export function ContainerTable({
             beamline={getContainerBeamline(row)}
             beamlines={beamlines}
             setBeamline={(b) => {
-              setContainerBeamline(row.containerId, b.name);
+              setContainerLocation(row.containerId, b.name, undefined);
             }}
           ></BeamLineSelector>
         );
@@ -116,7 +112,7 @@ export function ContainerTable({
             container={row}
             beamline={getContainerBeamline(row)}
             setPosition={(pos) => {
-              setContainerPosition(row.containerId, pos);
+              setContainerLocation(row.containerId, row.beamlineLocation, pos);
             }}
           ></PositionSelector>
         );
@@ -180,7 +176,6 @@ export function BeamLineSelector({
     />
   );
 }
-import Select from 'react-select';
 
 export function PositionSelector({
   beamline,
