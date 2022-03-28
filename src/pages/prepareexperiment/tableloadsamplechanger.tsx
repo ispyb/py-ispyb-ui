@@ -207,32 +207,48 @@ export function PositionSelector({
   const posToStr = (p: string) => {
     const pos = getContainerPosition(p);
     if (!pos) {
-      return '';
+      return 'none';
     }
-    return `  ${pos.position}`;
+    return `cell ${pos.cell} pos ${pos.position}`;
+  };
+
+  let anyChoice = false;
+
+  const choices = range(1, 25).map((n) => {
+    if (containerCanGoInPosition(beamline?.sampleChangerType, container.containerType, String(n))) {
+      const pos = getContainerPosition(String(n));
+      anyChoice = true;
+      return (
+        <>
+          {pos?.position == 1 && <Dropdown.Header>{`Cell ${pos.cell}`}</Dropdown.Header>}
+          <Dropdown.Item
+            onClick={() => {
+              setPosition(String(n));
+            }}
+            key={n}
+          >
+            {getContainerPosition(String(n))?.position}
+          </Dropdown.Item>
+        </>
+      );
+    }
+    return undefined;
+  });
+
+  const config = {
+    modifiers: [
+      {
+        name: 'computeStyles',
+        options: {
+          gpuAcceleration: false, // true by default
+        },
+      },
+    ],
   };
 
   return (
     <DropdownButton variant={variant} size={size} title={posToStr(container.sampleChangerLocation)}>
-      {range(1, 25).map((n) => {
-        if (containerCanGoInPosition(beamline?.sampleChangerType, container.containerType, String(n))) {
-          const pos = getContainerPosition(String(n));
-          return (
-            <>
-              {pos?.position == 1 && <Dropdown.Header>{`Cell ${pos.cell}`}</Dropdown.Header>}
-              <Dropdown.Item
-                onClick={() => {
-                  setPosition(String(n));
-                }}
-                key={n}
-              >
-                {posToStr(String(n))}
-              </Dropdown.Item>
-            </>
-          );
-        }
-        return undefined;
-      })}
+      <Dropdown.Menu popperConfig={config}> {anyChoice ? choices : <Dropdown.Header>{`No compatible position`}</Dropdown.Header>}</Dropdown.Menu>
     </DropdownButton>
   );
 }
