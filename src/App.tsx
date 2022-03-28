@@ -45,7 +45,6 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <Menu />
       <Page>
         <Suspense fallback={<LoadingPanel></LoadingPanel>}>
           <ErrorBoundary>
