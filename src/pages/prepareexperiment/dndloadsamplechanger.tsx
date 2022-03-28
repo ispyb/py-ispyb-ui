@@ -67,7 +67,7 @@ export default function DnDLoadSampleChanger({
               <Col></Col>
             </Row>
             <Row>
-              <div style={{ width: 400, margin: 'auto' }}>
+              <div style={{ width: 400, margin: 'auto', marginTop: 20, marginBottom: 20 }}>
                 <DnDSampleChanger beamline={beamline} setContainerLocation={setContainerLocation} proposalName={proposalName} containers={dewars}></DnDSampleChanger>
               </div>
             </Row>

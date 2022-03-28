@@ -3,11 +3,13 @@ import { range } from 'lodash';
 import { Beamline } from 'models';
 import { ContainerDewar } from 'pages/model';
 import { useState } from 'react';
-import { Alert, Button, Col, Dropdown, DropdownButton, Row } from 'react-bootstrap';
+import { Alert, Button, Col, Row } from 'react-bootstrap';
 import BootstrapTable, { ColumnDescription } from 'react-bootstrap-table-next';
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 import paginationFactory from 'react-bootstrap-table2-paginator';
 import { findBestDefaultBeamline } from './dndloadsamplechanger';
+
+import './tableloadsamplechanger.scss';
 
 export default function TableLoadSampleChanger({
   dewars,
@@ -97,8 +99,6 @@ export function ContainerTable({
             setBeamline={(b) => {
               setContainerBeamline(row.containerId, b.name);
             }}
-            size="sm"
-            variant={'secondary'}
           ></BeamLineSelector>
         );
       },
@@ -109,12 +109,8 @@ export function ContainerTable({
     {
       text: 'Position',
       dataField: 'sampleChangerLocation',
+      headerStyle: { minWidth: 150 },
       formatter: (cell, row) => {
-        // const pos = getContainerPosition(cell);
-        // if (!pos) {
-        //   return '';
-        // }
-        // return `cell ${pos.cell} pos ${pos.position}`;
         return (
           <PositionSelector
             container={row}
@@ -162,47 +158,39 @@ export function BeamLineSelector({
   beamline,
   beamlines,
   setBeamline,
-  size,
-  variant,
 }: {
   beamline?: Beamline;
   beamlines: Beamline[];
   // eslint-disable-next-line no-unused-vars
   setBeamline: (b: Beamline) => void;
-  size?: 'sm' | 'lg' | undefined;
-  variant?: string | undefined;
 }) {
+  const options = beamlines.map((b) => {
+    return { label: b.name, value: b };
+  });
+
   return (
-    <DropdownButton variant={variant} size={size} title={beamline ? beamline.name : ''}>
-      {beamlines.map((b) => {
-        return (
-          <Dropdown.Item
-            onClick={() => {
-              setBeamline(b);
-            }}
-            key={b.name}
-          >
-            {b.name}
-          </Dropdown.Item>
-        );
-      })}
-    </DropdownButton>
+    <Select
+      value={{ label: beamline ? beamline.name : '', value: beamline }}
+      onChange={(v) => {
+        if (v && v.value) {
+          setBeamline(v.value);
+        }
+      }}
+      options={options}
+    />
   );
 }
+import Select from 'react-select';
 
 export function PositionSelector({
   beamline,
   container,
   setPosition,
-  size,
-  variant,
 }: {
   beamline?: Beamline;
   container: ContainerDewar;
   // eslint-disable-next-line no-unused-vars
   setPosition: (pos: string) => void;
-  size?: 'sm' | 'lg' | undefined;
-  variant?: string | undefined;
 }) {
   const posToStr = (p: string) => {
     const pos = getContainerPosition(p);
@@ -212,43 +200,35 @@ export function PositionSelector({
     return `cell ${pos.cell} pos ${pos.position}`;
   };
 
-  let anyChoice = false;
+  const options = range(0, 8).map((cell) => {
+    const opts: {
+      label: string;
+      value: string;
+    }[] = [];
+    for (const pos of range(0, 3)) {
+      const position = String(3 * cell + pos + 1);
 
-  const choices = range(1, 25).map((n) => {
-    if (containerCanGoInPosition(beamline?.sampleChangerType, container.containerType, String(n))) {
-      const pos = getContainerPosition(String(n));
-      anyChoice = true;
-      return (
-        <>
-          {pos?.position == 1 && <Dropdown.Header>{`Cell ${pos.cell}`}</Dropdown.Header>}
-          <Dropdown.Item
-            onClick={() => {
-              setPosition(String(n));
-            }}
-            key={n}
-          >
-            {getContainerPosition(String(n))?.position}
-          </Dropdown.Item>
-        </>
-      );
+      if (containerCanGoInPosition(beamline?.sampleChangerType, container.containerType, position)) {
+        opts.push({ label: String(pos + 1), value: position });
+      }
     }
-    return undefined;
+    return {
+      label: `Cell ${cell + 1}`,
+      options: opts,
+    };
   });
 
-  const config = {
-    modifiers: [
-      {
-        name: 'computeStyles',
-        options: {
-          gpuAcceleration: false, // true by default
-        },
-      },
-    ],
-  };
-
+  const value: ({ label: string; value: string } | undefined)[] = [{ label: posToStr(container.sampleChangerLocation), value: container.sampleChangerLocation }];
+  const v = value[0];
   return (
-    <DropdownButton variant={variant} size={size} title={posToStr(container.sampleChangerLocation)}>
-      <Dropdown.Menu popperConfig={config}> {anyChoice ? choices : <Dropdown.Header>{`No compatible position`}</Dropdown.Header>}</Dropdown.Menu>
-    </DropdownButton>
+    <Select
+      value={v}
+      onChange={(v) => {
+        if (v && v.value) {
+          setPosition(v.value);
+        }
+      }}
+      options={options}
+    />
   );
 }
