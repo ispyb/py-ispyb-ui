@@ -42,26 +42,28 @@ export function MainMenu({ user, selected }: { user: User; selected?: string }) 
       <Container>
         <Navbar.Brand href="/">ISPyB</Navbar.Brand>
         {user.isAuthenticated && (
-          <Nav className="me-auto">
-            {[
-              { to: '/proposals', title: 'My proposals', key: 'myproposals' },
-              { to: '/sessions', title: 'My sessions', key: 'mysessions' },
-            ].map((item) => {
-              return (
-                <Nav>
-                  <LinkContainer to={item.to}>
-                    <Nav.Link className={item.key === selected ? 'selectedNav' : 'toto'}>{item.title}</Nav.Link>
-                  </LinkContainer>
-                </Nav>
-              );
-            })}
-          </Nav>
+          <>
+            <Nav className="me-auto">
+              {[
+                { to: '/proposals', title: 'My proposals', key: 'myproposals' },
+                { to: '/sessions', title: 'My sessions', key: 'mysessions' },
+              ].map((item) => {
+                return (
+                  <Nav>
+                    <LinkContainer to={item.to}>
+                      <Nav.Link className={item.key === selected ? 'selectedNav' : 'toto'}>{item.title}</Nav.Link>
+                    </LinkContainer>
+                  </Nav>
+                );
+              })}
+            </Nav>
+            <Nav>
+              <Nav.Link>
+                <LogOut user={user} />
+              </Nav.Link>
+            </Nav>
+          </>
         )}
-        <Nav>
-          <Nav.Link>
-            <LogOut user={user} />
-          </Nav.Link>
-        </Nav>
       </Container>
     </Navbar>
   );
