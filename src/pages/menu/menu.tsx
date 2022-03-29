@@ -38,7 +38,7 @@ export default function Menu({ selected }: { selected?: string }) {
 
 export function MainMenu({ user, selected }: { user: User; selected?: string }) {
   return (
-    <Navbar style={{ maxHeight: 50 }} bg="light" variant="light">
+    <Navbar className="mainNav" bg="light" variant="light">
       <Container>
         <Navbar.Brand href="/">ISPyB</Navbar.Brand>
         {user.isAuthenticated && (

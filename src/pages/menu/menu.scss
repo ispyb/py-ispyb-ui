@@ -1,8 +1,13 @@
 @import 'theme.scss';
 
+.mainNav {
+  max-height: 60px;
+}
+
 .proposalNav {
   max-height: 30px;
   border-top: 1px solid black;
+  border-bottom: 1px solid gray;
   background-color: darken($light, 30%) !important;
 }
 
