@@ -28,6 +28,9 @@ interface Props {
   setEndDate?: (_: string) => void;
   userPortalLink: { visible: boolean; header: string; url: string; toolTip: string };
   showDatePicker?: boolean;
+  showEmptySessions: boolean;
+  // eslint-disable-next-line no-unused-vars
+  setShowEmptySessions: (_: boolean) => void;
 }
 
 export default function SessionTable({
@@ -41,6 +44,8 @@ export default function SessionTable({
   areEMColumnsVisible = true,
   userPortalLink,
   showDatePicker = true,
+  showEmptySessions,
+  setShowEmptySessions,
 }: Props) {
   const responsiveColumns = useResponsiveColumns(
     SessionTableColumns({
@@ -59,6 +64,8 @@ export default function SessionTable({
         endDate={endDate}
         setEndDate={setEndDate}
         showDatePicker={showDatePicker}
+        showEmptySessions={showEmptySessions}
+        setShowEmptySessions={setShowEmptySessions}
         checkList={[
           { text: 'MX', checked: areMXColumnsVisible, action: setTechniqueVisibleSessionTable, actionType: SET_SESSIONS_MX_COLUMNS },
           { text: 'SAXS', checked: areSAXSColumnsVisible, action: setTechniqueVisibleSessionTable, actionType: SET_SESSIONS_SAXS_COLUMNS },

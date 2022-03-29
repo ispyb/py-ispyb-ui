@@ -8,6 +8,7 @@ import { useAppSelector } from 'hooks';
 import { useGetBeamlines } from 'hooks/site';
 import Page from 'pages/page';
 import { User } from 'models';
+import { allSessionsEmpty, sessionIsEmpty } from 'helpers/sessionhelper';
 
 export default function SessionsPage({ user }: { user: User }) {
   const { isManager, username } = user;
@@ -27,6 +28,10 @@ export default function SessionsPage({ user }: { user: User }) {
   const { data, isError } = useSessions({ startDate, endDate, isManager, username });
   if (isError) throw Error(isError);
 
+  const [showEmptySessions, setShowEmptySessions] = useState(allSessionsEmpty(data));
+
+  const filteredData = showEmptySessions ? data : data?.filter((s) => !sessionIsEmpty(s));
+
   return (
     <Page selected="mysessions">
       <SessionTable
@@ -34,8 +39,10 @@ export default function SessionsPage({ user }: { user: User }) {
         setStartDate={setStartDate}
         endDate={endDate}
         setEndDate={setEndDate}
+        showEmptySessions={showEmptySessions}
+        setShowEmptySessions={setShowEmptySessions}
         // eslint-disable-next-line
-        data={data?.filter((d: any) => new Set(beamlines).has(d.beamLineName))}
+        data={filteredData?.filter((d: any) => new Set(beamlines).has(d.beamLineName))}
         areEMColumnsVisible={areEMColumnsVisible}
         areMXColumnsVisible={areMXColumnsVisible}
         areSAXSColumnsVisible={areSAXSColumnsVisible}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import UI from 'config/ui';
 import SessionTable from 'pages/session/sessiontable';
 import { useSessions } from 'hooks/ispyb';
@@ -22,6 +22,8 @@ export default function ProposalSessionsPage({ user }: { user: User }) {
   const { data, isError } = useSessions({ isManager, username, proposalName });
   if (isError) throw Error(isError);
 
+  const [showEmptySessions, setShowEmptySessions] = useState(false);
+
   return (
     <Page selected="sessions">
       <SessionTable
@@ -32,6 +34,8 @@ export default function ProposalSessionsPage({ user }: { user: User }) {
         areMXColumnsVisible={areMXColumnsVisible}
         areSAXSColumnsVisible={areSAXSColumnsVisible}
         userPortalLink={UI.sessionsPage.userPortalLink}
+        showEmptySessions={showEmptySessions}
+        setShowEmptySessions={setShowEmptySessions}
       ></SessionTable>
     </Page>
   );

@@ -3,7 +3,6 @@ import React, { PropsWithChildren, Suspense } from 'react';
 import Menu from './menu/menu';
 
 export default function Page({ children, selected }: PropsWithChildren<{ selected: string }>) {
-  console.log(selected);
   return (
     <>
       <Menu selected={selected} />

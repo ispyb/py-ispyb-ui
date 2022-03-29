@@ -18,9 +18,21 @@ interface SessionTableMenuType {
   endDate?: string;
   // eslint-disable-next-line no-unused-vars
   setEndDate?: (_: string) => void;
+  showEmptySessions: boolean;
+  // eslint-disable-next-line no-unused-vars
+  setShowEmptySessions: (_: boolean) => void;
 }
 
-export default function SessionTableMenu({ checkList, showDatePicker, startDate, setStartDate, endDate, setEndDate }: SessionTableMenuType) {
+export default function SessionTableMenu({
+  checkList,
+  showDatePicker,
+  startDate,
+  setStartDate,
+  endDate,
+  setEndDate,
+  showEmptySessions,
+  setShowEmptySessions,
+}: SessionTableMenuType) {
   // eslint-disable-next-line
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -66,7 +78,19 @@ export default function SessionTableMenu({ checkList, showDatePicker, startDate,
           displayFormat="DD/MM/YYYY"
         />
       )}
-      <div></div>
+      <div style={{ fontSize: 18, margin: 0 }} className="form-check form-switch">
+        <input
+          checked={showEmptySessions}
+          onChange={() => {
+            setShowEmptySessions(!showEmptySessions);
+          }}
+          className="form-check-input"
+          type="checkbox"
+          role="switch"
+          id="flexSwitchCheckDefault"
+        />
+        <label className="form-check-label">Show empty sessions</label>
+      </div>
     </Menu>
   );
 }
