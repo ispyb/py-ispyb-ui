@@ -28,7 +28,7 @@ export default function SessionsPage({ user }: { user: User }) {
   if (isError) throw Error(isError);
 
   return (
-    <Page>
+    <Page selected="mysessions">
       <SessionTable
         startDate={startDate}
         setStartDate={setStartDate}

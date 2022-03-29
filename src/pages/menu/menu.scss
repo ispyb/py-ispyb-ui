@@ -1,0 +1,21 @@
+@import 'theme.scss';
+
+.proposalNav {
+  max-height: 30px;
+  border-top: 1px solid black;
+  background-color: darken($light, 30%) !important;
+}
+
+.proposalNav .nav-link {
+  color: $light !important;
+  font-weight: 600;
+}
+
+.proposalNav .navbar-brand {
+  color: $light !important;
+  font-weight: 300;
+}
+
+.selectedNav {
+  text-decoration: underline !important;
+}

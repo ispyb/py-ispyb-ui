@@ -9,7 +9,7 @@ type Props = PropsWithChildren<{
 
 export default function MXPage({ children, sessionId, proposalName }: Props) {
   return (
-    <Page>
+    <Page selected="sessions">
       <SessionTabMenu sessionId={sessionId} proposalName={proposalName}></SessionTabMenu>
       {children}
     </Page>

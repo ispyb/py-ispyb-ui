@@ -23,7 +23,7 @@ export default function ProposalSessionsPage({ user }: { user: User }) {
   if (isError) throw Error(isError);
 
   return (
-    <Page>
+    <Page selected="sessions">
       <SessionTable
         showDatePicker={false}
         // eslint-disable-next-line
