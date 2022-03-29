@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import { Session } from 'pages/model';
 
 export function allSessionsEmpty(sessions?: Session[]) {
