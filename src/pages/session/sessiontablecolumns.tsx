@@ -91,7 +91,7 @@ export default function columns(props: Props): ResponsiveColumnDescription<Sessi
         md: { width: '56px' },
         lg: { width: '56px' },
       },
-      style: { verticalAlign: 'middle', textAlign: 'center', width: '56px' },
+      style: { verticalAlign: 'middle', textAlign: 'center', width: '56px', padding: 0 },
     },
     {
       text: 'Date',
@@ -99,12 +99,7 @@ export default function columns(props: Props): ResponsiveColumnDescription<Sessi
       sort: true,
       formatter: dateFormatter,
       sortValue: (cell) => dateToTimestamp(cell),
-      responsiveHeaderStyle: {
-        xs: { width: '100px', textAlign: 'center', verticalAlign: 'sub' },
-        sm: { width: '100px', textAlign: 'center', verticalAlign: 'sub' },
-        md: { width: '80px', textAlign: 'center', verticalAlign: 'sub' },
-        lg: { width: '80px', textAlign: 'center', verticalAlign: 'sub' },
-      },
+      headerStyle: { verticalAlign: 'middle', textAlign: 'center', width: 200 },
     },
     {
       text: 'Beamline',
@@ -172,8 +167,8 @@ export default function columns(props: Props): ResponsiveColumnDescription<Sessi
       responsiveHeaderStyle: {
         xs: { hidden: true },
         sm: { hidden: true },
-        md: { width: '140px', textAlign: 'center', verticalAlign: 'sub' },
-        lg: { width: '20%', textAlign: 'center', verticalAlign: 'sub' },
+        md: { textAlign: 'center', verticalAlign: 'sub' },
+        lg: { textAlign: 'center', verticalAlign: 'sub' },
       },
     },
   ];
