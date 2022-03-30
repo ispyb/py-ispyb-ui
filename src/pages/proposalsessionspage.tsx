@@ -7,6 +7,7 @@ import { useGetBeamlines } from 'hooks/site';
 import Page from 'pages/page';
 import { User } from 'models';
 import { useParams } from 'react-router-dom';
+import { sessionIsEmpty } from 'helpers/sessionhelper';
 
 type Param = {
   proposalName: string;
@@ -24,12 +25,14 @@ export default function ProposalSessionsPage({ user }: { user: User }) {
 
   const [showEmptySessions, setShowEmptySessions] = useState(false);
 
+  const filteredData = showEmptySessions ? data : data?.filter((s) => !sessionIsEmpty(s));
+
   return (
     <Page selected="sessions">
       <SessionTable
         showDatePicker={false}
         // eslint-disable-next-line
-        data={data?.filter((d: any) => new Set(beamlines).has(d.beamLineName))}
+        data={filteredData?.filter((d: any) => new Set(beamlines).has(d.beamLineName))}
         areEMColumnsVisible={areEMColumnsVisible}
         areMXColumnsVisible={areMXColumnsVisible}
         areSAXSColumnsVisible={areSAXSColumnsVisible}
