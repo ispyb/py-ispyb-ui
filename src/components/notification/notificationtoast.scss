@@ -1,0 +1,34 @@
+@import 'theme.scss';
+
+.notiferror-header {
+  background-color: lighten($danger, 8%) !important;
+  color: color-contrast(lighten($danger, 8%)) !important;
+  border-bottom: 1px solid darken($danger, 5%) !important;
+}
+
+.notiferror-body {
+  background-color: lighten($danger, 30%) !important;
+  color: color-contrast(lighten($danger, 30%)) !important;
+}
+
+.notifinfo-header {
+  background-color: lighten($info, 8%) !important;
+  color: color-contrast(lighten($info, 8%)) !important;
+  border-bottom: 1px solid darken($info, 5%) !important;
+}
+
+.notifinfo-body {
+  background-color: lighten($info, 30%) !important;
+  color: color-contrast(lighten($info, 30%)) !important;
+}
+
+.notifwarning-header {
+  background-color: lighten($warning, 8%) !important;
+  color: color-contrast(lighten($warning, 8%)) !important;
+  border-bottom: 1px solid darken($warning, 5%) !important;
+}
+
+.notifwarning-body {
+  background-color: lighten($warning, 30%) !important;
+  color: color-contrast(lighten($warning, 30%)) !important;
+}
