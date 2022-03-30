@@ -38,7 +38,7 @@ export default function Menu({ selected }: { selected?: string }) {
 
 export function MainMenu({ user, selected }: { user: User; selected?: string }) {
   return (
-    <Navbar className="mainNav" bg="light" variant="light">
+    <Navbar className="mainNav" bg="dark" variant="dark">
       <Container>
         <Navbar.Brand href="/">ISPyB</Navbar.Brand>
         {user.isAuthenticated && (
@@ -81,7 +81,7 @@ export function ProposalMenu({ user, selected }: { user: User; selected?: string
     return <></>;
   }
   return (
-    <Navbar className="proposalNav">
+    <Navbar className="proposalNav" bg="light" variant="light">
       <Container>
         <Navbar.Brand>Proposal {proposalName}</Navbar.Brand>
         <Nav className="me-auto">

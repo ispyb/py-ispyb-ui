@@ -6,18 +6,14 @@
 
 .proposalNav {
   max-height: 30px;
-  border-top: 1px solid black;
   border-bottom: 1px solid gray;
-  background-color: darken($light, 30%) !important;
 }
 
 .proposalNav .nav-link {
-  color: $light !important;
   font-weight: 600;
 }
 
 .proposalNav .navbar-brand {
-  color: $light !important;
   font-weight: 300;
 }
 
