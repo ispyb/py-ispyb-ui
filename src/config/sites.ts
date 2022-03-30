@@ -41,6 +41,7 @@ const sites: Site[] = [
           { name: 'ID30A-3', sampleChangerType: 'FlexHCDDual' },
           { name: 'ID30B', sampleChangerType: 'FlexHCDDual' },
           { name: 'BM30A', sampleChangerType: 'FlexHCDDual' },
+          { name: 'TEST', sampleChangerType: 'ISARA' },
         ],
       },
     },

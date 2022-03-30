@@ -1,14 +1,20 @@
-import { range } from 'lodash';
 import { containerType, sampleChangerType } from 'models';
+import { AbstractSampleChanger } from 'pages/prepareexperiment/samplechanger/abstractsamplechanger';
+import { FlexHCDDual } from 'pages/prepareexperiment/samplechanger/flexhcddual';
+import { FlexHCDUnipuckPlate } from 'pages/prepareexperiment/samplechanger/flexhdcunipuckplate';
+import { ISARA } from 'pages/prepareexperiment/samplechanger/isara';
 
-export function getContainerTypes(type?: sampleChangerType): (containerType | undefined)[] {
+export function getSampleChanger(type?: sampleChangerType): AbstractSampleChanger | undefined {
   if (type === 'FlexHCDDual') {
-    return ['Spinepuck', 'Unipuck', 'Spinepuck', 'Unipuck', 'Unipuck', 'Unipuck', 'Unipuck', 'Unipuck'];
+    return new FlexHCDDual();
   }
   if (type === 'FlexHCDUnipuckPlate') {
-    return ['Unipuck', 'Unipuck', 'Unipuck', 'Unipuck', 'Unipuck', 'Unipuck', 'Unipuck', 'Unipuck'];
+    return new FlexHCDUnipuckPlate();
   }
-  return range(0, 8).map(() => undefined);
+  if (type === 'ISARA') {
+    return new ISARA();
+  }
+  return undefined;
 }
 
 export function getContainerType(type: string | undefined): containerType | undefined {
@@ -32,10 +38,10 @@ export function getContainerPosition(n: undefined | string) {
   return { cell: Math.floor(i / 3) + 1, position: (i % 3) + 1 };
 }
 
-export function containerCanGoInPosition(changerType: sampleChangerType | undefined, containerType: string | undefined, position: string | undefined) {
+export function containerCanGoInPosition(changer: AbstractSampleChanger | undefined, containerType: string | undefined, position: string | undefined) {
   const pos = getContainerPosition(position);
-  if (pos) {
-    return getContainerTypes(changerType)[pos.cell - 1] === getContainerType(containerType);
+  if (pos && changer) {
+    return changer.getContainerType(pos.cell, pos.position) === getContainerType(containerType);
   }
   return false;
 }

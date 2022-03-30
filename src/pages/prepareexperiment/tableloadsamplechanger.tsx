@@ -1,4 +1,4 @@
-import { containerCanGoInPosition, getContainerPosition } from 'helpers/mx/samplehelper';
+import { containerCanGoInPosition, getContainerPosition, getSampleChanger } from 'helpers/mx/samplehelper';
 import { range } from 'lodash';
 import { Beamline } from 'models';
 import { ContainerDewar } from 'pages/model';
@@ -203,7 +203,7 @@ export function PositionSelector({
     for (const pos of range(0, 3)) {
       const position = String(3 * cell + pos + 1);
 
-      if (containerCanGoInPosition(beamline?.sampleChangerType, container.containerType, position)) {
+      if (containerCanGoInPosition(getSampleChanger(beamline?.sampleChangerType), container.containerType, position)) {
         opts.push({ label: String(pos + 1), value: position });
       }
     }
