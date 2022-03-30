@@ -10,13 +10,20 @@ import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
-export default function ProposalTable({ data }: { data: Proposal[] }) {
+export default function ProposalTable({ data, variant }: { data: Proposal[]; variant: 'sessions' | 'experiments' }) {
   const columns: ColumnDescription[] = [
     { text: 'id', dataField: 'Proposal_proposalId', hidden: true },
     {
       text: '',
       dataField: 'Proposal_proposalId',
-      formatter: (cell, row) => <ProposalSearch proposal={row}></ProposalSearch>,
+      formatter: (cell, row) => {
+        switch (variant) {
+          case 'sessions':
+            return <ProposalSessions proposal={row}></ProposalSessions>;
+          case 'experiments':
+            return <ProposalExperiments proposal={row}></ProposalExperiments>;
+        }
+      },
       headerStyle: { width: 56 },
       style: { verticalAlign: 'middle', textAlign: 'center' },
     },
@@ -71,11 +78,22 @@ export function ProposalName({ proposal }: { proposal: Proposal }) {
   );
 }
 
-export function ProposalSearch({ proposal }: { proposal: Proposal }) {
+export function ProposalSessions({ proposal }: { proposal: Proposal }) {
   const proposalName = `${proposal.Proposal_proposalCode}${proposal.Proposal_proposalNumber}`;
   return (
     <OverlayTrigger placement="right" overlay={<Tooltip>Search sessions for {proposalName}</Tooltip>}>
       <Button variant="link" href={`/${proposalName}/sessions`}>
+        <FontAwesomeIcon icon={faSearch}></FontAwesomeIcon>
+      </Button>
+    </OverlayTrigger>
+  );
+}
+
+export function ProposalExperiments({ proposal }: { proposal: Proposal }) {
+  const proposalName = `${proposal.Proposal_proposalCode}${proposal.Proposal_proposalNumber}`;
+  return (
+    <OverlayTrigger placement="right" overlay={<Tooltip>Prepare experiments for {proposalName}</Tooltip>}>
+      <Button variant="link" href={`/${proposalName}/MX/prepare`}>
         <FontAwesomeIcon icon={faSearch}></FontAwesomeIcon>
       </Button>
     </OverlayTrigger>

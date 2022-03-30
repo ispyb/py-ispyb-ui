@@ -52,3 +52,60 @@ export interface Session {
   visit_number?: string;
   xrfSpectrumCount: number;
 }
+
+export interface ContainerDewar {
+  Shipping_comments: string;
+  barCode: string;
+  beamLineOperator?: string;
+  beamlineLocation?: string;
+  beamlineName?: string;
+  bltimeStamp: string;
+  capacity: number;
+  comments: string;
+  containerCode: string;
+  containerId: number;
+  containerStatus?: string;
+  containerType: string;
+  creationDate: string;
+  customsValue?: string;
+  dateOfShippingToUser?: string;
+  deliveryAgent_agentCode?: string;
+  deliveryAgent_agentName?: string;
+  deliveryAgent_deliveryDate?: string;
+  deliveryAgent_flightCode?: string;
+  deliveryAgent_shippingDate?: string;
+  dewarCode: string;
+  dewarId: number;
+  dewarStatus?: string;
+  firstExperimentId?: string;
+  isReimbursed: false;
+  isStorageDewar?: string;
+  isStorageShipping?: string;
+  laboratoryId?: string;
+  nbReimbDewars?: string;
+  proposalId: number;
+  returnCourier?: string;
+  returnLabContactId: number;
+  sampleChangerLocation: string;
+  sampleCount: number;
+  sendingLabContactId: number;
+  sessionEndDate?: string;
+  sessionId?: string;
+  sessionStartDate?: string;
+  shippingId: number;
+  shippingName: string;
+  shippingStatus: string;
+  shippingType: string;
+  storageLocation: string;
+  trackingNumberFromSynchrotron?: string;
+  trackingNumberToSynchrotron?: string;
+  transportValue: number;
+  type: string;
+}
+export interface Shipment {
+  shippingId: number;
+  name: string;
+  status: string;
+  creationDate: string;
+  dewars: ContainerDewar[];
+}

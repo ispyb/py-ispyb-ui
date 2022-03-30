@@ -123,3 +123,18 @@ export function getMXDataCollectionAnalysis({ sessionId, proposalName, format }:
 export function getWorkflowImage({ stepId, proposalName }: { proposalName: string; stepId: string }) {
   return { url: `${server}/${token}/proposal/${proposalName}/mx/workflow/step/${stepId}/image` };
 }
+
+export function getDewars({ proposalName }: { proposalName: string }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/dewar/list` };
+}
+
+export function updateShippingStatus({ proposalName, shippingId, status }: { proposalName: string; shippingId: number; status: string }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/shipping/${shippingId}/status/${status}/update` };
+}
+
+export function updateSampleChangerLocation({ proposalName, containerId, beamline, position }: { proposalName: string; containerId: number; beamline: string; position?: string }) {
+  return {
+    url: `${server}/${token}/proposal/${proposalName}/container/${containerId}/beamline/${beamline}/samplechangerlocation/update`,
+    data: `sampleChangerLocation=${position}`,
+  };
+}
