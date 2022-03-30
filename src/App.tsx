@@ -11,9 +11,7 @@ import MoviesPage from 'pages/em/movie/moviespage';
 import SessionsPage from 'pages/sessionspage';
 import ProposalsPage from 'pages/proposalspage';
 import ShippingPage from 'pages/shippingpage';
-import PreparePage from 'pages/preparepage';
 import ErrorBoundary from 'components/errors/errorboundary';
-import Page from 'pages/page';
 import { useAppSelector } from 'hooks';
 import LoadingPanel from 'components/loading/loadingpanel';
 import 'App.scss';
@@ -45,31 +43,27 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <Menu />
-      <Page>
-        <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-          <ErrorBoundary>
-            <Routes>
-              <Route path="/" element={<SessionsPage user={user} />} />
-              <Route path="/sessions" element={<SessionsPage user={user} />} />
-              <Route path="/:proposalName/sessions" element={<ProposalSessionsPage user={user} />} />
-              <Route path="/proposals" element={<ProposalsPage />} />
-              <Route path="/shipping" element={<ShippingPage />} />
-              <Route path="/prepare" element={<PreparePage />} />
-              <Route path="/:proposalName/EM/:sessionId" element={<EMSessionPage />} />
-              <Route path="/:proposalName/EM/:sessionId/classification" element={<SessionClassificationPage />} />
-              <Route path="/:proposalName/EM/:sessionId/statistics" element={<SessionStatisticsPage />} />
-              <Route path="/:proposalName/EM/:dataCollectionId/movies" element={<MoviesPage />} />
-              <Route path="/:proposalName/MX/:sessionId" element={<MXDataCollectionGroupPage />} />
-              <Route path="/:proposalName/MX/:sessionId/energy" element={<MXEnergyScanPage />} />
-              <Route path="/:proposalName/MX/:sessionId/xrf" element={<MXFluorescencePage />} />
-              <Route path="/:proposalName/MX/:sessionId/workflow/:workflowId/steps/:stepsIds" element={<MXWorkflowPage />} />
-              <Route path="/:proposalName/MX/:sessionId/workflow/:workflowId/steps/:stepsIds" element={<MXWorkflowPage />} />
-              <Route path="/:proposalName/MX/prepare" element={<PrepareExperimentPage />} />
-            </Routes>
-          </ErrorBoundary>
-        </Suspense>
-      </Page>
+      <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+        <ErrorBoundary>
+          <Routes>
+            <Route path="/" element={<SessionsPage user={user} />} />
+            <Route path="/sessions" element={<SessionsPage user={user} />} />
+            <Route path="/:proposalName/sessions" element={<ProposalSessionsPage user={user} />} />
+            <Route path="/proposals" element={<ProposalsPage />} />
+            <Route path="/shipping" element={<ShippingPage />} />
+            <Route path="/:proposalName/EM/:sessionId" element={<EMSessionPage />} />
+            <Route path="/:proposalName/EM/:sessionId/classification" element={<SessionClassificationPage />} />
+            <Route path="/:proposalName/EM/:sessionId/statistics" element={<SessionStatisticsPage />} />
+            <Route path="/:proposalName/EM/:dataCollectionId/movies" element={<MoviesPage />} />
+            <Route path="/:proposalName/MX/:sessionId" element={<MXDataCollectionGroupPage />} />
+            <Route path="/:proposalName/MX/:sessionId/energy" element={<MXEnergyScanPage />} />
+            <Route path="/:proposalName/MX/:sessionId/xrf" element={<MXFluorescencePage />} />
+            <Route path="/:proposalName/MX/:sessionId/workflow/:workflowId/steps/:stepsIds" element={<MXWorkflowPage />} />
+            <Route path="/:proposalName/MX/:sessionId/workflow/:workflowId/steps/:stepsIds" element={<MXWorkflowPage />} />
+            <Route path="/:proposalName/MX/prepare" element={<PrepareExperimentPage />} />{' '}
+          </Routes>
+        </ErrorBoundary>
+      </Suspense>
     </BrowserRouter>
   );
 }

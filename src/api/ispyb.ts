@@ -13,16 +13,20 @@ export function getLogin(site: Site) {
   return `${server}/authenticate?site=${site}`;
 }
 
-export function getSessions({ startDate, endDate }: { startDate?: string; endDate?: string }) {
-  if (startDate && endDate) {
-    return { url: `${server}/${token}/proposal/session/date/${startDate}/${endDate}/list` };
-  }
-
+export function getSessions() {
   return { url: `${server}/${token}/session/list` };
+}
+
+export function getSessionsManagerDates(startDate: string, endDate: string) {
+  return { url: `${server}/${token}/proposal/session/date/${startDate}/${endDate}/list` };
 }
 
 export function getProposalSessions(proposalName: string) {
   return { url: `${server}/${token}/proposal/${proposalName}/session/list` };
+}
+
+export function getProposalSessionsWhithDates(proposalName: string, startDate: string, endDate: string) {
+  return { url: `${server}/${token}/proposal/${proposalName}/session/date/${startDate}/${endDate}/list` };
 }
 
 export function getProposal(proposalName?: string) {

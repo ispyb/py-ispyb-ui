@@ -1,0 +1,22 @@
+@import 'theme.scss';
+
+.mainNav {
+  max-height: 60px;
+}
+
+.proposalNav {
+  max-height: 30px;
+  border-bottom: 1px solid gray;
+}
+
+.proposalNav .nav-link {
+  font-weight: 600;
+}
+
+.proposalNav .navbar-brand {
+  font-weight: 300;
+}
+
+.selectedNav {
+  text-decoration: underline !important;
+}

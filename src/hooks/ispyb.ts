@@ -17,31 +17,26 @@ import {
   getMXEnergyScans,
   getMXFluorescenceSpectras,
   getDewars,
+  getProposalSessionsWhithDates,
+  getSessionsManagerDates,
 } from 'api/ispyb';
 import { EnergyScan, WorkflowStep, FluorescenceSpectra, Sample, DataCollectionGroup } from 'pages/mx/model';
 
-import { ContainerDewar, Proposal } from 'pages/model';
+import { ContainerDewar, Proposal, Session } from 'pages/model';
+import { dateToTimestamp } from 'helpers/dateparser';
+import { parse } from 'date-fns';
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function doGet<T = any>(url: string, suspense = true) {
+// eslint-disable-next-line no-unused-vars,@typescript-eslint/no-explicit-any
+function doGet<T = any>(url: string, editData: (data: T) => T = (d) => d, suspense = true) {
   const { data, error, mutate } = useSWR<T>(url, fetcher, { suspense: suspense });
   return {
-    data,
+    data: data == undefined ? undefined : editData(data),
     isLoading: !error && !data,
     isError: error,
     mutate,
   };
-}
-
-interface UseSession {
-  startDate?: string;
-  endDate?: string;
-  sessionId?: string;
-  isManager?: boolean;
-  proposalName?: string;
-  username?: string;
 }
 
 interface ProposalSessionId {
@@ -49,30 +44,46 @@ interface ProposalSessionId {
   sessionId?: string;
 }
 
-export function useProposal(props: UseSession) {
-  return doGet(getProposal(props.proposalName).url);
+export function useProposal({ proposalName }: { proposalName: string }) {
+  return doGet(getProposal(proposalName).url);
 }
 
 export function useProposals() {
   return doGet<Proposal[]>(getProposals().url);
 }
 
-export function useSessions(props: UseSession) {
-  const { startDate, endDate, isManager, proposalName, username } = props;
+export function useSessions(props: { startDate?: string; endDate?: string; isManager?: boolean; proposalName?: string; username?: string }) {
+  const { startDate, endDate, isManager, proposalName } = props;
   if (proposalName) {
-    return doGet(getProposalSessions(proposalName).url);
+    if (startDate && endDate) {
+      return doGet<Session[]>(getProposalSessionsWhithDates(proposalName, startDate, endDate).url);
+    }
+    return doGet<Session[]>(getProposalSessions(proposalName).url);
   }
-  if (!isManager && username) {
-    return doGet(getProposalSessions(username).url);
+  if (isManager) {
+    if (startDate && endDate) {
+      return doGet<Session[]>(getSessionsManagerDates(startDate, endDate).url);
+    } else {
+      return { data: undefined, isError: 'Manager mush provide start and end dates' }; //would be too heavy
+    }
+  } else {
+    if (startDate && endDate) {
+      return doGet<Session[]>(getSessions().url, (sessions) => {
+        return sessions.filter((s) => {
+          const sessionStartTimeStamp = dateToTimestamp(s.BLSession_startDate);
+          const sessionEndTimeStamp = dateToTimestamp(s.BLSession_endDate);
+          const reqStart = parse(startDate, 'yyyyMMdd', new Date()).getTime();
+          const reqEnd = parse(endDate, 'yyyyMMdd', new Date()).getTime();
+
+          return sessionStartTimeStamp <= reqEnd && sessionEndTimeStamp >= reqStart;
+        });
+      });
+    }
+    return doGet<Session[]>(getSessions().url);
   }
-  if (isManager && (!startDate || !endDate)) {
-    return { data: undefined, isError: 'Manager mush provide start and end dates' }; //would be too heavy
-  }
-  return doGet(getSessions({ startDate, endDate }).url);
 }
 
-export function useSession(props: UseSession) {
-  const { sessionId } = props;
+export function useSession({ sessionId }: { sessionId: string }) {
   if (sessionId) {
     return doGet(getSessionById(sessionId).url);
   }

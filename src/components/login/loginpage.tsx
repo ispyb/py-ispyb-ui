@@ -11,7 +11,7 @@ function LoginPage() {
     return null;
   }
   return (
-    <Page>
+    <Page selected="login">
       <Container fluid>
         <Row>
           <Col md={8}>

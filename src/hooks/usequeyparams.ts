@@ -7,7 +7,6 @@ import { useLocation } from 'react-router';
  */
 export default function useQueryParams(): Record<string, string> {
   const dict: Record<string, string> = {};
-  console.log(new URLSearchParams(useLocation().search));
   const entries: IterableIterator<[string, string]> = new URLSearchParams(useLocation().search).entries();
 
   for (const entry of Array.from(entries)) {

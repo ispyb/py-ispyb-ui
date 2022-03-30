@@ -11,9 +11,12 @@ import paginationFactory from 'react-bootstrap-table2-paginator';
 import { Session } from 'pages/model';
 import filterFactory from 'react-bootstrap-table2-filter';
 import BootstrapTable from 'react-bootstrap-table-next';
+import { Alert } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 
 interface Props {
-  data: Session[];
+  data?: Session[];
   areMXColumnsVisible?: boolean;
   areSAXSColumnsVisible?: boolean;
   areEMColumnsVisible?: boolean;
@@ -25,6 +28,9 @@ interface Props {
   setEndDate?: (_: string) => void;
   userPortalLink: { visible: boolean; header: string; url: string; toolTip: string };
   showDatePicker?: boolean;
+  showEmptySessions: boolean;
+  // eslint-disable-next-line no-unused-vars
+  setShowEmptySessions: (_: boolean) => void;
 }
 
 export default function SessionTable({
@@ -38,6 +44,8 @@ export default function SessionTable({
   areEMColumnsVisible = true,
   userPortalLink,
   showDatePicker = true,
+  showEmptySessions,
+  setShowEmptySessions,
 }: Props) {
   const responsiveColumns = useResponsiveColumns(
     SessionTableColumns({
@@ -56,20 +64,29 @@ export default function SessionTable({
         endDate={endDate}
         setEndDate={setEndDate}
         showDatePicker={showDatePicker}
+        showEmptySessions={showEmptySessions}
+        setShowEmptySessions={setShowEmptySessions}
         checkList={[
           { text: 'MX', checked: areMXColumnsVisible, action: setTechniqueVisibleSessionTable, actionType: SET_SESSIONS_MX_COLUMNS },
           { text: 'SAXS', checked: areSAXSColumnsVisible, action: setTechniqueVisibleSessionTable, actionType: SET_SESSIONS_SAXS_COLUMNS },
           { text: 'EM', checked: areEMColumnsVisible, action: setTechniqueVisibleSessionTable, actionType: SET_SESSIONS_EM_COLUMNS },
         ]}
       />
-      <BootstrapTable
-        bootstrap4
-        filter={filterFactory()}
-        keyField="SessionTableToolkitProvider"
-        data={data}
-        columns={responsiveColumns}
-        pagination={paginationFactory({ showTotal: true, sizePerPage: 20 })}
-      />
+      {data && data.length ? (
+        <BootstrapTable
+          bootstrap4
+          filter={filterFactory()}
+          keyField="SessionTableToolkitProvider"
+          data={data}
+          columns={responsiveColumns}
+          pagination={paginationFactory({ showTotal: true, sizePerPage: 20 })}
+        />
+      ) : (
+        <Alert variant="info">
+          <FontAwesomeIcon icon={faInfoCircle} style={{ marginRight: 10 }} />
+          No session found.
+        </Alert>
+      )}
     </>
   );
 }
