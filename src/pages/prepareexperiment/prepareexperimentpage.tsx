@@ -20,6 +20,7 @@ import produce from 'immer';
 import LoadSampleChanger from './loadsamplechanger';
 import { Shipment } from 'pages/model';
 import { useState } from 'react';
+import Page from 'pages/page';
 
 type Param = {
   proposalName: string;
@@ -182,25 +183,29 @@ export default function PrepareExperimentPage() {
 
   if (compactStep1) {
     return (
-      <Col>
-        <Row>
-          <Col>{step1}</Col>
-        </Row>
-        <Row>
-          <Col>{step2}</Col>
-        </Row>
-      </Col>
+      <Page selected="prepare">
+        <Col>
+          <Row>
+            <Col>{step1}</Col>
+          </Row>
+          <Row>
+            <Col>{step2}</Col>
+          </Row>
+        </Col>
+      </Page>
     );
   } else {
     return (
-      <Row>
-        <Col md={'auto'}>
-          <Row>
-            <div style={{ maxWidth: 450 }}>{step1}</div>
-          </Row>
-        </Col>
-        <Col>{step2}</Col>
-      </Row>
+      <Page selected="prepare">
+        <Row>
+          <Col md={'auto'}>
+            <Row>
+              <div style={{ maxWidth: 450 }}>{step1}</div>
+            </Row>
+          </Col>
+          <Col>{step2}</Col>
+        </Row>
+      </Page>
     );
   }
 }
