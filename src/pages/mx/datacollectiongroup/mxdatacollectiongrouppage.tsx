@@ -8,10 +8,12 @@ import { DataCollectionGroup } from 'pages/mx/model';
 import LazyWrapper from 'components/loading/lazywrapper';
 import LoadingPanel from 'components/loading/loadingpanel';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faDotCircle, faListAlt, faListUl } from '@fortawesome/free-solid-svg-icons';
 import { Subject } from 'rxjs';
 import _ from 'lodash';
 import ContainerFilter from '../container/containerfilter';
+import { faDotCircle, faFilePdf, faFileWord, faListAlt, faListUl } from '@fortawesome/free-solid-svg-icons';
+import { getMXDataCollectionAnalysis, getMXDataCollectionSummary } from 'api/ispyb';
+import DownloadOptions from 'components/buttons/downloadoptions';
 
 type Param = {
   sessionId: string;
@@ -43,7 +45,43 @@ export default function MXDataCollectionGroupPage() {
         <Card>
           <div style={{ position: 'relative', top: -39, height: 0, alignSelf: 'flex-end' }}>
             <ButtonGroup style={{ marginRight: 50 }}>
-              <OverlayTrigger key={'bottom'} placement={'bottom'} overlay={<Tooltip id={`tooltip-bottom`}>Toggle container filtering</Tooltip>}>
+              <DownloadOptions
+                title="Summary"
+                options={[
+                  {
+                    href: getMXDataCollectionSummary({ sessionId, proposalName, format: 'pdf' }).url,
+                    fileName: `Report_${proposalName}_${sessionId}.pdf`,
+                    title: 'PDF',
+                    icon: faFilePdf,
+                  },
+                  {
+                    href: getMXDataCollectionSummary({ sessionId, proposalName, format: 'rtf' }).url,
+                    fileName: `Report_${proposalName}_${sessionId}.rtf`,
+                    title: 'RTF',
+                    icon: faFileWord,
+                  },
+                ]}
+              ></DownloadOptions>
+              <DownloadOptions
+                title="Analysis"
+                options={[
+                  {
+                    href: getMXDataCollectionAnalysis({ sessionId, proposalName, format: 'pdf' }).url,
+                    fileName: `AnalysisReport_${proposalName}_${sessionId}.pdf`,
+                    title: 'PDF',
+                    icon: faFilePdf,
+                  },
+                  {
+                    href: getMXDataCollectionAnalysis({ sessionId, proposalName, format: 'rtf' }).url,
+                    fileName: `AnalysisReport_${proposalName}_${sessionId}.rtf`,
+                    title: 'RTF',
+                    icon: faFileWord,
+                  },
+                ]}
+              ></DownloadOptions>
+            </ButtonGroup>
+            <ButtonGroup style={{ marginRight: 50 }}>
+              <OverlayTrigger key={'bottom'} placement={'bottom'} overlay={<Tooltip id={`tooltip-bottom`}>Toggle sample filtering</Tooltip>}>
                 <ToggleButton
                   style={{ margin: 1 }}
                   size="sm"

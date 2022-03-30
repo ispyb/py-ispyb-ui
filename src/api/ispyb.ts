@@ -113,6 +113,13 @@ export function getJpegchooch({ energyscanId, proposalName }: { proposalName: st
 export function getJpegxrfscan({ proposalName, xfeFluorescenceSpectrumId }: { proposalName: string; xfeFluorescenceSpectrumId: number }) {
   return { url: `${server}/${token}/proposal/${proposalName}/mx/xrfscan/xrfscanId/${xfeFluorescenceSpectrumId}/image/jpegScanFileFullPath/get` };
 }
+export function getMXDataCollectionSummary({ sessionId, proposalName, format }: { proposalName: string; sessionId: string; format: string }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/mx/datacollection/session/${sessionId}/report/${format}` };
+}
+export function getMXDataCollectionAnalysis({ sessionId, proposalName, format }: { proposalName: string; sessionId: string; format: string }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/mx/datacollection/session/${sessionId}/analysisreport/${format}` };
+}
+
 export function getWorkflowImage({ stepId, proposalName }: { proposalName: string; stepId: string }) {
   return { url: `${server}/${token}/proposal/${proposalName}/mx/workflow/step/${stepId}/image` };
 }
