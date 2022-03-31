@@ -18,7 +18,8 @@ export abstract class AbstractSampleChanger {
         style={{ maxWidth: 500 }}
         viewBox={`-${this.sampleChangerRadius + 5} -${this.sampleChangerRadius + 5} ${2 * (this.sampleChangerRadius + 5)} ${2 * (this.sampleChangerRadius + 5)}`}
       >
-        <circle cx={0} cy={0} r={this.sampleChangerRadius} stroke={'#000'} fill="#CCCCCC"></circle>;{this.plotCells()}
+        <circle cx={0} cy={0} r={this.sampleChangerRadius} stroke={'#000'} fill="#CCCCCC"></circle>
+        {this.plotCells()}
         <g>{children}</g>
       </svg>
     );
@@ -37,6 +38,28 @@ export abstract class AbstractSampleChanger {
       res = res + this.getNbContainerInCell(n);
     });
     return res + position + 1;
+  }
+
+  getPosition(location: number): { position: number; cell: number } | undefined {
+    if (location == 4) {
+      debugger;
+    }
+    if (isNaN(location)) {
+      return undefined;
+    }
+    let minLocation = 1;
+    for (const cell of range(0, this.getNbCell())) {
+      const nbContainer = this.getNbContainerInCell(cell);
+      if (minLocation + nbContainer <= location) {
+        minLocation = minLocation + nbContainer;
+      } else {
+        return {
+          cell,
+          position: location - minLocation,
+        };
+      }
+    }
+    return undefined;
   }
 
   abstract getContainerType(cell: number, position: number): containerType;

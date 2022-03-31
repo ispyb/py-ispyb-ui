@@ -3,7 +3,25 @@ import { AbstractSampleChanger } from './abstractsamplechanger';
 
 export class ISARA extends AbstractSampleChanger {
   plotCells(): JSX.Element {
-    return <></>;
+    return (
+      <g>
+        <rect
+          x={-this.sampleChangerRadius * 2}
+          y={-this.sampleChangerRadius * 2}
+          width={this.sampleChangerRadius * 3}
+          height={this.sampleChangerRadius * 1.17}
+          fill="#FFFF"
+          z={1000}
+        ></rect>
+        <line
+          x2={-this.sampleChangerRadius * 0.56}
+          y2={-this.sampleChangerRadius * 0.83}
+          x1={this.sampleChangerRadius * 0.56}
+          y1={-this.sampleChangerRadius * 0.83}
+          stroke={'#000'}
+        ></line>
+      </g>
+    );
   }
 
   getContainerCoordinates(cell: number, position: number): { x: number; y: number; r: number; xtxt: number; ytxt: number } {

@@ -1,4 +1,5 @@
-import { containerType, sampleChangerType } from 'models';
+import { Beamline, containerType, sampleChangerType } from 'models';
+import { ContainerDewar } from 'pages/model';
 import { AbstractSampleChanger } from 'pages/prepareexperiment/samplechanger/abstractsamplechanger';
 import { FlexHCDDual } from 'pages/prepareexperiment/samplechanger/flexhcddual';
 import { FlexHCDUnipuckPlate } from 'pages/prepareexperiment/samplechanger/flexhdcunipuckplate';
@@ -30,18 +31,21 @@ export function getContainerType(type: string | undefined): containerType | unde
   return undefined;
 }
 
-export function getContainerPosition(n: undefined | string) {
-  if (!n || isNaN(Number(n))) {
-    return undefined;
-  }
-  const i = Number(n) - 1;
-  return { cell: Math.floor(i / 3) + 1, position: (i % 3) + 1 };
-}
-
-export function containerCanGoInPosition(changer: AbstractSampleChanger | undefined, containerType: string | undefined, position: string | undefined) {
-  const pos = getContainerPosition(position);
-  if (pos && changer) {
-    return changer.getContainerType(pos.cell, pos.position) === getContainerType(containerType);
+export function containerCanGoInLocation(changer: AbstractSampleChanger | undefined, containerType: string | undefined, location: number | undefined) {
+  if (location && changer) {
+    const pos = changer.getPosition(location);
+    if (pos) {
+      return changer.getContainerType(pos.cell, pos.position) === getContainerType(containerType);
+    }
   }
   return false;
+}
+
+export function getContainerBeamline(beamlines: Beamline[], container: ContainerDewar) {
+  for (const beamline of beamlines) {
+    if (container.beamlineLocation === beamline.name) {
+      return beamline;
+    }
+  }
+  return undefined;
 }
