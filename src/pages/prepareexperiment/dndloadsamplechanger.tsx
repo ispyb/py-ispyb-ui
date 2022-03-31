@@ -14,7 +14,7 @@ import DnDSampleChanger from './dndsamplechanger';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
-import { getContainerPosition, getContainerType } from 'helpers/mx/samplehelper';
+import { getContainerBeamline, getContainerType, getSampleChanger } from 'helpers/mx/samplehelper';
 
 import './dndloadsamplechanger.scss';
 import { BeamLineSelector } from './tableloadsamplechanger';
@@ -53,7 +53,7 @@ export default function DnDLoadSampleChanger({
                 return (
                   <Col style={{ display: 'flex' }}>
                     <div style={{ margin: 'auto' }}>
-                      <DragableContainer d={d} proposalName={proposalName}></DragableContainer>
+                      <DragableContainer d={d} beamlines={beamlines} proposalName={proposalName}></DragableContainer>
                     </div>
                   </Col>
                 );
@@ -83,7 +83,7 @@ export function findBestDefaultBeamline(beamlines: Beamline[], containers?: Cont
   if (containers) {
     //first look for beamline with a sample that has a location defined
     for (const container of containers) {
-      if (container.beamlineLocation && getContainerPosition(container.sampleChangerLocation)) {
+      if (container.beamlineLocation && !isNaN(Number(container.sampleChangerLocation))) {
         for (const beamline of beamlines) {
           if (container.beamlineLocation === beamline.name) {
             return beamline;
@@ -106,7 +106,7 @@ export function findBestDefaultBeamline(beamlines: Beamline[], containers?: Cont
   return beamlines[0];
 }
 
-function DragableContainer({ d, proposalName }: { d: ContainerDewar; proposalName: string }) {
+function DragableContainer({ d, proposalName, beamlines }: { d: ContainerDewar; proposalName: string; beamlines: Beamline[] }) {
   const [{ isDragging }, drag, preview] = useDrag(() => ({
     type: ItemTypes.CONTAINER,
     item: d,
@@ -118,7 +118,9 @@ function DragableContainer({ d, proposalName }: { d: ContainerDewar; proposalNam
     preview(getEmptyImage(), { captureDraggingState: true });
   }, [preview]);
 
-  const pos = getContainerPosition(d.sampleChangerLocation);
+  const beamline = getContainerBeamline(beamlines, d);
+  const changer = getSampleChanger(beamline?.sampleChangerType);
+  const pos = changer?.getPosition(Number(d.sampleChangerLocation));
   return (
     <div style={{ width: 100, height: 160 }}>
       <Col style={{ height: 20 }}>
@@ -132,7 +134,7 @@ function DragableContainer({ d, proposalName }: { d: ContainerDewar; proposalNam
         ref={drag}
         style={{
           backgroundColor: 'white',
-          cursor: 'move',
+          cursor: 'grab',
           opacity: isDragging ? 0 : 1,
         }}
       >
@@ -143,7 +145,7 @@ function DragableContainer({ d, proposalName }: { d: ContainerDewar; proposalNam
           <Row>
             <p style={{ padding: 0, margin: 0, textAlign: 'center' }}>{d.beamlineLocation}</p>
             <p style={{ padding: 0, margin: 0, textAlign: 'center' }}>
-              cell {pos.cell} pos {pos.position}
+              cell {pos.cell + 1} pos {pos.position + 1}
             </p>
           </Row>
         </Col>

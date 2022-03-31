@@ -1,4 +1,4 @@
-import { containerCanGoInPosition, getContainerPosition } from 'helpers/mx/samplehelper';
+import { containerCanGoInLocation, getSampleChanger } from 'helpers/mx/samplehelper';
 import { range } from 'lodash';
 import { Beamline } from 'models';
 import { ContainerDewar } from 'pages/model';
@@ -187,24 +187,26 @@ export function PositionSelector({
   // eslint-disable-next-line no-unused-vars
   setPosition: (pos: string) => void;
 }) {
+  const changer = getSampleChanger(beamline?.sampleChangerType);
+
   const posToStr = (p: string) => {
-    const pos = getContainerPosition(p);
+    const pos = changer?.getPosition(Number(p));
     if (!pos) {
       return 'none';
     }
-    return `cell ${pos.cell} pos ${pos.position}`;
+    return `cell ${pos.cell + 1} pos ${pos.position + 1}`;
   };
 
-  const options = range(0, 8).map((cell) => {
+  const options = range(0, changer?.getNbCell()).map((cell) => {
     const opts: {
       label: string;
       value: string;
     }[] = [];
-    for (const pos of range(0, 3)) {
-      const position = String(3 * cell + pos + 1);
+    for (const pos of range(0, changer?.getNbContainerInCell(cell))) {
+      const location = changer?.getLocation(cell, pos);
 
-      if (containerCanGoInPosition(beamline?.sampleChangerType, container.containerType, position)) {
-        opts.push({ label: String(pos + 1), value: position });
+      if (containerCanGoInLocation(changer, container.containerType, location)) {
+        opts.push({ label: String(pos + 1), value: String(location) });
       }
     }
     return {
