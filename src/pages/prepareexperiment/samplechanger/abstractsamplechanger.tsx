@@ -41,9 +41,6 @@ export abstract class AbstractSampleChanger {
   }
 
   getPosition(location: number): { position: number; cell: number } | undefined {
-    if (location == 4) {
-      debugger;
-    }
     if (isNaN(location)) {
       return undefined;
     }
