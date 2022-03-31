@@ -134,7 +134,7 @@ function DragableContainer({ d, proposalName, beamlines }: { d: ContainerDewar; 
         ref={drag}
         style={{
           backgroundColor: 'white',
-          cursor: 'move',
+          cursor: 'grab',
           opacity: isDragging ? 0 : 1,
         }}
       >
