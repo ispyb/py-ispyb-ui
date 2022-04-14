@@ -1,5 +1,7 @@
 import { store } from 'store';
 import { Site } from 'models';
+import { LabContact } from 'pages/shipping/model';
+import { json } from 'stream/consumers';
 
 let server = '';
 let token = '';
@@ -140,6 +142,7 @@ export function updateSampleChangerLocation({ proposalName, containerId, beamlin
   return {
     url: `${server}/${token}/proposal/${proposalName}/container/${containerId}/beamline/${beamline}/samplechangerlocation/update`,
     data: `sampleChangerLocation=${position}`,
+    headers: { 'content-type': 'application/x-www-form-urlencoded;' },
   };
 }
 
@@ -149,4 +152,12 @@ export function getXrfScanCsv({ scanId, proposalName }: { proposalName: string; 
 
 export function getLabContacts({ proposalName }: { proposalName: string }) {
   return { url: `${server}/${token}/proposal/${proposalName}/shipping/labcontact/list` };
+}
+
+export function updateLabContact({ proposalName, data }: { proposalName: string; data: LabContact }) {
+  return {
+    url: `${server}/${token}/proposal/${proposalName}/shipping/labcontact/save`,
+    data: `labcontact=${JSON.stringify(data)}`,
+    headers: { 'content-type': 'application/x-www-form-urlencoded;' },
+  };
 }

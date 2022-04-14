@@ -5,6 +5,7 @@ import { Button, Row } from 'react-bootstrap';
 import BootstrapTable, { ColumnDescription } from 'react-bootstrap-table-next';
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 import paginationFactory from 'react-bootstrap-table2-paginator';
+import { KeyedMutator } from 'swr';
 import AddressModal from './addressmodal';
 import { LabContact } from './model';
 
@@ -14,7 +15,7 @@ type LabContactExt = LabContact & {
   email?: string;
 };
 
-export function AddressesTable({ addresses }: { addresses: LabContact[] }) {
+export function AddressesTable({ addresses, proposalName, mutate }: { addresses: LabContact[]; proposalName: string; mutate: KeyedMutator<LabContact[]> }) {
   const data = addresses.map((v) => {
     const res: LabContactExt = v;
     res.email = v.personVO.emailAddress;
@@ -29,7 +30,7 @@ export function AddressesTable({ addresses }: { addresses: LabContact[] }) {
       text: '',
       dataField: 'labContactId',
       formatter: (cell, row) => {
-        return <EditAddressButton labContact={row}></EditAddressButton>;
+        return <EditAddressButton mutate={mutate} proposalName={proposalName} labContact={row}></EditAddressButton>;
       },
       headerStyle: { width: 56 },
       style: { padding: 0, verticalAlign: 'middle', textAlign: 'center' },
@@ -90,7 +91,7 @@ export function AddressesTable({ addresses }: { addresses: LabContact[] }) {
   );
 }
 
-export function EditAddressButton({ labContact }: { labContact: LabContact }) {
+export function EditAddressButton({ labContact, proposalName, mutate }: { labContact: LabContact; proposalName: string; mutate: KeyedMutator<LabContact[]> }) {
   const [modalShow, setModalShow] = useState(false);
 
   return (
@@ -103,7 +104,7 @@ export function EditAddressButton({ labContact }: { labContact: LabContact }) {
       >
         <FontAwesomeIcon icon={faEdit}></FontAwesomeIcon>
       </Button>
-      <AddressModal address={labContact} show={modalShow} onHide={() => setModalShow(false)}></AddressModal>
+      <AddressModal mutate={mutate} proposalName={proposalName} address={labContact} show={modalShow} onHide={() => setModalShow(false)}></AddressModal>
     </>
   );
 }

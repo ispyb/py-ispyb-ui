@@ -4,22 +4,38 @@ import { Button, Col, Form, InputGroup, Modal, Row } from 'react-bootstrap';
 import { LabContact } from './model';
 import { Formik, FormikProps } from 'formik';
 import * as Yup from 'yup';
+import { KeyedMutator } from 'swr';
+import produce from 'immer';
+import axios from 'axios';
+import { updateLabContact } from 'api/ispyb';
 
-export default function AddressModal({ show, onHide, address }: { show: boolean; onHide: () => void; address: LabContact }) {
+export default function AddressModal({
+  show,
+  onHide,
+  address,
+  mutate,
+  proposalName,
+}: {
+  show: boolean;
+  onHide: () => void;
+  address: LabContact;
+  mutate: KeyedMutator<LabContact[]>;
+  proposalName: string;
+}) {
   return (
     <Modal backdrop="static" keyboard={false} onHide={onHide} show={show} size="xl" aria-labelledby="contained-modal-title-vcenter" centered>
       <Modal.Header>
         <Modal.Title id="contained-modal-title-vcenter">Edit address</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <ModalContent close={onHide} address={address}></ModalContent>
+        <ModalContent close={onHide} address={address} mutate={mutate} proposalName={proposalName}></ModalContent>
       </Modal.Body>
     </Modal>
   );
 }
 
-export function ModalContent({ address, close }: { address: LabContact; close: () => void }) {
-  return <AddressForm close={close} address={address}></AddressForm>;
+export function ModalContent({ address, close, mutate, proposalName }: { address: LabContact; close: () => void; mutate: KeyedMutator<LabContact[]>; proposalName: string }) {
+  return <AddressForm close={close} address={address} mutate={mutate} proposalName={proposalName}></AddressForm>;
 }
 
 type FormType = {
@@ -64,7 +80,7 @@ const schema = Yup.object().shape({
   labAddress: Yup.string().max(45, 'Too long'),
 });
 
-export function AddressForm({ address, close }: { address: LabContact; close: () => void }) {
+export function AddressForm({ address, close, mutate, proposalName }: { address: LabContact; close: () => void; mutate: KeyedMutator<LabContact[]>; proposalName: string }) {
   const initialValues: FormType = {
     cardName: address.cardName,
 
@@ -90,7 +106,36 @@ export function AddressForm({ address, close }: { address: LabContact; close: ()
     <Formik
       initialValues={initialValues}
       validationSchema={schema}
-      onSubmit={function (values, formikHelpers) {
+      onSubmit={function (values) {
+        const next = produce(address, (draft) => {
+          draft.cardName = values.cardName;
+
+          draft.personVO.givenName = values.givenName;
+          draft.personVO.familyName = values.familyName;
+
+          draft.personVO.emailAddress = values.emailAddress;
+          draft.personVO.phoneNumber = values.phoneNumber;
+          draft.personVO.faxNumber = values.faxNumber;
+
+          draft.courierAccount = values.courierAccount;
+          draft.defaultCourrierCompany = values.defaultCourrierCompany;
+
+          draft.dewarAvgCustomsValue = Number(values.dewarAvgCustomsValue);
+          draft.dewarAvgTransportValue = Number(values.dewarAvgTransportValue);
+          draft.billingReference = values.billingReference;
+
+          draft.personVO.laboratoryVO.name = values.labName;
+          draft.personVO.laboratoryVO.address = values.labAddress;
+        });
+        const req = updateLabContact({ proposalName, data: next });
+        axios.post(req.url, req.data, { headers: req.headers }).then(
+          () => {
+            mutate();
+          },
+          () => {
+            mutate();
+          }
+        );
         close();
         return;
       }}
