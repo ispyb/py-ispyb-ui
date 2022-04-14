@@ -146,3 +146,7 @@ export function updateSampleChangerLocation({ proposalName, containerId, beamlin
 export function getXrfScanCsv({ scanId, proposalName }: { proposalName: string; scanId: number }) {
   return { url: `${server}/${token}/proposal/${proposalName}/mx/xrfscan/xrfscanId/${scanId}/csv` };
 }
+
+export function getLabContacts({ proposalName }: { proposalName: string }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/shipping/labcontact/list` };
+}

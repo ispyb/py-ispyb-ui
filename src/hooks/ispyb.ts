@@ -20,8 +20,10 @@ import {
   getProposalSessionsWhithDates,
   getSessionsManagerDates,
   getXrfScanCsv,
+  getLabContacts,
 } from 'api/ispyb';
 import { EnergyScan, WorkflowStep, FluorescenceSpectra, Sample, DataCollectionGroup } from 'pages/mx/model';
+import { LabContact } from 'pages/shipping/model';
 
 import { ContainerDewar, Proposal, Session } from 'pages/model';
 import { dateToTimestamp } from 'helpers/dateparser';
@@ -146,4 +148,8 @@ export function useDewars({ proposalName }: { proposalName: string }) {
 
 export function useXrfScanCsv({ scanId, proposalName }: { proposalName: string; scanId: number }) {
   return doGet<string>(getXrfScanCsv({ scanId, proposalName }).url);
+}
+
+export function useLabContacts({ proposalName }: { proposalName: string }) {
+  return doGet<LabContact[]>(getLabContacts({ proposalName }).url);
 }
