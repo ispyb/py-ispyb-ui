@@ -12,18 +12,14 @@ export default function AddressModal({ show, onHide, address }: { show: boolean;
         <Modal.Title id="contained-modal-title-vcenter">Edit address</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        {show && (
-          <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-            <ModalContent address={address}></ModalContent>
-          </Suspense>
-        )}
+        <ModalContent close={onHide} address={address}></ModalContent>
       </Modal.Body>
     </Modal>
   );
 }
 
-export function ModalContent({ address }: { address: LabContact }) {
-  return <AddressForm address={address}></AddressForm>;
+export function ModalContent({ address, close }: { address: LabContact; close: () => void }) {
+  return <AddressForm close={close} address={address}></AddressForm>;
 }
 
 type FormType = {
@@ -68,8 +64,8 @@ const schema = Yup.object().shape({
   labAddress: Yup.string().max(45, 'Too long'),
 });
 
-export function AddressForm({ address }: { address: LabContact }) {
-  const initialState: FormType = {
+export function AddressForm({ address, close }: { address: LabContact; close: () => void }) {
+  const initialValues: FormType = {
     cardName: address.cardName,
 
     givenName: address.personVO.givenName,
@@ -89,60 +85,65 @@ export function AddressForm({ address }: { address: LabContact }) {
     labName: address.personVO.laboratoryVO.name,
     labAddress: address.personVO.laboratoryVO.address,
   };
-  const [formData, setFormData] = useState(initialState);
-
-  const updateFormProperty = (field: keyof FormType, value: string) => {
-    setFormData({
-      ...formData,
-      [field]: value,
-    });
-  };
 
   return (
     <Formik
-      initialValues={formData}
+      initialValues={initialValues}
       validationSchema={schema}
       onSubmit={function (values, formikHelpers) {
+        close();
         return;
       }}
     >
-      {(formicProps) => (
-        <Form noValidate onSubmit={formicProps.handleSubmit}>
+      {(formikProps) => (
+        <Form noValidate onSubmit={formikProps.handleSubmit}>
           <Row className="mb-3">
-            <FormInput name="Address name" field="cardName" formicProps={formicProps}></FormInput>
+            <FormInput name="Address name" field="cardName" formikProps={formikProps}></FormInput>
           </Row>
           <Row className="mb-3">
-            <FormInput name="First name" field="givenName" formicProps={formicProps}></FormInput>
-            <FormInput name="Surname" field="familyName" formicProps={formicProps}></FormInput>
+            <FormInput name="First name" field="givenName" formikProps={formikProps}></FormInput>
+            <FormInput name="Surname" field="familyName" formikProps={formikProps}></FormInput>
           </Row>
           <Row className="mb-3">
-            <FormInput name="Email" field="emailAddress" formicProps={formicProps}></FormInput>
-            <FormInput name="Phone" field="phoneNumber" formicProps={formicProps}></FormInput>
-            <FormInput name="Fax" field="faxNumber" formicProps={formicProps}></FormInput>
+            <FormInput name="Email" field="emailAddress" formikProps={formikProps}></FormInput>
+            <FormInput name="Phone" field="phoneNumber" formikProps={formikProps}></FormInput>
+            <FormInput name="Fax" field="faxNumber" formikProps={formikProps}></FormInput>
           </Row>
           <Row className="mb-3">
-            <FormInput name="Courier account" field="courierAccount" formicProps={formicProps}></FormInput>
-            <FormInput name="Courier company" field="defaultCourrierCompany" formicProps={formicProps}></FormInput>
+            <FormInput name="Courier account" field="courierAccount" formikProps={formikProps}></FormInput>
+            <FormInput name="Courier company" field="defaultCourrierCompany" formikProps={formikProps}></FormInput>
           </Row>
           <Row className="mb-3">
-            <FormInput name="Avg customs value" field="dewarAvgCustomsValue" formicProps={formicProps}></FormInput>
-            <FormInput name="Avg transport value" field="dewarAvgTransportValue" formicProps={formicProps}></FormInput>
-            <FormInput name="Billing reference" field="billingReference" formicProps={formicProps}></FormInput>
+            <FormInput name="Avg customs value" field="dewarAvgCustomsValue" formikProps={formikProps}></FormInput>
+            <FormInput name="Avg transport value" field="dewarAvgTransportValue" formikProps={formikProps}></FormInput>
+            <FormInput name="Billing reference" field="billingReference" formikProps={formikProps}></FormInput>
           </Row>
           <Row className="mb-3">
-            <FormInput name="Lab name" field="labName" formicProps={formicProps}></FormInput>
+            <FormInput name="Lab name" field="labName" formikProps={formikProps}></FormInput>
           </Row>
           <Row className="mb-3">
-            <FormInput name="Lab address" type={'textarea'} field="labAddress" formicProps={formicProps}></FormInput>
+            <FormInput name="Lab address" type={'textarea'} field="labAddress" formikProps={formikProps}></FormInput>
           </Row>
-          <Button type="submit">Save</Button>
+          <Row>
+            <Col></Col>
+            <Col md={'auto'}>
+              <Button disabled={!formikProps.isValid} variant="primary" type="submit">
+                Save
+              </Button>
+            </Col>
+            <Col md={'auto'}>
+              <Button variant="secondary" onClick={close}>
+                Cancel
+              </Button>
+            </Col>
+          </Row>
         </Form>
       )}
     </Formik>
   );
 }
 
-export function FormInput({ name, field, type, formicProps }: { name: string; field: keyof FormType; type?: ElementType; formicProps: FormikProps<FormType> }) {
+export function FormInput({ name, field, type, formikProps }: { name: string; field: keyof FormType; type?: ElementType; formikProps: FormikProps<FormType> }) {
   return (
     <Form.Group as={Col}>
       <Form.Label>{name}</Form.Label>
@@ -151,12 +152,13 @@ export function FormInput({ name, field, type, formicProps }: { name: string; fi
           type="text"
           as={type}
           placeholder={'none'}
-          onChange={formicProps.handleChange}
+          onChange={formikProps.handleChange}
           name={field}
-          value={formicProps.values[field]}
-          isInvalid={!!formicProps.errors[field]}
+          value={formikProps.values[field]}
+          isInvalid={!!formikProps.errors[field]}
+          style={{ height: type === 'textarea' ? 200 : undefined }}
         />
-        <Form.Control.Feedback type="invalid">{formicProps.errors[field]}</Form.Control.Feedback>
+        <Form.Control.Feedback type="invalid">{formikProps.errors[field]}</Form.Control.Feedback>
       </InputGroup>
     </Form.Group>
   );
