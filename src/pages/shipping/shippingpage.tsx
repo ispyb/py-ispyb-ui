@@ -8,6 +8,8 @@ import { faAddressCard, faBoxOpen, faFlask } from '@fortawesome/free-solid-svg-i
 import { AddressesTab } from './addressestab';
 import { ShipmentsTab } from './shipmentstab';
 import { StockSolutionsTab } from './stocksolutionstab';
+import LazyWrapper from 'components/loading/lazywrapper';
+import LoadingPanel from 'components/loading/loadingpanel';
 
 type Param = {
   proposalName: string;
@@ -28,7 +30,9 @@ export default function ShippingPage() {
           }
         >
           <Card>
-            <AddressesTab proposalName={proposalName}></AddressesTab>
+            <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+              <AddressesTab proposalName={proposalName}></AddressesTab>
+            </LazyWrapper>
           </Card>
         </Tab>
         <Tab
@@ -40,7 +44,9 @@ export default function ShippingPage() {
           }
         >
           <Card>
-            <ShipmentsTab proposalName={proposalName}></ShipmentsTab>
+            <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+              <ShipmentsTab proposalName={proposalName}></ShipmentsTab>
+            </LazyWrapper>
           </Card>
         </Tab>
         <Tab
@@ -52,7 +58,9 @@ export default function ShippingPage() {
           }
         >
           <Card>
-            <StockSolutionsTab proposalName={proposalName}></StockSolutionsTab>
+            <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+              <StockSolutionsTab proposalName={proposalName}></StockSolutionsTab>
+            </LazyWrapper>
           </Card>
         </Tab>
       </Tabs>

@@ -161,3 +161,7 @@ export function updateLabContact({ proposalName, data }: { proposalName: string;
     headers: { 'content-type': 'application/x-www-form-urlencoded;' },
   };
 }
+
+export function getShipments({ proposalName }: { proposalName: string }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/shipping/list` };
+}

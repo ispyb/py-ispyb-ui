@@ -21,9 +21,10 @@ import {
   getSessionsManagerDates,
   getXrfScanCsv,
   getLabContacts,
+  getShipments,
 } from 'api/ispyb';
 import { EnergyScan, WorkflowStep, FluorescenceSpectra, Sample, DataCollectionGroup } from 'pages/mx/model';
-import { LabContact } from 'pages/shipping/model';
+import { LabContact, Parcel, Shipment } from 'pages/shipping/model';
 
 import { ContainerDewar, Proposal, Session } from 'pages/model';
 import { dateToTimestamp } from 'helpers/dateparser';
@@ -152,4 +153,8 @@ export function useXrfScanCsv({ scanId, proposalName }: { proposalName: string; 
 
 export function useLabContacts({ proposalName }: { proposalName: string }) {
   return doGet<LabContact[]>(getLabContacts({ proposalName }).url);
+}
+
+export function useShipments({ proposalName }: { proposalName: string }) {
+  return doGet<Parcel[]>(getShipments({ proposalName }).url);
 }
