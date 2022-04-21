@@ -1,5 +1,4 @@
-import LoadingPanel from 'components/loading/loadingpanel';
-import { ElementType, Suspense, useState } from 'react';
+import { ElementType } from 'react';
 import { Button, Col, Form, InputGroup, Modal, Row } from 'react-bootstrap';
 import { LabContact } from './model';
 import { Formik, FormikProps } from 'formik';

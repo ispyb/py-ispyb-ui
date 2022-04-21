@@ -1,7 +1,6 @@
 import { store } from 'store';
 import { Site } from 'models';
 import { LabContact } from 'pages/shipping/model';
-import { json } from 'stream/consumers';
 
 let server = '';
 let token = '';

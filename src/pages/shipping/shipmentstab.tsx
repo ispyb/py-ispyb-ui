@@ -10,7 +10,7 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
 export function ShipmentsTab({ proposalName }: { proposalName: string }) {
-  const { data = [], isError, mutate } = useShipments({ proposalName });
+  const { data = [], isError } = useShipments({ proposalName });
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<Shipment | undefined>(undefined);
 
@@ -63,7 +63,7 @@ export function ShipmentsTab({ proposalName }: { proposalName: string }) {
   );
 }
 
-export function ShipmentCard({ proposalName, shipment, selected, onClick }: { proposalName: string; shipment: Shipment; selected: boolean; onClick: () => void }) {
+export function ShipmentCard({ shipment, selected, onClick }: { proposalName: string; shipment: Shipment; selected: boolean; onClick: () => void }) {
   return (
     <Row onClick={onClick} className={`shipmentCard ${selected ? 'shipmentCardSelected' : ''}`}>
       <Col>
