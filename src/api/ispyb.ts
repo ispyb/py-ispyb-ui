@@ -164,3 +164,7 @@ export function updateLabContact({ proposalName, data }: { proposalName: string;
 export function getShipments({ proposalName }: { proposalName: string }) {
   return { url: `${server}/${token}/proposal/${proposalName}/shipping/list` };
 }
+
+export function getShipping({ proposalName, shippingId }: { proposalName: string; shippingId: number }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/shipping/${shippingId}/get` };
+}

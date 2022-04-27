@@ -1,3 +1,5 @@
+import { Session } from 'pages/model';
+
 export type LabContact = {
   labContactId: number;
   personVO: PersonV0;
@@ -36,7 +38,7 @@ export type LaboratoryVO = {
   laboratoryExtPk: string;
 };
 
-export type Parcel = {
+export type Container = {
   Container_beamlineLocation?: string;
   Container_bltimeStamp: string;
   Container_capacity: number;
@@ -85,8 +87,116 @@ export type Parcel = {
   stockSolutionCount: number;
 };
 
+export type Parcel = Container & {
+  containers: Container[];
+  sampleCount: number;
+};
+
 export type Shipment = Parcel & {
   parcels: Parcel[];
   parcelCount: number;
   sampleCount: number;
 };
+
+export interface Shipping {
+  comments: string;
+  creationDate: string;
+  dateOfShippingToUser?: string;
+  deliveryAgentAgentCode?: string;
+  deliveryAgentAgentName?: string;
+  deliveryAgentDeliveryDate?: string;
+  deliveryAgentFlightCode?: string;
+  deliveryAgentShippingDate?: string;
+  dewarVOs: ShippingDewar[];
+  isStorageShipping?: string;
+  laboratoryId?: string;
+  returnCourier?: string;
+  returnLabContactVO: LabContact;
+  sendingLabContactVO: LabContact;
+  sessions: ShippingSession[];
+  shippingId: number;
+  shippingName: string;
+  shippingStatus: string;
+  shippingType: string;
+  timeStamp: string;
+}
+
+export interface ShippingDewar {
+  barCode: string;
+  code: string;
+  comments: string;
+  containerVOs: ShippingContainer[];
+  customsValue?: string;
+  dewarId: number;
+  dewarStatus: string;
+  facilityCode?: string;
+  isReimbursed: boolean;
+  isStorageDewar?: string;
+  sessionVO?: ShippingSession;
+  storageLocation: string;
+  timeStamp?: string;
+  trackingNumberFromSynchrotron?: string;
+  trackingNumberToSynchrotron?: string;
+  transportValue: number;
+  type: string;
+}
+
+export interface ShippingContainer {
+  barcode?: string;
+  beamlineLocation: string;
+  capacity: number;
+  code: string;
+  containerId: number;
+  containerStatus: string;
+  containerType: string;
+  sampleChangerLocation: string;
+  sampleVOs: ShippingSample[];
+}
+
+export interface ShippingSample {
+  blSampleId: number;
+  blSampleStatus?: string;
+  code?: string;
+  comments: string;
+  completionStage?: string;
+  holderLength?: string;
+  isInSampleChanger?: string;
+  lastImageURL?: string;
+  lastKnownCenteringPosition?: string;
+  location: string;
+  loopLength?: string;
+  loopType?: string;
+  name: string;
+  publicationComments?: string;
+  publicationStage?: string;
+  smiles?: string;
+  structureStage?: string;
+  wireWidth?: string;
+}
+
+export interface ShippingSession {
+  beamLineSetupVO?: string;
+  beamlineName: string;
+  beamlineOperator?: string;
+  comments: string;
+  databackupEurope?: string;
+  databackupFrance?: string;
+  dewarTransport?: string;
+  endDate: string;
+  expSessionPk?: string;
+  externalId?: string;
+  lastUpdate: string;
+  nbReimbDewars?: string;
+  nbShifts: number;
+  operatorSiteNumber?: string;
+  projectCode?: string;
+  protectedData?: string;
+  scheduled: number;
+  sessionId: number;
+  sessionTitle?: string;
+  startDate: string;
+  structureDeterminations?: string;
+  timeStamp: string;
+  usedFlag?: string;
+  visit_number?: string;
+}

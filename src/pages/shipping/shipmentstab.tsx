@@ -2,11 +2,12 @@ import { dateToTimestamp, formatDateTo } from 'helpers/dateparser';
 import { useShipments } from 'hooks/ispyb';
 import _, { sum } from 'lodash';
 import { Row, Col, Badge, InputGroup, FormControl } from 'react-bootstrap';
-import { Shipment } from './model';
+import { Parcel, Shipment } from './model';
 import './shipmentstab.scss';
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { ShipmentView } from './shipmentview';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
 export function ShipmentsTab({ proposalName }: { proposalName: string }) {
@@ -14,13 +15,23 @@ export function ShipmentsTab({ proposalName }: { proposalName: string }) {
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<Shipment | undefined>(undefined);
 
+  console.log(selected);
+
   if (isError) throw Error(isError);
 
   const shipments: Shipment[] = _(data)
     .groupBy((i) => i.Shipping_shippingId)
-    .map((p) => {
-      const parcels = [...p.values()];
-      const sampleCount = sum(parcels.map((p) => p.sampleCount));
+    .map((cs) => {
+      const containers = [...cs.values()];
+      const sampleCount = sum(containers.map((c) => c.sampleCount));
+      const parcels: Parcel[] = _(containers)
+        .groupBy((i) => i.Dewar_dewarId)
+        .map((cs) => {
+          const containers = [...cs.values()];
+          const sampleCount = sum(containers.map((c) => c.sampleCount));
+          return { ...containers[0], containers, sampleCount };
+        })
+        .value();
       const parcelCount = parcels.length;
       return { ...parcels[0], parcels, sampleCount, parcelCount };
     })
@@ -62,7 +73,9 @@ export function ShipmentsTab({ proposalName }: { proposalName: string }) {
           </Col>
         </Row>
       </Col>
-      <Col></Col>
+      <Col>
+        <ShipmentView proposalName={proposalName} shipment={selected}></ShipmentView>
+      </Col>
     </Row>
   );
 }
