@@ -19,4 +19,4 @@
 
 ## License
 
-The source code of EXI2 is licensed under the [MIT](../../LICENSE.md) license.
+The source code of EXI2 is licensed under the MIT license.

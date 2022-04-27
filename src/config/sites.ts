@@ -1,4 +1,3 @@
-
 import { Site } from 'models';
 
 const sites: Site[] = [
