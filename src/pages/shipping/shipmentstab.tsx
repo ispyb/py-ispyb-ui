@@ -84,7 +84,7 @@ export function ShipmentCard({ shipment, selected, onClick }: { proposalName: st
         </Row>
       </Col>
       <Col md="auto">
-        <Badge>{shipment.Shipping_shippingStatus}</Badge>
+        <Badge bg={shipment.Shipping_shippingStatus?.toLowerCase() === 'processing' ? 'warning' : 'primary'}>{shipment.Shipping_shippingStatus}</Badge>
       </Col>
     </Row>
   );
