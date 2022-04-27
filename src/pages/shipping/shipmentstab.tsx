@@ -1,4 +1,4 @@
-import { formatDateTo } from 'helpers/dateparser';
+import { dateToTimestamp, formatDateTo } from 'helpers/dateparser';
 import { useShipments } from 'hooks/ispyb';
 import _, { sum } from 'lodash';
 import { Row, Col, Badge, InputGroup, FormControl } from 'react-bootstrap';
@@ -26,13 +26,17 @@ export function ShipmentsTab({ proposalName }: { proposalName: string }) {
     })
     .value();
 
-  const filteredShipments = shipments.filter((v) => {
-    return (
-      (v.Shipping_shippingName && v.Shipping_shippingName.toLowerCase().includes(search.toLowerCase())) ||
-      (v.Shipping_shippingStatus && v.Shipping_shippingStatus.toLowerCase().includes(search.toLowerCase())) ||
-      (v.Shipping_creationDate && formatDateTo(v.Shipping_creationDate, 'dd/MM/yyyy').includes(search))
-    );
-  });
+  const filteredShipments = shipments
+    .filter((v) => {
+      return (
+        (v.Shipping_shippingName && v.Shipping_shippingName.toLowerCase().includes(search.toLowerCase())) ||
+        (v.Shipping_shippingStatus && v.Shipping_shippingStatus.toLowerCase().includes(search.toLowerCase())) ||
+        (v.Shipping_creationDate && formatDateTo(v.Shipping_creationDate, 'dd/MM/yyyy').includes(search))
+      );
+    })
+    .sort((a, b) => {
+      return dateToTimestamp(b.Shipping_creationDate) - dateToTimestamp(a.Shipping_creationDate);
+    });
 
   return (
     <Row>
