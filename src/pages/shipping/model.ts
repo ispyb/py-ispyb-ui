@@ -1,5 +1,3 @@
-import { Session } from 'pages/model';
-
 export type LabContact = {
   labContactId: number;
   personVO: PersonV0;
@@ -199,4 +197,30 @@ export interface ShippingSession {
   timeStamp: string;
   usedFlag?: string;
   visit_number?: string;
+}
+
+export type ShippingHistory = ShippingHistoryEntry[];
+export interface ShippingHistoryEntry {
+  DewarTransportHistory_DewarTransportHistoryId: number;
+  DewarTransportHistory_arrivalDate: string;
+  DewarTransportHistory_dewarStatus: string;
+  DewarTransportHistory_storageLocation: string;
+  Dewar_barCode: string;
+  Dewar_code: string;
+  Dewar_comments: string;
+  Dewar_dewarId: number;
+  Dewar_dewarStatus: string;
+  Dewar_firstExperimentId: number;
+  Dewar_trackingNumberFromSynchrotron: string;
+  Dewar_trackingNumberToSynchrotron: string;
+  Dewar_type: string;
+  Shipping_dateOfShippingToUser?: string;
+  Shipping_deliveryAgent_deliveryDate?: string;
+  Shipping_deliveryAgent_shippingDate?: string;
+  Shipping_proposalId: number;
+  Shipping_returnCourier?: string;
+  Shipping_shippingId: number;
+  Shipping_shippingName: string;
+  Shipping_shippingStatus: string;
+  deliveryAgent_agentName?: string;
 }

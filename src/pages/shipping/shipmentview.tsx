@@ -1,5 +1,7 @@
 import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import LazyWrapper from 'components/loading/lazywrapper';
+import LoadingPanel from 'components/loading/loadingpanel';
 import SimpleParameterTable from 'components/table/simpleparametertable';
 import { formatDateTo } from 'helpers/dateparser';
 import { useShipping } from 'hooks/ispyb';
@@ -8,6 +10,7 @@ import { Alert, Card, Col, Container, Nav, Row, Tab } from 'react-bootstrap';
 import { Shipment, Shipping, ShippingDewar } from './model';
 
 import './shipmentview.scss';
+import { TransportPane } from './transportpane';
 
 export function ShipmentView({ proposalName, shipment }: { proposalName: string; shipment?: Shipment }) {
   if (!shipment) {
@@ -64,7 +67,11 @@ export function ShipmentView({ proposalName, shipment }: { proposalName: string;
               </Tab.Pane>
             </Tab.Content>
             <Tab.Content>
-              <Tab.Pane eventKey="transport" title="Transport History"></Tab.Pane>
+              <Tab.Pane eventKey="transport" title="Transport History">
+                <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+                  <TransportPane shipping={data} proposalName={proposalName}></TransportPane>
+                </LazyWrapper>
+              </Tab.Pane>
             </Tab.Content>
           </Card.Body>
         </Card>

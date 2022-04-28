@@ -168,3 +168,7 @@ export function getShipments({ proposalName }: { proposalName: string }) {
 export function getShipping({ proposalName, shippingId }: { proposalName: string; shippingId: number }) {
   return { url: `${server}/${token}/proposal/${proposalName}/shipping/${shippingId}/get` };
 }
+
+export function getShippingHistory({ proposalName, shippingId }: { proposalName: string; shippingId: number }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/shipping/${shippingId}/history` };
+}

@@ -23,9 +23,10 @@ import {
   getLabContacts,
   getShipments,
   getShipping,
+  getShippingHistory,
 } from 'api/ispyb';
 import { EnergyScan, WorkflowStep, FluorescenceSpectra, Sample, DataCollectionGroup } from 'pages/mx/model';
-import { Container, LabContact, Parcel, Shipping } from 'pages/shipping/model';
+import { Container, LabContact, Shipping, ShippingHistory } from 'pages/shipping/model';
 
 import { ContainerDewar, Proposal, Session } from 'pages/model';
 import { dateToTimestamp } from 'helpers/dateparser';
@@ -162,4 +163,8 @@ export function useShipments({ proposalName }: { proposalName: string }) {
 
 export function useShipping({ proposalName, shippingId }: { proposalName: string; shippingId: number }) {
   return doGet<Shipping>(getShipping({ proposalName, shippingId }).url);
+}
+
+export function useShippingHistory({ proposalName, shippingId }: { proposalName: string; shippingId: number }) {
+  return doGet<ShippingHistory>(getShippingHistory({ proposalName, shippingId }).url);
 }
