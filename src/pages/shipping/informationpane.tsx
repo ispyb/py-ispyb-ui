@@ -1,13 +1,13 @@
-import { faEdit, faExclamationTriangle, faInfoCircle, faPlane, faPlaneDeparture, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faExclamationTriangle, faInfoCircle, faPlaneDeparture, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { removeShipping, updateShippingStatus } from 'api/ispyb';
 import axios from 'axios';
 import SimpleParameterTable from 'components/table/simpleparametertable';
 import { formatDateTo } from 'helpers/dateparser';
 import { useState } from 'react';
-import { Row, Col, Badge, Alert, Button, Spinner, Modal, Form, InputGroup } from 'react-bootstrap';
+import { Row, Col, Badge, Alert, Button, Spinner } from 'react-bootstrap';
 import { KeyedMutator } from 'swr';
-import { Container, LabContact, Shipping } from './model';
+import { Container, Shipping } from './model';
 
 import './informationpane.scss';
 import { EditModal } from './shipmenteditmodal';

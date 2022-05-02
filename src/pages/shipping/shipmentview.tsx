@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LazyWrapper from 'components/loading/lazywrapper';
 import LoadingPanel from 'components/loading/loadingpanel';
 import SimpleParameterTable from 'components/table/simpleparametertable';
-import { formatDateTo } from 'helpers/dateparser';
 import { useShipping } from 'hooks/ispyb';
 import { MXContainer } from 'pages/mx/container/mxcontainer';
 import { Alert, Card, Col, Container as ContainerB, Nav, Row, Tab } from 'react-bootstrap';
