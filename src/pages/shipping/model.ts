@@ -126,7 +126,7 @@ export interface ShippingDewar {
   containerVOs: ShippingContainer[];
   customsValue?: string;
   dewarId: number;
-  dewarStatus: string;
+  dewarStatus?: string;
   facilityCode?: string;
   isReimbursed: boolean;
   isStorageDewar?: string;
@@ -197,6 +197,17 @@ export interface ShippingSession {
   timeStamp: string;
   usedFlag?: string;
   visit_number?: string;
+  proposalVO: ShippingProposal;
+}
+
+export interface ShippingProposal {
+  code: string;
+  externalId?: string;
+  number: string;
+  proposalId: number;
+  timeStamp: string;
+  title: string;
+  type: string;
 }
 
 export type ShippingHistory = ShippingHistoryEntry[];

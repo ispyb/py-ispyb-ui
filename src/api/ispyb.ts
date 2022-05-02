@@ -172,3 +172,39 @@ export function getShipping({ proposalName, shippingId }: { proposalName: string
 export function getShippingHistory({ proposalName, shippingId }: { proposalName: string; shippingId: number }) {
   return { url: `${server}/${token}/proposal/${proposalName}/shipping/${shippingId}/history` };
 }
+
+export type SaveShipmentData = {
+  shippingId: number;
+  name: string;
+  status: string;
+  sendingLabContactId: number;
+  returnLabContactId: number;
+  returnCourier: number;
+  courierAccount: string | undefined;
+  billingReference: string | undefined;
+  dewarAvgCustomsValue: number;
+  dewarAvgTransportValue: number;
+  comments: string;
+  sessionId: number | undefined;
+};
+
+export function saveShipment({ proposalName, data }: { proposalName: string; data: SaveShipmentData }) {
+  const d = data as { [key: string]: string | number | undefined };
+
+  const asString = Object.keys(d)
+    .map((key) => {
+      const v = d[key];
+      return `${encodeURIComponent(key)}=${v != undefined ? encodeURIComponent(v) : ''}`;
+    })
+    .join('&');
+
+  return {
+    url: `${server}/${token}/proposal/${proposalName}/shipping/save`,
+    data: asString,
+    headers: { 'content-type': 'application/x-www-form-urlencoded;' },
+  };
+}
+
+export function removeShipping({ proposalName, shippingId }: { proposalName: string; shippingId: number }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/shipping/${shippingId}/remove` };
+}

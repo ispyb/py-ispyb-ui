@@ -11,7 +11,7 @@ import { ShipmentView } from './shipmentview';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
 export function ShipmentsTab({ proposalName }: { proposalName: string }) {
-  const { data = [], isError } = useShipments({ proposalName });
+  const { data = [], isError, mutate } = useShipments({ proposalName });
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<Shipment | undefined>(undefined);
 
@@ -74,7 +74,7 @@ export function ShipmentsTab({ proposalName }: { proposalName: string }) {
         </Row>
       </Col>
       <Col>
-        <ShipmentView proposalName={proposalName} shipment={selected}></ShipmentView>
+        <ShipmentView mutateShipments={mutate} proposalName={proposalName} shipment={selected}></ShipmentView>
       </Col>
     </Row>
   );

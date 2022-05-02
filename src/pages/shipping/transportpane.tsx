@@ -38,16 +38,33 @@ export function TransportPane({ shipping, proposalName }: { shipping: Shipping; 
   return (
     <Col>
       <Row style={{ margin: 10 }}>
-        <div className="historyParameterTable">
-          <SimpleParameterTable
-            parameters={[
-              { key: 'Creation date', value: formatDateTo(shipping.creationDate, 'yyyy-MM-dd') },
-              { key: 'Sending date', value: formatDateTo(shipping.deliveryAgentShippingDate, 'yyyy-MM-dd') },
-              { key: 'Expected arrival date', value: formatDateTo(shipping.deliveryAgentDeliveryDate, 'yyyy-MM-dd') },
-              { key: 'Return date', value: formatDateTo(shipping.dateOfShippingToUser, 'yyyy-MM-dd') },
-            ]}
-          ></SimpleParameterTable>
-        </div>
+        <Col></Col>
+        <Col md={'auto'}>
+          <div className="historyParameterTable">
+            <SimpleParameterTable parameters={[{ key: 'Creation date', value: formatDateTo(shipping.creationDate, 'yyyy-MM-dd') || 'unknown' }]}></SimpleParameterTable>
+          </div>
+        </Col>
+        <Col></Col>
+        <Col md={'auto'}>
+          <div className="historyParameterTable">
+            <SimpleParameterTable parameters={[{ key: 'Sending date', value: formatDateTo(shipping.deliveryAgentShippingDate, 'yyyy-MM-dd') || 'unknown' }]}></SimpleParameterTable>
+          </div>
+        </Col>
+        <Col></Col>
+        <Col md={'auto'}>
+          <div className="historyParameterTable">
+            <SimpleParameterTable
+              parameters={[{ key: 'Expected arrival date', value: formatDateTo(shipping.deliveryAgentDeliveryDate, 'yyyy-MM-dd') || 'unknown' }]}
+            ></SimpleParameterTable>
+          </div>
+        </Col>
+        <Col></Col>
+        <Col md={'auto'}>
+          <div className="historyParameterTable">
+            <SimpleParameterTable parameters={[{ key: 'Return date', value: formatDateTo(shipping.dateOfShippingToUser, 'yyyy-MM-dd') || 'unknown' }]}></SimpleParameterTable>
+          </div>
+        </Col>
+        <Col></Col>
       </Row>
       <Row>
         <Col>

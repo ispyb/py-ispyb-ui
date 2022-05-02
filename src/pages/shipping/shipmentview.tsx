@@ -6,13 +6,15 @@ import SimpleParameterTable from 'components/table/simpleparametertable';
 import { formatDateTo } from 'helpers/dateparser';
 import { useShipping } from 'hooks/ispyb';
 import { MXContainer } from 'pages/mx/container/mxcontainer';
-import { Alert, Card, Col, Container, Nav, Row, Tab } from 'react-bootstrap';
-import { Shipment, Shipping, ShippingDewar } from './model';
+import { Alert, Card, Col, Container as ContainerB, Nav, Row, Tab } from 'react-bootstrap';
+import { KeyedMutator } from 'swr';
+import { InformationPane } from './informationpane';
+import { Container, Shipment, Shipping, ShippingDewar } from './model';
 
 import './shipmentview.scss';
 import { TransportPane } from './transportpane';
 
-export function ShipmentView({ proposalName, shipment }: { proposalName: string; shipment?: Shipment }) {
+export function ShipmentView({ proposalName, shipment, mutateShipments }: { proposalName: string; shipment?: Shipment; mutateShipments: KeyedMutator<Container[]> }) {
   if (!shipment) {
     return (
       <Row style={{ margin: 10 }}>
@@ -23,7 +25,7 @@ export function ShipmentView({ proposalName, shipment }: { proposalName: string;
     );
   }
 
-  const { data, isError } = useShipping({ proposalName, shippingId: shipment.Shipping_shippingId });
+  const { data, isError, mutate } = useShipping({ proposalName, shippingId: shipment.Shipping_shippingId });
 
   if (isError) throw Error(isError);
 
@@ -41,7 +43,7 @@ export function ShipmentView({ proposalName, shipment }: { proposalName: string;
       <Tab.Container defaultActiveKey="information">
         <Card className="card-shipment">
           <Card.Header>
-            <Container fluid>
+            <ContainerB fluid>
               <Row>
                 <Col md="auto">
                   <h5>{data.shippingName}</h5>
@@ -58,12 +60,12 @@ export function ShipmentView({ proposalName, shipment }: { proposalName: string;
                   </Nav>
                 </Col>
               </Row>
-            </Container>
+            </ContainerB>
           </Card.Header>
           <Card.Body>
             <Tab.Content>
               <Tab.Pane eventKey="information" title="Information">
-                <InformationPane shipping={data}></InformationPane>
+                <InformationPane proposalName={proposalName} shipping={data} mutateShipping={mutate} mutateShipments={mutateShipments}></InformationPane>
               </Tab.Pane>
             </Tab.Content>
             <Tab.Content>
@@ -79,7 +81,7 @@ export function ShipmentView({ proposalName, shipment }: { proposalName: string;
       <Tab.Container defaultActiveKey="content">
         <Card className="card-shipment">
           <Card.Header>
-            <Container fluid>
+            <ContainerB fluid>
               <Row>
                 <Col md="auto">
                   <h5>
@@ -98,7 +100,7 @@ export function ShipmentView({ proposalName, shipment }: { proposalName: string;
                   </Nav>
                 </Col>
               </Row>
-            </Container>
+            </ContainerB>
           </Card.Header>
           <Card.Body>
             <Tab.Content>
@@ -113,30 +115,6 @@ export function ShipmentView({ proposalName, shipment }: { proposalName: string;
         </Card>
       </Tab.Container>
     </>
-  );
-}
-
-export function InformationPane({ shipping }: { shipping: Shipping }) {
-  return (
-    <Row>
-      <Col md={'auto'}>
-        <SimpleParameterTable
-          parameters={[
-            { key: 'Beamline', value: shipping.sessions.length ? shipping.sessions[0].beamlineName : '' },
-            { key: 'Sender address', value: shipping.sendingLabContactVO.cardName },
-            { key: 'Return address', value: shipping.returnLabContactVO.cardName },
-          ]}
-        ></SimpleParameterTable>
-      </Col>
-      <Col md={'auto'}>
-        <SimpleParameterTable
-          parameters={[
-            { key: 'Date', value: formatDateTo(shipping.timeStamp, 'dd/MM/yyy') },
-            { key: 'Status', value: shipping.shippingStatus },
-          ]}
-        ></SimpleParameterTable>
-      </Col>
-    </Row>
   );
 }
 
