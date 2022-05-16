@@ -174,17 +174,17 @@ export function getShippingHistory({ proposalName, shippingId }: { proposalName:
 }
 
 export type SaveShipmentData = {
-  shippingId: number;
-  name: string;
-  status: string;
-  sendingLabContactId: number;
-  returnLabContactId: number;
-  returnCourier: number;
+  shippingId: number | undefined;
+  name: string | undefined;
+  status: string | undefined;
+  sendingLabContactId: number | undefined;
+  returnLabContactId: number | undefined;
+  returnCourier: number | undefined;
   courierAccount: string | undefined;
   billingReference: string | undefined;
-  dewarAvgCustomsValue: number;
-  dewarAvgTransportValue: number;
-  comments: string;
+  dewarAvgCustomsValue: number | undefined;
+  dewarAvgTransportValue: number | undefined;
+  comments: string | undefined;
   sessionId: number | undefined;
 };
 

@@ -1,19 +1,21 @@
 import { dateToTimestamp, formatDateTo } from 'helpers/dateparser';
 import { useShipments } from 'hooks/ispyb';
 import _, { sum } from 'lodash';
-import { Row, Col, Badge, InputGroup, FormControl } from 'react-bootstrap';
+import { Row, Col, Badge, InputGroup, FormControl, Button } from 'react-bootstrap';
 import { Parcel, Shipment } from './model';
 import './shipmentstab.scss';
 import { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { ShipmentView } from './shipmentview';
+import { EditShippingModal } from './shipmenteditmodal';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
 export function ShipmentsTab({ proposalName }: { proposalName: string }) {
   const { data = [], isError, mutate } = useShipments({ proposalName });
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<Shipment | undefined>(undefined);
+  const [showNewShipmentModal, setShowNewShipmentModal] = useState(false);
 
   console.log(selected);
 
@@ -52,6 +54,13 @@ export function ShipmentsTab({ proposalName }: { proposalName: string }) {
   return (
     <Row>
       <Col md="auto">
+        <Row style={{ paddingRight: 12, paddingLeft: 12 }}>
+          <Button style={{ margin: 5, marginTop: 10 }} onClick={() => setShowNewShipmentModal(true)}>
+            <FontAwesomeIcon style={{ marginRight: 5 }} icon={faPlus}></FontAwesomeIcon>
+            Create new shipment
+          </Button>
+          <EditShippingModal proposalName={proposalName} mutateShipments={mutate} show={showNewShipmentModal} setShow={setShowNewShipmentModal}></EditShippingModal>
+        </Row>
         <Row>
           <InputGroup style={{ margin: 5 }}>
             <InputGroup.Text>
@@ -60,7 +69,7 @@ export function ShipmentsTab({ proposalName }: { proposalName: string }) {
             <FormControl placeholder={`search ${shipments.length} shipments...`} value={search} onChange={(e) => setSearch(e.target.value)} />
           </InputGroup>
         </Row>
-        <Row style={{ height: '80vh', overflowY: 'scroll' }}>
+        <Row style={{ height: '75vh', overflowY: 'scroll' }}>
           <Col>
             {filteredShipments.map((s) => (
               <ShipmentCard

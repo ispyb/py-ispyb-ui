@@ -15,17 +15,17 @@ import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave } from '@fortawesome/free-solid-svg-icons';
 
-export function EditModal({
-  shipping,
+export function EditShippingModal({
+  shipping = undefined,
   proposalName,
-  mutateShipping,
+  mutateShipping = undefined,
   mutateShipments,
   show,
   setShow,
 }: {
-  shipping: Shipping;
+  shipping?: Shipping;
   proposalName: string;
-  mutateShipping: KeyedMutator<Shipping>;
+  mutateShipping?: KeyedMutator<Shipping>;
   mutateShipments: KeyedMutator<Container[]>;
   show: boolean;
   // eslint-disable-next-line no-unused-vars
@@ -50,22 +50,26 @@ export function EditModal({
     label: string;
   };
 
-  function getContactOption(shippingContact: LabContact): Option {
-    return {
-      value: shippingContact.labContactId,
-      label: shippingContact.cardName,
-    };
+  function getContactOption(shippingContact?: LabContact): Option | undefined {
+    return shippingContact
+      ? {
+          value: shippingContact.labContactId,
+          label: shippingContact.cardName,
+        }
+      : undefined;
   }
 
-  function getSessionOption(session: Session): Option {
-    return {
-      value: session.sessionId,
-      label: `${formatDateTo(session.BLSession_startDate, 'dd/MM/yyyy')} - ${session.beamLineName}`,
-    };
+  function getSessionOption(session?: Session): Option | undefined {
+    return session
+      ? {
+          value: session.sessionId,
+          label: `${formatDateTo(session.BLSession_startDate, 'dd/MM/yyyy')} - ${session.beamLineName}`,
+        }
+      : undefined;
   }
 
-  function getShippingSessionOption(shipping: Shipping): Option | undefined {
-    if (shipping.sessions.length) {
+  function getShippingSessionOption(shipping?: Shipping): Option | undefined {
+    if (shipping && shipping.sessions.length) {
       return {
         value: shipping.sessions[0].sessionId,
         label: `${formatDateTo(shipping.sessions[0].startDate, 'dd/MM/yyyy')} - ${shipping.sessions[0].beamlineName}`,
@@ -74,15 +78,15 @@ export function EditModal({
     return undefined;
   }
 
-  const addressOptions = contacts.map(getContactOption);
-  const sessionOptions = sessions.map(getSessionOption);
+  const addressOptions = contacts.map(getContactOption).filter((v) => v) as Option[];
+  const sessionOptions = sessions.map(getSessionOption).filter((v) => v) as Option[];
 
   type FormType = {
-    name: string;
+    name?: string;
     session?: Option;
-    comments: string;
-    from: Option;
-    return: Option;
+    comments?: string;
+    from?: Option;
+    return?: Option;
   };
 
   const formSchema = Yup.object().shape({
@@ -91,11 +95,11 @@ export function EditModal({
   });
 
   const initialValues: FormType = {
-    name: shipping.shippingName,
-    comments: shipping.comments,
+    name: shipping?.shippingName,
+    comments: shipping?.comments,
     session: getShippingSessionOption(shipping),
-    from: getContactOption(shipping.sendingLabContactVO),
-    return: getContactOption(shipping.returnLabContactVO),
+    from: getContactOption(shipping?.sendingLabContactVO),
+    return: getContactOption(shipping?.returnLabContactVO),
   };
 
   return (
@@ -105,13 +109,14 @@ export function EditModal({
       key={formKey}
       onSubmit={(values) => {
         setSaving(true);
+
         const data: SaveShipmentData = {
-          shippingId: shipping.shippingId,
+          shippingId: shipping?.shippingId,
           name: values.name,
-          status: shipping.shippingStatus,
-          sendingLabContactId: values.from.value,
-          returnLabContactId: values.return.value,
-          returnCourier: values.return.value,
+          status: shipping?.shippingStatus,
+          sendingLabContactId: values.from?.value,
+          returnLabContactId: values.return?.value,
+          returnCourier: values.return?.value,
           courierAccount: undefined,
           billingReference: undefined,
           dewarAvgCustomsValue: 0,
@@ -123,13 +128,13 @@ export function EditModal({
 
         axios.post(req.url, req.data, { headers: req.headers }).then(
           () => {
-            mutateShipping();
+            mutateShipping && mutateShipping();
             mutateShipments();
             setSaving(false);
             setShow(false);
           },
           () => {
-            mutateShipping();
+            mutateShipping && mutateShipping();
             mutateShipments();
             setSaving(false);
             setShow(false);
@@ -142,7 +147,7 @@ export function EditModal({
       {(formikProps) => (
         <Modal centered backdrop="static" keyboard={false} show={show} onHide={() => setShow(false)}>
           <Modal.Header closeButton={!saving}>
-            <Modal.Title>Edit shipment</Modal.Title>
+            <Modal.Title>{shipping ? 'Edit shipment' : 'New shipment'}</Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <Form noValidate onSubmit={formikProps.handleSubmit}>

@@ -10,7 +10,7 @@ import { KeyedMutator } from 'swr';
 import { Container, Shipping } from './model';
 
 import './informationpane.scss';
-import { EditModal } from './shipmenteditmodal';
+import { EditShippingModal } from './shipmenteditmodal';
 import _ from 'lodash';
 
 export function InformationPane({
@@ -175,14 +175,14 @@ export function InformationPane({
           <Button disabled={!isEditShipmentActive} style={{ marginLeft: 15 }} onClick={() => setShowEditModal(true)}>
             <FontAwesomeIcon style={{ marginRight: 10 }} icon={faEdit}></FontAwesomeIcon>Edit
           </Button>
-          <EditModal
+          <EditShippingModal
             shipping={shipping}
             proposalName={proposalName}
             mutateShipping={mutateShipping}
             mutateShipments={mutateShipments}
             show={showEditModal}
             setShow={setShowEditModal}
-          ></EditModal>
+          ></EditShippingModal>
         </Col>
         <Col md="auto" style={{ padding: 0 }}>
           <Button onClick={onDelete} disabled={!isDeleteShipmentActive || deleting} style={{ marginLeft: 15 }}>
