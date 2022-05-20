@@ -1,16 +1,13 @@
-import { containerType } from "models";
-import { AbstractSampleChanger } from "./abstractsamplechanger";
-import React from "react";
+import { containerType } from 'models';
+import { AbstractSampleChanger } from './abstractsamplechanger';
+import React from 'react';
 
 export class P11SC extends AbstractSampleChanger {
   plotCells(): JSX.Element {
     return <></>;
   }
 
-  getContainerCoordinates(
-    cell: number,
-    position: number
-  ): { x: number; y: number; r: number; xtxt: number; ytxt: number } {
+  getContainerCoordinates(cell: number, position: number): { x: number; y: number; r: number; xtxt: number; ytxt: number } {
     const r = this.sampleChangerRadius / 8;
     const draw = this.getDrawingPosition(position);
     const x = draw.x - 10;
@@ -21,11 +18,7 @@ export class P11SC extends AbstractSampleChanger {
     return { x, y, r, xtxt: x, ytxt: y + txtYDiff };
   }
 
-  computePos(
-    radiusRatio: number,
-    maxPosition: number,
-    position: number
-  ): { x: number; y: number } {
+  computePos(radiusRatio: number, maxPosition: number, position: number): { x: number; y: number } {
     const containerRadius = this.sampleChangerRadius / 8;
     const radius = radiusRatio * containerRadius;
     const step = (Math.PI * 2) / maxPosition;
@@ -55,6 +48,6 @@ export class P11SC extends AbstractSampleChanger {
 
   // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-unused-vars
   getContainerType(cell: number, position: number): containerType {
-    return "Unipuck";
+    return 'Unipuck';
   }
 }
