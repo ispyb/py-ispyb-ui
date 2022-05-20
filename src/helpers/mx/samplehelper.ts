@@ -4,6 +4,7 @@ import { AbstractSampleChanger } from 'pages/prepareexperiment/samplechanger/abs
 import { FlexHCDDual } from 'pages/prepareexperiment/samplechanger/flexhcddual';
 import { FlexHCDUnipuckPlate } from 'pages/prepareexperiment/samplechanger/flexhdcunipuckplate';
 import { ISARA } from 'pages/prepareexperiment/samplechanger/isara';
+import { P11SC } from 'pages/prepareexperiment/samplechanger/p11sc';
 
 export function getSampleChanger(type?: sampleChangerType): AbstractSampleChanger | undefined {
   if (type === 'FlexHCDDual') {
@@ -14,6 +15,9 @@ export function getSampleChanger(type?: sampleChangerType): AbstractSampleChange
   }
   if (type === 'ISARA') {
     return new ISARA();
+  }
+  if (type === 'P11SC') {
+    return new P11SC();
   }
   return undefined;
 }
