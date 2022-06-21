@@ -16,10 +16,11 @@ export function MXContainer({
   sessionId,
   containerId,
   containerType,
-  removeSelectedGroups = () => undefined,
-  addSelectedGroups = () => undefined,
+  removeSelectedGroups = undefined,
+  addSelectedGroups = undefined,
   selectedGroups = [],
   showInfo = true,
+  onContainerClick = undefined,
 }: {
   proposalName: string;
   sessionId?: string;
@@ -27,6 +28,7 @@ export function MXContainer({
   containerType?: containerType;
   selectedGroups?: number[];
   showInfo?: boolean;
+  onContainerClick?: () => void;
   // eslint-disable-next-line no-unused-vars
   removeSelectedGroups?: (ids: number[]) => void;
   // eslint-disable-next-line no-unused-vars
@@ -41,7 +43,7 @@ export function MXContainer({
   const type = findContainerType(containerType, samples, sampleByPosition);
   if (type) {
     const svg = (
-      <ContainerSVG maxPosition={type.maxPos}>
+      <ContainerSVG maxPosition={type.maxPos} onContainerClick={onContainerClick}>
         {range(1, type.maxPos + 1).map((n) => {
           const position = type.computePos(n);
 
@@ -62,11 +64,14 @@ export function MXContainer({
 
           const refSample = collected && collected.length ? collected[0] : sampleArray && sampleArray.length ? sampleArray[0] : undefined;
 
-          const onClick = () => {
-            if (collectionIds) {
-              selected ? removeSelectedGroups(collectionIds) : addSelectedGroups(collectionIds);
-            }
-          };
+          const onClick =
+            removeSelectedGroups && addSelectedGroups
+              ? () => {
+                  if (collectionIds) {
+                    selected ? removeSelectedGroups(collectionIds) : addSelectedGroups(collectionIds);
+                  }
+                }
+              : undefined;
 
           return (
             <SampleSVG
@@ -76,6 +81,7 @@ export function MXContainer({
               collected={Boolean(collected && collected.length)}
               selected={Boolean(selected)}
               onClick={onClick}
+              clickableContainer={onContainerClick != undefined}
             ></SampleSVG>
           );
         })}
@@ -174,7 +180,7 @@ export function EmptyContainer({ containerType }: { containerType: containerType
         {range(1, type.maxPos + 1).map((n) => {
           const position = type.computePos(n);
 
-          return <SampleSVG position={position} n={n} collected={false} selected={false} onClick={() => undefined}></SampleSVG>;
+          return <SampleSVG clickableContainer={false} position={position} n={n} collected={false} selected={false}></SampleSVG>;
         })}
       </ContainerSVG>
     );
@@ -182,10 +188,17 @@ export function EmptyContainer({ containerType }: { containerType: containerType
   return <></>;
 }
 
-function ContainerSVG({ maxPosition, children }: PropsWithChildren<{ maxPosition: number }>) {
+function ContainerSVG({ maxPosition, children, onContainerClick = undefined }: PropsWithChildren<{ maxPosition: number; onContainerClick?: () => void }>) {
   return (
     <svg style={{ maxWidth: 200 }} viewBox={`-5 -5 ${2 * containerRadius + 10} ${2 * containerRadius + 10}`}>
-      <circle cx={containerRadius} cy={containerRadius} r={containerRadius} fill="#CCCCCC" className="puck"></circle>
+      <circle
+        onClick={onContainerClick}
+        className={onContainerClick ? 'puck-clickable' : 'puck'}
+        cx={containerRadius}
+        cy={containerRadius}
+        r={containerRadius}
+        fill="#CCCCCC"
+      ></circle>
       {maxPosition == 16 && (
         <g fill="#888888" stroke="#888888" pointer-events="none">
           <circle cx={containerRadius} cy={containerRadius * 1.05} r={containerRadius * 0.1}></circle>
@@ -205,17 +218,24 @@ function SampleSVG({
   refSample,
   collected,
   selected,
-  onClick,
+  onClick = undefined,
+  clickableContainer,
 }: {
   position: { x: string | number; y: string | number };
   n: number;
   refSample?: Sample;
   collected: boolean;
   selected: boolean;
-  onClick: () => void;
+  onClick?: () => void;
+  clickableContainer: boolean;
 }) {
   if (refSample) {
-    const className = collected ? (selected ? 'sampleCollectedSelected' : 'sampleCollected') : 'sampleFilled';
+    const type = collected ? (selected ? 'sampleCollectedSelected' : 'sampleCollected') : 'sampleFilled';
+    const className = onClick ? type + ' sample-clickable' : type;
+
+    const sampleCircle = (
+      <circle pointerEvents={clickableContainer ? 'none' : undefined} onClick={onClick} className={className} cx={position.x} cy={position.y} r={containerRadius * 0.175}></circle>
+    );
     return (
       <>
         <OverlayTrigger
@@ -237,9 +257,9 @@ function SampleSVG({
             </Tooltip>
           }
         >
-          <circle onClick={onClick} className={className} cx={position.x} cy={position.y} r={containerRadius * 0.175}></circle>
+          {sampleCircle}
         </OverlayTrigger>
-        <text className={className} x={position.x} y={position.y}>
+        <text className={type} x={position.x} y={position.y}>
           <tspan dx="0" dy="3" pointer-events="none">
             {n}
           </tspan>
@@ -249,7 +269,7 @@ function SampleSVG({
   }
   return (
     <>
-      <circle className="sampleEmpty" cx={position.x} cy={position.y} r={containerRadius * 0.175}></circle>
+      <circle pointerEvents={'none'} className="sampleEmpty" cx={position.x} cy={position.y} r={containerRadius * 0.175}></circle>
       <text x={position.x} y={position.y} className="sampleEmpty">
         <tspan dx="0" dy="3" pointer-events="none">
           {n}

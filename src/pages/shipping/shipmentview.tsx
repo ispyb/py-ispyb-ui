@@ -1,14 +1,15 @@
-import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faQuestionCircle, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LazyWrapper from 'components/loading/lazywrapper';
 import LoadingPanel from 'components/loading/loadingpanel';
 import SimpleParameterTable from 'components/table/simpleparametertable';
 import { useShipping } from 'hooks/ispyb';
 import { MXContainer } from 'pages/mx/container/mxcontainer';
-import { Alert, Card, Col, Container as ContainerB, Nav, Row, Tab } from 'react-bootstrap';
+import { useState } from 'react';
+import { Alert, Button, Card, Col, Container as ContainerB, Modal, Nav, OverlayTrigger, Popover, Row, Tab } from 'react-bootstrap';
 import { KeyedMutator } from 'swr';
 import { InformationPane } from './informationpane';
-import { Container, Shipment, Shipping, ShippingDewar } from './model';
+import { Container, Shipment, Shipping, ShippingContainer, ShippingDewar } from './model';
 
 import './shipmentview.scss';
 import { TransportPane } from './transportpane';
@@ -147,12 +148,56 @@ export function DewarPane({ dewar, proposalName }: { dewar: ShippingDewar; propo
               .sort((a, b) => b.containerId - a.containerId)
               .map((c) => (
                 <Col style={{ maxWidth: 150 }}>
-                  <MXContainer proposalName={proposalName} containerId={String(c.containerId)}></MXContainer>
+                  <ContainerView proposalName={proposalName} container={c}></ContainerView>
                 </Col>
               ))}
           </Row>
         </Col>
       </Row>
     </Alert>
+  );
+}
+
+export function ContainerView({ container, proposalName }: { container: ShippingContainer; proposalName: string }) {
+  const [showPopover, setShowPopover] = useState(false);
+
+  const popover = (
+    <Popover style={{ width: 240 }}>
+      <Popover.Header as="h3">Container</Popover.Header>
+      <Popover.Body>
+        <Col>
+          <Row>
+            <SimpleParameterTable
+              parameters={[
+                { key: 'code', value: container.code },
+                { key: 'type', value: container.containerType },
+              ]}
+            ></SimpleParameterTable>
+          </Row>
+          <Row>
+            <Col md={'auto'} style={{ paddingRight: 0 }}>
+              <Button>
+                <FontAwesomeIcon icon={faEdit}></FontAwesomeIcon> Edit
+              </Button>
+            </Col>
+            <Col md={'auto'}>
+              <Button variant="warning">
+                <FontAwesomeIcon icon={faTrash}></FontAwesomeIcon> Remove
+              </Button>
+            </Col>
+          </Row>
+        </Col>
+      </Popover.Body>
+    </Popover>
+  );
+
+  return (
+    <>
+      <OverlayTrigger show={showPopover} trigger="focus" rootClose placement={'top'} overlay={popover} onToggle={(v) => setShowPopover(v)}>
+        <div>
+          <MXContainer proposalName={proposalName} containerId={String(container.containerId)} onContainerClick={() => setShowPopover(true)}></MXContainer>
+        </div>
+      </OverlayTrigger>
+    </>
   );
 }

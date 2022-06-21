@@ -165,7 +165,7 @@ function InfoContainerBtn({ cx, cy, cr, container, proposalName }: { cx: number;
   );
 
   return (
-    <OverlayTrigger show={show} key={'bottom'} placement={'left'} overlay={popover}>
+    <OverlayTrigger show={show} trigger="focus" rootClose onToggle={(v) => setShow(v)} placement={'left'} overlay={popover}>
       <g>
         <circle onClick={() => setShow(!show)} className={show ? 'infoContainerBtnClicked' : 'infoContainerBtn'} cx={x} cy={y} r={r}></circle>
         <text className="infoContainerBtnTxt" x={x} y={y + 2.5}>
