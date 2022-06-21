@@ -1,5 +1,6 @@
 import { store } from 'store';
 import { Site } from 'models';
+import { LabContact } from 'pages/shipping/model';
 
 let server = '';
 let token = '';
@@ -140,5 +141,66 @@ export function updateSampleChangerLocation({ proposalName, containerId, beamlin
   return {
     url: `${server}/${token}/proposal/${proposalName}/container/${containerId}/beamline/${beamline}/samplechangerlocation/update`,
     data: `sampleChangerLocation=${position}`,
+    headers: { 'content-type': 'application/x-www-form-urlencoded;' },
   };
+}
+
+export function getLabContacts({ proposalName }: { proposalName: string }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/shipping/labcontact/list` };
+}
+
+export function updateLabContact({ proposalName, data }: { proposalName: string; data: LabContact }) {
+  return {
+    url: `${server}/${token}/proposal/${proposalName}/shipping/labcontact/save`,
+    data: `labcontact=${JSON.stringify(data)}`,
+    headers: { 'content-type': 'application/x-www-form-urlencoded;' },
+  };
+}
+
+export function getShipments({ proposalName }: { proposalName: string }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/shipping/list` };
+}
+
+export function getShipping({ proposalName, shippingId }: { proposalName: string; shippingId: number }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/shipping/${shippingId}/get` };
+}
+
+export function getShippingHistory({ proposalName, shippingId }: { proposalName: string; shippingId: number }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/shipping/${shippingId}/history` };
+}
+
+export type SaveShipmentData = {
+  shippingId: number | undefined;
+  name: string | undefined;
+  status: string | undefined;
+  sendingLabContactId: number | undefined;
+  returnLabContactId: number | undefined;
+  returnCourier: number | undefined;
+  courierAccount: string | undefined;
+  billingReference: string | undefined;
+  dewarAvgCustomsValue: number | undefined;
+  dewarAvgTransportValue: number | undefined;
+  comments: string | undefined;
+  sessionId: number | undefined;
+};
+
+export function saveShipment({ proposalName, data }: { proposalName: string; data: SaveShipmentData }) {
+  const d = data as { [key: string]: string | number | undefined };
+
+  const asString = Object.keys(d)
+    .map((key) => {
+      const v = d[key];
+      return `${encodeURIComponent(key)}=${v != undefined ? encodeURIComponent(v) : ''}`;
+    })
+    .join('&');
+
+  return {
+    url: `${server}/${token}/proposal/${proposalName}/shipping/save`,
+    data: asString,
+    headers: { 'content-type': 'application/x-www-form-urlencoded;' },
+  };
+}
+
+export function removeShipping({ proposalName, shippingId }: { proposalName: string; shippingId: number }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/shipping/${shippingId}/remove` };
 }

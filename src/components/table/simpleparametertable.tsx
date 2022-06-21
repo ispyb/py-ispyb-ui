@@ -3,7 +3,7 @@ import { Table } from 'react-bootstrap';
 
 interface Parameter {
   key: string;
-  value: string | number | undefined | null;
+  value: string | number | JSX.Element | undefined | null;
   className?: string;
   units?: string;
   valueTooltip?: string;

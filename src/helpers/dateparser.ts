@@ -9,8 +9,11 @@ import { isMatch } from 'date-fns';
  * @param outputFormat
  * @returns
  */
-export function formatDateTo(dateTime: string, outputFormat: string): string {
-  return format(parseDate(dateTime), outputFormat);
+export function formatDateTo(dateTime: string | undefined, outputFormat: string): string {
+  if (dateTime) {
+    return format(parseDate(dateTime), outputFormat);
+  }
+  return '';
 }
 
 export function dateToTimestamp(dateTime?: string): number {

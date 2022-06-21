@@ -10,7 +10,6 @@ import SessionClassificationPage from 'pages/em/classification/sessionclassifica
 import MoviesPage from 'pages/em/movie/moviespage';
 import SessionsPage from 'pages/sessionspage';
 import ProposalsPage from 'pages/proposalspage';
-import ShippingPage from 'pages/shippingpage';
 import ErrorBoundary from 'components/errors/errorboundary';
 import { useAppSelector } from 'hooks';
 import LoadingPanel from 'components/loading/loadingpanel';
@@ -21,6 +20,7 @@ import ProposalSessionsPage from 'pages/proposalsessionspage';
 import MXEnergyScanPage from 'pages/mx/energyscan/mxenergyscanpage';
 import MXFluorescencePage from 'pages/mx/fluorescence/fluorescencepage';
 import PrepareExperimentPage from 'pages/prepareexperiment/prepareexperimentpage';
+import ShippingPage from 'pages/shipping/shippingpage';
 
 export default function App() {
   const user = useAppSelector((state) => state.user);
@@ -48,9 +48,9 @@ export default function App() {
           <Routes>
             <Route path="/" element={<SessionsPage user={user} />} />
             <Route path="/sessions" element={<SessionsPage user={user} />} />
-            <Route path="/:proposalName/sessions" element={<ProposalSessionsPage user={user} />} />
             <Route path="/proposals" element={<ProposalsPage />} />
-            <Route path="/shipping" element={<ShippingPage />} />
+            <Route path="/:proposalName/sessions" element={<ProposalSessionsPage user={user} />} />
+            <Route path="/:proposalName/shipping" element={<ShippingPage />} />
             <Route path="/:proposalName/EM/:sessionId" element={<EMSessionPage />} />
             <Route path="/:proposalName/EM/:sessionId/classification" element={<SessionClassificationPage />} />
             <Route path="/:proposalName/EM/:sessionId/statistics" element={<SessionStatisticsPage />} />

@@ -19,12 +19,17 @@ import {
   getDewars,
   getProposalSessionsWhithDates,
   getSessionsManagerDates,
+  getLabContacts,
+  getShipments,
+  getShipping,
+  getShippingHistory,
 } from 'api/ispyb';
 import { EnergyScan, WorkflowStep, FluorescenceSpectra, Sample, DataCollectionGroup } from 'pages/mx/model';
 
 import { ContainerDewar, Proposal, Session } from 'pages/model';
 import { dateToTimestamp } from 'helpers/dateparser';
 import { parse } from 'date-fns';
+import { Container, LabContact, Shipping, ShippingHistory } from 'pages/shipping/model';
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
@@ -129,4 +134,20 @@ export function useEMClassification({ proposalName, sessionId }: ProposalSession
 
 export function useDewars({ proposalName }: { proposalName: string }) {
   return doGet<ContainerDewar[]>(getDewars({ proposalName }).url);
+}
+
+export function useLabContacts({ proposalName }: { proposalName: string }) {
+  return doGet<LabContact[]>(getLabContacts({ proposalName }).url);
+}
+
+export function useShipments({ proposalName }: { proposalName: string }) {
+  return doGet<Container[]>(getShipments({ proposalName }).url);
+}
+
+export function useShipping({ proposalName, shippingId }: { proposalName: string; shippingId: number }) {
+  return doGet<Shipping>(getShipping({ proposalName, shippingId }).url);
+}
+
+export function useShippingHistory({ proposalName, shippingId }: { proposalName: string; shippingId: number }) {
+  return doGet<ShippingHistory>(getShippingHistory({ proposalName, shippingId }).url);
 }
