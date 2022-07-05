@@ -12,8 +12,9 @@ import { allSessionsEmpty, sessionIsEmpty } from 'helpers/sessionhelper';
 
 export default function SessionsPage({ user }: { user: User }) {
   const { isManager, username } = user;
-  const { areEMColumnsVisible, areMXColumnsVisible, areSAXSColumnsVisible } = useAppSelector((state) => state.ui.sessionsPage);
-  const beamlines: string[] = useGetBeamlines({ areMXColumnsVisible, areSAXSColumnsVisible, areEMColumnsVisible });
+  const { areEMColumnsVisible, areMXColumnsVisible, areSSXColumnsVisible, areSAXSColumnsVisible } = useAppSelector((state) => state.ui.sessionsPage);
+  const beamlines: string[] = useGetBeamlines({ areMXColumnsVisible, areSSXColumnsVisible, areSAXSColumnsVisible, areEMColumnsVisible });
+  console.log(beamlines);
   const params: Record<string, string> = useQueryParams();
 
   let { startDate: paramStartDate, endDate: paramEndDate } = params;
@@ -45,6 +46,7 @@ export default function SessionsPage({ user }: { user: User }) {
         data={filteredData?.filter((d: any) => new Set(beamlines).has(d.beamLineName))}
         areEMColumnsVisible={areEMColumnsVisible}
         areMXColumnsVisible={areMXColumnsVisible}
+        areSSXColumnsVisible={areSSXColumnsVisible}
         areSAXSColumnsVisible={areSAXSColumnsVisible}
         userPortalLink={UI.sessionsPage.userPortalLink}
       ></SessionTable>

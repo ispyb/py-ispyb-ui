@@ -53,7 +53,7 @@ const sites: Site[] = [
         {
           plugin: 'db',
           title: 'ISPyB',
-          server: 'https://ispyb.esrf.fr/ispyb/ispyb-ws/rest',
+          server: 'https://ispyb.esrf.fr/ispyb/ispyb-ws/rest/authenticate?site=ESRF',
           enabled: true,
           site: 'ESRF',
           message: 'Use ISPyB authentication when you log in as a proposal',

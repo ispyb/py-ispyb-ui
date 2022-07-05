@@ -17,8 +17,8 @@ export default function ProposalSessionsPage({ user }: { user: User }) {
   const { proposalName } = useParams<Param>();
 
   const { isManager, username } = user;
-  const { areEMColumnsVisible, areMXColumnsVisible, areSAXSColumnsVisible } = useAppSelector((state) => state.ui.sessionsPage);
-  const beamlines: string[] = useGetBeamlines({ areMXColumnsVisible, areSAXSColumnsVisible, areEMColumnsVisible });
+  const { areEMColumnsVisible, areMXColumnsVisible, areSSXColumnsVisible, areSAXSColumnsVisible } = useAppSelector((state) => state.ui.sessionsPage);
+  const beamlines: string[] = useGetBeamlines({ areMXColumnsVisible, areSSXColumnsVisible, areSAXSColumnsVisible, areEMColumnsVisible });
 
   const { data, isError } = useSessions({ isManager, username, proposalName });
   if (isError) throw Error(isError);
@@ -35,6 +35,7 @@ export default function ProposalSessionsPage({ user }: { user: User }) {
         data={filteredData?.filter((d: any) => new Set(beamlines).has(d.beamLineName))}
         areEMColumnsVisible={areEMColumnsVisible}
         areMXColumnsVisible={areMXColumnsVisible}
+        areSSXColumnsVisible={areSSXColumnsVisible}
         areSAXSColumnsVisible={areSAXSColumnsVisible}
         userPortalLink={UI.sessionsPage.userPortalLink}
         showEmptySessions={showEmptySessions}

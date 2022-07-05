@@ -73,12 +73,13 @@ const getHeaderStats = () => {
 
 interface Props {
   areMXColumnsVisible: boolean;
+  areSSXColumnsVisible: boolean;
   areSAXSColumnsVisible: boolean;
   areEMColumnsVisible: boolean;
   userPortalLink: { visible: boolean; header: string; url: string; toolTip: string };
 }
 export default function columns(props: Props): ResponsiveColumnDescription<Session>[] {
-  const { areMXColumnsVisible, areSAXSColumnsVisible, areEMColumnsVisible, userPortalLink } = props;
+  const { areMXColumnsVisible, areSSXColumnsVisible, areSAXSColumnsVisible, areEMColumnsVisible, userPortalLink } = props;
   return [
     { text: 'id', dataField: 'sessionId', hidden: true },
     {
@@ -147,11 +148,11 @@ export default function columns(props: Props): ResponsiveColumnDescription<Sessi
       },
     },
     /** MX */
-    toColumn('En. Scans', 'energyScanCount', statsFormatter, getHeaderStats(), !areMXColumnsVisible),
-    toColumn('XRF', 'xrfSpectrumCount', statsFormatter, getHeaderStats(), !areMXColumnsVisible),
-    toColumn('Samples', 'sampleCount', statsFormatter, getHeaderStats(), !areMXColumnsVisible),
-    toColumn('Tests', 'testDataCollectionGroupCount', statsFormatter, getHeaderStats(), !areMXColumnsVisible),
-    toColumn('Collects', 'dataCollectionGroupCount', statsFormatter, getHeaderStats(), !areMXColumnsVisible),
+    toColumn('En. Scans', 'energyScanCount', statsFormatter, getHeaderStats(), !(areMXColumnsVisible || areSSXColumnsVisible)),
+    toColumn('XRF', 'xrfSpectrumCount', statsFormatter, getHeaderStats(), !(areMXColumnsVisible || areSSXColumnsVisible)),
+    toColumn('Samples', 'sampleCount', statsFormatter, getHeaderStats(), !(areMXColumnsVisible || areSSXColumnsVisible)),
+    toColumn('Tests', 'testDataCollectionGroupCount', statsFormatter, getHeaderStats(), !(areMXColumnsVisible || areSSXColumnsVisible)),
+    toColumn('Collects', 'dataCollectionGroupCount', statsFormatter, getHeaderStats(), !(areMXColumnsVisible || areSSXColumnsVisible)),
     /* SAXS */
     toColumn('Calibration', 'calibrationCount', statsFormatter, getHeaderStats(), !areSAXSColumnsVisible),
     toColumn('SC', 'sampleChangerCount', statsFormatter, getHeaderStats(), !areSAXSColumnsVisible),

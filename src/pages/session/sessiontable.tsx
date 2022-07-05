@@ -2,7 +2,7 @@ import React from 'react';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
 import 'react-bootstrap-table2-filter/dist/react-bootstrap-table2-filter.min.css';
-import { SET_SESSIONS_MX_COLUMNS, SET_SESSIONS_SAXS_COLUMNS, SET_SESSIONS_EM_COLUMNS } from 'redux/actiontypes';
+import { SET_SESSIONS_MX_COLUMNS, SET_SESSIONS_SAXS_COLUMNS, SET_SESSIONS_EM_COLUMNS, SET_SESSIONS_SSX_COLUMNS } from 'redux/actiontypes';
 import { setTechniqueVisibleSessionTable } from 'redux/actions/ui';
 import useResponsiveColumns from 'hooks/bootstraptable';
 import SessionTableMenu from 'pages/session/sessiontablemenu';
@@ -18,6 +18,7 @@ import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 interface Props {
   data?: Session[];
   areMXColumnsVisible?: boolean;
+  areSSXColumnsVisible?: boolean;
   areSAXSColumnsVisible?: boolean;
   areEMColumnsVisible?: boolean;
   startDate?: string;
@@ -40,6 +41,7 @@ export default function SessionTable({
   endDate,
   setEndDate,
   areMXColumnsVisible = true,
+  areSSXColumnsVisible = true,
   areSAXSColumnsVisible = true,
   areEMColumnsVisible = true,
   userPortalLink,
@@ -50,6 +52,7 @@ export default function SessionTable({
   const responsiveColumns = useResponsiveColumns(
     SessionTableColumns({
       areMXColumnsVisible,
+      areSSXColumnsVisible,
       areSAXSColumnsVisible,
       areEMColumnsVisible,
       userPortalLink,
@@ -68,6 +71,7 @@ export default function SessionTable({
         setShowEmptySessions={setShowEmptySessions}
         checkList={[
           { text: 'MX', checked: areMXColumnsVisible, action: setTechniqueVisibleSessionTable, actionType: SET_SESSIONS_MX_COLUMNS },
+          { text: 'SSX', checked: areSSXColumnsVisible, action: setTechniqueVisibleSessionTable, actionType: SET_SESSIONS_SSX_COLUMNS },
           { text: 'SAXS', checked: areSAXSColumnsVisible, action: setTechniqueVisibleSessionTable, actionType: SET_SESSIONS_SAXS_COLUMNS },
           { text: 'EM', checked: areEMColumnsVisible, action: setTechniqueVisibleSessionTable, actionType: SET_SESSIONS_EM_COLUMNS },
         ]}

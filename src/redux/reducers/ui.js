@@ -1,4 +1,4 @@
-import { SET_SESSIONS_MX_COLUMNS, SET_SESSIONS_SAXS_COLUMNS, SET_SESSIONS_EM_COLUMNS } from '../actiontypes';
+import { SET_SESSIONS_MX_COLUMNS, SET_SESSIONS_SSX_COLUMNS, SET_SESSIONS_SAXS_COLUMNS, SET_SESSIONS_EM_COLUMNS } from '../actiontypes';
 import UI from 'config/ui';
 
 let initialState = UI;
@@ -11,6 +11,16 @@ const ui = (state = initialState, action) => {
         sessionsPage: {
           ...state.sessionsPage,
           areMXColumnsVisible: action.visible,
+        },
+      };
+      break;
+    }
+    case SET_SESSIONS_SSX_COLUMNS: {
+      state = {
+        ...initialState,
+        sessionsPage: {
+          ...state.sessionsPage,
+          areSSXColumnsVisible: action.visible,
         },
       };
       break;

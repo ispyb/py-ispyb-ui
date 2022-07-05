@@ -40,10 +40,12 @@ export function useGetTechniqueByBeamline(beamline: string): string | null {
 
 export function useGetBeamlines({
   areMXColumnsVisible,
+  areSSXColumnsVisible,
   areSAXSColumnsVisible,
   areEMColumnsVisible,
 }: {
   areMXColumnsVisible: boolean;
+  areSSXColumnsVisible: boolean;
   areSAXSColumnsVisible: boolean;
   areEMColumnsVisible: boolean;
 }): string[] {
@@ -51,7 +53,9 @@ export function useGetBeamlines({
   if (areMXColumnsVisible) {
     beamlines = beamlines.concat(useBeamlines('MX'));
   }
-
+  if (areSSXColumnsVisible) {
+    beamlines = beamlines.concat(useBeamlines('SSX'));
+  }
   if (areSAXSColumnsVisible) {
     beamlines = beamlines.concat(useBeamlines('SAXS'));
   }
