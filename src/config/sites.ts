@@ -2,6 +2,39 @@ import { Site } from 'models';
 
 const sites: Site[] = [
   {
+    name: 'ESRF-SSX',
+    server: 'http://localhost:8000/ispyb/api/v1/legacy',
+    server_py: 'http://localhost:8000/ispyb/api/v1',
+    description: 'European Synchroton Radiation Facility',
+    icon: '../images/site/esrf.png',
+    authentication: {
+      sso: {
+        enabled: false,
+        plugin: 'keycloak',
+        configuration: {
+          realm: 'ESRF',
+          url: 'https://websso.esrf.fr/auth/',
+          clientId: 'icat',
+        },
+      },
+      authenticators: [
+        {
+          plugin: 'dummy',
+          title: 'ISPyB',
+          server: 'http://localhost:8000/ispyb/api/v1/auth/login',
+          json: true,
+          enabled: true,
+          site: 'ESRF',
+          message: 'dummy auth',
+        },
+      ],
+    },
+
+    techniques: {
+      SSX: { beamlines: [{ name: 'ID29' }] },
+    },
+  },
+  {
     name: 'ESRF',
     server: 'https://ispyb.esrf.fr/ispyb/ispyb-ws/rest',
     description: 'European Synchroton Radiation Facility',
@@ -45,40 +78,6 @@ const sites: Site[] = [
       },
     },
   },
-  {
-    name: 'ESRF-SSX',
-    server: 'http://localhost:8000/ispyb/api/v1/legacy',
-    server_py: 'http://localhost:8000/ispyb/api/v1',
-    description: 'European Synchroton Radiation Facility',
-    icon: '../images/site/esrf.png',
-    authentication: {
-      sso: {
-        enabled: false,
-        plugin: 'keycloak',
-        configuration: {
-          realm: 'ESRF',
-          url: 'https://websso.esrf.fr/auth/',
-          clientId: 'icat',
-        },
-      },
-      authenticators: [
-        {
-          plugin: 'dummy',
-          title: 'ISPyB',
-          server: 'http://localhost:8000/ispyb/api/v1/auth/login',
-          json: true,
-          enabled: true,
-          site: 'ESRF',
-          message: 'dummy auth',
-        },
-      ],
-    },
-
-    techniques: {
-      SSX: { beamlines: [{ name: 'ID29' }] },
-    },
-  },
-
   {
     name: 'EMBL',
     server: 'https://ispyb.embl-hamburg.de/ispyb/ispyb-ws/rest',
