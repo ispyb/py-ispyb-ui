@@ -9,7 +9,7 @@ import UI from 'config/ui';
 import ErrorUserMessage from 'components/usermessages/errorusermessage';
 
 function LoginForm(props) {
-  const { plugin, site } = props;
+  const { authenticator } = props;
   const user = useSelector((state) => state.user);
   const { isAuthenticating, isError } = user;
   const { register, handleSubmit } = useForm();
@@ -20,7 +20,7 @@ function LoginForm(props) {
       <Form
         className="container-fluid"
         onSubmit={handleSubmit((data) => {
-          dispatch(doSignIn(plugin, data.username, data.password, site));
+          dispatch(doSignIn(authenticator, data.username, data.password));
         })}
       >
         {UI.loginForm.header && (

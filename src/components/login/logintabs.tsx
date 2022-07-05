@@ -32,7 +32,7 @@ function LoginTabs() {
                   {authenticator.message}
                 </Alert>
               )}
-              <LoginForm site={authenticator.site} plugin={authenticator.plugin} />
+              <LoginForm authenticator={authenticator} />
             </Tab>
           ))}
       </Tabs>

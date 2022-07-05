@@ -27,6 +27,7 @@ interface Authenticator {
   plugin: string;
   title: string;
   server: string;
+  json?: boolean;
   enabled: boolean;
   site: string;
   message?: string;
@@ -41,6 +42,7 @@ export interface Site {
   techniques: Record<string, Technique>;
   authentication: Authentication;
   server: string;
+  server_py?: string;
   name: string;
   description: string;
   icon: string;

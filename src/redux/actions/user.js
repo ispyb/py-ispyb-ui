@@ -15,24 +15,22 @@ export function doLogOut() {
  * @param {*} password
  * @param {*} site This can be optional depending on the specific inplementation. It is not used when py-ispyb is the backend
  */
-export function doSignIn(plugin, username, password, site) {
+export function doSignIn(authenticator, username, password) {
   return function (dispatch) {
+    const data = {
+      plugin: authenticator.plugin,
+      login: username,
+      username: username,
+      password: password,
+      token: password,
+    };
     axios
-      .post(
-        getLogin(site),
-        qs.stringify({
-          plugin: plugin,
-          login: username,
-          password: password,
-          token: password,
-        }),
-        { 'content-type': 'application/json' }
-      )
+      .post(authenticator.server, authenticator.json ? data : qs.stringify(data), { 'content-type': 'application/json' })
       .then((response) => {
         /** ISPYB  does not respond with an error code when authentication is failed this is why it is checked if token and roles and retrieved **/
-        const { token, roles } = response.data;
-        if (token && roles) {
-          return dispatch({ type: LOGGED_IN, username, token, roles });
+        const { token, roles, groups } = response.data;
+        if (token && (roles || groups)) {
+          return dispatch({ type: LOGGED_IN, username, token, roles: roles || groups });
         }
         throw new Error('Authentication failed');
       })

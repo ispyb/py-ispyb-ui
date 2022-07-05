@@ -22,8 +22,7 @@ store.subscribe(() => {
       }
       const token = keycloak?.token;
       if (token) {
-        const { plugin } = site_i.authentication.sso;
-        store.dispatch(doSignIn(plugin, null, token, site_i.name));
+        store.dispatch(doSignIn(site_i.authentication.sso, null, token));
       }
       keycloak_i.onAuthSuccess = undefined;
     };
