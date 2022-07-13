@@ -3,9 +3,9 @@ import { Site } from 'models';
 const sites: Site[] = [
   {
     name: 'ESRF-SSX',
-    server: 'http://localhost:8000/ispyb/api/v1/legacy',
-    server_py: 'http://localhost:8000/ispyb/api/v1',
-    description: 'European Synchroton Radiation Facility',
+    server: 'http://py-ispyb-development:8000/ispyb/api/v1/legacy',
+    server_py: 'http://py-ispyb-development:8000/ispyb/api/v1',
+    description: 'European Synchrotron Radiation Facility',
     icon: '../images/site/esrf.png',
     authentication: {
       sso: {
@@ -21,7 +21,7 @@ const sites: Site[] = [
         {
           plugin: 'dummy',
           title: 'ISPyB',
-          server: 'http://localhost:8000/ispyb/api/v1/auth/login',
+          server: 'http://py-ispyb-development:8000/ispyb/api/v1/auth/login',
           json: true,
           enabled: true,
           site: 'ESRF',
@@ -37,7 +37,7 @@ const sites: Site[] = [
   {
     name: 'ESRF',
     server: 'https://ispyb.esrf.fr/ispyb/ispyb-ws/rest',
-    description: 'European Synchroton Radiation Facility',
+    description: 'European Synchrotron Radiation Facility',
     icon: '../images/site/esrf.png',
     authentication: {
       sso: {
