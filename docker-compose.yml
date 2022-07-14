@@ -1,0 +1,19 @@
+version: "3.6"
+networks:
+  traefik-network:
+    external: true
+
+services:
+  py-ispyb-ui:
+    build: .
+    container_name: py-ispyb-ui
+    labels:
+      - "traefik.backend=py-ispyb-ui-localhost"
+      - "traefik.frontend.rule=Host:py-ispyb-ui.localhost"
+      - "traefik.docker.network=traefik-network"
+      - "traefik.port=3000"
+    networks:
+      - traefik-network
+    ports:
+      - 5000:5000
+ 
