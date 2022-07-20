@@ -3,6 +3,13 @@ import parse from 'date-fns/parse';
 import parseISO from 'date-fns/parseISO';
 import { isMatch } from 'date-fns';
 
+export function formatDateToDay(dateTime: string): string {
+  return formatDateTo(dateTime, 'dd/MM/yyyy');
+}
+export function formatDateToDayAndTime(dateTime: string): string {
+  return formatDateTo(dateTime, 'dd/MM/yyyy HH:mm:ss');
+}
+
 /**
  *
  * @param dateTime
@@ -10,7 +17,11 @@ import { isMatch } from 'date-fns';
  * @returns
  */
 export function formatDateTo(dateTime: string, outputFormat: string): string {
-  return format(parseDate(dateTime), outputFormat);
+  try {
+    return format(parseDate(dateTime), outputFormat);
+  } catch (e) {
+    return 'Invalid date';
+  }
 }
 
 export function dateToTimestamp(dateTime?: string): number {

@@ -109,3 +109,55 @@ export interface Shipment {
   creationDate: string;
   dewars: ContainerDewar[];
 }
+
+export type BeamLineSetupResponse = {
+  beamLineSetupId: number;
+  synchrotronMode: string;
+  undulatorType1: string;
+  undulatorType2: string;
+  undulatorType3: string;
+  focalSpotSizeAtSample: number;
+  focusingOptic: string;
+  beamDivergenceHorizontal: number;
+  beamDivergenceVertical: number;
+  polarisation: number;
+  monochromatorType: string;
+  setupDate: string;
+  synchrotronName: string;
+  maxExpTimePerDataCollection: number;
+  minExposureTimePerImage: number;
+  goniostatMaxOscillationSpeed: number;
+  goniostatMinOscillationWidth: number;
+  minTransmission: number;
+  CS: number;
+  recordTimeStamp: string;
+};
+
+export type SessionResponse = {
+  sessionId: number;
+  expSessionPk: number;
+  beamLineSetupId: number;
+  proposalId: number;
+  projectCode: string;
+  startDate: string;
+  endDate: string;
+  beamLineName: string;
+  scheduled: number;
+  nbShifts: number;
+  comments: string;
+  beamLineOperator: string;
+  visit_number: number;
+  bltimeStamp: string;
+  usedFlag: number;
+  sessionTitle: string;
+  structureDeterminations: number;
+  dewarTransport: number;
+  databackupFrance: number;
+  databackupEurope: number;
+  operatorSiteNumber: string;
+  lastUpdate: string;
+  protectedData: string;
+  externalId: string;
+  nbReimbDewars: number;
+  BeamLineSetup?: BeamLineSetupResponse;
+};

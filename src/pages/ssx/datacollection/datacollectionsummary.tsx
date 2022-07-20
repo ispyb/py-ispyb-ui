@@ -1,16 +1,21 @@
 import SimpleParameterTable from 'components/table/simpleparametertable';
+import { useSSXDataCollectionSample } from 'hooks/pyispyb';
 import { Col, Row } from 'react-bootstrap';
 import { SSXDataCollectionResponse } from '../model';
 
 export default function SSXDataCollectionSummary({ dc }: { dc: SSXDataCollectionResponse }) {
+  const { data: sample, isError } = useSSXDataCollectionSample(dc.ssxDataCollectionId);
+
+  if (isError) throw Error(isError);
+
   return (
     <Row>
       <Col>
         <SimpleParameterTable
           parameters={[
-            { key: 'Sample name', value: dc.SSXSpecimen.Specimen.Macromolecule.acronym },
+            { key: 'Sample name', value: sample?.Specimen.Macromolecule.acronym },
             { key: 'Experiment type', value: dc.DataCollection.experimentType },
-            { key: 'Support', value: dc.SSXSpecimen.sampleSupport },
+            { key: 'Support', value: sample?.sampleSupport },
 
             { key: 'Exposure time', value: dc.DataCollection.exposureTime, units: 's' },
             { key: 'Repetition rate', value: dc.repetitionRate },

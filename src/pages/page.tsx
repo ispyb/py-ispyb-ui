@@ -7,7 +7,7 @@ export default function Page({ children, selected }: PropsWithChildren<{ selecte
     <>
       <Menu selected={selected} />
       <div style={{ fontSize: 13, marginTop: 120, marginRight: 10, marginLeft: 10 }}>
-        <Suspense fallback={<LoadingPanel></LoadingPanel>}> {children}</Suspense>
+        <Suspense fallback={<LoadingPanel></LoadingPanel>}>{children}</Suspense>
       </div>
     </>
   );

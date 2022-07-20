@@ -16,3 +16,18 @@ export type RequestInformation = {
 export function getSSXDataCollections({ sessionId }: { sessionId: string }): RequestInformation {
   return { url: `${server_py}/ssx/datacollection?sessionId=${sessionId}`, token };
 }
+
+export function getSSXDataCollection({ ssxDatacollectionId }: { ssxDatacollectionId: number }): RequestInformation {
+  return { url: `${server_py}/ssx/datacollection/${ssxDatacollectionId}`, token };
+}
+
+export function getSSXDataCollectionSample({ ssxDatacollectionId }: { ssxDatacollectionId: number }): RequestInformation {
+  return { url: `${server_py}/ssx/datacollection/${ssxDatacollectionId}/sample`, token };
+}
+export function getSSXDataCollectionSampleThumbnail({ ssxDatacollectionId, thumbnailNumber }: { ssxDatacollectionId: number; thumbnailNumber: number }): RequestInformation {
+  return { url: `${server_py}/ssx/datacollection/${ssxDatacollectionId}/sample/thumbnail/${thumbnailNumber}`, token };
+}
+
+export function getSession({ sessionId }: { sessionId: string }): RequestInformation {
+  return { url: `${server_py}/session/${sessionId}`, token };
+}

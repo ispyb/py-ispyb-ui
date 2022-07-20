@@ -5,6 +5,9 @@ import { useEffect, useState } from 'react';
 import './zoomimage.css';
 import LazyWrapper from 'components/loading/lazywrapper';
 import { CSSProperties } from 'react';
+import { RequestInformation } from 'api/pyispyb';
+import axios from 'axios';
+import VisibilitySensor from 'react-visibility-sensor';
 
 const placeholder = (
   <div className="zoom-image-placeholder">
@@ -55,6 +58,77 @@ export default function ZoomImage({ src, alt, style, lazy = true, legend }: prop
   return (
     <div className="zoomimage" style={style}>
       <Zoom>{img}</Zoom>
+      {legend && <span>{legend}</span>}
+    </div>
+  );
+}
+
+function getBase64(src: RequestInformation, error: (error: any) => void, success: (value: string) => void) {
+  axios
+    .get(src.url, {
+      headers: { Authorization: `Bearer ${src.token}` },
+      responseType: 'blob',
+    })
+    .catch(error)
+    .then((response) => {
+      if (response) {
+        // const blob = new Blob([response.data], { type: response.headers['content-type'] });
+        const v = URL.createObjectURL(response.data);
+        console.log(v);
+        // const v = Buffer.from(response.data, 'binary').toString('base64');
+        success(v);
+      }
+    });
+}
+
+export function ZoomImageBearer({ src, alt, style, lazy = true, legend }: { src: RequestInformation; alt?: string; style?: CSSProperties; lazy?: boolean; legend?: string }) {
+  const [error, setError] = useState(false);
+
+  const [loaded, setLoaded] = useState(false);
+
+  const [value, setValue] = useState('');
+
+  const onVisible = (visible: boolean) => {
+    console.log(visible);
+    if (visible) {
+      getBase64(
+        src,
+        () => {
+          setError(true);
+        },
+        (value) => {
+          setValue(value);
+          setLoaded(true);
+        }
+      );
+    }
+  };
+
+  if (error) {
+    return (
+      <>
+        <div style={style} className="zoom-image-alt">
+          <p>{alt} not found</p>
+        </div>
+        {legend && <span>{legend}</span>}
+      </>
+    );
+  }
+  if (lazy && !loaded) {
+    return (
+      <VisibilitySensor onChange={onVisible}>
+        <div style={style}>
+          {placeholder}
+          {legend && <span>{legend}</span>}
+        </div>
+      </VisibilitySensor>
+    );
+  }
+  return (
+    <div className="zoomimage" style={style}>
+      <Zoom>
+        <Image width="100%" thumbnail alt={alt} src={value}></Image>
+      </Zoom>
       {legend && <span>{legend}</span>}
     </div>
   );

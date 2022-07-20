@@ -1,12 +1,17 @@
-import moment from 'moment';
+import LazyWrapper from 'components/loading/lazywrapper';
+import LoadingPanel from 'components/loading/loadingpanel';
+import { formatDateToDayAndTime } from 'helpers/dateparser';
+import { SessionResponse } from 'pages/model';
+
 import { Tab, Card, Container, Row, Col, Badge, Nav } from 'react-bootstrap';
 import { SSXDataCollectionResponse } from '../model';
+import SSXDataCollectionBeamlineParams from './datacollectionbeamlineparams';
 import SSXDataCollectionExperiment from './datacollectionexperiment';
 import SSXDataCollectionProcessing from './datacollectionprocessing';
 import SSXDataCollectionSample from './datacollectionsample';
 import SSXDataCollectionSummary from './datacollectionsummary';
 
-export default function SSXDataCollectionPane({ dc }: { dc: SSXDataCollectionResponse }) {
+export default function SSXDataCollectionPane({ dc, session }: { dc: SSXDataCollectionResponse; session?: SessionResponse }) {
   return (
     <div style={{ margin: 5 }}>
       <Tab.Container defaultActiveKey="Summary">
@@ -16,7 +21,7 @@ export default function SSXDataCollectionPane({ dc }: { dc: SSXDataCollectionRes
               <Row>
                 <Col md="auto">
                   <h5>
-                    {moment(dc.DataCollection.startTime, 'MMMM Do YYYY, h:mm:ss A').format('DD/MM/YYYY HH:mm:ss')}
+                    {formatDateToDayAndTime(dc.DataCollection.startTime)}
                     <Badge bg="info">{dc.DataCollection.experimentType}</Badge>
                   </h5>
                 </Col>
@@ -25,6 +30,9 @@ export default function SSXDataCollectionPane({ dc }: { dc: SSXDataCollectionRes
                   <Nav className="tabs-datacollectiongroup-panel" variant="tabs">
                     <Nav.Item>
                       <Nav.Link eventKey="Summary">Summary</Nav.Link>
+                    </Nav.Item>
+                    <Nav.Item>
+                      <Nav.Link eventKey="Beamline">Beamline parameters</Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
                       <Nav.Link eventKey="Sample">Sample</Nav.Link>
@@ -43,16 +51,27 @@ export default function SSXDataCollectionPane({ dc }: { dc: SSXDataCollectionRes
           <Card.Body>
             <Tab.Content>
               <Tab.Pane eventKey="Summary" title="Summary">
-                <SSXDataCollectionSummary dc={dc}></SSXDataCollectionSummary>
+                <SSXDataCollectionSummary dc={dc}></SSXDataCollectionSummary>{' '}
               </Tab.Pane>
               <Tab.Pane eventKey="Sample" title="Sample">
-                <SSXDataCollectionSample dc={dc}></SSXDataCollectionSample>
+                <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+                  <SSXDataCollectionSample dc={dc}></SSXDataCollectionSample>
+                </LazyWrapper>
               </Tab.Pane>
               <Tab.Pane eventKey="Processing" title="Processing">
-                <SSXDataCollectionProcessing dc={dc}></SSXDataCollectionProcessing>
+                <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+                  <SSXDataCollectionProcessing dc={dc}></SSXDataCollectionProcessing>
+                </LazyWrapper>
               </Tab.Pane>
               <Tab.Pane eventKey="Experiment" title="Experiment details">
-                <SSXDataCollectionExperiment dc={dc}></SSXDataCollectionExperiment>
+                <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+                  <SSXDataCollectionExperiment dc={dc}></SSXDataCollectionExperiment>
+                </LazyWrapper>
+              </Tab.Pane>
+              <Tab.Pane eventKey="Beamline" title="Beamline parameters">
+                <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+                  <SSXDataCollectionBeamlineParams dc={dc} session={session}></SSXDataCollectionBeamlineParams>
+                </LazyWrapper>
               </Tab.Pane>
             </Tab.Content>
           </Card.Body>

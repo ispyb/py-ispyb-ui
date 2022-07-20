@@ -5,7 +5,6 @@ export type SSXDataCollectionResponse = {
   energyBandwidth: number;
   monoStripe: string;
   DataCollection: DataCollectionResponse;
-  SSXSpecimen: SSXSpecimenResponse;
 };
 
 export type DataCollectionResponse = {
@@ -108,6 +107,7 @@ export type DataCollectionResponse = {
   c2lens: number;
   c3lens: number;
   DataCollectionGroup: DataCollectionGroupResponse;
+  Detector?: DetectorResponse;
 };
 
 export type DataCollectionGroupResponse = {
@@ -126,6 +126,31 @@ export type DataCollectionGroupResponse = {
   actualContainerBarcode: string;
   actualContainerSlotInSC: number;
   xtalSnapshotFullPath: string;
+};
+
+export type DetectorResponse = {
+  detectorId: number;
+  detectorType: string;
+  detectorManufacturer: string;
+  detectorModel: string;
+  detectorPixelSizeHorizontal: number;
+  detectorPixelSizeVertical: number;
+  detectorSerialNumber: string;
+  detectorDistanceMin: number;
+  detectorDistanceMax: number;
+  trustedPixelValueRangeLower: number;
+  trustedPixelValueRangeUpper: number;
+  sensorThickness: number;
+  overload: number;
+  XGeoCorr: string;
+  YGeoCorr: string;
+  detectorMode: string;
+  detectorMaxResolution: number;
+  detectorMinResolution: number;
+  CS: number;
+  density: number;
+  composition: string;
+  localName: string;
 };
 
 export type SSXSpecimenResponse = {
@@ -153,6 +178,26 @@ export type SpecimenResponse = {
   Macromolecule: MacromoleculeResponse;
   Buffer: BufferResponse;
   Experiment: ExperimentResponse;
+  Structures: StructureResponse[];
+};
+
+export type StructureResponse = {
+  structureId: number;
+  macromoleculeId: number;
+  crystalId: number;
+  blSampleId: number;
+  filePath: string;
+  structureType: string;
+  fromResiduesBases: string;
+  toResiduesBases: string;
+  sequence: string;
+  creationDate: string;
+  name: string;
+  symmetry: string;
+  multiplicity: string;
+  groupName: string;
+  proposalId: number;
+  uniprotId: string;
 };
 
 export type MacromoleculeResponse = {
