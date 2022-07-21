@@ -58,11 +58,6 @@ export function Section2({ dc, session, sample }: { dc: SSXDataCollectionRespons
       value: `${convertToFixed(wavelengthToEnergy(dc.DataCollection.wavelength), 3)}  KeV (${convertToFixed(dc.DataCollection.wavelength, 4)} )`,
     },
 
-    { key: `${dc.DataCollection.rotationAxis} range`, value: `${convertToFixed(dc.DataCollection.axisRange, 2)}`, units: '°' },
-    {
-      key: `${dc.DataCollection.rotationAxis} start (total)`,
-      value: `${convertToFixed(dc.DataCollection.axisStart, 2)} ° (${convertToFixed(dc.DataCollection.axisEnd - dc.DataCollection.axisStart, 2)})`,
-    },
     { key: 'Exposure Time', value: dc.DataCollection.exposureTime, units: 's' },
     { key: 'Flux start', value: convertToExponential(dc.DataCollection.flux, 2), units: 'ph/sec' },
     { key: 'Flux end', value: convertToExponential(dc.DataCollection.flux_end, 2), units: 'ph/sec' },
@@ -90,14 +85,6 @@ export function Section3({ dc, session, sample }: { dc: SSXDataCollectionRespons
       key: 'Y Beam',
       value: `${convertToFixed(dc.DataCollection.yBeam, 2)}`,
       units: 'mm',
-    },
-    {
-      key: 'Kappa',
-      value: dc.DataCollection.kappaStart,
-    },
-    {
-      key: 'Phi',
-      value: dc.DataCollection.phiStart,
     },
   ];
   return <SimpleParameterTable parameters={parameters}></SimpleParameterTable>;
@@ -138,10 +125,7 @@ export function Section5({ dc, session, sample }: { dc: SSXDataCollectionRespons
       key: 'Monochromator type',
       value: session?.BeamLineSetup?.monochromatorType,
     },
-    {
-      key: 'Beam shape',
-      value: dc.DataCollection.beamShape,
-    },
+
     {
       key: 'Beam size at Sample Hor (Vert)',
       value: `${multiply(dc.DataCollection.beamSizeAtSampleX, 1000)}(${multiply(dc.DataCollection.beamSizeAtSampleY, 1000)})`,

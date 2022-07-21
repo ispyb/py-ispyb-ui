@@ -8,6 +8,7 @@ export type SSXDataCollectionResponse = {
 };
 
 export type DataCollectionResponse = {
+  dataCollectionId: number;
   dataCollectionGroupId: number;
   strategySubWedgeOrigId: number;
   detectorId: number;

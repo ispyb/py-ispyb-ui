@@ -24,8 +24,8 @@ export function getSSXDataCollection({ ssxDatacollectionId }: { ssxDatacollectio
 export function getSSXDataCollectionSample({ ssxDatacollectionId }: { ssxDatacollectionId: number }): RequestInformation {
   return { url: `${server_py}/ssx/datacollection/${ssxDatacollectionId}/sample`, token };
 }
-export function getSSXDataCollectionSampleThumbnail({ ssxDatacollectionId, thumbnailNumber }: { ssxDatacollectionId: number; thumbnailNumber: number }): RequestInformation {
-  return { url: `${server_py}/ssx/datacollection/${ssxDatacollectionId}/sample/thumbnail/${thumbnailNumber}`, token };
+export function getDataCollectionSampleThumbnail({ dataCollectionId, thumbnailNumber }: { dataCollectionId: number; thumbnailNumber: number }): RequestInformation {
+  return { url: `${server_py}/events/image/${dataCollectionId}?imageId=${thumbnailNumber}&fullSize=true`, token };
 }
 
 export function getSession({ sessionId }: { sessionId: string }): RequestInformation {

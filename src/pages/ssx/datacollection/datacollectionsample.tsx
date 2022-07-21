@@ -1,5 +1,5 @@
-import { getSSXDataCollectionSampleThumbnail } from 'api/pyispyb';
-import ZoomImage, { ZoomImageBearer } from 'components/image/zoomimage';
+import { getDataCollectionSampleThumbnail } from 'api/pyispyb';
+import { ZoomImageBearer } from 'components/image/zoomimage';
 import SimpleParameterTable from 'components/table/simpleparametertable';
 import { useSSXDataCollectionSample } from 'hooks/pyispyb';
 import { Col, Row } from 'react-bootstrap';
@@ -39,7 +39,7 @@ export default function SSXDataCollectionSample({ dc }: { dc: SSXDataCollectionR
         ></SimpleParameterTable>
       </Col>
       <Col xs={12} sm={6} md={true}>
-        <ZoomImageBearer alt="Sample snapshot" src={getSSXDataCollectionSampleThumbnail({ ssxDatacollectionId: dc.ssxDataCollectionId, thumbnailNumber: 1 })} />
+        <ZoomImageBearer alt="Sample snapshot" src={getDataCollectionSampleThumbnail({ dataCollectionId: dc.DataCollection.dataCollectionId, thumbnailNumber: 1 })} />
       </Col>
     </Row>
   );
