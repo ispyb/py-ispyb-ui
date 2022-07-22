@@ -16,7 +16,8 @@ export default function SSXDataCollectionSample({ dc }: { dc: SSXDataCollectionR
       <Col>
         <SimpleParameterTable
           parameters={[
-            { key: 'Sample name', value: sample?.Specimen.Macromolecule.acronym },
+            { key: 'Sample name', value: sample?.Specimen.Macromolecule.name },
+            { key: 'Protein', value: sample?.Specimen.Macromolecule.acronym },
             { key: 'Avg crystal size', value: sample?.avgXtalSize },
             { key: 'Crystal concentration', value: sample?.Specimen.concentration },
             { key: 'Support', value: sample?.sampleSupport },

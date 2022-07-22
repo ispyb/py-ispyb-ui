@@ -13,7 +13,7 @@ export default function SSXDataCollectionSummary({ dc }: { dc: SSXDataCollection
       <Col>
         <SimpleParameterTable
           parameters={[
-            { key: 'Sample name', value: sample?.Specimen.Macromolecule.acronym },
+            { key: 'Sample name', value: sample?.Specimen.Macromolecule.name },
             { key: 'Experiment type', value: dc.DataCollection.experimentType },
             { key: 'Support', value: sample?.sampleSupport },
 
