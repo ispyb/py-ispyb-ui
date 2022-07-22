@@ -1,3 +1,5 @@
+import { faInfoCircle, faQuestion, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import SimpleParameterTable from 'components/table/simpleparametertable';
 import { useSSXDataCollectionSample } from 'hooks/pyispyb';
 import { Col, Row } from 'react-bootstrap';
@@ -27,13 +29,22 @@ export default function SSXDataCollectionSummary({ dc }: { dc: SSXDataCollection
         ></SimpleParameterTable>
       </Col>
       <Col>
-        <div style={{ textAlign: 'center' }}>TODO: Autoprocessing summary </div>
+        <div style={{ textAlign: 'center' }}>
+          <p>TODO: Autoprocessing summary</p>
+          <FontAwesomeIcon icon={faQuestionCircle} style={{ marginRight: 10 }} />
+        </div>
       </Col>
       <Col>
-        <div style={{ textAlign: 'center' }}>TODO: Max projection </div>
+        <div style={{ textAlign: 'center' }}>
+          <p>TODO: Max projection</p>
+          <FontAwesomeIcon icon={faQuestionCircle} style={{ marginRight: 10 }} />
+        </div>
       </Col>
       <Col>
-        <div style={{ textAlign: 'center' }}>TODO: Hit map </div>
+        <div style={{ textAlign: 'center' }}>
+          <p>TODO: Hit map</p>
+          <FontAwesomeIcon icon={faQuestionCircle} style={{ marginRight: 10 }} />
+        </div>
       </Col>
     </Row>
   );

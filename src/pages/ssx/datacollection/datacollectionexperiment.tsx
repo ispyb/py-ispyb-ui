@@ -1,3 +1,5 @@
+import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import SimpleParameterTable from 'components/table/simpleparametertable';
 import { Col, Row } from 'react-bootstrap';
 import { SSXDataCollectionResponse } from '../model';
@@ -15,7 +17,10 @@ export default function SSXDataCollectionExperiment({ dc }: { dc: SSXDataCollect
         ></SimpleParameterTable>
       </Col>
       <Col>
-        <div style={{ textAlign: 'center' }}>TODO: Time delays</div>
+        <div style={{ textAlign: 'center' }}>
+          <p>TODO: Time delays</p>
+          <FontAwesomeIcon icon={faQuestionCircle} style={{ marginRight: 10 }} />
+        </div>
       </Col>
     </Row>
   );

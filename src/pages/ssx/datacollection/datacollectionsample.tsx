@@ -1,3 +1,5 @@
+import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getDataCollectionSampleThumbnail } from 'api/pyispyb';
 import { ZoomImageBearer } from 'components/image/zoomimage';
 import SimpleParameterTable from 'components/table/simpleparametertable';
@@ -25,10 +27,16 @@ export default function SSXDataCollectionSample({ dc }: { dc: SSXDataCollectionR
         ></SimpleParameterTable>
       </Col>
       <Col>
-        <div style={{ textAlign: 'center' }}>TODO: Preparation </div>
+        <div style={{ textAlign: 'center' }}>
+          <p>TODO: Preparation</p>
+          <FontAwesomeIcon icon={faQuestionCircle} style={{ marginRight: 10 }} />
+        </div>
       </Col>
       <Col>
-        <div style={{ textAlign: 'center' }}>TODO: Crystal form </div>
+        <div style={{ textAlign: 'center' }}>
+          <p>TODO: Crystal form</p>
+          <FontAwesomeIcon icon={faQuestionCircle} style={{ marginRight: 10 }} />
+        </div>
       </Col>
       <Col>
         <SimpleParameterTable
