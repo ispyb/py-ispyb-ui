@@ -6,7 +6,6 @@ export default function SSXDataCollectionProcessing({ dc }: { dc: SSXDataCollect
   return (
     <div style={{ height: 150, textAlign: 'center' }}>
       <p>TODO: Processing</p>
-      <FontAwesomeIcon icon={faQuestionCircle} style={{ marginRight: 10 }} />
     </div>
   );
 }

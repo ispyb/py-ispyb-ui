@@ -31,19 +31,16 @@ export default function SSXDataCollectionSummary({ dc }: { dc: SSXDataCollection
       <Col>
         <div style={{ textAlign: 'center' }}>
           <p>TODO: Autoprocessing summary</p>
-          <FontAwesomeIcon icon={faQuestionCircle} style={{ marginRight: 10 }} />
         </div>
       </Col>
       <Col>
         <div style={{ textAlign: 'center' }}>
           <p>TODO: Max projection</p>
-          <FontAwesomeIcon icon={faQuestionCircle} style={{ marginRight: 10 }} />
         </div>
       </Col>
       <Col>
         <div style={{ textAlign: 'center' }}>
           <p>TODO: Hit map</p>
-          <FontAwesomeIcon icon={faQuestionCircle} style={{ marginRight: 10 }} />
         </div>
       </Col>
     </Row>
