@@ -1,5 +1,4 @@
 import { LOGGED_IN, LOG_OUT, LOGIN_ERROR } from '../actiontypes';
-import { getLogin } from 'api/ispyb';
 import axios from 'axios';
 import qs from 'qs';
 

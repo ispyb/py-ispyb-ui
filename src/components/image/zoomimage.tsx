@@ -63,6 +63,7 @@ export default function ZoomImage({ src, alt, style, lazy = true, legend }: prop
   );
 }
 
+// eslint-disable-next-line no-unused-vars, @typescript-eslint/no-explicit-any
 function getBase64(src: RequestInformation, error: (error: any) => void, success: (value: string) => void) {
   axios
     .get(src.url, {
@@ -72,10 +73,7 @@ function getBase64(src: RequestInformation, error: (error: any) => void, success
     .catch(error)
     .then((response) => {
       if (response) {
-        // const blob = new Blob([response.data], { type: response.headers['content-type'] });
         const v = URL.createObjectURL(response.data);
-        console.log(v);
-        // const v = Buffer.from(response.data, 'binary').toString('base64');
         success(v);
       }
     });

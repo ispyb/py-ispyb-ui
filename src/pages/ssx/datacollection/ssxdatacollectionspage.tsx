@@ -1,14 +1,10 @@
-import { faArrowAltCircleRight, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { H5 } from '@storybook/components';
-import LazyWrapper from 'components/loading/lazywrapper';
-import LoadingPanel from 'components/loading/loadingpanel';
-import { formatDateTo, formatDateToDayAndTime } from 'helpers/dateparser';
+import { formatDateToDayAndTime } from 'helpers/dateparser';
 import { useSession, useSSXDataCollections } from 'hooks/pyispyb';
-import moment from 'moment';
 import { SessionResponse } from 'pages/model';
 import Page from 'pages/page';
-import { Alert, Card, Col, Row } from 'react-bootstrap';
+import { Alert, Card } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import SSXDataCollectionPane from './ssxdatacollectionpane';
 

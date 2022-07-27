@@ -1,5 +1,3 @@
-import { faInfoCircle, faQuestion, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import SimpleParameterTable from 'components/table/simpleparametertable';
 import { useSSXDataCollectionSample } from 'hooks/pyispyb';
 import { Col, Row } from 'react-bootstrap';
