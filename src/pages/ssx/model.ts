@@ -154,91 +154,95 @@ export type DetectorResponse = {
   localName: string;
 };
 
-export type SSXSpecimenResponse = {
-  ssxSpecimenId: number;
-  specimenId: number;
-  avgXtalSize: number;
-  ligandConcentration: number;
-  sampleSupport: string;
-  jetMaterial: string;
-  Specimen: SpecimenResponse;
-};
-
-export type SpecimenResponse = {
-  specimenId: number;
-  experimentId: number;
-  bufferId: number;
-  macromoleculeId: number;
-  samplePlatePositionId: number;
-  safetyLevelId: number;
-  stockSolutionId: number;
-  code: string;
-  concentration: string;
-  volume: string;
-  comments: string;
-  Macromolecule: MacromoleculeResponse;
-  Buffer: BufferResponse;
-  Experiment: ExperimentResponse;
-  Structures: StructureResponse[];
-};
-
-export type StructureResponse = {
-  structureId: number;
-  macromoleculeId: number;
-  crystalId: number;
+export type SSXSampleResponse = {
   blSampleId: number;
-  filePath: string;
-  structureType: string;
-  fromResiduesBases: string;
-  toResiduesBases: string;
-  sequence: string;
-  creationDate: string;
+  diffractionPlanId: number;
+  crystalId: number;
+  containerId: number;
   name: string;
-  symmetry: string;
-  multiplicity: string;
-  groupName: string;
-  proposalId: number;
-  uniprotId: string;
+  code: string;
+  location: string;
+  holderLength: number;
+  loopLength: number;
+  loopType: string;
+  wireWidth: number;
+  comments: string;
+  completionStage: string;
+  structureStage: string;
+  publicationStage: string;
+  publicationComments: string;
+  blSampleStatus: string;
+  isInSampleChanger: number;
+  lastKnownCenteringPosition: string;
+  recordTimeStamp: string;
+  SMILES: string;
+  lastImageURL: string;
+  positionId: number;
+  blSubSampleId: number;
+  screenComponentGroupId: number;
+  volume: number;
+  dimension1: number;
+  dimension2: number;
+  dimension3: number;
+  shape: string;
+  subLocation: number;
+  Crystal: CrystalResponse;
+  sample_components: SampleComponentResponse[];
 };
 
-export type MacromoleculeResponse = {
-  macromoleculeId: number;
+export type CrystalResponse = {
+  crystalId: number;
+  diffractionPlanId: number;
+  proteinId: number;
+  crystalUUID: string;
+  name: string;
+  spaceGroup: string;
+  morphology: string;
+  color: string;
+  size_X: number;
+  size_Y: number;
+  size_Z: number;
+  cell_a: number;
+  cell_b: number;
+  cell_c: number;
+  cell_alpha: number;
+  cell_beta: number;
+  cell_gamma: number;
+  comments: string;
+  pdbFileName: string;
+  pdbFilePath: string;
+  recordTimeStamp: string;
+  abundance: number;
+  packingFraction: number;
+  Protein: ProteinResponse;
+};
+
+export type ProteinResponse = {
+  proteinId: number;
   proposalId: number;
-  safetyLevelId: number;
   name: string;
   acronym: string;
-  extintionCoefficient: string;
-  molecularMass: string;
+  description: string;
+  hazardGroup: number;
+  containmentLevel: number;
+  safetyLevel: string;
+  molecularMass: number;
+  proteinType: string;
   sequence: string;
-  contactsDescriptionFilePath: string;
-  symmetry: string;
-  comments: string;
-  refractiveIndex: string;
-  solventViscosity: string;
-  creationDate: string;
-  electronDensity: number;
+  personId: number;
+  bltimeStamp: string;
+  isCreatedBySampleSheet: number;
+  externalId: string;
+  componentTypeId: number;
+  modId: string;
+  concentrationTypeId: number;
 };
-export type BufferResponse = {
-  bufferId: number;
-  proposalId: number;
-  safetyLevelId: number;
+
+export type SampleComponentResponse = {
+  sampleComponentId: number;
+  blSampleId: number;
   name: string;
-  acronym: string;
-  pH: string;
+  componentType: string;
   composition: string;
-  comments: string;
-  BLSessionId: number;
-  electronDensity: number;
-};
-export type ExperimentResponse = {
-  experimentId: number;
-  sessionId: number;
-  proposalId: number;
-  name: string;
-  creationDate: string;
-  experimentType: string;
-  sourceFilePath: string;
-  dataAcquisitionFilePath: string;
-  status: string;
-  comments: string;
+  concentration: number;
 };

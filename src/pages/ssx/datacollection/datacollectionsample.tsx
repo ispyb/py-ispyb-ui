@@ -1,16 +1,14 @@
-import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+import { faFlask } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getDataCollectionSampleThumbnail } from 'api/pyispyb';
 import { ZoomImageBearer } from 'components/image/zoomimage';
 import SimpleParameterTable from 'components/table/simpleparametertable';
 import { useSSXDataCollectionSample } from 'hooks/pyispyb';
-import { Col, Row } from 'react-bootstrap';
-import { SSXDataCollectionResponse } from '../model';
+import { Col, Row, Table } from 'react-bootstrap';
+import { SSXDataCollectionResponse, SSXSampleResponse } from '../model';
 
 export default function SSXDataCollectionSample({ dc }: { dc: SSXDataCollectionResponse }) {
-  const { data: sample, isError } = useSSXDataCollectionSample(dc.ssxDataCollectionId);
-
-  const ligand = sample?.Specimen.Structures.filter((v) => v.structureType == 'Ligand')[0];
+  const { data: sample, isError } = useSSXDataCollectionSample(dc.DataCollection.dataCollectionId);
 
   if (isError) throw Error(isError);
   return (
@@ -18,38 +16,66 @@ export default function SSXDataCollectionSample({ dc }: { dc: SSXDataCollectionR
       <Col>
         <SimpleParameterTable
           parameters={[
-            { key: 'Sample name', value: sample?.Specimen.Macromolecule.name },
-            { key: 'Protein', value: sample?.Specimen.Macromolecule.acronym },
-            { key: 'Avg crystal size', value: sample?.avgXtalSize },
-            { key: 'Crystal concentration', value: sample?.Specimen.concentration },
-            { key: 'Support', value: sample?.sampleSupport },
+            { key: 'Sample name', value: sample?.name },
+            { key: 'Protein', value: sample?.Crystal.Protein.acronym },
+            { key: 'Avg crystal size (X, Y, Z)', value: `${sample?.Crystal.size_X}, ${sample?.Crystal.size_Y}, ${sample?.Crystal.size_Z}` },
+            { key: 'Crystal concentration', value: sample?.Crystal.abundance },
+            { key: 'Support', value: 'TODO' },
           ]}
         ></SimpleParameterTable>
       </Col>
       <Col>
-        <div style={{ textAlign: 'center' }}>
-          <p>TODO: Preparation</p>
-          <FontAwesomeIcon icon={faQuestionCircle} style={{ marginRight: 10 }} />
-        </div>
+        <SamplePreparation sample={sample}></SamplePreparation>
       </Col>
-      <Col>
-        <div style={{ textAlign: 'center' }}>
-          <p>TODO: Crystal form</p>
-          <FontAwesomeIcon icon={faQuestionCircle} style={{ marginRight: 10 }} />
-        </div>
-      </Col>
-      <Col>
-        <SimpleParameterTable
-          parameters={[
-            { key: 'Ligand', value: ligand?.name },
-            { key: 'Buffer', value: sample?.Specimen.Buffer.name },
-            { key: 'Buffer concentration', value: sample?.Specimen.Buffer.composition },
-          ]}
-        ></SimpleParameterTable>
-      </Col>
-      <Col xs={12} sm={6} md={true}>
-        <ZoomImageBearer alt="Sample snapshot" src={getDataCollectionSampleThumbnail({ dataCollectionId: dc.DataCollection.dataCollectionId, thumbnailNumber: 1 })} />
+      <Col md={'auto'}>
+        <ZoomImageBearer
+          style={{ maxWidth: 300 }}
+          alt="Sample snapshot"
+          src={getDataCollectionSampleThumbnail({ dataCollectionId: dc.DataCollection.dataCollectionId, thumbnailNumber: 1 })}
+        />
       </Col>
     </Row>
   );
+}
+
+export function SamplePreparation({ sample }: { sample?: SSXSampleResponse }) {
+  if (!sample) {
+    return <p>Could not find sample information.</p>;
+  }
+  return (
+    <Table size="sm" striped bordered hover style={{ margin: 10 }}>
+      <thead>
+        <tr>
+          <th>
+            <h5>
+              <FontAwesomeIcon icon={faFlask} style={{ marginRight: 10 }} />
+              Sample components
+            </h5>
+          </th>
+          <th>Name</th>
+          <th>Concentration</th>
+          <th>Composition</th>
+        </tr>
+      </thead>
+      <tbody>
+        {sample.sample_components
+          .sort((a, b) => a.componentType.localeCompare(b.componentType))
+          .map((component) => {
+            return (
+              <tr>
+                <th>{componentTypeDisplayValue(component.componentType)}</th>
+                <td>{component.name}</td>
+                <td>{component.concentration}</td>
+                <td>{component.composition}</td>
+              </tr>
+            );
+          })}
+      </tbody>
+    </Table>
+  );
+}
+
+function componentTypeDisplayValue(componentType: string) {
+  if (componentType == 'JetMaterial') return 'Jet material';
+  return componentType;
 }

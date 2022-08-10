@@ -17,12 +17,12 @@ export function getSSXDataCollections({ sessionId }: { sessionId: string }): Req
   return { url: `${server_py}/ssx/datacollection?sessionId=${sessionId}`, token };
 }
 
-export function getSSXDataCollection({ ssxDatacollectionId }: { ssxDatacollectionId: number }): RequestInformation {
-  return { url: `${server_py}/ssx/datacollection/${ssxDatacollectionId}`, token };
+export function getSSXDataCollection({ datacollectionId }: { datacollectionId: number }): RequestInformation {
+  return { url: `${server_py}/ssx/datacollection/${datacollectionId}`, token };
 }
 
-export function getSSXDataCollectionSample({ ssxDatacollectionId }: { ssxDatacollectionId: number }): RequestInformation {
-  return { url: `${server_py}/ssx/datacollection/${ssxDatacollectionId}/sample`, token };
+export function getSSXDataCollectionSample({ datacollectionId }: { datacollectionId: number }): RequestInformation {
+  return { url: `${server_py}/ssx/datacollection/${datacollectionId}/sample`, token };
 }
 export function getDataCollectionSampleThumbnail({ dataCollectionId, thumbnailNumber }: { dataCollectionId: number; thumbnailNumber: number }): RequestInformation {
   return { url: `${server_py}/events/image/${dataCollectionId}?imageId=${thumbnailNumber}&fullSize=true`, token };

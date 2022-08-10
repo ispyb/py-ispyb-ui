@@ -1,7 +1,7 @@
 import useSWR from 'swr';
 import axios from 'axios';
 import { RequestInformation, getSSXDataCollections, getSSXDataCollection, getSSXDataCollectionSample, getSession } from 'api/pyispyb';
-import { SSXDataCollectionResponse, SSXSpecimenResponse } from 'pages/ssx/model';
+import { SSXDataCollectionResponse, SSXSampleResponse } from 'pages/ssx/model';
 import { SessionResponse } from 'pages/model';
 
 const fetcher = (url: string, token: string) =>
@@ -26,12 +26,12 @@ export function useSSXDataCollections(sessionId: string) {
   return doGet<SSXDataCollectionResponse[]>(getSSXDataCollections({ sessionId }));
 }
 
-export function useSSXDataCollection(ssxDatacollectionId: number) {
-  return doGet<SSXDataCollectionResponse>(getSSXDataCollection({ ssxDatacollectionId }));
+export function useSSXDataCollection(datacollectionId: number) {
+  return doGet<SSXDataCollectionResponse>(getSSXDataCollection({ datacollectionId }));
 }
 
-export function useSSXDataCollectionSample(ssxDatacollectionId: number) {
-  return doGet<SSXSpecimenResponse>(getSSXDataCollectionSample({ ssxDatacollectionId }));
+export function useSSXDataCollectionSample(datacollectionId: number) {
+  return doGet<SSXSampleResponse>(getSSXDataCollectionSample({ datacollectionId }));
 }
 
 export function useSession(sessionId: string) {

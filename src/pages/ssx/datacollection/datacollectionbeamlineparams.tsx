@@ -3,7 +3,7 @@ import { convertToExponential, convertToFixed, multiply, wavelengthToEnergy } fr
 import { useSSXDataCollectionSample } from 'hooks/pyispyb';
 import { SessionResponse } from 'pages/model';
 import { Col, Row } from 'react-bootstrap';
-import { SSXDataCollectionResponse, SSXSpecimenResponse } from '../model';
+import { SSXDataCollectionResponse, SSXSampleResponse } from '../model';
 
 export default function SSXDataCollectionBeamlineParams({ dc, session }: { dc: SSXDataCollectionResponse; session?: SessionResponse }) {
   const { data: sample, isError } = useSSXDataCollectionSample(dc.ssxDataCollectionId);
@@ -33,11 +33,11 @@ export default function SSXDataCollectionBeamlineParams({ dc, session }: { dc: S
   );
 }
 
-export function Section1({ dc, sample }: { dc: SSXDataCollectionResponse; session?: SessionResponse; sample?: SSXSpecimenResponse }) {
+export function Section1({ dc, sample }: { dc: SSXDataCollectionResponse; session?: SessionResponse; sample?: SSXSampleResponse }) {
   const parameters = [
     { key: 'Workflow', value: 'TODO' },
-    { key: 'Protein', value: sample?.Specimen.Macromolecule.acronym },
-    { key: 'Sample', value: sample?.Specimen.Macromolecule.name },
+    { key: 'Protein', value: sample?.Crystal.Protein.acronym },
+    { key: 'Sample', value: sample?.name },
     { key: 'Prefix', value: dc.DataCollection.imagePrefix },
     { key: 'Run', value: dc.DataCollection.numberOfPasses },
     { key: '# Images', value: dc.DataCollection.numberOfImages },
@@ -46,7 +46,7 @@ export function Section1({ dc, sample }: { dc: SSXDataCollectionResponse; sessio
   return <SimpleParameterTable parameters={parameters}></SimpleParameterTable>;
 }
 
-export function Section2({ dc }: { dc: SSXDataCollectionResponse; session?: SessionResponse; sample?: SSXSpecimenResponse }) {
+export function Section2({ dc }: { dc: SSXDataCollectionResponse; session?: SessionResponse; sample?: SSXSampleResponse }) {
   const parameters = [
     {
       key: 'Res. (corner)',
@@ -65,7 +65,7 @@ export function Section2({ dc }: { dc: SSXDataCollectionResponse; session?: Sess
   return <SimpleParameterTable parameters={parameters}></SimpleParameterTable>;
 }
 
-export function Section3({ dc, session }: { dc: SSXDataCollectionResponse; session?: SessionResponse; sample?: SSXSpecimenResponse }) {
+export function Section3({ dc, session }: { dc: SSXDataCollectionResponse; session?: SessionResponse; sample?: SSXSampleResponse }) {
   const parameters = [
     {
       key: 'Beamline Name',
@@ -90,7 +90,7 @@ export function Section3({ dc, session }: { dc: SSXDataCollectionResponse; sessi
   return <SimpleParameterTable parameters={parameters}></SimpleParameterTable>;
 }
 
-export function Section4({ session }: { dc: SSXDataCollectionResponse; session?: SessionResponse; sample?: SSXSpecimenResponse }) {
+export function Section4({ session }: { dc: SSXDataCollectionResponse; session?: SessionResponse; sample?: SSXSampleResponse }) {
   const parameters = [
     {
       key: 'Synchrotron name',
@@ -115,7 +115,7 @@ export function Section4({ session }: { dc: SSXDataCollectionResponse; session?:
   ];
   return <SimpleParameterTable parameters={parameters}></SimpleParameterTable>;
 }
-export function Section5({ dc, session }: { dc: SSXDataCollectionResponse; session?: SessionResponse; sample?: SSXSpecimenResponse }) {
+export function Section5({ dc, session }: { dc: SSXDataCollectionResponse; session?: SessionResponse; sample?: SSXSampleResponse }) {
   const parameters = [
     {
       key: 'Focusing optics',
@@ -143,7 +143,7 @@ export function Section5({ dc, session }: { dc: SSXDataCollectionResponse; sessi
   ];
   return <SimpleParameterTable parameters={parameters}></SimpleParameterTable>;
 }
-export function Section6({ dc }: { dc: SSXDataCollectionResponse; session?: SessionResponse; sample?: SSXSpecimenResponse }) {
+export function Section6({ dc }: { dc: SSXDataCollectionResponse; session?: SessionResponse; sample?: SSXSampleResponse }) {
   const parameters = [
     {
       key: 'Detector Type',

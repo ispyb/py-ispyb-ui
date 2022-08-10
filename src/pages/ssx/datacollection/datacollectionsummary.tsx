@@ -4,7 +4,7 @@ import { Col, Row } from 'react-bootstrap';
 import { SSXDataCollectionResponse } from '../model';
 
 export default function SSXDataCollectionSummary({ dc }: { dc: SSXDataCollectionResponse }) {
-  const { data: sample, isError } = useSSXDataCollectionSample(dc.ssxDataCollectionId);
+  const { data: sample, isError } = useSSXDataCollectionSample(dc.DataCollection.dataCollectionId);
 
   if (isError) throw Error(isError);
 
@@ -13,9 +13,9 @@ export default function SSXDataCollectionSummary({ dc }: { dc: SSXDataCollection
       <Col>
         <SimpleParameterTable
           parameters={[
-            { key: 'Sample name', value: sample?.Specimen.Macromolecule.name },
+            { key: 'Sample name', value: sample?.name },
             { key: 'Experiment type', value: dc.DataCollection.experimentType },
-            { key: 'Support', value: sample?.sampleSupport },
+            { key: 'Support', value: 'TODO' },
 
             { key: 'Exposure time', value: dc.DataCollection.exposureTime, units: 's' },
             { key: 'Repetition rate', value: dc.repetitionRate },
