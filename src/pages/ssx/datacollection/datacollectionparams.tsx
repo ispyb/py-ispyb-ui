@@ -5,8 +5,8 @@ import { SessionResponse } from 'pages/model';
 import { Col, Row } from 'react-bootstrap';
 import { SSXDataCollectionResponse, SSXSampleResponse } from '../model';
 
-export default function SSXDataCollectionBeamlineParams({ dc, session }: { dc: SSXDataCollectionResponse; session?: SessionResponse }) {
-  const { data: sample, isError } = useSSXDataCollectionSample(dc.ssxDataCollectionId);
+export default function SSXDataCollectionParams({ dc, session }: { dc: SSXDataCollectionResponse; session?: SessionResponse }) {
+  const { data: sample, isError } = useSSXDataCollectionSample(dc.DataCollection.dataCollectionId);
   if (isError) throw Error(isError);
 
   return (
@@ -61,6 +61,7 @@ export function Section2({ dc }: { dc: SSXDataCollectionResponse; session?: Sess
     { key: 'Exposure Time', value: dc.DataCollection.exposureTime, units: 's' },
     { key: 'Flux start', value: convertToExponential(dc.DataCollection.flux, 2), units: 'ph/sec' },
     { key: 'Flux end', value: convertToExponential(dc.DataCollection.flux_end, 2), units: 'ph/sec' },
+    { key: 'Temperature', value: dc.DataCollection.averageTemperature },
   ];
   return <SimpleParameterTable parameters={parameters}></SimpleParameterTable>;
 }

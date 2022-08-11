@@ -24,6 +24,11 @@ export function getSSXDataCollection({ datacollectionId }: { datacollectionId: n
 export function getSSXDataCollectionSample({ datacollectionId }: { datacollectionId: number }): RequestInformation {
   return { url: `${server_py}/ssx/datacollection/${datacollectionId}/sample`, token };
 }
+
+export function getSSXDataCollectionSequences({ datacollectionId }: { datacollectionId: number }): RequestInformation {
+  return { url: `${server_py}/ssx/datacollection/${datacollectionId}/sequences`, token };
+}
+
 export function getDataCollectionSampleThumbnail({ dataCollectionId, thumbnailNumber }: { dataCollectionId: number; thumbnailNumber: number }): RequestInformation {
   return { url: `${server_py}/events/image/${dataCollectionId}?imageId=${thumbnailNumber}&fullSize=true`, token };
 }

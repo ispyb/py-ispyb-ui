@@ -5,11 +5,11 @@ import { SessionResponse } from 'pages/model';
 
 import { Tab, Card, Container, Row, Col, Badge, Nav } from 'react-bootstrap';
 import { SSXDataCollectionResponse } from '../model';
-import SSXDataCollectionBeamlineParams from './datacollectionbeamlineparams';
-import SSXDataCollectionExperiment from './datacollectionexperiment';
+import SSXDataCollectionParams from './datacollectionparams';
 import SSXDataCollectionProcessing from './datacollectionprocessing';
 import SSXDataCollectionSample from './datacollectionsample';
 import SSXDataCollectionSummary from './datacollectionsummary';
+import SSXDataCollectionSequence from './datacollectionsequence';
 
 export default function SSXDataCollectionPane({ dc, session }: { dc: SSXDataCollectionResponse; session?: SessionResponse }) {
   return (
@@ -32,7 +32,7 @@ export default function SSXDataCollectionPane({ dc, session }: { dc: SSXDataColl
                       <Nav.Link eventKey="Summary">Summary</Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
-                      <Nav.Link eventKey="Beamline">Beamline parameters</Nav.Link>
+                      <Nav.Link eventKey="Parameters">Parameters</Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
                       <Nav.Link eventKey="Sample">Sample</Nav.Link>
@@ -41,7 +41,7 @@ export default function SSXDataCollectionPane({ dc, session }: { dc: SSXDataColl
                       <Nav.Link eventKey="Processing">Processing</Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
-                      <Nav.Link eventKey="Experiment">Experiment details</Nav.Link>
+                      <Nav.Link eventKey="Sequence">Sequence</Nav.Link>
                     </Nav.Item>
                   </Nav>
                 </Col>
@@ -63,14 +63,14 @@ export default function SSXDataCollectionPane({ dc, session }: { dc: SSXDataColl
                   <SSXDataCollectionProcessing dc={dc}></SSXDataCollectionProcessing>
                 </LazyWrapper>
               </Tab.Pane>
-              <Tab.Pane eventKey="Experiment" title="Experiment details">
+              <Tab.Pane eventKey="Sequence" title="Sequence">
                 <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                  <SSXDataCollectionExperiment dc={dc}></SSXDataCollectionExperiment>
+                  <SSXDataCollectionSequence dc={dc}></SSXDataCollectionSequence>
                 </LazyWrapper>
               </Tab.Pane>
-              <Tab.Pane eventKey="Beamline" title="Beamline parameters">
+              <Tab.Pane eventKey="Parameters" title="Parameters">
                 <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                  <SSXDataCollectionBeamlineParams dc={dc} session={session}></SSXDataCollectionBeamlineParams>
+                  <SSXDataCollectionParams dc={dc} session={session}></SSXDataCollectionParams>
                 </LazyWrapper>
               </Tab.Pane>
             </Tab.Content>

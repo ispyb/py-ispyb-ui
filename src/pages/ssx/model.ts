@@ -246,3 +246,22 @@ export type SampleComponentResponse = {
   composition: string;
   concentration: number;
 };
+
+export type SSXSequenceEventResponse = {
+  sequenceEventId: number;
+  sequenceId: number;
+  imageId: number;
+  type: string;
+  name: string;
+  time: string;
+  duration: number;
+  period: number;
+  repetition: number;
+};
+
+export type SSXSequenceResponse = {
+  sequenceId: number;
+  dataCollectionId: number;
+  name: string;
+  sequence_events: SSXSequenceEventResponse[];
+};

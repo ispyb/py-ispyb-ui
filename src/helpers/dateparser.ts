@@ -9,6 +9,9 @@ export function formatDateToDay(dateTime: string): string {
 export function formatDateToDayAndTime(dateTime: string): string {
   return formatDateTo(dateTime, 'dd/MM/yyyy HH:mm:ss');
 }
+export function formatDateToDayAndPreciseTime(dateTime: string): string {
+  return formatDateTo(dateTime, 'dd/MM/yyyy HH:mm:ss.SSS');
+}
 
 /**
  *
@@ -32,7 +35,7 @@ export function dateToTimestamp(dateTime?: string): number {
 }
 
 export function parseDate(dateTime: string): Date {
-  const formats = ['MMM d, yyyy h:mm:ss aaa'];
+  const formats = ['MMM d, yyyy h:mm:ss aaa', "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"];
   for (const myFormat of formats) {
     if (isMatch(dateTime, myFormat)) {
       return parse(dateTime, myFormat, new Date());
