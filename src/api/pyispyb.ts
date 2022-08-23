@@ -25,6 +25,14 @@ export function getSSXDataCollectionSample({ datacollectionId }: { datacollectio
   return { url: `${server_py}/ssx/datacollection/${datacollectionId}/sample`, token };
 }
 
+export function getDataCollectionGraphs({ datacollectionId }: { datacollectionId: number }): RequestInformation {
+  return { url: `${server_py}/ssx/datacollection/${datacollectionId}/graphs`, token };
+}
+
+export function getDataCollectionGraphData({ graphId }: { graphId: number }): RequestInformation {
+  return { url: `${server_py}/ssx/graph/${graphId}/data`, token };
+}
+
 export function getSSXDataCollectionSequences({ datacollectionId }: { datacollectionId: number }): RequestInformation {
   return { url: `${server_py}/ssx/datacollection/${datacollectionId}/sequences`, token };
 }

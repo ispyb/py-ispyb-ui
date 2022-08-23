@@ -190,6 +190,17 @@ export type SSXSampleResponse = {
   sample_components: SampleComponentResponse[];
 };
 
+export type GraphResponse = {
+  graphId: number;
+  name: string;
+};
+
+export type GraphDataResponse = {
+  graphId: number;
+  x: number;
+  y: number;
+};
+
 export type CrystalResponse = {
   crystalId: number;
   diffractionPlanId: number;

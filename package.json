@@ -42,6 +42,7 @@
     "react-scripts": "5.0.0",
     "react-select": "^5.2.2",
     "react-visibility-sensor": "^5.1.1",
+    "recharts": "^2.1.13",
     "redux-devtools-extension": "^2.13.9",
     "redux-persist": "^6.0.0",
     "redux-promise-middleware": "^6.1.2",
