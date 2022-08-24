@@ -6,7 +6,7 @@ import _ from 'lodash';
 import { Alert, Badge, Col, Row, Toast } from 'react-bootstrap';
 import BootstrapTable from 'react-bootstrap-table-next';
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
-import { SSXDataCollectionResponse, SSXSequenceResponse } from '../model';
+import { SSXDataCollectionResponse, SSXSequenceEventTypeResponse, SSXSequenceResponse } from '../model';
 
 export default function SSXDataCollectionSequence({ dc }: { dc: SSXDataCollectionResponse }) {
   const { data: sequences, isError } = useSSXDataCollectionSequences(dc.DataCollection.dataCollectionId);
@@ -46,6 +46,11 @@ export function Sequence({ sequence }: { sequence: SSXSequenceResponse }) {
   );
 }
 
+function formatEventTypeObj(type: SSXSequenceEventTypeResponse | undefined) {
+  if (type) return formatEventType(type.name);
+  return undefined;
+}
+
 function formatEventType(type: string) {
   if (type == 'LaserExcitation') return 'Laser excitation';
   if (type == 'XrayDetection') return 'Xray detection';
@@ -55,7 +60,7 @@ function formatEventType(type: string) {
 }
 
 export function SummarySequence({ sequence }: { sequence: SSXSequenceResponse }) {
-  const groups = _(sequence.sequence_events).groupBy((s) => s.type);
+  const groups = _(sequence.sequence_events).groupBy((s) => s.SequenceEventType.name);
   return (
     <>
       {groups
@@ -97,7 +102,7 @@ export function DetailedSequence({ sequence }: { sequence: SSXSequenceResponse }
       columns={[
         { text: 'id', dataField: 'sequenceEventId', hidden: true },
         { text: 'time', dataField: 'time', sort: true, formatter: formatDateToDayAndPreciseTime, sortValue: dateToTimestamp },
-        { text: 'type', dataField: 'type', sort: true, formatter: formatEventType },
+        { text: 'type', dataField: 'SequenceEventType', sort: true, formatter: formatEventTypeObj },
         { text: 'name', dataField: 'name', sort: true, hidden: !sequence.sequence_events.some((e) => e.name) },
         { text: 'duration', dataField: 'duration', sort: true, hidden: !sequence.sequence_events.some((e) => e.duration) },
         { text: 'period', dataField: 'period', sort: true, hidden: !sequence.sequence_events.some((e) => e.period) },

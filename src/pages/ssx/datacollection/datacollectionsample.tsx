@@ -1,4 +1,4 @@
-import { faFlask } from '@fortawesome/free-solid-svg-icons';
+import { faFlask, faVial } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getDataCollectionSampleThumbnail } from 'api/pyispyb';
 import { ZoomImageBearer } from 'components/image/zoomimage';
@@ -43,35 +43,72 @@ export function SamplePreparation({ sample }: { sample?: SSXSampleResponse }) {
     return <p>Could not find sample information.</p>;
   }
   return (
-    <Table size="sm" striped bordered hover style={{ margin: 10 }}>
-      <thead>
-        <tr>
-          <th>
-            <h5>
-              <FontAwesomeIcon icon={faFlask} style={{ marginRight: 10 }} />
-              Sample components
-            </h5>
-          </th>
-          <th>Name</th>
-          <th>Concentration</th>
-          <th>Composition</th>
-        </tr>
-      </thead>
-      <tbody>
-        {sample.sample_components
-          .sort((a, b) => a.componentType.localeCompare(b.componentType))
-          .map((component) => {
-            return (
-              <tr>
-                <th>{componentTypeDisplayValue(component.componentType)}</th>
-                <td>{component.name}</td>
-                <td>{component.concentration}</td>
-                <td>{component.composition}</td>
-              </tr>
-            );
-          })}
-      </tbody>
-    </Table>
+    <Col>
+      {sample.Crystal.crystal_compositions.length ? (
+        <Table size="sm" striped bordered hover style={{ margin: 10 }}>
+          <thead>
+            <tr>
+              <th>
+                <h5>
+                  <FontAwesomeIcon icon={faVial} style={{ marginRight: 10 }} />
+                  Crystal components
+                </h5>
+              </th>
+              <th>Name</th>
+              <th>Concentration</th>
+              <th>Composition</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sample.Crystal.crystal_compositions
+              .sort((a, b) => a.Component.ComponentType.name.localeCompare(b.Component.ComponentType.name))
+              .map((composition) => {
+                return (
+                  <tr>
+                    <th>{componentTypeDisplayValue(composition.Component.ComponentType.name)}</th>
+
+                    <td>{composition.Component.name}</td>
+                    <td>{composition.abundance}</td>
+                    <td>{composition.Component.composition}</td>
+                  </tr>
+                );
+              })}
+          </tbody>
+        </Table>
+      ) : (
+        <></>
+      )}
+      <Table size="sm" striped bordered hover style={{ margin: 10 }}>
+        <thead>
+          <tr>
+            <th>
+              <h5>
+                <FontAwesomeIcon icon={faFlask} style={{ marginRight: 10 }} />
+                Sample components
+              </h5>
+            </th>
+            <th>Name</th>
+            <th>Concentration</th>
+            <th>Composition</th>
+          </tr>
+        </thead>
+        <tbody>
+          {sample.sample_compositions
+            .sort((a, b) => a.Component.ComponentType.name.localeCompare(b.Component.ComponentType.name))
+            .map((composition) => {
+              return (
+                <tr>
+                  <th>{componentTypeDisplayValue(composition.Component.ComponentType.name)}</th>
+
+                  <td>{composition.Component.name}</td>
+                  <td>{composition.abundance}</td>
+                  <td>{composition.Component.composition}</td>
+                </tr>
+              );
+            })}
+        </tbody>
+      </Table>
+    </Col>
   );
 }
 

@@ -22,7 +22,7 @@ export default function SSXDataCollectionPane({ dc, session }: { dc: SSXDataColl
                 <Col md="auto">
                   <h5>
                     {formatDateToDayAndTime(dc.DataCollection.startTime)}
-                    <Badge bg="info">{dc.DataCollection.experimentType}</Badge>
+                    <Badge bg="info">{dc.DataCollection.DataCollectionGroup.experimentType}</Badge>
                   </h5>
                 </Col>
                 <Col></Col>
@@ -36,9 +36,6 @@ export default function SSXDataCollectionPane({ dc, session }: { dc: SSXDataColl
                     </Nav.Item>
                     <Nav.Item>
                       <Nav.Link eventKey="Sample">Sample</Nav.Link>
-                    </Nav.Item>
-                    <Nav.Item>
-                      <Nav.Link eventKey="Processing">Processing</Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
                       <Nav.Link eventKey="Sequence">Sequence</Nav.Link>
@@ -56,11 +53,6 @@ export default function SSXDataCollectionPane({ dc, session }: { dc: SSXDataColl
               <Tab.Pane eventKey="Sample" title="Sample">
                 <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
                   <SSXDataCollectionSample dc={dc}></SSXDataCollectionSample>
-                </LazyWrapper>
-              </Tab.Pane>
-              <Tab.Pane eventKey="Processing" title="Processing">
-                <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                  <SSXDataCollectionProcessing dc={dc}></SSXDataCollectionProcessing>
                 </LazyWrapper>
               </Tab.Pane>
               <Tab.Pane eventKey="Sequence" title="Sequence">

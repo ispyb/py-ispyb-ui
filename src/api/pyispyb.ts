@@ -29,6 +29,10 @@ export function getDataCollectionGraphs({ datacollectionId }: { datacollectionId
   return { url: `${server_py}/ssx/datacollection/${datacollectionId}/graphs`, token };
 }
 
+export function getSSXDataCollectionHits({ datacollectionId }: { datacollectionId: number }): RequestInformation {
+  return { url: `${server_py}/ssx/datacollection/${datacollectionId}/hits`, token };
+}
+
 export function getDataCollectionGraphData({ graphId }: { graphId: number }): RequestInformation {
   return { url: `${server_py}/ssx/graph/${graphId}/data`, token };
 }

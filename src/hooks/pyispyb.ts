@@ -9,8 +9,9 @@ import {
   getSSXDataCollectionSample,
   getSession,
   getSSXDataCollectionSequences,
+  getSSXDataCollectionHits,
 } from 'api/pyispyb';
-import { SSXDataCollectionResponse, SSXSampleResponse, SSXSequenceResponse, GraphResponse, GraphDataResponse } from 'pages/ssx/model';
+import { SSXDataCollectionResponse, SSXSampleResponse, SSXSequenceResponse, GraphResponse, GraphDataResponse, SSXHitsResponse } from 'pages/ssx/model';
 import { SessionResponse } from 'pages/model';
 
 const fetcher = (url: string, token: string) =>
@@ -53,6 +54,10 @@ export function useDataCollectionGraphData(graphId: number) {
 
 export function useSSXDataCollectionSequences(datacollectionId: number) {
   return doGet<SSXSequenceResponse[]>(getSSXDataCollectionSequences({ datacollectionId }));
+}
+
+export function useSSXDataCollectionHits(datacollectionId: number) {
+  return doGet<SSXHitsResponse>(getSSXDataCollectionHits({ datacollectionId }));
 }
 
 export function useSession(sessionId: string) {

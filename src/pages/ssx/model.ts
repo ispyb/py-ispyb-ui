@@ -72,7 +72,6 @@ export type DataCollectionResponse = {
   imageQualityIndicatorsCSVPath: string;
   blSampleId: number;
   sessionId: number;
-  experimentType: string;
   crystalClass: string;
   chiStart: number;
   detectorMode: string;
@@ -187,7 +186,7 @@ export type SSXSampleResponse = {
   shape: string;
   subLocation: number;
   Crystal: CrystalResponse;
-  sample_components: SampleComponentResponse[];
+  sample_compositions: SampleCompositionResponse[];
 };
 
 export type GraphResponse = {
@@ -226,6 +225,7 @@ export type CrystalResponse = {
   abundance: number;
   packingFraction: number;
   Protein: ProteinResponse;
+  crystal_compositions: CrystalCompositionResponse[];
 };
 
 export type ProteinResponse = {
@@ -249,25 +249,56 @@ export type ProteinResponse = {
   concentrationTypeId: number;
 };
 
-export type SampleComponentResponse = {
-  sampleComponentId: number;
-  blSampleId: number;
+export type ComponentTypeResponse = {
   name: string;
-  componentType: string;
+};
+
+export type ComponentResponse = {
+  componentId: number;
+  componentTypeId: number;
+  name: string;
   composition: string;
   concentration: number;
+  proposalId: number;
+  ComponentType: ComponentTypeResponse;
+};
+
+export type SampleCompositionResponse = {
+  Component: ComponentResponse;
+  abundance: number;
+  blSampleId: number;
+  componentId: number;
+  concentrationTypeId: number;
+  ph: number;
+  ratio: number;
+  sampleCompositionId: number;
+};
+
+export type CrystalCompositionResponse = {
+  Component: ComponentResponse;
+  abundance: number;
+  crystalId: number;
+  componentId: number;
+  concentrationTypeId: number;
+  ph: number;
+  ratio: number;
+  crystalCompositionId: number;
+};
+
+export type SSXSequenceEventTypeResponse = {
+  name: string;
 };
 
 export type SSXSequenceEventResponse = {
   sequenceEventId: number;
   sequenceId: number;
   imageId: number;
-  type: string;
   name: string;
   time: string;
   duration: number;
   period: number;
   repetition: number;
+  SequenceEventType: SSXSequenceEventTypeResponse;
 };
 
 export type SSXSequenceResponse = {
@@ -275,4 +306,11 @@ export type SSXSequenceResponse = {
   dataCollectionId: number;
   name: string;
   sequence_events: SSXSequenceEventResponse[];
+};
+
+export type SSXHitsResponse = {
+  nbHits: number;
+  nbIndexed: number;
+  laticeType: string;
+  estimatedResolution: number;
 };
