@@ -3,10 +3,9 @@ import LoadingPanel from 'components/loading/loadingpanel';
 import { formatDateToDayAndTime } from 'helpers/dateparser';
 import { SessionResponse } from 'pages/model';
 
-import { Tab, Card, Container, Row, Col, Badge, Nav } from 'react-bootstrap';
+import { Tab, Card, Container, Row, Col, Nav } from 'react-bootstrap';
 import { SSXDataCollectionResponse } from '../model';
 import SSXDataCollectionParams from './datacollectionparams';
-import SSXDataCollectionProcessing from './datacollectionprocessing';
 import SSXDataCollectionSample from './datacollectionsample';
 import SSXDataCollectionSummary from './datacollectionsummary';
 import SSXDataCollectionSequence from './datacollectionsequence';

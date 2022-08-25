@@ -1,11 +1,10 @@
-import { faInfoCircle, faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { dateToTimestamp, formatDateToDayAndPreciseTime } from 'helpers/dateparser';
 import { useSSXDataCollectionSequences } from 'hooks/pyispyb';
 import _ from 'lodash';
 import { Alert, Badge, Col, Row, Toast } from 'react-bootstrap';
 import BootstrapTable from 'react-bootstrap-table-next';
-import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 import { SSXDataCollectionResponse, SSXSequenceEventTypeResponse, SSXSequenceResponse } from '../model';
 
 export default function SSXDataCollectionSequence({ dc }: { dc: SSXDataCollectionResponse }) {

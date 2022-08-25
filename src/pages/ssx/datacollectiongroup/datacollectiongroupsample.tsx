@@ -1,11 +1,9 @@
 import { faFlask, faVial } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { getDataCollectionSampleThumbnail } from 'api/pyispyb';
-import { ZoomImageBearer } from 'components/image/zoomimage';
 import SimpleParameterTable from 'components/table/simpleparametertable';
-import { useSSXDataCollectionGroupSample, useSSXDataCollectionSample } from 'hooks/pyispyb';
+import { useSSXDataCollectionGroupSample } from 'hooks/pyispyb';
 import { Col, Row, Table } from 'react-bootstrap';
-import { DataCollectionGroupResponse, SSXDataCollectionResponse, SSXSampleResponse } from '../model';
+import { DataCollectionGroupResponse, SSXSampleResponse } from '../model';
 
 export default function SSXDataCollectionGroupSample({ dcg }: { dcg: DataCollectionGroupResponse }) {
   const { data: sample, isError } = useSSXDataCollectionGroupSample(dcg.dataCollectionGroupId);

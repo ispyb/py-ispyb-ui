@@ -19,6 +19,7 @@ export default function SSXDataCollectionGroupPane({ dcg, session, proposalName 
                   <h5>
                     {formatDateToDayAndTime(dcg.startTime)}
                     <Badge bg="info">{dcg.experimentType}</Badge>
+                    <Badge bg="info">{dcg.nbDataCollection} collections</Badge>
                   </h5>
                 </Col>
                 <Col></Col>

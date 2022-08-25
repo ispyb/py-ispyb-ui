@@ -2,7 +2,7 @@ import SimpleParameterTable from 'components/table/simpleparametertable';
 import { useDataCollectionGraphData, useDataCollectionGraphs, useSSXDataCollectionHits, useSSXDataCollectionSample } from 'hooks/pyispyb';
 import { Button, ButtonGroup, Col, Row } from 'react-bootstrap';
 import { GraphResponse, SSXDataCollectionResponse } from '../model';
-import { BarChart, Bar, Brush, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label, RadialBarChart, RadialBar, ResponsiveContainer, PieChart, Pie } from 'recharts';
+import { BarChart, Bar, Brush, XAxis, YAxis, CartesianGrid, Tooltip, Legend, RadialBarChart, RadialBar, ResponsiveContainer } from 'recharts';
 import { Suspense, useState } from 'react';
 import LoadingPanel from 'components/loading/loadingpanel';
 

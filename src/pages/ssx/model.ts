@@ -126,6 +126,7 @@ export type DataCollectionGroupResponse = {
   actualContainerBarcode: string;
   actualContainerSlotInSC: number;
   xtalSnapshotFullPath: string;
+  nbDataCollection?: number;
 };
 
 export type DetectorResponse = {

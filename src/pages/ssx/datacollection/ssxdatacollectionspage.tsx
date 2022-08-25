@@ -1,4 +1,4 @@
-import { faArrowRight, faBackward, faInfoCircle, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
+import { faBackward, faInfoCircle, faPlusCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LazyWrapper from 'components/loading/lazywrapper';
 import LoadingPanel from 'components/loading/loadingpanel';
@@ -7,7 +7,7 @@ import { useSession, useSSXDataCollectionGroup, useSSXDataCollections } from 'ho
 import { SessionResponse } from 'pages/model';
 import Page from 'pages/page';
 import { Suspense } from 'react';
-import { Alert, Button, Card } from 'react-bootstrap';
+import { Alert, Card } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import SSXDataCollectionGroupPane from '../datacollectiongroup/ssxdatacollectiongrouppane';
 import { DataCollectionGroupResponse } from '../model';
