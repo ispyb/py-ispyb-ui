@@ -16,13 +16,22 @@ import {
 } from 'api/pyispyb';
 import { SSXDataCollectionResponse, SSXSampleResponse, SSXSequenceResponse, GraphResponse, GraphDataResponse, SSXHitsResponse, DataCollectionGroupResponse } from 'pages/ssx/model';
 import { SessionResponse } from 'pages/model';
+import { store } from 'store';
+import { doLogOut } from 'redux/actions/user';
 
 const fetcher = (url: string, token: string) =>
   axios
     .get(url, {
       headers: { Authorization: `Bearer ${token}` },
     })
-    .then((res) => res.data);
+    .catch((error) => {
+      console.log(error);
+      if (error.response.status == 401) {
+        store.dispatch(doLogOut());
+      }
+      throw error;
+    })
+    .then((res) => (res ? res.data : undefined));
 
 // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-explicit-any
 function doGet<T = any>(info: RequestInformation, editData: (data: T) => T = (d) => d, suspense = true) {

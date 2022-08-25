@@ -14,7 +14,6 @@ export default function SessionsPage({ user }: { user: User }) {
   const { isManager, username } = user;
   const { areEMColumnsVisible, areMXColumnsVisible, areSSXColumnsVisible, areSAXSColumnsVisible } = useAppSelector((state) => state.ui.sessionsPage);
   const beamlines: string[] = useGetBeamlines({ areMXColumnsVisible, areSSXColumnsVisible, areSAXSColumnsVisible, areEMColumnsVisible });
-  console.log(beamlines);
   const params: Record<string, string> = useQueryParams();
 
   let { startDate: paramStartDate, endDate: paramEndDate } = params;

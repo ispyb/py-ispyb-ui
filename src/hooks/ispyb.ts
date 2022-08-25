@@ -25,8 +25,20 @@ import { EnergyScan, WorkflowStep, FluorescenceSpectra, Sample, DataCollectionGr
 import { ContainerDewar, Proposal, Session } from 'pages/model';
 import { dateToTimestamp } from 'helpers/dateparser';
 import { parse } from 'date-fns';
+import { store } from 'store';
+import { doLogOut } from 'redux/actions/user';
 
-const fetcher = (url: string) => axios.get(url).then((res) => res.data);
+const fetcher = (url: string) =>
+  axios
+    .get(url)
+    .catch((error) => {
+      console.log(error);
+      if (error.response.status == 401) {
+        store.dispatch(doLogOut());
+      }
+      throw error;
+    })
+    .then((res) => (res ? res.data : undefined));
 
 // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-explicit-any
 function doGet<T = any>(url: string, editData: (data: T) => T = (d) => d, suspense = true) {
