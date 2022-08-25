@@ -65,7 +65,7 @@ export default function SSXDataCollectionsPage() {
         {session && (
           <Alert variant="info" style={{ margin: 10 }}>
             <h5 style={{ marginBottom: 15 }}>{<FontAwesomeIcon style={{ marginRight: 10 }} icon={faPlusCircle}></FontAwesomeIcon>}Details for experiment: </h5>
-            {session && dcg && <SSXDataCollectionGroupPane dcg={dcg} proposalName={proposalName} session={session}></SSXDataCollectionGroupPane>}
+            {session && dcg && <SSXDataCollectionGroupPane monitorBtn={false} dcg={dcg} proposalName={proposalName} session={session}></SSXDataCollectionGroupPane>}
             <a style={{ margin: 10 }} href={`/${proposalName}/SSX/${session.sessionId}`}>
               <h5>{<FontAwesomeIcon style={{ marginRight: 10 }} icon={faBackward}></FontAwesomeIcon>}Back to experiments</h5>
             </a>
@@ -84,10 +84,6 @@ export function SSXSessionInfo({ session, proposalName, dcg }: { session?: Sessi
         <h5>
           {proposalName} on {session.beamLineName} - Session from {formatDateToDayAndTime(session.startDate)} to {formatDateToDayAndTime(session.endDate)}
         </h5>
-        {/* <h5>
-          {<FontAwesomeIcon style={{ marginRight: 10 }} icon={faArrowRight}></FontAwesomeIcon>}
-          Experiment from {formatDateToDayAndTime(dcg.startTime)} to {formatDateToDayAndTime(dcg.endTime)}
-        </h5> */}
       </Alert>
     );
   }

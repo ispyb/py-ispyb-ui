@@ -7,7 +7,17 @@ import { Tab, Card, Container, Row, Col, Badge, Nav, Button } from 'react-bootst
 import { DataCollectionGroupResponse } from '../model';
 import SSXDataCollectionGroupSample from './datacollectiongroupsample';
 
-export default function SSXDataCollectionGroupPane({ dcg, session, proposalName }: { dcg: DataCollectionGroupResponse; session: SessionResponse; proposalName: string }) {
+export default function SSXDataCollectionGroupPane({
+  dcg,
+  session,
+  proposalName,
+  monitorBtn = true,
+}: {
+  dcg: DataCollectionGroupResponse;
+  session: SessionResponse;
+  proposalName: string;
+  monitorBtn?: boolean;
+}) {
   return (
     <div style={{ margin: 5 }}>
       <Tab.Container defaultActiveKey="Sample">
@@ -38,15 +48,17 @@ export default function SSXDataCollectionGroupPane({ dcg, session, proposalName 
           </Card.Header>
           <Card.Body>
             <Row>
-              <Col md={'auto'} style={{ display: 'flex' }}>
-                <Button
-                  style={{ display: 'flex', alignItems: 'center', height: '100%', width: 120, borderRadius: 0, borderRight: '1px solid lightgrey' }}
-                  variant="secondary"
-                  href={`/${proposalName}/SSX/${session.sessionId}/${dcg.dataCollectionGroupId}`}
-                >
-                  <p>Monitor experiment</p>
-                </Button>
-              </Col>
+              {monitorBtn && (
+                <Col md={'auto'} style={{ display: 'flex' }}>
+                  <Button
+                    style={{ display: 'flex', alignItems: 'center', height: '100%', width: 120, borderRadius: 0, borderRight: '1px solid lightgrey' }}
+                    variant="secondary"
+                    href={`/${proposalName}/SSX/${session.sessionId}/${dcg.dataCollectionGroupId}`}
+                  >
+                    <p>Monitor experiment</p>
+                  </Button>
+                </Col>
+              )}
               <Col>
                 <Tab.Content>
                   <Tab.Pane eventKey="Sample" title="Sample">
