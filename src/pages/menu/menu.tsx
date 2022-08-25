@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { doLogOut } from 'redux/actions/user';
 import { Container, Navbar, Nav, Button, Col, Row } from 'react-bootstrap';
@@ -30,7 +30,9 @@ export default function Menu({ selected }: { selected?: string }) {
         <MainMenu selected={selected} user={user}></MainMenu>
       </Row>
       <Row>
-        <ProposalMenu selected={selected} user={user}></ProposalMenu>
+        <Suspense fallback={<></>}>
+          <ProposalMenu selected={selected} user={user}></ProposalMenu>
+        </Suspense>
       </Row>
     </Col>
   );

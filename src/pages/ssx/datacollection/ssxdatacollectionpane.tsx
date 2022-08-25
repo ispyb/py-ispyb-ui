@@ -10,6 +10,7 @@ import SSXDataCollectionProcessing from './datacollectionprocessing';
 import SSXDataCollectionSample from './datacollectionsample';
 import SSXDataCollectionSummary from './datacollectionsummary';
 import SSXDataCollectionSequence from './datacollectionsequence';
+import { Suspense } from 'react';
 
 export default function SSXDataCollectionPane({ dc, session }: { dc: SSXDataCollectionResponse; session?: SessionResponse }) {
   return (
@@ -20,10 +21,7 @@ export default function SSXDataCollectionPane({ dc, session }: { dc: SSXDataColl
             <Container fluid>
               <Row>
                 <Col md="auto">
-                  <h5>
-                    {formatDateToDayAndTime(dc.DataCollection.startTime)}
-                    <Badge bg="info">{dc.DataCollection.DataCollectionGroup.experimentType}</Badge>
-                  </h5>
+                  <h5>{formatDateToDayAndTime(dc.DataCollection.startTime)}</h5>
                 </Col>
                 <Col></Col>
                 <Col md="auto">
@@ -52,17 +50,23 @@ export default function SSXDataCollectionPane({ dc, session }: { dc: SSXDataColl
               </Tab.Pane>
               <Tab.Pane eventKey="Sample" title="Sample">
                 <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                  <SSXDataCollectionSample dc={dc}></SSXDataCollectionSample>
+                  <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+                    <SSXDataCollectionSample dc={dc}></SSXDataCollectionSample>
+                  </Suspense>
                 </LazyWrapper>
               </Tab.Pane>
               <Tab.Pane eventKey="Sequence" title="Sequence">
                 <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                  <SSXDataCollectionSequence dc={dc}></SSXDataCollectionSequence>
+                  <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+                    <SSXDataCollectionSequence dc={dc}></SSXDataCollectionSequence>
+                  </Suspense>
                 </LazyWrapper>
               </Tab.Pane>
               <Tab.Pane eventKey="Parameters" title="Parameters">
                 <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                  <SSXDataCollectionParams dc={dc} session={session}></SSXDataCollectionParams>
+                  <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+                    <SSXDataCollectionParams dc={dc} session={session}></SSXDataCollectionParams>
+                  </Suspense>
                 </LazyWrapper>
               </Tab.Pane>
             </Tab.Content>

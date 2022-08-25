@@ -3,7 +3,8 @@ import { useDataCollectionGraphData, useDataCollectionGraphs, useSSXDataCollecti
 import { Button, ButtonGroup, Col, Row } from 'react-bootstrap';
 import { GraphResponse, SSXDataCollectionResponse } from '../model';
 import { BarChart, Bar, Brush, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Label, RadialBarChart, RadialBar, ResponsiveContainer, PieChart, Pie } from 'recharts';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
+import LoadingPanel from 'components/loading/loadingpanel';
 
 export default function SSXDataCollectionSummary({ dc }: { dc: SSXDataCollectionResponse }) {
   const { data: sample, isError } = useSSXDataCollectionSample(dc.DataCollection.dataCollectionId);
@@ -29,10 +30,14 @@ export default function SSXDataCollectionSummary({ dc }: { dc: SSXDataCollection
         ></SimpleParameterTable>
       </Col>
       <Col md={'auto'}>
-        <HitsStatistics dc={dc}></HitsStatistics>
+        <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+          <HitsStatistics dc={dc}></HitsStatistics>
+        </Suspense>
       </Col>
       <Col>
-        <UnitCellStatistics dc={dc}></UnitCellStatistics>
+        <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+          <UnitCellStatistics dc={dc}></UnitCellStatistics>
+        </Suspense>
       </Col>
     </Row>
   );
@@ -62,7 +67,7 @@ export function HitsStatistics({ dc }: { dc: SSXDataCollectionResponse }) {
 
   return (
     <>
-      <ResponsiveContainer width={300} height="100%" debounce={1}>
+      <ResponsiveContainer width={300} height={300} debounce={1}>
         <RadialBarChart cx="50%" cy="50%" innerRadius="20%" outerRadius="100%" barSize={30} data={data} startAngle={180} endAngle={0}>
           <RadialBar label={{ position: 'insideStart', fill: '#fff' }} background dataKey="nb" isAnimationActive={false} />
           <Legend iconSize={10} layout="vertical" verticalAlign="middle" wrapperStyle={style} />
@@ -87,7 +92,9 @@ export function UnitCellStatistics({ dc }: { dc: SSXDataCollectionResponse }) {
 
   return (
     <>
-      <UnitCellParamGraph graph={graphs[selected]}></UnitCellParamGraph>
+      <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+        <UnitCellParamGraph graph={graphs[selected]}></UnitCellParamGraph>
+      </Suspense>
       <Row style={{ marginLeft: 45, marginBottom: 5 }}>
         <Col></Col>
         <Col>

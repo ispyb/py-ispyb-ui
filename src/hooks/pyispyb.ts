@@ -10,8 +10,11 @@ import {
   getSession,
   getSSXDataCollectionSequences,
   getSSXDataCollectionHits,
+  getSSXDataCollectionGroups,
+  getSSXDataCollectionGroupSample,
+  getSSXDataCollectionGroup,
 } from 'api/pyispyb';
-import { SSXDataCollectionResponse, SSXSampleResponse, SSXSequenceResponse, GraphResponse, GraphDataResponse, SSXHitsResponse } from 'pages/ssx/model';
+import { SSXDataCollectionResponse, SSXSampleResponse, SSXSequenceResponse, GraphResponse, GraphDataResponse, SSXHitsResponse, DataCollectionGroupResponse } from 'pages/ssx/model';
 import { SessionResponse } from 'pages/model';
 
 const fetcher = (url: string, token: string) =>
@@ -32,8 +35,16 @@ function doGet<T = any>(info: RequestInformation, editData: (data: T) => T = (d)
   };
 }
 
-export function useSSXDataCollections(sessionId: string) {
-  return doGet<SSXDataCollectionResponse[]>(getSSXDataCollections({ sessionId }));
+export function useSSXDataCollections(sessionId: string, dataCollectionGroupId: string) {
+  return doGet<SSXDataCollectionResponse[]>(getSSXDataCollections({ sessionId, dataCollectionGroupId }));
+}
+
+export function useSSXDataCollectionGroups(sessionId: string) {
+  return doGet<DataCollectionGroupResponse[]>(getSSXDataCollectionGroups({ sessionId }));
+}
+
+export function useSSXDataCollectionGroup(dataCollectionGroupId: string) {
+  return doGet<DataCollectionGroupResponse>(getSSXDataCollectionGroup({ dataCollectionGroupId }));
 }
 
 export function useSSXDataCollection(datacollectionId: number) {
@@ -42,6 +53,10 @@ export function useSSXDataCollection(datacollectionId: number) {
 
 export function useSSXDataCollectionSample(datacollectionId: number) {
   return doGet<SSXSampleResponse>(getSSXDataCollectionSample({ datacollectionId }));
+}
+
+export function useSSXDataCollectionGroupSample(datacollectiongroupId: number) {
+  return doGet<SSXSampleResponse>(getSSXDataCollectionGroupSample({ datacollectiongroupId }));
 }
 
 export function useDataCollectionGraphs(datacollectionId: number) {

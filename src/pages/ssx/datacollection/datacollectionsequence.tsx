@@ -10,7 +10,6 @@ import { SSXDataCollectionResponse, SSXSequenceEventTypeResponse, SSXSequenceRes
 
 export default function SSXDataCollectionSequence({ dc }: { dc: SSXDataCollectionResponse }) {
   const { data: sequences, isError } = useSSXDataCollectionSequences(dc.DataCollection.dataCollectionId);
-
   if (isError) throw Error(isError);
 
   if (!sequences)

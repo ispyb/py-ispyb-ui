@@ -13,8 +13,16 @@ export type RequestInformation = {
   token: string;
 };
 
-export function getSSXDataCollections({ sessionId }: { sessionId: string }): RequestInformation {
-  return { url: `${server_py}/ssx/datacollection?sessionId=${sessionId}`, token };
+export function getSSXDataCollections({ sessionId, dataCollectionGroupId }: { sessionId: string; dataCollectionGroupId: string }): RequestInformation {
+  return { url: `${server_py}/ssx/datacollection?sessionId=${sessionId}&dataCollectionGroupId=${dataCollectionGroupId}`, token };
+}
+
+export function getSSXDataCollectionGroups({ sessionId }: { sessionId: string }): RequestInformation {
+  return { url: `${server_py}/ssx/datacollectiongroup?sessionId=${sessionId}`, token };
+}
+
+export function getSSXDataCollectionGroup({ dataCollectionGroupId }: { dataCollectionGroupId: string }): RequestInformation {
+  return { url: `${server_py}/ssx/datacollectiongroup/${dataCollectionGroupId}`, token };
 }
 
 export function getSSXDataCollection({ datacollectionId }: { datacollectionId: number }): RequestInformation {
@@ -23,6 +31,10 @@ export function getSSXDataCollection({ datacollectionId }: { datacollectionId: n
 
 export function getSSXDataCollectionSample({ datacollectionId }: { datacollectionId: number }): RequestInformation {
   return { url: `${server_py}/ssx/datacollection/${datacollectionId}/sample`, token };
+}
+
+export function getSSXDataCollectionGroupSample({ datacollectiongroupId }: { datacollectiongroupId: number }): RequestInformation {
+  return { url: `${server_py}/ssx/datacollectiongroup/${datacollectiongroupId}/sample`, token };
 }
 
 export function getDataCollectionGraphs({ datacollectionId }: { datacollectionId: number }): RequestInformation {
