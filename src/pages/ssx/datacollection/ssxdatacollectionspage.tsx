@@ -2,7 +2,7 @@ import { faArrowRight, faBackward, faInfoCircle, faPlusCircle } from '@fortaweso
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LazyWrapper from 'components/loading/lazywrapper';
 import LoadingPanel from 'components/loading/loadingpanel';
-import { formatDateToDayAndTime } from 'helpers/dateparser';
+import { formatDateToDayAndTime, parseDate } from 'helpers/dateparser';
 import { useSession, useSSXDataCollectionGroup, useSSXDataCollections } from 'hooks/pyispyb';
 import { SessionResponse } from 'pages/model';
 import Page from 'pages/page';
@@ -36,13 +36,17 @@ export default function SSXDataCollectionsPage() {
   if (dcs && dcs.length) {
     content = (
       <>
-        {dcs.map((dc) => (
-          <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-            <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-              <SSXDataCollectionPane dc={dc} session={session}></SSXDataCollectionPane>
-            </Suspense>
-          </LazyWrapper>
-        ))}
+        {dcs
+          .sort((a, b) => {
+            return parseDate(b.DataCollection.startTime).getTime() - parseDate(a.DataCollection.startTime).getTime();
+          })
+          .map((dc) => (
+            <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+              <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+                <SSXDataCollectionPane dc={dc} session={session}></SSXDataCollectionPane>
+              </Suspense>
+            </LazyWrapper>
+          ))}
       </>
     );
   } else {
