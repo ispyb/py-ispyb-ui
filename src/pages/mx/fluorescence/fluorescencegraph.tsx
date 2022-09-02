@@ -2,11 +2,10 @@ import { parse } from 'papaparse';
 import { useXrfScanCsv } from 'hooks/ispyb';
 import { useState } from 'react';
 import { Button, ButtonGroup, Col, Row } from 'react-bootstrap';
-import { ResponsiveContainer, Tooltip, LineChart, ReferenceArea, CartesianGrid, XAxis, YAxis, Legend, Line, ReferenceDot, ReferenceLine } from 'recharts';
+import { ResponsiveContainer, Tooltip, LineChart, ReferenceArea, CartesianGrid, XAxis, YAxis, Legend, Line, ReferenceLine } from 'recharts';
 import { FluorescenceSpectra } from '../model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
-import { Separator } from '@storybook/components';
 
 type Props = {
   proposalName: string;
