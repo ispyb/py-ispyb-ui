@@ -138,11 +138,11 @@ export default function InteractiveGraph(props: Props) {
         <Col></Col>
         <Col md={'auto'}>
           <ButtonGroup>
-            <Button onClick={unZoom}>reset zoom</Button>
+            <Button onClick={unZoom}>Reset zoom</Button>
           </ButtonGroup>
           <ButtonGroup style={{ marginLeft: 10 }}>
-            <Button onClick={hideAll}>hide all</Button>
-            <Button onClick={showAll}>show all</Button>
+            <Button onClick={hideAll}>Hide all</Button>
+            <Button onClick={showAll}>Show all</Button>
           </ButtonGroup>
           {props.extraButtons.map((group) => {
             return <ButtonGroup style={{ marginLeft: 10 }}>{group}</ButtonGroup>;
