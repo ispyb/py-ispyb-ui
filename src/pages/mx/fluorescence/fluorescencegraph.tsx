@@ -17,7 +17,26 @@ function getRandomColor() {
   return '#' + [0, 1, 2, 3, 4, 5].map(() => letters[Math.floor(Math.random() * 12)]).join('');
 }
 
-const COLORS = [...Array(100).keys()].map(getRandomColor);
+const COLORS = [
+  'black',
+  '#c44b4b',
+  'green',
+  '#ad6b05',
+  '#8a0a7f',
+  '#948a00',
+  '#e1c4ff',
+  '#ed72e3',
+  '#3efaac',
+  '#846d9c',
+  '#00d0ff',
+  '#fcba56',
+  '#849ba1',
+  '#2d458a',
+  '#be82ff',
+  '#047064',
+  '#5d00bd',
+];
+COLORS.push(...[...Array(100).keys()].map(getRandomColor));
 
 export default function FluorescenceGraph({ proposalName, spectra }: Props) {
   const { data: csv, isError } = useXrfScanCsv({ proposalName, scanId: spectra.xfeFluorescenceSpectrumId });
@@ -101,6 +120,7 @@ export default function FluorescenceGraph({ proposalName, spectra }: Props) {
       onHideKeys={onHideKeys}
       onShowKeys={onShowKeys}
       extraButtons={extraButtons}
+      importantKeys={['fit']}
     ></InteractiveGraph>
   );
 }

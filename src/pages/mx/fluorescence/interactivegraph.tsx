@@ -4,6 +4,11 @@ import { useState } from 'react';
 import { Col, Row, ButtonGroup, Button } from 'react-bootstrap';
 import { ResponsiveContainer, Tooltip, LineChart, ReferenceArea, CartesianGrid, XAxis, YAxis, Legend, Line, ReferenceLine, TooltipProps } from 'recharts';
 
+function getRandomColor() {
+  const letters = '23456789ABCD'.split('');
+  return '#' + [0, 1, 2, 3, 4, 5].map(() => letters[Math.floor(Math.random() * 12)]).join('');
+}
+
 type dataType = { [x: string]: number };
 
 type Props = {
@@ -19,6 +24,7 @@ type Props = {
   // eslint-disable-next-line no-unused-vars
   onHideKeys: (keys: string[]) => void;
   extraButtons: React.ReactElement[][];
+  importantKeys: string[];
 };
 
 export default function InteractiveGraph(props: Props) {
@@ -29,6 +35,9 @@ export default function InteractiveGraph(props: Props) {
 
   const [refLeft, setRefLeft] = useState<undefined | number>(undefined);
   const [refRight, setRefRight] = useState<undefined | number>(undefined);
+
+  const colors = props.colors.slice();
+  colors.push(...[...Array(100).keys()].map(getRandomColor));
 
   const doZoom = () => {
     if (refLeft && refRight) {
@@ -109,8 +118,8 @@ export default function InteractiveGraph(props: Props) {
                   setHighlight(undefined);
                 }}
               />
-              {renderLines({ ...props, highlight })}
-              {renderTags({ ...props, highlight })}
+              {renderLines({ ...props, highlight, colors })}
+              {renderTags({ ...props, highlight, colors })}
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -145,7 +154,20 @@ export default function InteractiveGraph(props: Props) {
   );
 }
 
-export function renderLines(props: Props & { highlight?: string }) {
+export function renderLines(props: Props & { highlight?: string; colors: string[] }) {
+  const getLineWidth = (key: string) => {
+    if (props.highlight) {
+      if (props.highlight === key) return 4;
+      return 1.5;
+    }
+    if (props.importantKeys.includes(key)) return 6;
+    return 1.5;
+  };
+  const getLineZ = (key: string) => {
+    if (props.highlight === key) return -2;
+    if (props.importantKeys.includes(key)) return -1;
+    return 1;
+  };
   return props.keys.map((key) => (
     <Line
       key={key}
@@ -154,7 +176,8 @@ export function renderLines(props: Props & { highlight?: string }) {
       legendType={props.hiddenKeys.includes(key) ? 'cross' : 'plainline'}
       stroke={props.colors[props.keys.indexOf(key)]}
       dot={false}
-      strokeWidth={props.highlight === key ? 3 : 1}
+      strokeWidth={getLineWidth(key)}
+      z={getLineZ(key)}
       strokeDasharray={props.highlight && props.highlight !== key ? '5 5' : undefined}
       hide={props.hiddenKeys.includes(key) && props.highlight !== key}
       isAnimationActive={false}
@@ -162,7 +185,7 @@ export function renderLines(props: Props & { highlight?: string }) {
   ));
 }
 
-export function renderTags(props: Props & { highlight?: string }) {
+export function renderTags(props: Props & { highlight?: string; colors: string[] }) {
   return props.keys
     .filter((key) => {
       if (props.hiddenKeys.includes(key) && props.highlight !== key) return false;
