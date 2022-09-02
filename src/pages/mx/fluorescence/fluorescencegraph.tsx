@@ -12,11 +12,6 @@ type Props = {
 
 type parseType = { [x: string]: number };
 
-function getRandomColor() {
-  const letters = '23456789ABCD'.split('');
-  return '#' + [0, 1, 2, 3, 4, 5].map(() => letters[Math.floor(Math.random() * 12)]).join('');
-}
-
 const COLORS = [
   'black',
   '#c44b4b',
@@ -36,7 +31,6 @@ const COLORS = [
   '#047064',
   '#5d00bd',
 ];
-COLORS.push(...[...Array(100).keys()].map(getRandomColor));
 
 export default function FluorescenceGraph({ proposalName, spectra }: Props) {
   const { data: csv, isError } = useXrfScanCsv({ proposalName, scanId: spectra.xfeFluorescenceSpectrumId });

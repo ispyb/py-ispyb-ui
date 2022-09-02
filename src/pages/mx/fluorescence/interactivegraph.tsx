@@ -9,6 +9,9 @@ function getRandomColor() {
   return '#' + [0, 1, 2, 3, 4, 5].map(() => letters[Math.floor(Math.random() * 12)]).join('');
 }
 
+//Generate some more colors to use when the provided list is not enough
+const EXTRA_COLORS = [...Array(100).keys()].map(getRandomColor);
+
 type dataType = { [x: string]: number };
 
 type Props = {
@@ -37,7 +40,8 @@ export default function InteractiveGraph(props: Props) {
   const [refRight, setRefRight] = useState<undefined | number>(undefined);
 
   const colors = props.colors.slice();
-  colors.push(...[...Array(100).keys()].map(getRandomColor));
+  // Add the backup colors at the end of the provided list. They will be used if the provided list is not long enough
+  colors.push(...EXTRA_COLORS);
 
   const doZoom = () => {
     if (refLeft && refRight) {
@@ -47,6 +51,7 @@ export default function InteractiveGraph(props: Props) {
       setRefRight(undefined);
     }
   };
+
   const unZoom = () => {
     setLeft(undefined);
     setRight(undefined);
@@ -62,7 +67,7 @@ export default function InteractiveGraph(props: Props) {
     props.onShowKeys(props.keys);
   };
 
-  const data_filtered = props.data.filter((v: { [x: string]: number }) => {
+  const data_in_range = props.data.filter((v: { [x: string]: number }) => {
     if (left && right) {
       return Number(left) <= v[props.xKey] && Number(right) >= v[props.xKey];
     } else {
@@ -76,7 +81,7 @@ export default function InteractiveGraph(props: Props) {
         <div style={{ paddingRight: 20 }}>
           <ResponsiveContainer width={'100%'} height={500}>
             <LineChart
-              data={data_filtered}
+              data={data_in_range}
               onMouseDown={(e) => {
                 if (e) {
                   setRefLeft(Number(e.activeLabel));
