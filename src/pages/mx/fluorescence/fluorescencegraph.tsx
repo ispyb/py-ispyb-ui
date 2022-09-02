@@ -250,8 +250,8 @@ export default function FluorescenceGraph({ proposalName, spectra }: Props) {
             <Button onClick={showAll}>show all</Button>
           </ButtonGroup>
           <ButtonGroup style={{ marginLeft: 10 }}>
-            <Button onClick={showMostCommon}>most common elements</Button>
-            <Button onClick={showAuto}>auto with fit</Button>
+            <Button onClick={showMostCommon}>show common elements</Button>
+            <Button onClick={showAuto}>show fit</Button>
           </ButtonGroup>
         </Col>
         <Col></Col>

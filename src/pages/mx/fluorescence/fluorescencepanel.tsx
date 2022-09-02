@@ -1,4 +1,4 @@
-import { Card, Row, Col, Container, Badge, Button, Modal } from 'react-bootstrap';
+import { Card, Row, Col, Container, Badge, Button } from 'react-bootstrap';
 
 import { FluorescenceSpectra } from 'pages/mx/model';
 import './fluorescencepanel.css';
@@ -6,11 +6,9 @@ import moment from 'moment';
 import SimpleParameterTable from 'components/table/simpleparametertable';
 import { getJpegxrfscan } from 'api/ispyb';
 import ZoomImage from 'components/image/zoomimage';
-import FluorescenceGraph from './fluorescencegraph';
-import ErrorBoundary from 'components/errors/errorboundary';
-import LoadingPanel from 'components/loading/loadingpanel';
 
-import { Suspense, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faWindowRestore } from '@fortawesome/free-solid-svg-icons';
 
 type Props = {
   sessionId: string;
@@ -18,8 +16,12 @@ type Props = {
   spectra: FluorescenceSpectra;
 };
 
-export default function FluorescencePanel({ proposalName, spectra }: Props) {
-  const [showModal, setShowModal] = useState(false);
+export default function FluorescencePanel({ proposalName, spectra, sessionId }: Props) {
+  const openInNewTab = (url: string) => {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  const url = `/${proposalName}/MX/${sessionId}/xrf/${spectra.xfeFluorescenceSpectrumId}`;
   return (
     <Card className="themed-card card-energyscan-panel">
       <Card.Header>
@@ -63,42 +65,19 @@ export default function FluorescencePanel({ proposalName, spectra }: Props) {
             ></ZoomImage>
             <Row>
               <Col>
-                <Button style={{ margin: 5 }} onClick={() => setShowModal(true)}>
-                  Show interactive graph
+                <Button
+                  style={{ margin: 5 }}
+                  onClick={() => {
+                    openInNewTab(url);
+                  }}
+                >
+                  Open spectrum <FontAwesomeIcon icon={faWindowRestore}></FontAwesomeIcon>
                 </Button>
               </Col>
             </Row>
           </Col>
         </Row>
-        <GraphModal proposalName={proposalName} spectra={spectra} onHide={() => setShowModal(false)} show={showModal}></GraphModal>
       </Card.Body>
     </Card>
-  );
-}
-
-export function GraphModal({ show, onHide, proposalName, spectra }: { proposalName: string; spectra: FluorescenceSpectra; show: boolean; onHide: () => void }) {
-  return (
-    <Modal animation={false} onHide={onHide} show={show} size="xl" aria-labelledby="contained-modal-title-vcenter" centered>
-      <Modal.Header closeButton>
-        <Modal.Title id="contained-modal-title-vcenter">XRF Viewer </Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        {show && (
-          <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-            <ModalContent proposalName={proposalName} spectra={spectra}></ModalContent>
-          </Suspense>
-        )}
-      </Modal.Body>
-    </Modal>
-  );
-}
-
-export function ModalContent({ spectra, proposalName }: { proposalName: string; spectra: FluorescenceSpectra }) {
-  return (
-    <Row>
-      <ErrorBoundary>
-        <FluorescenceGraph proposalName={proposalName} spectra={spectra}></FluorescenceGraph>
-      </ErrorBoundary>
-    </Row>
   );
 }
