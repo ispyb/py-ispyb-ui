@@ -2,10 +2,11 @@ import { parse } from 'papaparse';
 import { useXrfScanCsv } from 'hooks/ispyb';
 import { useState } from 'react';
 import { Button, ButtonGroup, Col, Row } from 'react-bootstrap';
-import { ResponsiveContainer, Tooltip, LineChart, ReferenceArea, CartesianGrid, XAxis, YAxis, Legend, Line } from 'recharts';
+import { ResponsiveContainer, Tooltip, LineChart, ReferenceArea, CartesianGrid, XAxis, YAxis, Legend, Line, ReferenceDot, ReferenceLine } from 'recharts';
 import { FluorescenceSpectra } from '../model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+import { Separator } from '@storybook/components';
 
 type Props = {
   proposalName: string;
@@ -41,11 +42,26 @@ export default function FluorescenceGraph({ proposalName, spectra }: Props) {
 
   const fields = (parsed.meta.fields || []).filter((v) => v !== 'channel' && v !== 'Energy');
 
+  const maxValues: { [x: string]: { x: number; y: number; fit: number } } = {};
+
   const r = parsed.data
     .map((d) => {
       const r: parseType = {};
       for (const a in d) {
-        r[a] = Number(d[a]);
+        const x = Number(d['Energy']);
+        const y = Number(d[a]);
+        const fit = Number(d['fit']);
+        r[a] = y;
+        if (a.startsWith('y')) {
+          if (a in maxValues) {
+            const max = maxValues[a].y;
+            if (max < y) {
+              maxValues[a] = { x, y, fit };
+            }
+          } else {
+            maxValues[a] = { x, y, fit };
+          }
+        }
       }
       return r;
     })
@@ -80,6 +96,22 @@ export default function FluorescenceGraph({ proposalName, spectra }: Props) {
     setDisabled([]);
   };
 
+  const showMostCommon = () => {
+    const disabled = fields.filter((f) => {
+      return f.search('Mn|Fe|Ni|Cu|Zn|Gd|counts') == -1;
+    });
+    setDisabled(disabled);
+  };
+
+  const showAuto = () => {
+    const disabled = fields
+      .filter((f) => {
+        return !(f in maxValues) || maxValues[f].y < maxValues[f].fit * 0.8;
+      })
+      .filter((v) => !v.includes('fit'));
+    setDisabled(disabled);
+  };
+
   return (
     <Col>
       <Row>
@@ -112,7 +144,36 @@ export default function FluorescenceGraph({ proposalName, spectra }: Props) {
                 domain={[left || ((dataMin: number) => Math.trunc(dataMin)), right || ((dataMax: number) => Math.round(dataMax))]}
               />
               <YAxis type="number" domain={['auto', 'auto']} />
-              <Tooltip active={true} isAnimationActive={false} />
+              <Tooltip
+                active={true}
+                isAnimationActive={false}
+                content={({ active, payload, label }) => {
+                  if (!active) return null;
+                  return (
+                    <Col style={{ backgroundColor: 'white', border: '1px solid grey' }}>
+                      <Row>
+                        <Col></Col>
+                        <Col md={'auto'}>
+                          <h5>{label}</h5>
+                        </Col>
+                        <Col></Col>
+                      </Row>
+                      {payload &&
+                        payload
+                          .filter((p) => p.value != 0)
+                          .map((p) => {
+                            return (
+                              <Row>
+                                <p style={{ color: p.color, marginTop: 0, marginBottom: 0 }}>
+                                  {p.dataKey} = {p.value}
+                                </p>
+                              </Row>
+                            );
+                          })}
+                    </Col>
+                  );
+                }}
+              />
               <Legend
                 onClick={(p) => {
                   if (disabled.includes(p.dataKey)) {
@@ -142,9 +203,29 @@ export default function FluorescenceGraph({ proposalName, spectra }: Props) {
                   strokeDasharray={highlight && highlight !== a ? '5 5' : undefined}
                   hide={disabled.includes(a) && highlight !== a}
                   isAnimationActive={false}
-                  //   name={r.filter((l) => l[a])}
                 ></Line>
               ))}
+              {fields
+                .filter((a) => {
+                  if (disabled.includes(a) && highlight !== a) return false;
+                  if (!(a in maxValues)) return false;
+                  return true;
+                })
+                .sort((a, b) => {
+                  return maxValues[b].x - maxValues[a].x;
+                })
+                .map((a, index) => {
+                  const color = COLORS[fields.indexOf(a)];
+                  return (
+                    <ReferenceLine
+                      x={maxValues[a].x}
+                      stroke={color}
+                      strokeWidth={0.5}
+                      strokeDasharray={'10 10'}
+                      label={<ReferenceLabel value={a} fill={color} index={index} />}
+                    ></ReferenceLine>
+                  );
+                })}
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -164,12 +245,31 @@ export default function FluorescenceGraph({ proposalName, spectra }: Props) {
         <Col md={'auto'}>
           <ButtonGroup>
             <Button onClick={unZoom}>reset zoom</Button>
+          </ButtonGroup>
+          <ButtonGroup style={{ marginLeft: 10 }}>
             <Button onClick={hideAll}>hide all</Button>
             <Button onClick={showAll}>show all</Button>
+          </ButtonGroup>
+          <ButtonGroup style={{ marginLeft: 10 }}>
+            <Button onClick={showMostCommon}>most common elements</Button>
+            <Button onClick={showAuto}>auto with fit</Button>
           </ButtonGroup>
         </Col>
         <Col></Col>
       </Row>
     </Col>
+  );
+}
+
+export function ReferenceLabel({ fill, value, viewBox, index }: { fill: string; value: string; viewBox?: { x: number; y: number }; index: number }) {
+  const x = (viewBox?.x || 0) - 3 * value.length;
+  const y = (viewBox?.y || 0) + (index % 2) * 25;
+
+  return (
+    <foreignObject x={x} y={y} width={1} height={1} overflow={'visible'}>
+      <div style={{ backgroundColor: 'white', border: '1px solid grey', display: 'inline' }}>
+        <small style={{ color: fill, whiteSpace: 'nowrap' }}>{value}</small>
+      </div>
+    </foreignObject>
   );
 }
