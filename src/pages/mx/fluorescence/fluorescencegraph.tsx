@@ -74,6 +74,9 @@ export default function FluorescenceGraph({ proposalName, spectra }: Props) {
     tags[v] = maxValues[v].x;
   }
 
+  const xKey = 'Energy';
+  const xTicks = Math.round(Math.max(...data.map((v) => v[xKey] || 0)));
+
   const showMostCommon = () => {
     const disabled = fields.filter((f) => {
       return f.search('Mn|Fe|Ni|Cu|Zn|Gd|counts') == -1;
@@ -101,13 +104,23 @@ export default function FluorescenceGraph({ proposalName, spectra }: Props) {
     setDisabled(new_disabled);
   };
 
-  const extraButtons = [[<Button onClick={showMostCommon}>Show common elements</Button>, <Button onClick={showAuto}>Show auto fit</Button>]];
+  const extraButtons = [
+    [
+      <Button key={0} onClick={showMostCommon}>
+        Show common elements
+      </Button>,
+      <Button key={1} onClick={showAuto}>
+        Show auto fit
+      </Button>,
+    ],
+  ];
 
   return (
     <InteractiveGraph
       data={data}
       colors={COLORS}
-      xKey={'Energy'}
+      xKey={xKey}
+      xTicks={xTicks}
       tags={tags}
       hiddenKeys={disabled}
       keys={fields}

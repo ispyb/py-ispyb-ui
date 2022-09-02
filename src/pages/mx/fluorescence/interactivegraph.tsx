@@ -28,6 +28,7 @@ type Props = {
   onHideKeys: (keys: string[]) => void;
   extraButtons: React.ReactElement[][];
   importantKeys: string[];
+  xTicks?: number;
 };
 
 export default function InteractiveGraph(props: Props) {
@@ -74,7 +75,6 @@ export default function InteractiveGraph(props: Props) {
       return true;
     }
   });
-
   return (
     <Col>
       <Row>
@@ -99,11 +99,12 @@ export default function InteractiveGraph(props: Props) {
               }}
             >
               {refLeft && refRight ? <ReferenceArea x1={refLeft} x2={refRight} strokeOpacity={0.3} /> : null}
-              <CartesianGrid strokeDasharray="3 3" />
+              <CartesianGrid strokeDasharray="1 1" />
               <XAxis
                 dataKey={props.xKey}
                 type="number"
                 allowDataOverflow={Boolean(left && right)}
+                tickCount={props.xTicks || 10}
                 domain={[left || ((dataMin: number) => Math.trunc(dataMin)), right || ((dataMax: number) => Math.round(dataMax))]}
               />
               <YAxis type="number" domain={['auto', 'auto']} />
@@ -149,8 +150,12 @@ export default function InteractiveGraph(props: Props) {
             <Button onClick={hideAll}>Hide all</Button>
             <Button onClick={showAll}>Show all</Button>
           </ButtonGroup>
-          {props.extraButtons.map((group) => {
-            return <ButtonGroup style={{ marginLeft: 10 }}>{group}</ButtonGroup>;
+          {props.extraButtons.map((group, index) => {
+            return (
+              <ButtonGroup key={index} style={{ marginLeft: 10 }}>
+                {group}
+              </ButtonGroup>
+            );
           })}
         </Col>
         <Col></Col>
@@ -204,6 +209,7 @@ export function renderTags(props: Props & { highlight?: string; colors: string[]
       const color = props.colors[props.keys.indexOf(key)];
       return (
         <ReferenceLine
+          key={key}
           x={props.tags[key]}
           stroke={color}
           strokeWidth={0.5}
@@ -230,7 +236,7 @@ export function RenderTooltip(props: TooltipProps<number, string>) {
           .filter((p) => p.value != 0)
           .map((p) => {
             return (
-              <Row>
+              <Row key={p.dataKey}>
                 <p style={{ color: p.color, marginTop: 0, marginBottom: 0 }}>
                   {p.dataKey} = {p.value}
                 </p>
