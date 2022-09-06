@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { Col, Row, ButtonGroup, Button } from 'react-bootstrap';
 import { ResponsiveContainer, Tooltip, LineChart, ReferenceArea, CartesianGrid, XAxis, YAxis, Legend, Line, ReferenceLine, TooltipProps } from 'recharts';
 
+import './interactivegraph.scss';
+
 function getRandomColor() {
   const letters = '23456789ABCD'.split('');
   return '#' + [0, 1, 2, 3, 4, 5].map(() => letters[Math.floor(Math.random() * 12)]).join('');
@@ -78,7 +80,35 @@ export default function InteractiveGraph(props: Props) {
   return (
     <Col>
       <Row>
-        <div style={{ paddingRight: 20 }}>
+        <Col md={'auto'}>
+          <h5>
+            <FontAwesomeIcon style={{ marginRight: 5 }} icon={faQuestionCircle}></FontAwesomeIcon>Hover legend to highlight line, click to toggle visibility, select area on chart
+            to zoom.
+          </h5>
+        </Col>
+        <Col></Col>
+      </Row>
+      <Row>
+        <Col md={'auto'}>
+          <ButtonGroup>
+            <Button onClick={unZoom}>Reset zoom</Button>
+          </ButtonGroup>
+          <ButtonGroup style={{ marginLeft: 10 }}>
+            <Button onClick={hideAll}>Hide all</Button>
+            <Button onClick={showAll}>Show all</Button>
+          </ButtonGroup>
+          {props.extraButtons.map((group, index) => {
+            return (
+              <ButtonGroup key={index} style={{ marginLeft: 10 }}>
+                {group}
+              </ButtonGroup>
+            );
+          })}
+        </Col>
+        <Col></Col>
+      </Row>
+      <Row>
+        <div style={{ paddingRight: 20, paddingTop: 20 }}>
           <ResponsiveContainer width={'100%'} height={500}>
             <LineChart
               data={data_in_range}
@@ -123,42 +153,15 @@ export default function InteractiveGraph(props: Props) {
                 onMouseLeave={() => {
                   setHighlight(undefined);
                 }}
+                layout="vertical"
+                verticalAlign="middle"
+                align="left"
               />
               {renderLines({ ...props, highlight, colors })}
               {renderTags({ ...props, highlight, colors })}
             </LineChart>
           </ResponsiveContainer>
         </div>
-      </Row>
-      <Row>
-        <Col></Col>
-        <Col md={'auto'}>
-          <p>
-            <FontAwesomeIcon style={{ marginRight: 5 }} icon={faQuestionCircle}></FontAwesomeIcon>Hover legend to highlight line, click to toggle visibility, select area on chart
-            to zoom.
-          </p>
-        </Col>
-        <Col></Col>
-      </Row>
-      <Row>
-        <Col></Col>
-        <Col md={'auto'}>
-          <ButtonGroup>
-            <Button onClick={unZoom}>Reset zoom</Button>
-          </ButtonGroup>
-          <ButtonGroup style={{ marginLeft: 10 }}>
-            <Button onClick={hideAll}>Hide all</Button>
-            <Button onClick={showAll}>Show all</Button>
-          </ButtonGroup>
-          {props.extraButtons.map((group, index) => {
-            return (
-              <ButtonGroup key={index} style={{ marginLeft: 10 }}>
-                {group}
-              </ButtonGroup>
-            );
-          })}
-        </Col>
-        <Col></Col>
       </Row>
     </Col>
   );
