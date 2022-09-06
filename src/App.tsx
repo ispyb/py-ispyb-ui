@@ -21,6 +21,7 @@ import ProposalSessionsPage from 'pages/proposalsessionspage';
 import MXEnergyScanPage from 'pages/mx/energyscan/mxenergyscanpage';
 import MXFluorescencePage from 'pages/mx/fluorescence/fluorescencepage';
 import PrepareExperimentPage from 'pages/prepareexperiment/prepareexperimentpage';
+import MxFluorescenceViewer from 'pages/mx/fluorescence/fluorescenceviewer';
 
 export default function App() {
   const user = useAppSelector((state) => state.user);
@@ -58,6 +59,7 @@ export default function App() {
             <Route path="/:proposalName/MX/:sessionId" element={<MXDataCollectionGroupPage />} />
             <Route path="/:proposalName/MX/:sessionId/energy" element={<MXEnergyScanPage />} />
             <Route path="/:proposalName/MX/:sessionId/xrf" element={<MXFluorescencePage />} />
+            <Route path="/:proposalName/MX/:sessionId/xrf/:xrfId" element={<MxFluorescenceViewer />} />
             <Route path="/:proposalName/MX/:sessionId/workflow/:workflowId/steps/:stepsIds" element={<MXWorkflowPage />} />
             <Route path="/:proposalName/MX/:sessionId/workflow/:workflowId/steps/:stepsIds" element={<MXWorkflowPage />} />
             <Route path="/:proposalName/MX/prepare" element={<PrepareExperimentPage />} />{' '}

@@ -19,6 +19,7 @@ import {
   getDewars,
   getProposalSessionsWhithDates,
   getSessionsManagerDates,
+  getXrfScanCsv,
 } from 'api/ispyb';
 import { EnergyScan, WorkflowStep, FluorescenceSpectra, Sample, DataCollectionGroup } from 'pages/mx/model';
 
@@ -129,4 +130,8 @@ export function useEMClassification({ proposalName, sessionId }: ProposalSession
 
 export function useDewars({ proposalName }: { proposalName: string }) {
   return doGet<ContainerDewar[]>(getDewars({ proposalName }).url);
+}
+
+export function useXrfScanCsv({ scanId, proposalName }: { proposalName: string; scanId: number }) {
+  return doGet<string>(getXrfScanCsv({ scanId, proposalName }).url);
 }

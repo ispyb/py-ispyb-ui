@@ -1,4 +1,4 @@
-import { Card, Row, Col, Container, Badge } from 'react-bootstrap';
+import { Card, Row, Col, Container, Badge, Button } from 'react-bootstrap';
 
 import { FluorescenceSpectra } from 'pages/mx/model';
 import './fluorescencepanel.css';
@@ -7,13 +7,21 @@ import SimpleParameterTable from 'components/table/simpleparametertable';
 import { getJpegxrfscan } from 'api/ispyb';
 import ZoomImage from 'components/image/zoomimage';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faWindowRestore } from '@fortawesome/free-solid-svg-icons';
+
 type Props = {
   sessionId: string;
   proposalName: string;
   spectra: FluorescenceSpectra;
 };
 
-export default function FluorescencePanel({ proposalName, spectra }: Props) {
+export default function FluorescencePanel({ proposalName, spectra, sessionId }: Props) {
+  const openInNewTab = (url: string) => {
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
+
+  const url = `/${proposalName}/MX/${sessionId}/xrf/${spectra.xfeFluorescenceSpectrumId}`;
   return (
     <Card className="themed-card card-energyscan-panel">
       <Card.Header>
@@ -40,9 +48,8 @@ export default function FluorescencePanel({ proposalName, spectra }: Props) {
                 { key: 'Protein', value: spectra.acronym ? `${spectra.acronym}` : 'unknown' },
                 { key: 'Sample', value: spectra.name ? `${spectra.name}` : 'unknown' },
                 { key: 'Filename', value: spectra.filename },
-                { key: 'Fluorescence Detector', value: 'unknown' },
                 { key: 'Energy', value: `${spectra.energy} keV` },
-                { key: 'Flux @100%', value: spectra.flux ? `${spectra.flux}  ph/sec` : 'unknown' },
+                { key: 'Flux', value: spectra.flux ? `${spectra.flux}  ph/sec` : 'unknown' },
                 { key: 'Transmission', value: spectra.beamTransmission ? `${spectra.beamTransmission}  %` : 'unknown' },
                 { key: 'Beam Size Hor', value: `${spectra.beamSizeHorizontal} μm` },
                 { key: 'Beam Size Vert', value: `${spectra.beamSizeVertical} μm` },
@@ -51,7 +58,23 @@ export default function FluorescencePanel({ proposalName, spectra }: Props) {
             ></SimpleParameterTable>
           </Col>
           <Col>
-            {<ZoomImage style={{ maxWidth: 600 }} alt="Dozor" src={getJpegxrfscan({ proposalName, xfeFluorescenceSpectrumId: spectra.xfeFluorescenceSpectrumId }).url}></ZoomImage>}
+            <ZoomImage
+              style={{ maxWidth: 600, maxHeight: 300 }}
+              alt="Scan thumbnail"
+              src={getJpegxrfscan({ proposalName, xfeFluorescenceSpectrumId: spectra.xfeFluorescenceSpectrumId }).url}
+            ></ZoomImage>
+            <Row>
+              <Col>
+                <Button
+                  style={{ margin: 5 }}
+                  onClick={() => {
+                    openInNewTab(url);
+                  }}
+                >
+                  Open spectrum <FontAwesomeIcon icon={faWindowRestore}></FontAwesomeIcon>
+                </Button>
+              </Col>
+            </Row>
           </Col>
         </Row>
       </Card.Body>
