@@ -1,7 +1,7 @@
 import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useState } from 'react';
-import { Col, Row, ButtonGroup, Button } from 'react-bootstrap';
+import { Col, Row, ButtonGroup, Button, Alert } from 'react-bootstrap';
 import { ResponsiveContainer, Tooltip, LineChart, ReferenceArea, CartesianGrid, XAxis, YAxis, Legend, Line, ReferenceLine, TooltipProps } from 'recharts';
 
 import './interactivegraph.scss';
@@ -81,10 +81,12 @@ export default function InteractiveGraph(props: Props) {
     <Col>
       <Row>
         <Col md={'auto'}>
-          <h5>
-            <FontAwesomeIcon style={{ marginRight: 5 }} icon={faQuestionCircle}></FontAwesomeIcon>Hover legend to highlight line, click to toggle visibility, select area on chart
-            to zoom.
-          </h5>
+          <Alert variant="info">
+            <h5>
+              <FontAwesomeIcon style={{ marginRight: 5 }} icon={faQuestionCircle}></FontAwesomeIcon>Hover legend to highlight line, click to toggle visibility, select area on chart
+              to zoom.
+            </h5>
+          </Alert>
         </Col>
         <Col></Col>
       </Row>
