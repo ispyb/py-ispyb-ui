@@ -6,7 +6,7 @@ import SimpleParameterTable from 'components/table/simpleparametertable';
 import { useShipping } from 'hooks/ispyb';
 import { MXContainer } from 'pages/mx/container/mxcontainer';
 import { useState } from 'react';
-import { Alert, Button, Card, Col, Container as ContainerB, Modal, Nav, OverlayTrigger, Popover, Row, Tab } from 'react-bootstrap';
+import { Alert, Button, Card, Col, Container as ContainerB, Nav, OverlayTrigger, Popover, Row, Tab } from 'react-bootstrap';
 import { KeyedMutator } from 'swr';
 import { InformationPane } from './informationpane';
 import { Container, Shipment, Shipping, ShippingContainer, ShippingDewar } from './model';
