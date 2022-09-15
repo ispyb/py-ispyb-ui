@@ -33,6 +33,7 @@ export function TransportPane({ shipping, proposalName }: { shipping: Shipping; 
       const refValue = values[0];
       return { ...refValue, steps: values };
     })
+    .sort((a, b) => a.Dewar_dewarId - b.Dewar_dewarId)
     .value();
 
   return (
@@ -69,7 +70,7 @@ export function TransportPane({ shipping, proposalName }: { shipping: Shipping; 
       <Row>
         <Col>
           {grouped.map((group) => {
-            return <DewarTransport history={group}></DewarTransport>;
+            return <DewarTransport key={group.Dewar_dewarId} history={group}></DewarTransport>;
           })}
         </Col>
       </Row>

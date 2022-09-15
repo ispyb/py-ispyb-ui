@@ -4,11 +4,12 @@ import _, { sum } from 'lodash';
 import { Row, Col, Badge, InputGroup, FormControl, Button } from 'react-bootstrap';
 import { Parcel, Shipment } from './model';
 import './shipmentstab.scss';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { ShipmentView } from './shipmentview';
 import { EditShippingModal } from './shipmenteditmodal';
+import LoadingPanel from 'components/loading/loadingpanel';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
 export function ShipmentsTab({ proposalName }: { proposalName: string }) {
@@ -73,6 +74,7 @@ export function ShipmentsTab({ proposalName }: { proposalName: string }) {
           <Col>
             {filteredShipments.map((s) => (
               <ShipmentCard
+                key={s.Shipping_shippingId}
                 onClick={() => setSelected(s)}
                 proposalName={proposalName}
                 shipment={s}
@@ -83,7 +85,9 @@ export function ShipmentsTab({ proposalName }: { proposalName: string }) {
         </Row>
       </Col>
       <Col>
-        <ShipmentView mutateShipments={mutate} proposalName={proposalName} shipment={selected}></ShipmentView>
+        <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+          <ShipmentView mutateShipments={mutate} proposalName={proposalName} shipment={selected}></ShipmentView>
+        </Suspense>
       </Col>
     </Row>
   );

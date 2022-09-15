@@ -22,6 +22,7 @@ import MXFluorescencePage from 'pages/mx/fluorescence/fluorescencepage';
 import PrepareExperimentPage from 'pages/prepareexperiment/prepareexperimentpage';
 import MxFluorescenceViewer from 'pages/mx/fluorescence/fluorescenceviewer';
 import ShippingPage from 'pages/shipping/shippingpage';
+import ContainerEditPage from 'pages/shipping/container/containereditpage';
 
 export default function App() {
   const user = useAppSelector((state) => state.user);
@@ -52,6 +53,7 @@ export default function App() {
             <Route path="/proposals" element={<ProposalsPage />} />
             <Route path="/:proposalName/sessions" element={<ProposalSessionsPage user={user} />} />
             <Route path="/:proposalName/shipping" element={<ShippingPage />} />
+            <Route path="/:proposalName/shipping/:shippingId/dewar/:dewarId/container/:containerId/edit" element={<ContainerEditPage />} />
             <Route path="/:proposalName/EM/:sessionId" element={<EMSessionPage />} />
             <Route path="/:proposalName/EM/:sessionId/classification" element={<SessionClassificationPage />} />
             <Route path="/:proposalName/EM/:sessionId/statistics" element={<SessionStatisticsPage />} />
@@ -62,7 +64,7 @@ export default function App() {
             <Route path="/:proposalName/MX/:sessionId/xrf/:xrfId" element={<MxFluorescenceViewer />} />
             <Route path="/:proposalName/MX/:sessionId/workflow/:workflowId/steps/:stepsIds" element={<MXWorkflowPage />} />
             <Route path="/:proposalName/MX/:sessionId/workflow/:workflowId/steps/:stepsIds" element={<MXWorkflowPage />} />
-            <Route path="/:proposalName/MX/prepare" element={<PrepareExperimentPage />} />{' '}
+            <Route path="/:proposalName/MX/prepare" element={<PrepareExperimentPage />} />
           </Routes>
         </ErrorBoundary>
       </Suspense>

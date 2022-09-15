@@ -1,3 +1,5 @@
+import { Crystal, DiffractionPlan } from 'pages/model';
+
 export type LabContact = {
   labContactId: number;
   personVO: PersonV0;
@@ -157,6 +159,8 @@ export interface ShippingSample {
   code?: string;
   comments: string;
   completionStage?: string;
+  crystalVO: Crystal;
+  diffractionPlanVO: DiffractionPlan;
   holderLength?: string;
   isInSampleChanger?: string;
   lastImageURL?: string;

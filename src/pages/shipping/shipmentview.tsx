@@ -3,9 +3,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LazyWrapper from 'components/loading/lazywrapper';
 import LoadingPanel from 'components/loading/loadingpanel';
 import SimpleParameterTable from 'components/table/simpleparametertable';
+import { openInNewTab } from 'helpers/opentab';
 import { useShipping } from 'hooks/ispyb';
 import { MXContainer } from 'pages/mx/container/mxcontainer';
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { Alert, Button, Card, Col, Container as ContainerB, Nav, OverlayTrigger, Popover, Row, Tab } from 'react-bootstrap';
 import { KeyedMutator } from 'swr';
 import { InformationPane } from './informationpane';
@@ -71,7 +72,9 @@ export function ShipmentView({ proposalName, shipment, mutateShipments }: { prop
             <Tab.Content>
               <Tab.Pane eventKey="transport" title="Transport History">
                 <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                  <TransportPane shipping={data} proposalName={proposalName}></TransportPane>
+                  <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+                    <TransportPane shipping={data} proposalName={proposalName}></TransportPane>
+                  </Suspense>
                 </LazyWrapper>
               </Tab.Pane>
             </Tab.Content>
@@ -121,14 +124,16 @@ export function ShipmentView({ proposalName, shipment, mutateShipments }: { prop
 export function ContentPane({ shipping, proposalName }: { shipping: Shipping; proposalName: string }) {
   return (
     <>
-      {shipping.dewarVOs.map((dewar) => (
-        <DewarPane proposalName={proposalName} dewar={dewar}></DewarPane>
-      ))}
+      {shipping.dewarVOs
+        .sort((a, b) => a.dewarId - b.dewarId)
+        .map((dewar) => (
+          <DewarPane key={dewar.dewarId} proposalName={proposalName} dewar={dewar} shipping={shipping}></DewarPane>
+        ))}
     </>
   );
 }
 
-export function DewarPane({ dewar, proposalName }: { dewar: ShippingDewar; proposalName: string }) {
+export function DewarPane({ dewar, proposalName, shipping }: { dewar: ShippingDewar; proposalName: string; shipping: Shipping }) {
   return (
     <Alert style={{ margin: 10 }} variant="light">
       <Row>
@@ -145,10 +150,10 @@ export function DewarPane({ dewar, proposalName }: { dewar: ShippingDewar; propo
         <Col>
           <Row>
             {dewar.containerVOs
-              .sort((a, b) => b.containerId - a.containerId)
+              .sort((a, b) => a.containerId - b.containerId)
               .map((c) => (
-                <Col style={{ maxWidth: 150 }}>
-                  <ContainerView proposalName={proposalName} container={c}></ContainerView>
+                <Col key={c.containerId} style={{ maxWidth: 150 }}>
+                  <ContainerView proposalName={proposalName} container={c} shipping={shipping} dewar={dewar}></ContainerView>
                 </Col>
               ))}
           </Row>
@@ -158,8 +163,10 @@ export function DewarPane({ dewar, proposalName }: { dewar: ShippingDewar; propo
   );
 }
 
-export function ContainerView({ container, proposalName }: { container: ShippingContainer; proposalName: string }) {
+export function ContainerView({ container, proposalName, shipping, dewar }: { container: ShippingContainer; proposalName: string; shipping: Shipping; dewar: ShippingDewar }) {
   const [showPopover, setShowPopover] = useState(false);
+
+  const editContainerUrl = `/${proposalName}/shipping/${shipping.shippingId}/dewar/${dewar.dewarId}/container/${container.containerId}/edit`;
 
   const popover = (
     <Popover style={{ width: 240 }}>
@@ -176,7 +183,7 @@ export function ContainerView({ container, proposalName }: { container: Shipping
           </Row>
           <Row>
             <Col md={'auto'} style={{ paddingRight: 0 }}>
-              <Button>
+              <Button onClick={() => openInNewTab(editContainerUrl)}>
                 <FontAwesomeIcon icon={faEdit}></FontAwesomeIcon> Edit
               </Button>
             </Col>

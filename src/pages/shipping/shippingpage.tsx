@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 
 import Page from 'pages/page';
 import { useParams } from 'react-router-dom';
@@ -31,7 +31,9 @@ export default function ShippingPage() {
         >
           <Card>
             <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-              <AddressesTab proposalName={proposalName}></AddressesTab>
+              <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+                <AddressesTab proposalName={proposalName}></AddressesTab>
+              </Suspense>
             </LazyWrapper>
           </Card>
         </Tab>
@@ -45,7 +47,9 @@ export default function ShippingPage() {
         >
           <Card>
             <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-              <ShipmentsTab proposalName={proposalName}></ShipmentsTab>
+              <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+                <ShipmentsTab proposalName={proposalName}></ShipmentsTab>
+              </Suspense>
             </LazyWrapper>
           </Card>
         </Tab>
@@ -59,7 +63,9 @@ export default function ShippingPage() {
         >
           <Card>
             <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-              <StockSolutionsTab proposalName={proposalName}></StockSolutionsTab>
+              <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+                <StockSolutionsTab proposalName={proposalName}></StockSolutionsTab>
+              </Suspense>
             </LazyWrapper>
           </Card>
         </Tab>

@@ -208,3 +208,7 @@ export function saveShipment({ proposalName, data }: { proposalName: string; dat
 export function removeShipping({ proposalName, shippingId }: { proposalName: string; shippingId: number }) {
   return { url: `${server}/${token}/proposal/${proposalName}/shipping/${shippingId}/remove` };
 }
+
+export function getShippingContainer({ proposalName, shippingId, dewarId, containerId }: { proposalName: string; shippingId: string; dewarId: string; containerId: string }) {
+  return { url: `${server}/${token}/proposal/${proposalName}/shipping/${shippingId}/dewar/${dewarId}/puck/${containerId}/get` };
+}

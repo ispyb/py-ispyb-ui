@@ -24,11 +24,12 @@ import {
   getShipments,
   getShipping,
   getShippingHistory,
+  getShippingContainer,
 } from 'api/ispyb';
 import { EnergyScan, WorkflowStep, FluorescenceSpectra, Sample, DataCollectionGroup } from 'pages/mx/model';
-import { Container, LabContact, Shipping, ShippingHistory } from 'pages/shipping/model';
+import { Container, LabContact, Shipping, ShippingContainer, ShippingHistory } from 'pages/shipping/model';
 
-import { ContainerDewar, Proposal, Session } from 'pages/model';
+import { ContainerDewar, Proposal, ProposalDetail, Session } from 'pages/model';
 import { dateToTimestamp } from 'helpers/dateparser';
 import { parse } from 'date-fns';
 import { store } from 'store';
@@ -63,7 +64,7 @@ interface ProposalSessionId {
 }
 
 export function useProposal({ proposalName }: { proposalName: string }) {
-  return doGet(getProposal(proposalName).url);
+  return doGet<ProposalDetail[]>(getProposal(proposalName).url);
 }
 
 export function useProposals() {
@@ -167,4 +168,8 @@ export function useShipping({ proposalName, shippingId }: { proposalName: string
 
 export function useShippingHistory({ proposalName, shippingId }: { proposalName: string; shippingId: number }) {
   return doGet<ShippingHistory>(getShippingHistory({ proposalName, shippingId }).url);
+}
+
+export function useShippingContainer({ proposalName, shippingId, dewarId, containerId }: { proposalName: string; shippingId: string; dewarId: string; containerId: string }) {
+  return doGet<ShippingContainer>(getShippingContainer({ proposalName, shippingId, dewarId, containerId }).url);
 }
