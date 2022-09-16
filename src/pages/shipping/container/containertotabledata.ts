@@ -58,7 +58,7 @@ export function getCrystalInfo(crystal: Crystal) {
     }
     return ' - (' + crystal.cellA + ' , ' + crystal.cellB + ' , ' + crystal.cellC + ' - ' + crystal.cellAlpha + ' , ' + crystal.cellBeta + ' , ' + crystal.cellGamma + ')';
   };
-  const spaceGroup = crystal.spaceGroup;
+  const spaceGroup = crystal.spaceGroup?.trim().length ? crystal.spaceGroup : undefined;
   const cell = getCellInfo(crystal);
 
   if (spaceGroup || cell) {
@@ -146,37 +146,45 @@ export function parseCrystalInfo(data: (string | number | undefined)[], crystals
 export function parseTableData(data: (string | number | undefined)[][], crystals: Crystal[], proteins: Protein[], container: ShippingContainer) {
   return {
     ...container,
-    sampleVOs: data.map((d) => parseSample(d, crystals, proteins)).filter((s) => s != undefined),
+    sampleVOs: data.map((d) => parseSample(d, crystals, proteins, container.sampleVOs)).filter((s) => s != undefined),
   };
 }
 
-function parseSample(data: (string | number | undefined)[], crystals: Crystal[], proteins: Protein[]) {
+function parseSample(data: (string | number | undefined)[], crystals: Crystal[], proteins: Protein[], samples: ShippingSample[]) {
   const get = (index: number) => {
     if (data.length <= index) return undefined;
     return data[index];
   };
 
   if (data.length <= 1) return undefined;
+
+  const location = get(0);
+  const sample_filter = samples.filter((s) => s.location == location);
+  const sample = sample_filter.length ? { ...sample_filter[0] } : { diffractionPlanVO: {} };
+
   return {
+    ...sample,
+    location,
     name: get(2),
-    BLSample_code: get(3),
-    smiles: get(3),
-    location: get(0),
+    code: get(3),
+    smiles: get(14),
     comments: get(18),
     structureStage: get(19),
     crystalVO: parseCrystalInfo(data, crystals, proteins),
     diffractionPlanVO: {
-      radiationSensitivity: get(13),
-      aimedCompleteness: get(11),
-      aimedMultiplicity: get(10),
+      ...sample['diffractionPlanVO'],
+      experimentKind: get(5),
       aimedResolution: get(6),
       requiredResolution: get(7),
-      observedResolution: get(17),
       preferredBeamDiameter: get(8),
       numberOfPositions: get(9),
-      experimentKind: get(5),
+      aimedMultiplicity: get(10),
+      aimedCompleteness: get(11),
+      forcedSpaceGroup: get(12),
+      radiationSensitivity: get(13),
       axisRange: get(15),
       minOscWidth: get(16),
+      observedResolution: get(17),
     },
   };
 }

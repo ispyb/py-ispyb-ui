@@ -4,8 +4,8 @@ import { Alert, Button, Card, Col, Row } from 'react-bootstrap';
 import { useParams } from 'react-router';
 import { HotTable, HotColumn } from '@handsontable/react';
 import Handsontable from 'handsontable';
-import { Shipping, ShippingContainer } from '../model';
-import { containerToTableData, getCrystalInfo } from './containertotabledata';
+import { Shipping, ShippingContainer, ShippingDewar } from '../model';
+import { containerToTableData, getCrystalInfo, parseTableData } from './containertotabledata';
 import { registerAllCellTypes } from 'handsontable/cellTypes';
 import { Suspense, useState } from 'react';
 import LoadingPanel from 'components/loading/loadingpanel';
@@ -14,8 +14,10 @@ import { spaceGroupShortNames, spaceGroupLongNames } from 'constants/spacegroups
 import _ from 'lodash';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faSync } from '@fortawesome/free-solid-svg-icons';
-import { Crystal } from 'pages/model';
+import { Crystal, ProposalDetail } from 'pages/model';
 import { registerAllPlugins } from 'handsontable/plugins';
+import { saveContainer } from 'api/ispyb';
+import axios from 'axios';
 
 type Param = {
   proposalName: string;
@@ -30,15 +32,48 @@ registerAllPlugins();
 export default function ContainerEditPage() {
   const { proposalName = '', shippingId = '', dewarId = '', containerId = '' } = useParams<Param>();
 
-  const { data: shipping, isError: shippingError } = useShipping({ proposalName, shippingId: Number(shippingId) });
+  const { data: shipping, isError: shippingError, mutate: mutateShipping } = useShipping({ proposalName, shippingId: Number(shippingId) });
 
-  const { data: container, isError: containerError } = useShippingContainer({ proposalName, shippingId, dewarId, containerId });
+  const { data: container, isError: containerError, mutate: mutateContainer } = useShippingContainer({ proposalName, shippingId, dewarId, containerId });
 
-  if (!shipping || !container || shippingError || containerError) {
-    return <></>;
+  const { data: proposalArray, isError: proposalError, mutate: mutateProposal } = useProposal({ proposalName });
+
+  const [forceRefreshEditor, setForceRefreshEditor] = useState(0);
+  const [refreshing, setRefreshing] = useState(false);
+
+  const errorPage = (msg: unknown) => (
+    <Page selected="shipping">
+      <Alert variant="danger">
+        Opening container editor failed: unable to retrieve information.
+        <br />
+        {msg}
+      </Alert>
+    </Page>
+  );
+
+  if (!shipping || !container || !proposalArray) {
+    return errorPage(!shipping ? 'Shipping does not exist.' : !container ? 'Container does not exist.' : 'Proposal does not exist.');
+  }
+  if (shippingError || containerError || proposalError) {
+    return errorPage(shippingError || containerError || proposalError);
+  }
+
+  const proposal = proposalArray[0];
+
+  if (!proposal) {
+    return errorPage('Proposal does not exist.');
   }
 
   const dewar = shipping?.dewarVOs.filter((a) => a.containerVOs.map((c) => c.containerId).includes(Number(containerId)))[0];
+
+  const forceRefresh = () => {
+    const whenDone = () => {
+      setForceRefreshEditor(forceRefreshEditor + 1);
+      setRefreshing(false);
+    };
+    setRefreshing(true);
+    Promise.all([mutateShipping(), mutateContainer(), mutateProposal()]).then(whenDone, whenDone);
+  };
 
   return (
     <Page selected="shipping">
@@ -51,32 +86,48 @@ export default function ContainerEditPage() {
             </strong>
           </h5>
         </Alert>
-        <LazyWrapper>
-          <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-            <ContainerEditor proposalName={proposalName} container={container} shipping={shipping}></ContainerEditor>
-          </Suspense>
-        </LazyWrapper>
+        {refreshing ? (
+          <LoadingPanel></LoadingPanel>
+        ) : (
+          <LazyWrapper>
+            <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+              <ContainerEditor
+                key={forceRefreshEditor}
+                proposalName={proposalName}
+                proposal={proposal}
+                container={container}
+                shipping={shipping}
+                dewar={dewar}
+                forceRefresh={forceRefresh}
+              ></ContainerEditor>
+            </Suspense>
+          </LazyWrapper>
+        )}
       </Col>
     </Page>
   );
 }
 
-function ContainerEditor({ container, proposalName }: { shipping: Shipping; container: ShippingContainer; proposalName: string }) {
-  const { data: proposalArray, isError: proposalError } = useProposal({ proposalName });
+function ContainerEditor({
+  container,
+  proposalName,
+  proposal,
+  shipping,
+  dewar,
+  forceRefresh,
+}: {
+  shipping: Shipping;
+  container: ShippingContainer;
+  proposal: ProposalDetail;
+  proposalName: string;
+  dewar: ShippingDewar;
+  forceRefresh: () => void;
+}) {
   const upToDateData = containerToTableData(container);
 
   const [data, setData] = useState(upToDateData);
   const [changed, setChanged] = useState(false);
   const [modifiedCrystals, setModifiedCrystals] = useState<Crystal[]>([]);
-
-  if (!proposalArray || proposalError) {
-    return <></>;
-  }
-  const proposal = proposalArray[0];
-
-  if (!proposal) {
-    return <></>;
-  }
 
   const synchronized = !changed && JSON.stringify(data) == JSON.stringify(upToDateData);
 
@@ -117,15 +168,21 @@ function ContainerEditor({ container, proposalName }: { shipping: Shipping; cont
       title: 'Crystal Form',
       source(query, callback) {
         const protein = data[this.row][1];
-        callback([
-          protein ? 'NEW' : '',
-          ..._(crystals)
-            .filter((c) => c.proteinVO.acronym == protein)
-            .map(getCrystalInfo)
-            .uniq()
-            .sort()
-            .value(),
-        ]);
+        if (protein) {
+          callback(
+            _.uniq([
+              'Not set',
+              ..._(crystals)
+                .filter((c) => c.proteinVO.acronym == protein)
+                .map(getCrystalInfo)
+                .uniq()
+                .sort()
+                .value(),
+            ])
+          );
+        } else {
+          callback([]);
+        }
       },
       type: 'autocomplete',
       strict: true,
@@ -176,14 +233,60 @@ function ContainerEditor({ container, proposalName }: { shipping: Shipping; cont
     },
   ];
 
-  function handleChange(row: number, prop: string | number, oldValue: string | number | undefined, newValue: string | number | undefined) {
+  function handleChanges(changes: Handsontable.CellChange[], source: Handsontable.ChangeSource) {
+    console.log(source, changes);
+    const ndata = JSON.parse(JSON.stringify(data));
+
+    const sampleNameIncrement: Record<string, number> = {};
+
+    changes.forEach(([row, prop, oldValue, newValue]) => {
+      const newValueString = String(newValue);
+      const oldValueString = String(oldValue);
+      if (prop == 1 && oldValueString.trim() != newValueString.trim()) {
+        //protein change -> set crystal
+        ndata[row][4] = getCrystalInfo(proposal.crystals.filter((c) => c.proteinVO.acronym == newValueString)[0]);
+      }
+      if (prop == 2 && source == 'Autofill.fill') {
+        //name change from autofill -> increment
+        const numbers = newValueString.match(/(\d+)/g);
+        let name = newValueString;
+        if (numbers) {
+          const n = numbers[numbers.length - 1];
+          if (newValueString.lastIndexOf(n) == newValueString.length - n.length) {
+            name = newValueString.substring(0, newValueString.length - n.length);
+            if (!(name in sampleNameIncrement)) {
+              sampleNameIncrement[name] = Number(n);
+            }
+          }
+        }
+        if (!(name in sampleNameIncrement)) {
+          sampleNameIncrement[name] = 0;
+        }
+        sampleNameIncrement[name] = sampleNameIncrement[name] + 1;
+        ndata[row][2] = name + String(sampleNameIncrement[name]);
+      }
+    });
+    setData(ndata);
     setChanged(true);
-    if (prop == 1) {
-      //protein change
-      const ndata = JSON.parse(JSON.stringify(data));
-      ndata[row][4] = getCrystalInfo(proposal.crystals.filter((c) => c.proteinVO.acronym == newValue)[0]);
-      setData(ndata);
-    }
+  }
+
+  function save() {
+    const toSave = parseTableData(data, crystals, proposal.proteins, container);
+    const request = saveContainer({
+      proposalName: proposalName,
+      shippingId: String(shipping.shippingId),
+      dewarId: String(dewar.dewarId),
+      containerId: String(container.containerId),
+      data: toSave,
+    });
+    axios.post(request.url, request.data, { headers: request.headers }).then(
+      () => {
+        forceRefresh();
+      },
+      () => {
+        forceRefresh();
+      }
+    );
   }
 
   return (
@@ -220,11 +323,12 @@ function ContainerEditor({ container, proposalName }: { shipping: Shipping; cont
                 autoColumnSize: {
                   syncLimit: 100,
                 },
-                afterChange: (changes) => {
+                afterChange: (changes, source) => {
                   if (changes)
-                    changes.forEach(([row, prop, oldValue, newValue]) => {
-                      handleChange(row, prop, oldValue, newValue);
-                    });
+                    // changes.forEach(([row, prop, oldValue, newValue]) => {
+                    //   handleChange(row, prop, oldValue, newValue);
+                    // });
+                    handleChanges(changes, source);
                 },
               }}
             >
@@ -239,28 +343,27 @@ function ContainerEditor({ container, proposalName }: { shipping: Shipping; cont
             {!synchronized ? (
               <Alert style={{ margin: 5 }} variant="warning">
                 <FontAwesomeIcon style={{ marginRight: 5 }} icon={faSync}></FontAwesomeIcon>
-                <strong>Changes not saved to server</strong>
+                <strong>Changes not saved to server.</strong>
               </Alert>
             ) : (
               <Alert style={{ margin: 5 }} variant="info">
                 <FontAwesomeIcon style={{ marginRight: 5 }} icon={faCheck}></FontAwesomeIcon>
-                <strong>Data is synchronized to server</strong>
+                <strong>Data is synchronized with server.</strong>
               </Alert>
             )}
           </Col>
           <Col md={'auto'}>
-            <Button style={{ margin: 5 }} disabled={synchronized}>
+            <Button style={{ margin: 5 }} disabled={synchronized} onClick={save}>
               Save
             </Button>
             <Button
               style={{ margin: 5 }}
               disabled={synchronized}
               onClick={() => {
-                setData(upToDateData);
-                setChanged(false);
+                forceRefresh();
               }}
             >
-              Cancel
+              Reset
             </Button>
           </Col>
         </Row>

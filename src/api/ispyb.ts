@@ -212,3 +212,28 @@ export function removeShipping({ proposalName, shippingId }: { proposalName: str
 export function getShippingContainer({ proposalName, shippingId, dewarId, containerId }: { proposalName: string; shippingId: string; dewarId: string; containerId: string }) {
   return { url: `${server}/${token}/proposal/${proposalName}/shipping/${shippingId}/dewar/${dewarId}/puck/${containerId}/get` };
 }
+
+export function saveContainer({
+  proposalName,
+  shippingId,
+  dewarId,
+  containerId,
+  data,
+}: {
+  proposalName: string;
+  shippingId: string;
+  dewarId: string;
+  containerId: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data: any;
+}) {
+  const d = JSON.stringify(data);
+
+  const encoded = `puck=${encodeURIComponent(d)}`;
+
+  return {
+    url: `${server}/${token}/proposal/${proposalName}/shipping/${shippingId}/dewar/${dewarId}/puck/${containerId}/save`,
+    data: encoded,
+    headers: { 'content-type': 'application/x-www-form-urlencoded;' },
+  };
+}
