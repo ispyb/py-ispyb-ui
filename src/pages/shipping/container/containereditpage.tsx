@@ -15,6 +15,7 @@ import _ from 'lodash';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faSync } from '@fortawesome/free-solid-svg-icons';
 import { Crystal } from 'pages/model';
+import { registerAllPlugins } from 'handsontable/plugins';
 
 type Param = {
   proposalName: string;
@@ -24,6 +25,7 @@ type Param = {
 };
 
 registerAllCellTypes();
+registerAllPlugins();
 
 export default function ContainerEditPage() {
   const { proposalName = '', shippingId = '', dewarId = '', containerId = '' } = useParams<Param>();
@@ -100,7 +102,6 @@ function ContainerEditor({ container, proposalName }: { shipping: Shipping; cont
     { title: '#', width: 30, readOnly: true },
     {
       title: 'Protein <br />Acronym',
-      width: 80,
       type: 'autocomplete',
       source: _(proposal.proteins)
         .map((p) => p.acronym)
@@ -110,15 +111,14 @@ function ContainerEditor({ container, proposalName }: { shipping: Shipping; cont
       allowInvalid: false,
       filter: true,
     },
-    { title: 'Sample<br /> Name', width: 120 },
-    { title: 'Pin <br />BarCode', width: 60 },
+    { title: 'Sample<br /> Name' },
+    { title: 'Pin <br />BarCode' },
     {
       title: 'Crystal Form',
-      width: 230,
       source(query, callback) {
         const protein = data[this.row][1];
         callback([
-          'NEW',
+          protein ? 'NEW' : '',
           ..._(crystals)
             .filter((c) => c.proteinVO.acronym == protein)
             .map(getCrystalInfo)
@@ -134,37 +134,34 @@ function ContainerEditor({ container, proposalName }: { shipping: Shipping; cont
     },
     {
       title: 'Exp.<br /> Type',
-      width: 100,
       type: 'autocomplete',
       filter: true,
       strict: true,
       allowInvalid: false,
       source: ['', 'Default', 'MXPressE', 'MXPressF', 'MXPressO', 'MXPressI', 'MXPressE_SAD', 'MXScore', 'MXPressM', 'MXPressP', 'MXPressP_SAD'],
     },
-    { title: 'Aimed<br /> resolution', width: 66 },
-    { title: 'Required<br /> resolution', width: 67 },
-    { title: 'Beam <br />Diameter', width: 61 },
-    { title: 'Number of<br /> positions', width: 70 },
-    { title: 'Aimed<br /> multiplicity', width: 60 },
-    { title: 'Aimed<br /> Completeness', width: 80 },
+    { title: 'Aimed<br /> resolution' },
+    { title: 'Required<br /> resolution' },
+    { title: 'Beam <br />Diameter' },
+    { title: 'Number of<br /> positions' },
+    { title: 'Aimed<br /> multiplicity' },
+    { title: 'Aimed<br /> Completeness' },
     {
       title: 'Forced <br /> Space G.',
-      width: 55,
       source: ['', ..._(spaceGroupShortNames).concat(spaceGroupLongNames).uniq().value()],
       type: 'autocomplete',
       filter: true,
       strict: true,
       allowInvalid: false,
     },
-    { title: 'Radiation<br /> Sensitivity', width: 80 },
-    { title: 'Smiles', width: 140 },
-    { title: 'Tot Rot. <br />Angle', width: 60 },
-    { title: 'Min Osc.<br />Angle', width: 60 },
-    { title: 'Observed <br />resolution', width: 80 },
-    { title: 'Comments', width: 200 },
+    { title: 'Radiation<br /> Sensitivity' },
+    { title: 'Smiles' },
+    { title: 'Tot Rot. <br />Angle' },
+    { title: 'Min Osc.<br />Angle' },
+    { title: 'Observed <br />resolution' },
+    { title: 'Comments' },
     {
       title: 'Ligands',
-      width: 100,
       type: 'autocomplete',
       source: [
         '',
@@ -218,14 +215,17 @@ function ContainerEditor({ container, proposalName }: { shipping: Shipping; cont
               settings={{
                 data: data,
                 licenseKey: 'non-commercial-and-evaluation',
+                stretchH: 'all',
+                fixedColumnsStart: 1,
+                autoColumnSize: {
+                  syncLimit: 100,
+                },
                 afterChange: (changes) => {
                   if (changes)
                     changes.forEach(([row, prop, oldValue, newValue]) => {
                       handleChange(row, prop, oldValue, newValue);
                     });
                 },
-                stretchH: 'all',
-                fixedColumnsStart: 1,
               }}
             >
               {columns.map((c) => (

@@ -1,4 +1,4 @@
-import { Crystal, ProposalDetail, Protein } from 'pages/model';
+import { Crystal, Protein } from 'pages/model';
 import { ShippingContainer, ShippingSample } from '../model';
 
 export function containerToTableData(container: ShippingContainer) {
