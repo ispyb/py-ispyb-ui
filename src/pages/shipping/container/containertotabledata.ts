@@ -156,7 +156,13 @@ function parseSample(data: (string | number | undefined)[], crystals: Crystal[],
     return data[index];
   };
 
-  if (data.length <= 1) return undefined;
+  if (
+    data.filter((d) => {
+      return d != null && d != undefined && d != '';
+    }).length <= 1
+  ) {
+    return undefined;
+  }
 
   const location = get(0);
   const sample_filter = samples.filter((s) => s.location == location);

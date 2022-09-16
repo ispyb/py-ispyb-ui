@@ -7,13 +7,13 @@ import Handsontable from 'handsontable';
 import { Shipping, ShippingContainer, ShippingDewar } from '../model';
 import { containerToTableData, getCrystalInfo, parseTableData } from './containertotabledata';
 import { registerAllCellTypes } from 'handsontable/cellTypes';
-import { Suspense, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import LoadingPanel from 'components/loading/loadingpanel';
 import LazyWrapper from 'components/loading/lazywrapper';
 import { spaceGroupShortNames, spaceGroupLongNames } from 'constants/spacegroups';
 import _ from 'lodash';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faSync } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faExclamationTriangle, faSync } from '@fortawesome/free-solid-svg-icons';
 import { Crystal, ProposalDetail } from 'pages/model';
 import { registerAllPlugins } from 'handsontable/plugins';
 import { saveContainer } from 'api/ispyb';
@@ -131,6 +131,21 @@ function ContainerEditor({
 
   const synchronized = !changed && JSON.stringify(data) == JSON.stringify(upToDateData);
 
+  useEffect(() => {
+    const onbeforeunloadFn = (ev: BeforeUnloadEvent) => {
+      if (!synchronized) {
+        const msg = 'You have some unsaved changes';
+        ev.preventDefault();
+        (ev || window.event).returnValue = msg;
+        return msg;
+      }
+    };
+    window.addEventListener('beforeunload', onbeforeunloadFn);
+    return () => {
+      window.removeEventListener('beforeunload', onbeforeunloadFn);
+    };
+  }, [synchronized]);
+
   const crystals = _([
     ...modifiedCrystals,
     ...proposal.crystals.map((crystal) => {
@@ -234,17 +249,20 @@ function ContainerEditor({
   ];
 
   function handleChanges(changes: Handsontable.CellChange[], source: Handsontable.ChangeSource) {
-    console.log(source, changes);
     const ndata = JSON.parse(JSON.stringify(data));
 
     const sampleNameIncrement: Record<string, number> = {};
 
     changes.forEach(([row, prop, oldValue, newValue]) => {
-      const newValueString = String(newValue);
-      const oldValueString = String(oldValue);
+      const newValueString = String(newValue || '');
+      const oldValueString = String(oldValue || '');
       if (prop == 1 && oldValueString.trim() != newValueString.trim()) {
         //protein change -> set crystal
-        ndata[row][4] = getCrystalInfo(proposal.crystals.filter((c) => c.proteinVO.acronym == newValueString)[0]);
+        if (newValueString.trim().length) {
+          ndata[row][4] = getCrystalInfo(proposal.crystals.filter((c) => c.proteinVO.acronym == newValueString)[0]);
+        } else {
+          ndata[row][4] = undefined;
+        }
       }
       if (prop == 2 && source == 'Autofill.fill') {
         //name change from autofill -> increment
@@ -310,6 +328,22 @@ function ContainerEditor({
           </Col>
         </Row>
         <Row>
+          <Col md={'auto'}>
+            <Alert variant="info" style={{ padding: 5 }}>
+              <strong>
+                <FontAwesomeIcon style={{ marginRight: 5 }} icon={faExclamationTriangle}></FontAwesomeIcon>Sample name field is mandatory and no special characters are allowed
+              </strong>
+            </Alert>
+          </Col>
+          <Col md={'auto'}>
+            <Alert variant="info" style={{ padding: 5 }}>
+              <strong>
+                <FontAwesomeIcon style={{ marginRight: 5 }} icon={faExclamationTriangle}></FontAwesomeIcon>Protein + sample name should be unique for the whole proposal
+              </strong>
+            </Alert>
+          </Col>
+        </Row>
+        <Row>
           <div id="hot-app">
             <HotTable
               rowHeights={25}
@@ -339,19 +373,13 @@ function ContainerEditor({
           </div>
         </Row>
         <Row>
-          <Col>
-            {!synchronized ? (
-              <Alert style={{ margin: 5 }} variant="warning">
-                <FontAwesomeIcon style={{ marginRight: 5 }} icon={faSync}></FontAwesomeIcon>
-                <strong>Changes not saved to server.</strong>
-              </Alert>
-            ) : (
-              <Alert style={{ margin: 5 }} variant="info">
-                <FontAwesomeIcon style={{ marginRight: 5 }} icon={faCheck}></FontAwesomeIcon>
-                <strong>Data is synchronized with server.</strong>
-              </Alert>
-            )}
+          <Col md={'auto'}>
+            <Alert style={{ marginTop: 5, padding: 5 }} variant={synchronized ? 'success' : 'warning'}>
+              <FontAwesomeIcon style={{ marginRight: 5 }} icon={synchronized ? faCheck : faSync}></FontAwesomeIcon>
+              <strong>{synchronized ? 'Data is synchronized with server.' : 'Unsaved changes.'}</strong>
+            </Alert>
           </Col>
+          <Col></Col>
           <Col md={'auto'}>
             <Button style={{ margin: 5 }} disabled={synchronized} onClick={save}>
               Save
