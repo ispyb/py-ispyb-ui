@@ -64,7 +64,7 @@ export default function ZoomImage({ src, alt, style, lazy = true, legend }: prop
 }
 
 // eslint-disable-next-line no-unused-vars, @typescript-eslint/no-explicit-any
-function getBase64(src: RequestInformation, error: (error: any) => void, success: (value: string) => void) {
+function getObjectURL(src: RequestInformation, error: (error: any) => void, success: (value: string) => void) {
   axios
     .get(src.url, {
       headers: { Authorization: `Bearer ${src.token}` },
@@ -89,7 +89,7 @@ export function ZoomImageBearer({ src, alt, style, lazy = true, legend }: { src:
   const onVisible = (visible: boolean) => {
     console.log(visible);
     if (visible) {
-      getBase64(
+      getObjectURL(
         src,
         () => {
           setError(true);
