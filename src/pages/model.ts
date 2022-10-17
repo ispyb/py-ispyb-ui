@@ -51,26 +51,26 @@ export interface Buffer {
 }
 
 export interface Crystal {
-  cellA: number;
-  cellAlpha: number;
-  cellB: number;
-  cellBeta: number;
-  cellC: number;
-  cellGamma: number;
-  color: string;
-  comments: string;
-  crystalId: number;
-  diffractionPlanVO: DiffractionPlan;
-  morphology: string;
-  name: string;
-  pdbFileName: string;
-  pdbFilePath: string;
+  cellA?: number;
+  cellAlpha?: number;
+  cellB?: number;
+  cellBeta?: number;
+  cellC?: number;
+  cellGamma?: number;
+  color?: string;
+  comments?: string;
+  crystalId?: number;
+  diffractionPlanVO?: DiffractionPlan;
+  morphology?: string;
+  name?: string;
+  pdbFileName?: string;
+  pdbFilePath?: string;
   proteinVO: Protein;
-  sizeX: number;
-  sizeY: number;
-  sizeZ: number;
-  spaceGroup: string;
-  structure3VOs: unknown;
+  sizeX?: number;
+  sizeY?: number;
+  sizeZ?: number;
+  spaceGroup?: string;
+  structure3VOs?: unknown;
 }
 
 export interface DiffractionPlan {

@@ -103,6 +103,7 @@ export function parseCrystalInfo(data: (string | number | undefined)[], crystals
       cellAlpha: undefined,
       cellBeta: undefined,
       cellGamma: undefined,
+      comments: undefined,
     };
 
   const splitted = String(crystalData).split('-');
@@ -118,6 +119,7 @@ export function parseCrystalInfo(data: (string | number | undefined)[], crystals
       cellAlpha: 0,
       cellBeta: 0,
       cellGamma: 0,
+      comments: undefined,
     };
 
   const cells = (splitted[1] + '-' + splitted[2])
@@ -140,6 +142,7 @@ export function parseCrystalInfo(data: (string | number | undefined)[], crystals
     cellAlpha,
     cellBeta,
     cellGamma,
+    comments: undefined,
   };
 }
 

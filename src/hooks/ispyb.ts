@@ -47,9 +47,21 @@ axios.interceptors.response.use(
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
+interface GetHookOption {
+  autoRefresh: boolean;
+}
+const defaultOptions: GetHookOption = {
+  autoRefresh: true,
+};
+
 // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-explicit-any
-function doGet<T = any>(url: string, editData: (data: T) => T = (d) => d, suspense = true) {
-  const { data, error, mutate } = useSWR<T>(url, fetcher, { suspense: suspense });
+function doGet<T = any>(url: string, options: GetHookOption = defaultOptions, editData: (data: T) => T = (d) => d, suspense = true) {
+  const { data, error, mutate } = useSWR<T>(url, fetcher, {
+    suspense: suspense,
+    revalidateIfStale: options.autoRefresh,
+    revalidateOnFocus: options.autoRefresh,
+    revalidateOnReconnect: options.autoRefresh,
+  });
   return {
     data: data == undefined ? undefined : editData(data),
     isLoading: !error && !data,
@@ -63,31 +75,31 @@ interface ProposalSessionId {
   sessionId?: string;
 }
 
-export function useProposal({ proposalName }: { proposalName: string }) {
-  return doGet<ProposalDetail[]>(getProposal(proposalName).url);
+export function useProposal({ proposalName }: { proposalName: string }, options?: GetHookOption) {
+  return doGet<ProposalDetail[]>(getProposal(proposalName).url, options);
 }
 
-export function useProposals() {
-  return doGet<Proposal[]>(getProposals().url);
+export function useProposals(options?: GetHookOption) {
+  return doGet<Proposal[]>(getProposals().url, options);
 }
 
-export function useSessions(props: { startDate?: string; endDate?: string; isManager?: boolean; proposalName?: string; username?: string }) {
+export function useSessions(props: { startDate?: string; endDate?: string; isManager?: boolean; proposalName?: string; username?: string }, options?: GetHookOption) {
   const { startDate, endDate, isManager, proposalName } = props;
   if (proposalName) {
     if (startDate && endDate) {
-      return doGet<Session[]>(getProposalSessionsWhithDates(proposalName, startDate, endDate).url);
+      return doGet<Session[]>(getProposalSessionsWhithDates(proposalName, startDate, endDate).url, options);
     }
-    return doGet<Session[]>(getProposalSessions(proposalName).url);
+    return doGet<Session[]>(getProposalSessions(proposalName).url, options);
   }
   if (isManager) {
     if (startDate && endDate) {
-      return doGet<Session[]>(getSessionsManagerDates(startDate, endDate).url);
+      return doGet<Session[]>(getSessionsManagerDates(startDate, endDate).url, options);
     } else {
       return { data: undefined, isError: 'Manager mush provide start and end dates' }; //would be too heavy
     }
   } else {
     if (startDate && endDate) {
-      return doGet<Session[]>(getSessions().url, (sessions) => {
+      return doGet<Session[]>(getSessions().url, options, (sessions) => {
         return sessions.filter((s) => {
           const sessionStartTimeStamp = dateToTimestamp(s.BLSession_startDate);
           const sessionEndTimeStamp = dateToTimestamp(s.BLSession_endDate);
@@ -98,78 +110,81 @@ export function useSessions(props: { startDate?: string; endDate?: string; isMan
         });
       });
     }
-    return doGet<Session[]>(getSessions().url);
+    return doGet<Session[]>(getSessions().url, options);
   }
 }
 
-export function useSession({ sessionId }: { sessionId: string }) {
+export function useSession({ sessionId }: { sessionId: string }, options?: GetHookOption) {
   if (sessionId) {
-    return doGet(getSessionById(sessionId).url);
+    return doGet(getSessionById(sessionId).url, options);
   }
 }
 
-export function useEMDataCollectionsBy({ proposalName, sessionId }: ProposalSessionId) {
-  return doGet(getEMDataCollectionsBy({ proposalName, sessionId }).url);
+export function useEMDataCollectionsBy({ proposalName, sessionId }: ProposalSessionId, options?: GetHookOption) {
+  return doGet(getEMDataCollectionsBy({ proposalName, sessionId }).url, options);
 }
 
-export function useMXDataCollectionsBy({ proposalName, sessionId }: ProposalSessionId) {
-  return doGet<DataCollectionGroup[]>(getMXDataCollectionsBy({ proposalName, sessionId }).url);
+export function useMXDataCollectionsBy({ proposalName, sessionId }: ProposalSessionId, options?: GetHookOption) {
+  return doGet<DataCollectionGroup[]>(getMXDataCollectionsBy({ proposalName, sessionId }).url, options);
 }
-export function useMxDataCollectionsByGroupId({ proposalName, dataCollectionGroupId }: { proposalName: string; dataCollectionGroupId: string }) {
-  return doGet(getMxDataCollectionsByGroupId({ proposalName, dataCollectionGroupId }).url);
-}
-
-export function useMXEnergyScans({ proposalName, sessionId }: { proposalName: string; sessionId: string }) {
-  return doGet<EnergyScan[]>(getMXEnergyScans({ proposalName, sessionId }).url);
-}
-export function useMXFluorescenceSpectras({ proposalName, sessionId }: { proposalName: string; sessionId: string }) {
-  return doGet<FluorescenceSpectra[]>(getMXFluorescenceSpectras({ proposalName, sessionId }).url);
+export function useMxDataCollectionsByGroupId({ proposalName, dataCollectionGroupId }: { proposalName: string; dataCollectionGroupId: string }, options?: GetHookOption) {
+  return doGet(getMxDataCollectionsByGroupId({ proposalName, dataCollectionGroupId }).url, options);
 }
 
-export function useMxWorkflow({ proposalName, stepId }: { proposalName: string; stepId: string }) {
-  return doGet<WorkflowStep>(getMxWorkflow({ proposalName, stepId }).url);
+export function useMXEnergyScans({ proposalName, sessionId }: { proposalName: string; sessionId: string }, options?: GetHookOption) {
+  return doGet<EnergyScan[]>(getMXEnergyScans({ proposalName, sessionId }).url, options);
+}
+export function useMXFluorescenceSpectras({ proposalName, sessionId }: { proposalName: string; sessionId: string }, options?: GetHookOption) {
+  return doGet<FluorescenceSpectra[]>(getMXFluorescenceSpectras({ proposalName, sessionId }).url, options);
 }
 
-export function useMXContainers({ proposalName, containerIds }: { proposalName: string; containerIds: string[] }) {
-  return doGet<Sample[]>(getMXContainers({ proposalName, containerIds }).url);
+export function useMxWorkflow({ proposalName, stepId }: { proposalName: string; stepId: string }, options?: GetHookOption) {
+  return doGet<WorkflowStep>(getMxWorkflow({ proposalName, stepId }).url, options);
 }
 
-export function useEMStatistics({ proposalName, sessionId }: ProposalSessionId) {
-  return doGet(getEMStatisticsBy({ proposalName, sessionId }).url);
+export function useMXContainers({ proposalName, containerIds }: { proposalName: string; containerIds: string[] }, options?: GetHookOption) {
+  return doGet<Sample[]>(getMXContainers({ proposalName, containerIds }).url, options);
 }
 
-export function useMoviesByDataCollectionId({ proposalName, dataCollectionId }: { proposalName: string; dataCollectionId: number }) {
-  return doGet(getEmMoviesByDataCollectionId({ proposalName, dataCollectionId }).url);
+export function useEMStatistics({ proposalName, sessionId }: ProposalSessionId, options?: GetHookOption) {
+  return doGet(getEMStatisticsBy({ proposalName, sessionId }).url, options);
 }
 
-export function useEMClassification({ proposalName, sessionId }: ProposalSessionId) {
-  return doGet(getEMClassificationBy({ proposalName, sessionId }).url);
+export function useMoviesByDataCollectionId({ proposalName, dataCollectionId }: { proposalName: string; dataCollectionId: number }, options?: GetHookOption) {
+  return doGet(getEmMoviesByDataCollectionId({ proposalName, dataCollectionId }).url, options);
 }
 
-export function useDewars({ proposalName }: { proposalName: string }) {
-  return doGet<ContainerDewar[]>(getDewars({ proposalName }).url);
+export function useEMClassification({ proposalName, sessionId }: ProposalSessionId, options?: GetHookOption) {
+  return doGet(getEMClassificationBy({ proposalName, sessionId }).url, options);
 }
 
-export function useXrfScanCsv({ scanId, proposalName }: { proposalName: string; scanId: number }) {
-  return doGet<string>(getXrfScanCsv({ scanId, proposalName }).url);
+export function useDewars({ proposalName }: { proposalName: string }, options?: GetHookOption) {
+  return doGet<ContainerDewar[]>(getDewars({ proposalName }).url, options);
 }
 
-export function useLabContacts({ proposalName }: { proposalName: string }) {
-  return doGet<LabContact[]>(getLabContacts({ proposalName }).url);
+export function useXrfScanCsv({ scanId, proposalName }: { proposalName: string; scanId: number }, options?: GetHookOption) {
+  return doGet<string>(getXrfScanCsv({ scanId, proposalName }).url, options);
 }
 
-export function useShipments({ proposalName }: { proposalName: string }) {
-  return doGet<Container[]>(getShipments({ proposalName }).url);
+export function useLabContacts({ proposalName }: { proposalName: string }, options?: GetHookOption) {
+  return doGet<LabContact[]>(getLabContacts({ proposalName }).url, options);
 }
 
-export function useShipping({ proposalName, shippingId }: { proposalName: string; shippingId: number }) {
-  return doGet<Shipping>(getShipping({ proposalName, shippingId }).url);
+export function useShipments({ proposalName }: { proposalName: string }, options?: GetHookOption) {
+  return doGet<Container[]>(getShipments({ proposalName }).url, options);
 }
 
-export function useShippingHistory({ proposalName, shippingId }: { proposalName: string; shippingId: number }) {
-  return doGet<ShippingHistory>(getShippingHistory({ proposalName, shippingId }).url);
+export function useShipping({ proposalName, shippingId }: { proposalName: string; shippingId: number }, options?: GetHookOption) {
+  return doGet<Shipping>(getShipping({ proposalName, shippingId }).url, options);
 }
 
-export function useShippingContainer({ proposalName, shippingId, dewarId, containerId }: { proposalName: string; shippingId: string; dewarId: string; containerId: string }) {
-  return doGet<ShippingContainer>(getShippingContainer({ proposalName, shippingId, dewarId, containerId }).url);
+export function useShippingHistory({ proposalName, shippingId }: { proposalName: string; shippingId: number }, options?: GetHookOption) {
+  return doGet<ShippingHistory>(getShippingHistory({ proposalName, shippingId }).url, options);
+}
+
+export function useShippingContainer(
+  { proposalName, shippingId, dewarId, containerId }: { proposalName: string; shippingId: string; dewarId: string; containerId: string },
+  options?: GetHookOption
+) {
+  return doGet<ShippingContainer>(getShippingContainer({ proposalName, shippingId, dewarId, containerId }).url, options);
 }

@@ -18,6 +18,7 @@ import { Crystal, ProposalDetail } from 'pages/model';
 import { registerAllPlugins } from 'handsontable/plugins';
 import { saveContainer } from 'api/ispyb';
 import axios from 'axios';
+import { CrystalEditor } from './crystaleditor';
 
 type Param = {
   proposalName: string;
@@ -32,11 +33,11 @@ registerAllPlugins();
 export default function ContainerEditPage() {
   const { proposalName = '', shippingId = '', dewarId = '', containerId = '' } = useParams<Param>();
 
-  const { data: shipping, isError: shippingError, mutate: mutateShipping } = useShipping({ proposalName, shippingId: Number(shippingId) });
+  const { data: shipping, isError: shippingError, mutate: mutateShipping } = useShipping({ proposalName, shippingId: Number(shippingId) }, { autoRefresh: false });
 
-  const { data: container, isError: containerError, mutate: mutateContainer } = useShippingContainer({ proposalName, shippingId, dewarId, containerId });
+  const { data: container, isError: containerError, mutate: mutateContainer } = useShippingContainer({ proposalName, shippingId, dewarId, containerId }, { autoRefresh: false });
 
-  const { data: proposalArray, isError: proposalError, mutate: mutateProposal } = useProposal({ proposalName });
+  const { data: proposalArray, isError: proposalError, mutate: mutateProposal } = useProposal({ proposalName }, { autoRefresh: false });
 
   const [forceRefreshEditor, setForceRefreshEditor] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
@@ -358,16 +359,14 @@ function ContainerEditor({
                   syncLimit: 100,
                 },
                 afterChange: (changes, source) => {
-                  if (changes)
-                    // changes.forEach(([row, prop, oldValue, newValue]) => {
-                    //   handleChange(row, prop, oldValue, newValue);
-                    // });
-                    handleChanges(changes, source);
+                  if (changes) handleChanges(changes, source);
                 },
               }}
             >
               {columns.map((c) => (
-                <HotColumn key={c.title} settings={c}></HotColumn>
+                <HotColumn key={c.title} settings={c}>
+                  {c.title == 'Crystal Form' ? <CrystalEditor hot-editor data={data} crystals={crystals} proteins={proposal.proteins}></CrystalEditor> : undefined}
+                </HotColumn>
               ))}
             </HotTable>
           </div>

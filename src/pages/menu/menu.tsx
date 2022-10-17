@@ -25,7 +25,7 @@ function LogOut(props: { user: User }) {
 export default function Menu({ selected }: { selected?: string }) {
   const user = useSelector((state: RootState) => state.user);
   return (
-    <Col style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: Number.MAX_SAFE_INTEGER }}>
+    <Col style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 999 }}>
       <Row>
         <MainMenu selected={selected} user={user}></MainMenu>
       </Row>
