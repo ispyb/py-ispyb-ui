@@ -6,14 +6,19 @@ import SimpleParameterTable from 'components/table/simpleparametertable';
 import { openInNewTab } from 'helpers/opentab';
 import { useShipping } from 'hooks/ispyb';
 import { MXContainer } from 'pages/mx/container/mxcontainer';
-import { Suspense, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { Alert, Button, Card, Col, Container as ContainerB, Nav, OverlayTrigger, Popover, Row, Tab } from 'react-bootstrap';
+import Select from 'react-select';
 import { KeyedMutator } from 'swr';
 import { InformationPane } from './informationpane';
 import { Container, Shipment, Shipping, ShippingContainer, ShippingDewar } from './model';
 
 import './shipmentview.scss';
 import { TransportPane } from './transportpane';
+
+import { containerCapacities } from 'constants/containers';
+import { addContainer, removeContainer } from 'api/ispyb';
+import axios from 'axios';
 
 export function ShipmentView({ proposalName, shipment, mutateShipments }: { proposalName: string; shipment?: Shipment; mutateShipments: KeyedMutator<Container[]> }) {
   if (!shipment) {
@@ -108,7 +113,7 @@ export function ShipmentView({ proposalName, shipment, mutateShipments }: { prop
           <Card.Body>
             <Tab.Content>
               <Tab.Pane eventKey="content" title="Content">
-                <ContentPane proposalName={proposalName} shipping={data}></ContentPane>
+                <ContentPane proposalName={proposalName} shipping={data} mutateShipping={mutate}></ContentPane>
               </Tab.Pane>
             </Tab.Content>
             <Tab.Content>
@@ -121,19 +126,29 @@ export function ShipmentView({ proposalName, shipment, mutateShipments }: { prop
   );
 }
 
-export function ContentPane({ shipping, proposalName }: { shipping: Shipping; proposalName: string }) {
+export function ContentPane({ shipping, proposalName, mutateShipping }: { shipping: Shipping; proposalName: string; mutateShipping: KeyedMutator<Shipping> }) {
   return (
     <>
       {shipping.dewarVOs
         .sort((a, b) => a.dewarId - b.dewarId)
         .map((dewar) => (
-          <DewarPane key={dewar.dewarId} proposalName={proposalName} dewar={dewar} shipping={shipping}></DewarPane>
+          <DewarPane key={dewar.dewarId} proposalName={proposalName} dewar={dewar} shipping={shipping} mutateShipping={mutateShipping}></DewarPane>
         ))}
     </>
   );
 }
 
-export function DewarPane({ dewar, proposalName, shipping }: { dewar: ShippingDewar; proposalName: string; shipping: Shipping }) {
+export function DewarPane({
+  dewar,
+  proposalName,
+  shipping,
+  mutateShipping,
+}: {
+  dewar: ShippingDewar;
+  proposalName: string;
+  shipping: Shipping;
+  mutateShipping: KeyedMutator<Shipping>;
+}) {
   return (
     <Alert style={{ margin: 10 }} variant="light">
       <Row>
@@ -152,19 +167,50 @@ export function DewarPane({ dewar, proposalName, shipping }: { dewar: ShippingDe
             {dewar.containerVOs
               .sort((a, b) => a.containerId - b.containerId)
               .map((c) => (
-                <Col key={c.containerId} style={{ maxWidth: 150 }}>
-                  <ContainerView proposalName={proposalName} container={c} shipping={shipping} dewar={dewar}></ContainerView>
-                </Col>
+                <ContainerView key={c.containerId} proposalName={proposalName} container={c} shipping={shipping} dewar={dewar} mutateShipping={mutateShipping}></ContainerView>
               ))}
           </Row>
+        </Col>
+        <Col md="auto">
+          <Select
+            value={{ label: 'Add container...', value: 0 }}
+            options={Object.entries(containerCapacities).map(([key, value]) => {
+              return { label: key, value: value };
+            })}
+            onChange={(v) => {
+              if (v) {
+                const req = addContainer({ proposalName, shippingId: String(shipping.shippingId), dewarId: String(dewar.dewarId), containerType: v.label, capacity: v.value });
+                axios.get(req.url).then(() => mutateShipping());
+              }
+            }}
+          ></Select>
         </Col>
       </Row>
     </Alert>
   );
 }
 
-export function ContainerView({ container, proposalName, shipping, dewar }: { container: ShippingContainer; proposalName: string; shipping: Shipping; dewar: ShippingDewar }) {
+export function ContainerView({
+  container,
+  proposalName,
+  shipping,
+  dewar,
+  mutateShipping,
+}: {
+  container: ShippingContainer;
+  proposalName: string;
+  shipping: Shipping;
+  dewar: ShippingDewar;
+  mutateShipping: KeyedMutator<Shipping>;
+}) {
   const [showPopover, setShowPopover] = useState(false);
+  const [show, setShow] = useState(true);
+
+  useEffect(() => {
+    setShow(true);
+  }, [container.containerId]);
+
+  if (!show) return null;
 
   const editContainerUrl = `/${proposalName}/shipping/${shipping.shippingId}/dewar/${dewar.dewarId}/container/${container.containerId}/edit`;
 
@@ -178,6 +224,7 @@ export function ContainerView({ container, proposalName, shipping, dewar }: { co
               parameters={[
                 { key: 'code', value: container.code },
                 { key: 'type', value: container.containerType },
+                { key: 'capacity', value: container.capacity },
               ]}
             ></SimpleParameterTable>
           </Row>
@@ -188,7 +235,19 @@ export function ContainerView({ container, proposalName, shipping, dewar }: { co
               </Button>
             </Col>
             <Col md={'auto'}>
-              <Button variant="warning">
+              <Button
+                variant="warning"
+                onClick={() => {
+                  setShow(false);
+                  const req = removeContainer({
+                    proposalName,
+                    shippingId: String(shipping.shippingId),
+                    dewarId: String(dewar.dewarId),
+                    containerId: String(container.containerId),
+                  });
+                  axios.get(req.url).then(() => mutateShipping());
+                }}
+              >
                 <FontAwesomeIcon icon={faTrash}></FontAwesomeIcon> Remove
               </Button>
             </Col>
@@ -199,12 +258,34 @@ export function ContainerView({ container, proposalName, shipping, dewar }: { co
   );
 
   return (
-    <>
+    <Col style={{ maxWidth: 150 }}>
       <OverlayTrigger show={showPopover} trigger="focus" rootClose placement={'top'} overlay={popover} onToggle={(v) => setShowPopover(v)}>
-        <div>
-          <MXContainer proposalName={proposalName} containerId={String(container.containerId)} onContainerClick={() => setShowPopover(true)}></MXContainer>
-        </div>
+        <Col>
+          <Row>
+            <MXContainer
+              proposalName={proposalName}
+              containerId={String(container.containerId)}
+              containerType={container.containerType}
+              showInfo={false}
+              onContainerClick={() => setShowPopover(true)}
+            ></MXContainer>
+          </Row>
+          <Row>
+            <Col></Col>
+            <Col md={'auto'}>
+              <strong>{container.code}</strong>
+            </Col>
+            <Col></Col>
+          </Row>
+          <Row>
+            <Col></Col>
+            <Col md={'auto'}>
+              <small>{container.containerType}</small>
+            </Col>
+            <Col></Col>
+          </Row>
+        </Col>
       </OverlayTrigger>
-    </>
+    </Col>
   );
 }

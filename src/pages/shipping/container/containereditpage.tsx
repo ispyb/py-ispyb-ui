@@ -129,6 +129,7 @@ function ContainerEditor({
   const [data, setData] = useState(upToDateData);
   const [changed, setChanged] = useState(false);
   const [modifiedCrystals, setModifiedCrystals] = useState<Crystal[]>([]);
+  const [name, setName] = useState(container.code);
 
   const synchronized = !changed && JSON.stringify(data) == JSON.stringify(upToDateData);
 
@@ -328,6 +329,7 @@ function ContainerEditor({
 
   function save() {
     const toSave = parseTableData(data, crystals, proposal.proteins, container);
+    toSave.code = name;
     const request = saveContainer({
       proposalName: proposalName,
       shippingId: String(shipping.shippingId),
@@ -348,20 +350,34 @@ function ContainerEditor({
   return (
     <Card style={{ padding: 20 }}>
       <Col>
-        <Row>
+        <Row style={{ marginBottom: 10 }}>
           <Col>
-            <h5>Name: {container.code}</h5>
+            <Row>
+              <Col md={'auto'} style={{ marginTop: 5 }}>
+                <h5>Name:</h5>
+              </Col>
+              <Col>
+                <input
+                  className="form-control"
+                  value={name}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    setChanged(true);
+                  }}
+                ></input>
+              </Col>
+            </Row>
           </Col>
-          <Col>
+          <Col style={{ marginTop: 5 }}>
             <h5>Type: {container.containerType}</h5>
           </Col>
-          <Col>
+          <Col style={{ marginTop: 5 }}>
             <h5>Beamline : {container.beamlineLocation}</h5>
           </Col>
-          <Col>
+          <Col style={{ marginTop: 5 }}>
             <h5>#Sample Changer: {container.sampleChangerLocation}</h5>
           </Col>
-          <Col>
+          <Col style={{ marginTop: 5 }}>
             <h5>Status: {container.containerStatus}</h5>
           </Col>
         </Row>

@@ -237,3 +237,27 @@ export function saveContainer({
     headers: { 'content-type': 'application/x-www-form-urlencoded;' },
   };
 }
+
+export function addContainer({
+  proposalName,
+  shippingId,
+  dewarId,
+  containerType,
+  capacity,
+}: {
+  proposalName: string;
+  shippingId: string;
+  dewarId: string;
+  containerType: string;
+  capacity: number;
+}) {
+  return {
+    url: `${server}/${token}/proposal/${proposalName}/shipping/${shippingId}/dewar/${dewarId}/containerType/${containerType}/capacity/${capacity}/container/add`,
+  };
+}
+
+export function removeContainer({ proposalName, shippingId, dewarId, containerId }: { proposalName: string; shippingId: string; dewarId: string; containerId: string }) {
+  return {
+    url: `${server}/${token}/proposal/${proposalName}/shipping/${shippingId}/dewar/${dewarId}/puck/${containerId}/remove`,
+  };
+}

@@ -1,3 +1,4 @@
+import { containerType } from 'models';
 import { Crystal, DiffractionPlan } from 'pages/model';
 
 export type LabContact = {
@@ -148,7 +149,7 @@ export interface ShippingContainer {
   code: string;
   containerId: number;
   containerStatus: string;
-  containerType: string;
+  containerType: containerType | undefined;
   sampleChangerLocation: string;
   sampleVOs: ShippingSample[];
 }

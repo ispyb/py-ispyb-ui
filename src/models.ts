@@ -2,7 +2,7 @@
  * Site: this model descript config/site.js
  /******************************************/
 export type sampleChangerType = 'FlexHCDDual' | 'FlexHCDUnipuckPlate' | 'ISARA' | 'P11SC';
-export type containerType = 'Spinepuck' | 'Unipuck';
+export type containerType = 'Spinepuck' | 'Unipuck' | 'PLATE' | 'OTHER';
 
 export interface Beamline {
   name: string;

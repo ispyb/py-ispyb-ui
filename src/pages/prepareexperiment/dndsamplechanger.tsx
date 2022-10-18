@@ -6,7 +6,7 @@ import { Col, OverlayTrigger, Popover, Row } from 'react-bootstrap';
 
 import { useDrop } from 'react-dnd';
 import { ItemTypes } from './dndlayer';
-import { Beamline } from 'models';
+import { Beamline, containerType } from 'models';
 
 import './dndsamplechanger.scss';
 import { getContainerType, getSampleChanger } from 'helpers/mx/samplehelper';
@@ -190,7 +190,7 @@ function DroppablePosition({
   r: number;
   position: number;
   beamline: Beamline;
-  containerType: 'Spinepuck' | 'Unipuck';
+  containerType: containerType;
   // eslint-disable-next-line no-unused-vars
   setContainerLocation: (containerId: number, beamline: string, position: string) => void;
 }) {

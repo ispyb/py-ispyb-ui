@@ -32,7 +32,7 @@ export function getContainerType(type: string | undefined): containerType | unde
   if (type === 'Spinepuck' || type === 'Puck') {
     return 'Spinepuck';
   }
-  return undefined;
+  return 'OTHER';
 }
 
 export function containerCanGoInLocation(changer: AbstractSampleChanger | undefined, containerType: string | undefined, location: number | undefined) {
