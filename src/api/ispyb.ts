@@ -34,6 +34,10 @@ export function getProposal(proposalName?: string) {
   return { url: `${server}/${token}/proposal/${proposalName}/info/get` };
 }
 
+export function getProposalSamples(proposalName?: string) {
+  return { url: `${server}/${token}/proposal/${proposalName}/mx/sample/list` };
+}
+
 export function getProposals() {
   return { url: `${server}/${token}/proposal/list` };
 }

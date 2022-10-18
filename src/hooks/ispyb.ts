@@ -25,11 +25,12 @@ import {
   getShipping,
   getShippingHistory,
   getShippingContainer,
+  getProposalSamples,
 } from 'api/ispyb';
 import { EnergyScan, WorkflowStep, FluorescenceSpectra, Sample, DataCollectionGroup } from 'pages/mx/model';
 import { Container, LabContact, Shipping, ShippingContainer, ShippingHistory } from 'pages/shipping/model';
 
-import { ContainerDewar, Proposal, ProposalDetail, Session } from 'pages/model';
+import { ContainerDewar, Proposal, ProposalDetail, ProposalSample, Session } from 'pages/model';
 import { dateToTimestamp } from 'helpers/dateparser';
 import { parse } from 'date-fns';
 import { store } from 'store';
@@ -77,6 +78,10 @@ interface ProposalSessionId {
 
 export function useProposal({ proposalName }: { proposalName: string }, options?: GetHookOption) {
   return doGet<ProposalDetail[]>(getProposal(proposalName).url, options);
+}
+
+export function useProposalSamples({ proposalName }: { proposalName: string }, options?: GetHookOption) {
+  return doGet<ProposalSample[]>(getProposalSamples(proposalName).url, options);
 }
 
 export function useProposals(options?: GetHookOption) {

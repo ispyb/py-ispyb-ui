@@ -19,7 +19,7 @@ function getData(sample: ShippingSample | undefined, index: number) {
   if (sample) {
     return [
       sample.location, //0
-      sample.crystalVO.proteinVO.acronym, //1
+      sample.crystalVO?.proteinVO.acronym, //1
       sample.name, //2
       sample.code, //3
       getCrystalInfo(sample.crystalVO), //4
@@ -42,7 +42,8 @@ function getData(sample: ShippingSample | undefined, index: number) {
   } else return [index + 1];
 }
 
-export function getCrystalInfo(crystal: Crystal) {
+export function getCrystalInfo(crystal?: Crystal) {
+  if (crystal == undefined) return 'Not set';
   const getCellInfo = (crystal: Crystal) => {
     if (
       crystal.cellA == undefined &&
@@ -148,17 +149,29 @@ export function parseCrystalInfo(data: (string | number | undefined)[], crystals
   };
 }
 
-export function parseTableData(data: (string | number | undefined)[][], crystals: Crystal[], proteins: Protein[], container: ShippingContainer) {
+export function parseTableData(data: (string | number | undefined)[][], crystals: Crystal[], proteins: Protein[], container: ShippingContainer): ShippingContainer {
+  const samples: ShippingSample[] = [];
+  for (const sample of data.map((d) => parseSample(d, crystals, proteins, container.sampleVOs))) {
+    if (sample != undefined) samples.push(sample);
+  }
   return {
     ...container,
-    sampleVOs: data.map((d) => parseSample(d, crystals, proteins, container.sampleVOs)).filter((s) => s != undefined),
+    sampleVOs: samples,
   };
 }
 
-function parseSample(data: (string | number | undefined)[], crystals: Crystal[], proteins: Protein[], samples: ShippingSample[]) {
-  const get = (index: number) => {
+function parseSample(data: (string | number | undefined)[], crystals: Crystal[], proteins: Protein[], samples: ShippingSample[]): ShippingSample | undefined {
+  const getString = (index: number) => {
     if (data.length <= index) return undefined;
-    return data[index];
+    const r = data[index];
+    if (r == undefined) return undefined;
+    return String(r);
+  };
+  const getNumber = (index: number) => {
+    if (data.length <= index) return undefined;
+    const r = data[index];
+    if (r == undefined) return undefined;
+    return Number(r);
   };
 
   if (
@@ -169,33 +182,33 @@ function parseSample(data: (string | number | undefined)[], crystals: Crystal[],
     return undefined;
   }
 
-  const location = get(0);
+  const location = getString(0) || 'undefined';
   const sample_filter = samples.filter((s) => s.location == location);
   const sample = sample_filter.length ? { ...sample_filter[0] } : { diffractionPlanVO: {} };
 
   return {
     ...sample,
     location,
-    name: get(2),
-    code: get(3),
-    smiles: get(14),
-    comments: get(18),
-    structureStage: get(19),
+    name: getString(2),
+    code: getString(3),
+    smiles: getString(14),
+    comments: getString(18),
+    structureStage: getString(19),
     crystalVO: parseCrystalInfo(data, crystals, proteins),
     diffractionPlanVO: {
-      ...sample['diffractionPlanVO'],
-      experimentKind: get(5),
-      aimedResolution: get(6),
-      requiredResolution: get(7),
-      preferredBeamDiameter: get(8),
-      numberOfPositions: get(9),
-      aimedMultiplicity: get(10),
-      aimedCompleteness: get(11),
-      forcedSpaceGroup: get(12),
-      radiationSensitivity: get(13),
-      axisRange: get(15),
-      minOscWidth: get(16),
-      observedResolution: get(17),
+      ...sample.diffractionPlanVO,
+      experimentKind: getString(5),
+      aimedResolution: getNumber(6),
+      requiredResolution: getNumber(7),
+      preferredBeamDiameter: getNumber(8),
+      numberOfPositions: getNumber(9),
+      aimedMultiplicity: getNumber(10),
+      aimedCompleteness: getNumber(11),
+      forcedSpaceGroup: getString(12),
+      radiationSensitivity: getNumber(13),
+      axisRange: getNumber(15),
+      minOscWidth: getNumber(16),
+      observedResolution: getNumber(17),
     },
   };
 }

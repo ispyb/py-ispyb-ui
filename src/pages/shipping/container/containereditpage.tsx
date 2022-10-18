@@ -1,4 +1,4 @@
-import { useProposal, useShipping, useShippingContainer } from 'hooks/ispyb';
+import { useProposal, useProposalSamples, useShipping, useShippingContainer } from 'hooks/ispyb';
 import Page from 'pages/page';
 import { Alert, Button, Card, Col, Row } from 'react-bootstrap';
 import { useParams } from 'react-router';
@@ -14,11 +14,12 @@ import { spaceGroupShortNames, spaceGroupLongNames } from 'constants/spacegroups
 import _ from 'lodash';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faExclamationTriangle, faSync } from '@fortawesome/free-solid-svg-icons';
-import { Crystal, ProposalDetail } from 'pages/model';
+import { Crystal, ProposalDetail, ProposalSample } from 'pages/model';
 import { registerAllPlugins } from 'handsontable/plugins';
 import { saveContainer } from 'api/ispyb';
 import axios from 'axios';
 import { CrystalEditor } from './crystaleditor';
+import { validateContainers } from 'helpers/mx/shipping/containervalidation';
 
 type Param = {
   proposalName: string;
@@ -39,6 +40,7 @@ export default function ContainerEditPage() {
 
   const { data: proposalArray, isError: proposalError, mutate: mutateProposal } = useProposal({ proposalName }, { autoRefresh: false });
 
+  const { data: proposalSamples, isError: proposalSampleError } = useProposalSamples({ proposalName });
   const [forceRefreshEditor, setForceRefreshEditor] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -55,13 +57,13 @@ export default function ContainerEditPage() {
   if (!shipping || !container || !proposalArray) {
     return errorPage(!shipping ? 'Shipping does not exist.' : !container ? 'Container does not exist.' : 'Proposal does not exist.');
   }
-  if (shippingError || containerError || proposalError) {
-    return errorPage(shippingError || containerError || proposalError);
+  if (shippingError || containerError || proposalError || proposalSampleError) {
+    return errorPage(shippingError || containerError || proposalError || proposalSampleError);
   }
 
   const proposal = proposalArray[0];
 
-  if (!proposal) {
+  if (!proposal || proposalSamples == undefined) {
     return errorPage('Proposal does not exist.');
   }
 
@@ -96,6 +98,7 @@ export default function ContainerEditPage() {
                 key={forceRefreshEditor}
                 proposalName={proposalName}
                 proposal={proposal}
+                proposalSamples={proposalSamples}
                 container={container}
                 shipping={shipping}
                 dewar={dewar}
@@ -113,6 +116,7 @@ function ContainerEditor({
   container,
   proposalName,
   proposal,
+  proposalSamples,
   shipping,
   dewar,
   forceRefresh,
@@ -120,6 +124,7 @@ function ContainerEditor({
   shipping: Shipping;
   container: ShippingContainer;
   proposal: ProposalDetail;
+  proposalSamples: ProposalSample[];
   proposalName: string;
   dewar: ShippingDewar;
   forceRefresh: () => void;
@@ -130,6 +135,8 @@ function ContainerEditor({
   const [changed, setChanged] = useState(false);
   const [modifiedCrystals, setModifiedCrystals] = useState<Crystal[]>([]);
   const [name, setName] = useState(container.code);
+
+  const [errors, setErrors] = useState<string[]>([]);
 
   const synchronized = !changed && JSON.stringify(data) == JSON.stringify(upToDateData);
 
@@ -330,21 +337,24 @@ function ContainerEditor({
   function save() {
     const toSave = parseTableData(data, crystals, proposal.proteins, container);
     toSave.code = name;
-    const request = saveContainer({
-      proposalName: proposalName,
-      shippingId: String(shipping.shippingId),
-      dewarId: String(dewar.dewarId),
-      containerId: String(container.containerId),
-      data: toSave,
-    });
-    axios.post(request.url, request.data, { headers: request.headers }).then(
-      () => {
-        forceRefresh();
-      },
-      () => {
-        forceRefresh();
-      }
-    );
+    const errors = validateContainers([toSave], proposalSamples);
+    if (errors.length == 0) {
+      const request = saveContainer({
+        proposalName: proposalName,
+        shippingId: String(shipping.shippingId),
+        dewarId: String(dewar.dewarId),
+        containerId: String(container.containerId),
+        data: toSave,
+      });
+      axios.post(request.url, request.data, { headers: request.headers }).then(
+        () => {
+          forceRefresh();
+        },
+        () => {
+          forceRefresh();
+        }
+      );
+    } else setErrors(errors);
   }
 
   return (
@@ -425,6 +435,16 @@ function ContainerEditor({
               ))}
             </HotTable>
           </div>
+        </Row>
+        <Row>
+          {errors.map((e) => (
+            <Col key={e} md={'auto'}>
+              <Alert style={{ marginTop: 5, padding: 5 }} variant={'danger'}>
+                <FontAwesomeIcon style={{ marginRight: 5 }} icon={faExclamationTriangle}></FontAwesomeIcon>
+                <strong>{e}</strong>
+              </Alert>
+            </Col>
+          ))}
         </Row>
         <Row>
           <Col md={'auto'}>

@@ -155,21 +155,21 @@ export interface ShippingContainer {
 }
 
 export interface ShippingSample {
-  blSampleId: number;
+  blSampleId?: number;
   blSampleStatus?: string;
   code?: string;
-  comments: string;
+  comments?: string;
   completionStage?: string;
-  crystalVO: Crystal;
+  crystalVO?: Crystal;
   diffractionPlanVO: DiffractionPlan;
   holderLength?: string;
   isInSampleChanger?: string;
   lastImageURL?: string;
   lastKnownCenteringPosition?: string;
-  location: string;
+  location?: string;
   loopLength?: string;
   loopType?: string;
-  name: string;
+  name?: string;
   publicationComments?: string;
   publicationStage?: string;
   smiles?: string;
