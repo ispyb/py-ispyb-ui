@@ -5,7 +5,7 @@ import { useParams } from 'react-router';
 import { HotTable, HotColumn } from '@handsontable/react';
 import Handsontable from 'handsontable';
 import { Shipping, ShippingContainer, ShippingDewar } from '../model';
-import { containerToTableData, getCrystalInfo, parseTableData } from './containertotabledata';
+import { containerToTableData, getCrystalInfo, parseCrystalInfo, parseTableData } from './containertotabledata';
 import { registerAllCellTypes } from 'handsontable/cellTypes';
 import { Suspense, useEffect, useState } from 'react';
 import LoadingPanel from 'components/loading/loadingpanel';
@@ -165,6 +165,43 @@ function ContainerEditor({
     .uniq()
     .value();
 
+  const addModifiedCrystal = (crystal: Crystal, col: number, row: number) => {
+    const n = [crystal, ...modifiedCrystals];
+    const filterDouble = _(n)
+      .map((crystal) => {
+        for (const modifiedCrystal of n) {
+          if (
+            modifiedCrystal.crystalId == crystal.crystalId ||
+            (modifiedCrystal.proteinVO.acronym == crystal.proteinVO.acronym && getCrystalInfo(modifiedCrystal) == getCrystalInfo(crystal))
+          ) {
+            // only take the first occurrence = latest modification
+            return modifiedCrystal;
+          }
+        }
+        return crystal;
+      })
+      .uniq()
+      .value();
+    setModifiedCrystals(filterDouble);
+
+    //update modified crystal in data
+    const ndata: (string | number | undefined)[][] = JSON.parse(JSON.stringify(data));
+    //crystal was modified from this row -> update
+    ndata[row][col] = getCrystalInfo(crystal);
+    //look if same crystal Id was somewhere else
+    for (const r of ndata) {
+      const c = parseCrystalInfo(r, crystals, proposal.proteins);
+      if (c != undefined && c.crystalId) {
+        if (crystal.crystalId == c.crystalId) {
+          //if found, update with new crystal info
+          console.log('found');
+          r[col] = getCrystalInfo(crystal);
+        }
+      }
+    }
+    setData(ndata);
+  };
+
   const columns: Handsontable.ColumnSettings[] = [
     { title: '#', width: 30, readOnly: true },
     {
@@ -260,7 +297,7 @@ function ContainerEditor({
       if (prop == 1 && oldValueString.trim() != newValueString.trim()) {
         //protein change -> set crystal
         if (newValueString.trim().length) {
-          ndata[row][4] = getCrystalInfo(proposal.crystals.filter((c) => c.proteinVO.acronym == newValueString)[0]);
+          ndata[row][4] = getCrystalInfo(crystals.filter((c) => c.proteinVO.acronym == newValueString)[0]);
         } else {
           ndata[row][4] = undefined;
         }
@@ -365,7 +402,9 @@ function ContainerEditor({
             >
               {columns.map((c) => (
                 <HotColumn key={c.title} settings={c}>
-                  {c.title == 'Crystal Form' ? <CrystalEditor hot-editor data={data} crystals={crystals} proteins={proposal.proteins}></CrystalEditor> : undefined}
+                  {c.title == 'Crystal Form' ? (
+                    <CrystalEditor hot-editor data={data} crystals={crystals} proteins={proposal.proteins} addModifiedCrystal={addModifiedCrystal}></CrystalEditor>
+                  ) : undefined}
                 </HotColumn>
               ))}
             </HotTable>

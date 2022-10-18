@@ -14,11 +14,14 @@ export function EditCrystalModal({
   crystal,
   show,
   setShow,
+  onModifiedCrystal,
 }: {
   crystal: Crystal;
   show: boolean;
   // eslint-disable-next-line no-unused-vars
   setShow: (_: boolean) => void;
+  // eslint-disable-next-line no-unused-vars
+  onModifiedCrystal: (crystal: Crystal) => void;
 }) {
   const [formKey, setFormKey] = useState(uuidv4());
 
@@ -64,7 +67,16 @@ export function EditCrystalModal({
           <Modal.Title>{'Edit crystal'}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <Form fields={fields} uiSchema={uiSchema} schema={schema} formData={crystal} validator={validator} />
+          <Form
+            fields={fields}
+            uiSchema={uiSchema}
+            schema={schema}
+            formData={crystal}
+            validator={validator}
+            onSubmit={(data) => {
+              onModifiedCrystal(data.formData);
+            }}
+          />
         </Modal.Body>
       </Modal>
     </div>

@@ -67,13 +67,15 @@ export function getCrystalInfo(crystal: Crystal) {
   return 'Not set';
 }
 
-export function parseCrystalInfo(data: (string | number | undefined)[], crystals: Crystal[], proteins: Protein[]) {
+export function parseCrystalInfo(data: (string | number | undefined)[], crystals: Crystal[], proteins: Protein[]): Crystal | undefined {
   const get = (index: number) => {
     if (data.length <= index) return undefined;
     return data[index];
   };
   const proteinData = get(1);
   const crystalData = get(4);
+
+  if (proteinData == undefined || crystalData == undefined) return undefined;
 
   //look for existing crystal
   const crystalSearch = crystals
@@ -126,12 +128,12 @@ export function parseCrystalInfo(data: (string | number | undefined)[], crystals
     .trim()
     .replace(/[{()}]/g, '')
     .replace(/\s+/g, '');
-  const cellA = cells.split('-')[0].split(',')[0] == 'null' ? null : cells.split('-')[0].split(',')[0];
-  const cellB = cells.split('-')[0].split(',')[1] == 'null' ? null : cells.split('-')[0].split(',')[1];
-  const cellC = cells.split('-')[0].split(',')[1] == 'null' ? null : cells.split('-')[0].split(',')[2];
-  const cellAlpha = cells.split('-')[1].split(',')[0] == 'null' ? null : cells.split('-')[1].split(',')[0];
-  const cellBeta = cells.split('-')[1].split(',')[1] == 'null' ? null : cells.split('-')[1].split(',')[1];
-  const cellGamma = cells.split('-')[1].split(',')[2] == 'null' ? null : cells.split('-')[1].split(',')[2];
+  const cellA = Number(cells.split('-')[0].split(',')[0] == 'null' ? null : cells.split('-')[0].split(',')[0]);
+  const cellB = Number(cells.split('-')[0].split(',')[1] == 'null' ? null : cells.split('-')[0].split(',')[1]);
+  const cellC = Number(cells.split('-')[0].split(',')[1] == 'null' ? null : cells.split('-')[0].split(',')[2]);
+  const cellAlpha = Number(cells.split('-')[1].split(',')[0] == 'null' ? null : cells.split('-')[1].split(',')[0]);
+  const cellBeta = Number(cells.split('-')[1].split(',')[1] == 'null' ? null : cells.split('-')[1].split(',')[1]);
+  const cellGamma = Number(cells.split('-')[1].split(',')[2] == 'null' ? null : cells.split('-')[1].split(',')[2]);
   return {
     crystalId: undefined,
     proteinVO,
