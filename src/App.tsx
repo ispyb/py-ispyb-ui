@@ -23,6 +23,7 @@ import PrepareExperimentPage from 'pages/prepareexperiment/prepareexperimentpage
 import MxFluorescenceViewer from 'pages/mx/fluorescence/fluorescenceviewer';
 import ShippingPage from 'pages/shipping/shippingpage';
 import ContainerEditPage from 'pages/shipping/container/containereditpage';
+import { ImportShippingFromCSV } from 'pages/shipping/csv/importshipping';
 
 export default function App() {
   const user = useAppSelector((state) => state.user);
@@ -54,6 +55,7 @@ export default function App() {
             <Route path="/:proposalName/sessions" element={<ProposalSessionsPage user={user} />} />
             <Route path="/:proposalName/shipping" element={<ShippingPage />} />
             <Route path="/:proposalName/shipping/:shippingId/dewar/:dewarId/container/:containerId/edit" element={<ContainerEditPage />} />
+            <Route path="/:proposalName/shipping/:shippingId/import/csv" element={<ImportShippingFromCSV />} />
             <Route path="/:proposalName/EM/:sessionId" element={<EMSessionPage />} />
             <Route path="/:proposalName/EM/:sessionId/classification" element={<SessionClassificationPage />} />
             <Route path="/:proposalName/EM/:sessionId/statistics" element={<SessionStatisticsPage />} />

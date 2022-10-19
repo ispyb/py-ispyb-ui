@@ -20,6 +20,7 @@ import { saveContainer } from 'api/ispyb';
 import axios from 'axios';
 import { CrystalEditor } from './crystaleditor';
 import { validateContainers } from 'helpers/mx/shipping/containervalidation';
+import { EXPERIMENT_TYPES } from 'constants/experiments';
 
 type Param = {
   proposalName: string;
@@ -258,7 +259,7 @@ function ContainerEditor({
       filter: true,
       strict: true,
       allowInvalid: false,
-      source: ['', 'Default', 'MXPressE', 'MXPressF', 'MXPressO', 'MXPressI', 'MXPressE_SAD', 'MXScore', 'MXPressM', 'MXPressP', 'MXPressP_SAD'],
+      source: EXPERIMENT_TYPES,
     },
     { title: 'Aimed<br /> resolution' },
     { title: 'Required<br /> resolution' },

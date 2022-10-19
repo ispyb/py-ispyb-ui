@@ -1,4 +1,4 @@
-import { faEdit, faQuestionCircle, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faFileImport, faQuestionCircle, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LazyWrapper from 'components/loading/lazywrapper';
 import LoadingPanel from 'components/loading/loadingpanel';
@@ -127,14 +127,30 @@ export function ShipmentView({ proposalName, shipment, mutateShipments }: { prop
 }
 
 export function ContentPane({ shipping, proposalName, mutateShipping }: { shipping: Shipping; proposalName: string; mutateShipping: KeyedMutator<Shipping> }) {
+  const importURL = `/${proposalName}/shipping/${shipping.shippingId}/import/csv`;
+
   return (
-    <>
+    <Col style={{ margin: 10 }}>
+      <Row>
+        <Col>
+          <Button
+            onClick={() => {
+              openInNewTab(importURL);
+            }}
+            variant="primary"
+          >
+            <FontAwesomeIcon style={{ marginRight: 10 }} icon={faFileImport}></FontAwesomeIcon>
+            Import from CSV
+          </Button>
+        </Col>
+      </Row>
+      {shipping.dewarVOs.length > 0 ? <div style={{ height: 2, marginTop: 10, backgroundColor: '#c3c3c3de' }}></div> : null}
       {shipping.dewarVOs
         .sort((a, b) => a.dewarId - b.dewarId)
         .map((dewar) => (
           <DewarPane key={dewar.dewarId} proposalName={proposalName} dewar={dewar} shipping={shipping} mutateShipping={mutateShipping}></DewarPane>
         ))}
-    </>
+    </Col>
   );
 }
 
@@ -150,7 +166,7 @@ export function DewarPane({
   mutateShipping: KeyedMutator<Shipping>;
 }) {
   return (
-    <Alert style={{ margin: 10 }} variant="light">
+    <Alert style={{ marginTop: 10 }} variant="light">
       <Row>
         <Col md="auto">
           <SimpleParameterTable
