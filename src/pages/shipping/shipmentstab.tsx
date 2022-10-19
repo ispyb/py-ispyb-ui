@@ -67,7 +67,7 @@ export function ShipmentsTab({ proposalName }: { proposalName: string }) {
             <InputGroup.Text>
               <FontAwesomeIcon icon={faSearch}></FontAwesomeIcon>
             </InputGroup.Text>
-            <FormControl placeholder={`search ${shipments.length} shipments...`} value={search} onChange={(e) => setSearch(e.target.value)} />
+            <FormControl placeholder={`search in ${shipments.length} shipments...`} value={search} onChange={(e) => setSearch(e.target.value)} />
           </InputGroup>
         </Row>
         <Row style={{ height: '75vh', overflowY: 'scroll' }}>

@@ -173,6 +173,7 @@ export function DewarPane({
         </Col>
         <Col md="auto">
           <Select
+            className="containerTypeSelect"
             value={{ label: 'Add container...', value: 0 }}
             options={Object.entries(containerCapacities).map(([key, value]) => {
               return { label: key, value: value };
