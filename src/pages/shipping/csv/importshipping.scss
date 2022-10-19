@@ -1,7 +1,14 @@
 @import 'theme.scss';
 
 td.error {
-  border-bottom: 5px dashed red;
+  // border-bottom: 5px dashed red;
+  // text-decoration: wavy red;
+  text-decoration: red underline;
+  // -webkit-text-decoration-style: wavy;
+  // -moz-text-decoration-style: wavy;
+  text-decoration-style: dotted;
+  text-decoration-thickness: 3px;
+  text-underline-position: under;
 }
 
 td.color1 {
