@@ -18,10 +18,15 @@ export function validateContainers(containers: ShippingContainer[], proposalSamp
       if (sample.name == undefined || sample.name == null || sample.name == '') {
         errors.push(`Sample in position ${sample.location} is not named.`);
       }
-      if (sample.name && !sample.name.match('^[a-zA-Z0-9]+$')) {
-        errors.push(`Sample in position ${sample.location} is has special characters.`);
+      if (sample.name && sample.name.match(/[^a-zA-Z0-9]/)) {
+        const invalids = [...sample.name.matchAll(/[^a-zA-Z0-9]/g)];
+        if (invalids.length > 1) {
+          errors.push(`Sample named '${sample.name}' in position ${sample.location} has invalid characters '${invalids.join(',')}'.`);
+        } else {
+          errors.push(`Sample named '${sample.name}' in position ${sample.location} has invalid character '${invalids[0]}'.`);
+        }
       }
-      if (sample.crystalVO == undefined || sample.name == null) {
+      if (sample.crystalVO == undefined) {
         errors.push(`Sample in position ${sample.location} has no crystal.`);
       }
       if (

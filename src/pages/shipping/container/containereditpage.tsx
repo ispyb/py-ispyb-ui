@@ -40,7 +40,7 @@ export default function ContainerEditPage() {
 
   const { data: proposalArray, isError: proposalError, mutate: mutateProposal } = useProposal({ proposalName }, { autoRefresh: false });
 
-  const { data: proposalSamples, isError: proposalSampleError } = useProposalSamples({ proposalName });
+  const { data: proposalSamples, isError: proposalSampleError, mutate: mutateProposalSamples } = useProposalSamples({ proposalName });
   const [forceRefreshEditor, setForceRefreshEditor] = useState(0);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -75,7 +75,7 @@ export default function ContainerEditPage() {
       setRefreshing(false);
     };
     setRefreshing(true);
-    Promise.all([mutateShipping(), mutateContainer(), mutateProposal()]).then(whenDone, whenDone);
+    Promise.all([mutateShipping(), mutateContainer(), mutateProposal(), mutateProposalSamples()]).then(whenDone, whenDone);
   };
 
   return (
@@ -136,8 +136,6 @@ function ContainerEditor({
   const [modifiedCrystals, setModifiedCrystals] = useState<Crystal[]>([]);
   const [name, setName] = useState(container.code);
 
-  const [errors, setErrors] = useState<string[]>([]);
-
   const synchronized = !changed && JSON.stringify(data) == JSON.stringify(upToDateData);
 
   useEffect(() => {
@@ -172,6 +170,10 @@ function ContainerEditor({
   ])
     .uniq()
     .value();
+
+  const toSave = parseTableData(data, crystals, proposal.proteins, container);
+  toSave.code = name;
+  const errors = validateContainers([toSave], proposalSamples);
 
   const addModifiedCrystal = (crystal: Crystal, col: number, row: number) => {
     const n = [crystal, ...modifiedCrystals];
@@ -335,9 +337,6 @@ function ContainerEditor({
   }
 
   function save() {
-    const toSave = parseTableData(data, crystals, proposal.proteins, container);
-    toSave.code = name;
-    const errors = validateContainers([toSave], proposalSamples);
     if (errors.length == 0) {
       const request = saveContainer({
         proposalName: proposalName,
@@ -354,7 +353,7 @@ function ContainerEditor({
           forceRefresh();
         }
       );
-    } else setErrors(errors);
+    }
   }
 
   return (
@@ -455,7 +454,7 @@ function ContainerEditor({
           </Col>
           <Col></Col>
           <Col md={'auto'}>
-            <Button style={{ margin: 5 }} disabled={synchronized} onClick={save}>
+            <Button style={{ margin: 5 }} disabled={synchronized || errors.length > 0} onClick={save}>
               Save
             </Button>
             <Button
