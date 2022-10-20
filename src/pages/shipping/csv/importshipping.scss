@@ -1,14 +1,12 @@
 @import 'theme.scss';
 
-td.error {
-  // border-bottom: 5px dashed red;
-  // text-decoration: wavy red;
-  text-decoration: red underline;
-  // -webkit-text-decoration-style: wavy;
-  // -moz-text-decoration-style: wavy;
-  text-decoration-style: dotted;
-  text-decoration-thickness: 3px;
-  text-underline-position: under;
+td.error::before {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  left: 4px;
+  border-top: 3px dotted red;
 }
 
 td.color1 {
@@ -16,37 +14,29 @@ td.color1 {
 }
 
 td.color2 {
-  background-color: lightcoral;
-}
-
-td.color3 {
   background-color: lightyellow;
 }
 
-td.color4 {
+td.color3 {
   background-color: lightgray;
 }
 
-td.color5 {
+td.color4 {
   background-color: lightgreen;
 }
 
-td.color6 {
+td.color5 {
   background-color: lightpink;
 }
 
-td.color7 {
-  background-color: lightsalmon;
-}
-
-td.color8 {
+td.color6 {
   background-color: lightslategray;
 }
 
-td.color9 {
+td.color7 {
   background-color: lightseagreen;
 }
 
-td.color10 {
+td.color8 {
   background-color: lightsteelblue;
 }

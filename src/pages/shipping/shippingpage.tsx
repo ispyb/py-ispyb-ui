@@ -4,7 +4,7 @@ import Page from 'pages/page';
 import { useParams } from 'react-router-dom';
 import { Card, Tab, Tabs } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAddressCard, faBoxOpen, faFlask } from '@fortawesome/free-solid-svg-icons';
+import { faAddressCard, faBoxOpen } from '@fortawesome/free-solid-svg-icons';
 import { AddressesTab } from './addressestab';
 import { ShipmentsTab } from './shipmentstab';
 import LazyWrapper from 'components/loading/lazywrapper';

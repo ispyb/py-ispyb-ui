@@ -1,6 +1,6 @@
 import { useProposal, useProposalSamples, useShipping } from 'hooks/ispyb';
 import Page from 'pages/page';
-import { Alert, Col, Row } from 'react-bootstrap';
+import { Alert, Button, Col, Row } from 'react-bootstrap';
 import { useParams } from 'react-router';
 import CSVReader from 'react-csv-reader';
 import { useState } from 'react';
@@ -14,8 +14,7 @@ import { spaceGroupLongNames, spaceGroupShortNames } from 'constants/spacegroups
 import './importshipping.scss';
 import { validateShipping } from 'helpers/mx/shipping/shippingcsv';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
-import { of } from 'rxjs';
+import { faExclamationTriangle, faFileImport, faSave } from '@fortawesome/free-solid-svg-icons';
 import { CellMeta } from 'handsontable/settings';
 import { CommentObject } from 'handsontable/plugins/comments';
 
@@ -27,8 +26,8 @@ type Param = {
 export function ImportShippingFromCSV() {
   const { proposalName = '', shippingId = '' } = useParams<Param>();
 
-  const { data: shipping, isError: shippingError, mutate: mutateShipping } = useShipping({ proposalName, shippingId: Number(shippingId) }, { autoRefresh: false });
-  const { data: proposalArray, isError: proposalError, mutate: mutateProposal } = useProposal({ proposalName }, { autoRefresh: false });
+  const { data: shipping, isError: shippingError, mutate: mutateShipping } = useShipping({ proposalName, shippingId: Number(shippingId) });
+  const { data: proposalArray, isError: proposalError, mutate: mutateProposal } = useProposal({ proposalName });
   const { data: proposalSamples, isError: proposalSampleError, mutate: mutateProposalSamples } = useProposalSamples({ proposalName });
 
   const errorPage = (msg: unknown) => (
@@ -85,17 +84,58 @@ export function CSVShippingImporter({ shipping, proposal, proposalSamples }: { s
   };
   return (
     <Col>
-      <CSVReader parserOptions={papaparseOptions} onFileLoaded={onCSVLoaded} />
-      {data ? <CSVShippingImporterTable proposal={proposal} shipping={shipping} proposalSamples={proposalSamples} data={data}></CSVShippingImporterTable> : <></>}
+      <Row>
+        <CSVReader
+          cssInputClass="form-control form-control-sm"
+          label={'Choose import source file'}
+          cssLabelClass="form-label"
+          parserOptions={papaparseOptions}
+          onFileLoaded={onCSVLoaded}
+        />
+      </Row>
+      <Row>
+        <small>
+          Do you need help? Click{' '}
+          <a target="_blank" href="https://github.com/ispyb/EXI/wiki/Fill-shipment-from-CSV">
+            here
+          </a>
+          . Examples can be found here:{' '}
+          <a target="_blank" href="https://raw.githubusercontent.com/ispyb/EXI/master/csv/example3.csv">
+            example.csv
+          </a>
+        </small>
+      </Row>
+      <Row>
+        {[
+          'Parcel Name should be unique for this shipment',
+          'Container name should be unique for this shipment',
+          'Protein + sample name should be unique for the whole proposal',
+          'Sample name field is mandatory and no special characters are allowed',
+          'Only Unipuck container type at MAX IV',
+        ].map((m) => (
+          <Col key={m} md={'auto'}>
+            <Alert style={{ marginTop: 5, padding: 5 }} variant="info">
+              <FontAwesomeIcon style={{ marginRight: 5 }} icon={faExclamationTriangle}></FontAwesomeIcon>
+              <small>{m} </small>
+            </Alert>
+          </Col>
+        ))}
+      </Row>
+      <div style={{ height: 2, marginTop: 10, marginBottom: 20, backgroundColor: '#c3c3c3de' }}></div>
+      {data ? (
+        <CSVShippingImporterTable onDataChange={setData} proposal={proposal} shipping={shipping} proposalSamples={proposalSamples} data={data}></CSVShippingImporterTable>
+      ) : (
+        <></>
+      )}
     </Col>
   );
 }
 
-const lastColor: { [column: string]: number } = {};
-const maxColor = 10;
-const valueColors: { [value: string]: number } = {};
+const lastColor: { [column: number]: number } = {};
+const maxColor = 8;
+const valueColors: { [key: string]: number } = {};
 
-const getNextColorForColumn = (column: string) => {
+const getNextColorForColumn = (column: number) => {
   let next = 1;
   if (column in lastColor) {
     const last = lastColor[column];
@@ -107,12 +147,16 @@ const getNextColorForColumn = (column: string) => {
   return next;
 };
 
-const getClassForValue = (column: string, value: string) => {
-  if (value in valueColors) {
-    return `color${valueColors[value]}`;
+const getClassForValue = (column: number, value: string | number | undefined) => {
+  if (value == undefined || String(value).trim().length == 0) {
+    return '';
+  }
+  const key = `column=${column}+value=${value}`;
+  if (key in valueColors) {
+    return `color${valueColors[key]}`;
   } else {
     const newValueColor = getNextColorForColumn(column);
-    valueColors[value] = newValueColor;
+    valueColors[key] = newValueColor;
     return `color${newValueColor}`;
   }
 };
@@ -122,54 +166,39 @@ export function CSVShippingImporterTable({
   proposal,
   proposalSamples,
   data,
+  onDataChange,
 }: {
   shipping: Shipping;
   proposal: ProposalDetail;
   proposalSamples: ProposalSample[];
   data: (string | number | undefined)[][];
+  // eslint-disable-next-line no-unused-vars
+  onDataChange: (data: (string | number | undefined)[][]) => void;
 }) {
-  const errors = validateShipping(data, proposalSamples);
-  const getErrorForCell = (row: number, col: number) => {
-    for (const error of errors) {
-      if (error.row == row && error.col == col) {
-        return error;
-      }
-    }
-    return undefined;
+  const errors = validateShipping(data, shipping, proposalSamples);
+  const getErrorsForCell = (row: number, col: number) => {
+    const res = errors.filter((e) => e.row == row && e.col == col);
+    return res;
   };
-  const generateCellProperties = (row: number, col: number, columnNameForColor: string | undefined = undefined): CellMeta => {
-    const colorClass = columnNameForColor != undefined ? getClassForValue(columnNameForColor, String(data[row][col])) : undefined;
-    const error = getErrorForCell(row, col);
-    const classNames = [...(colorClass ? [colorClass] : []), ...(error ? ['error'] : [])];
-    const comment: CommentObject | undefined = error ? { value: error.message, readOnly: true } : undefined;
+  const generateCellProperties = (row: number, col: number): CellMeta => {
+    const colorClass = getClassForValue(col, data[row][col]);
+    const errors = getErrorsForCell(row, col);
+    const classNames = [...(colorClass ? [colorClass] : []), ...(errors.length ? ['error'] : [])];
+    const comment: CommentObject | undefined = errors.length ? { value: errors.map((e) => '- ' + e.message).join('\n'), readOnly: true } : undefined;
     return { className: classNames, comment };
   };
 
   const columns: Handsontable.ColumnSettings[] = [
     {
       title: 'Parcel<br />Name',
-      cells(row, col) {
-        return generateCellProperties(row, col, 'parcel');
-        // return { className: [getErrorClassForCell(row, col), getClassForValue('parcel', String(data[row][col]))] };
-      },
     },
     {
       title: 'Container<br />Name',
-      cells(row, col) {
-        return generateCellProperties(row, col, 'container');
-
-        //return { className: [getErrorClassForCell(row, col), getClassForValue('container', String(data[row][col]))] };
-      },
     },
     { title: 'Container<br />Type' },
     { title: 'Container<br />Position' },
     {
       title: 'Protein<br />Acronym',
-      cells(row, col) {
-        return generateCellProperties(row, col, 'protein');
-
-        //return { className: [getErrorClassForCell(row, col), getClassForValue('protein', String(data[row][col]))] };
-      },
     },
     { title: 'Sample<br />Acronym' },
     { title: 'Pin<br />Barcode' },
@@ -210,9 +239,23 @@ export function CSVShippingImporterTable({
     { title: 'Comments' },
   ];
 
+  function handleChanges(changes: Handsontable.CellChange[], source: Handsontable.ChangeSource) {
+    const ndata = JSON.parse(JSON.stringify(data));
+    changes.forEach(([row, prop, oldValue, newValue]) => {
+      ndata[row][prop] = newValue;
+    });
+    onDataChange(ndata);
+  }
+
   return (
     <Row>
       <Col>
+        <Row>
+          <h5>Please check content before importing.</h5>
+        </Row>
+        <Row>
+          <small>Fields with same value have same color.</small>
+        </Row>
         <Row>
           <div id="hot-app">
             <HotTable
@@ -230,8 +273,10 @@ export function CSVShippingImporterTable({
                 },
                 cells(row, col) {
                   return generateCellProperties(row, col);
-
-                  //   return { className: getErrorClassForCell(row, col), comment: { value: 'testtt' } };
+                },
+                beforeChange: (changes, source) => {
+                  console.log([changes, source]);
+                  if (changes) handleChanges(changes, source);
                 },
               }}
             >
@@ -241,15 +286,30 @@ export function CSVShippingImporterTable({
             </HotTable>
           </div>
         </Row>
-        <Row>
-          {errors.map((e) => (
-            <Col key={e.message} md={'auto'}>
-              <Alert style={{ marginTop: 5, padding: 5 }} variant={'danger'}>
-                <FontAwesomeIcon style={{ marginRight: 5 }} icon={faExclamationTriangle}></FontAwesomeIcon>
-                <strong>{e.message}</strong>
-              </Alert>
-            </Col>
-          ))}
+        {errors.length > 0 ? (
+          <Row style={{ maxHeight: 65, overflowY: 'scroll', backgroundColor: 'rgb(195 195 195 / 22%)', borderBottom: '2px solid #c3c3c3de', marginRight: 0, marginLeft: 0 }}>
+            {_(errors)
+              .map((e) => e.message)
+              .uniq()
+              .map((e) => (
+                <Col key={e} md={'auto'}>
+                  <Alert style={{ marginTop: 5, padding: 5 }} variant={'danger'}>
+                    <FontAwesomeIcon style={{ marginRight: 5 }} icon={faExclamationTriangle}></FontAwesomeIcon>
+                    <strong>{e}</strong>
+                  </Alert>
+                </Col>
+              ))
+              .value()}
+          </Row>
+        ) : null}
+        <Row style={{ marginTop: 10 }}>
+          <Col></Col>
+          <Col md={'auto'}>
+            <Button disabled={errors.length > 0}>
+              <FontAwesomeIcon style={{ marginRight: 10 }} icon={faSave}></FontAwesomeIcon>
+              {errors.length > 0 ? 'Fix errors to finalize import' : 'Finalize import'}
+            </Button>
+          </Col>
         </Row>
       </Col>
     </Row>
