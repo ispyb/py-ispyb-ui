@@ -39,12 +39,17 @@ export type Value = string | number | undefined;
 export type Line = Value[];
 export type Data = Line[];
 export type Error = { row: number; col: number; message: string };
+export type AutoReplacement = { row: number; col: number; oldValue: Value; newValue: Value };
 
 export function getField(line: Line, field: FieldName): { index: number; value: Value } {
   const index = FIELDS.indexOf(field);
   if (line.length > index) return { index, value: line[index] };
   return { index, value: undefined };
 }
+
+const getSampleKey = (protein?: Value, name?: Value) => {
+  return `protein=${protein}+name=${name}`;
+};
 
 export function validateShipping(data: Line[], shipping: Shipping, proposalSamples: ProposalSample[]): Error[] {
   const errors: Error[] = [];
@@ -59,10 +64,6 @@ export function validateShipping(data: Line[], shipping: Shipping, proposalSampl
     .flatMap((d) => d.containerVOs)
     .map((c) => c.code)
     .value();
-
-  const getSampleKey = (protein?: Value, name?: Value) => {
-    return `protein=${protein}+name=${name}`;
-  };
 
   const shippingSampleKeys = _(data)
     .map((row) => {
@@ -79,8 +80,8 @@ export function validateShipping(data: Line[], shipping: Shipping, proposalSampl
   const proposalSampleKeys = _(proposalSamples)
     .map((sample) => {
       const protein = sample.Protein_acronym;
-      const sampleCode = sample.BLSample_name;
-      return getSampleKey(protein, sampleCode);
+      const sampleName = sample.BLSample_name;
+      return getSampleKey(protein, sampleName);
     })
     .value();
 
@@ -153,4 +154,84 @@ export function validateShipping(data: Line[], shipping: Shipping, proposalSampl
   });
 
   return errors;
+}
+
+export function autofixShipping(data: Line[], shipping: Shipping, proposalSamples: ProposalSample[]): [Line[], AutoReplacement[]] {
+  //PREPARE DATA
+
+  const proposalSampleKeys = _(proposalSamples)
+    .map((sample) => {
+      const protein = sample.Protein_acronym;
+      const sampleName = sample.BLSample_name;
+      return getSampleKey(protein, sampleName);
+    })
+    .value();
+  const shippingSampleKeys = _(data)
+    .map((row) => {
+      const protein = getField(row, 'protein acronym');
+      const sample = getField(row, 'sample acronym');
+      return getSampleKey(protein.value, sample.value);
+    })
+    .value();
+  const existingSampleKeys = [...proposalSampleKeys, ...shippingSampleKeys];
+
+  const sampleNameSuffixes: { [protein: string]: { [sampleName: string]: number } } = {};
+  const getSampleNameWithSuffix = (protein: string, sampleName: string): string => {
+    if (!(protein in sampleNameSuffixes)) {
+      sampleNameSuffixes[protein] = {};
+    }
+    const proteinDict = sampleNameSuffixes[protein];
+    if (!(sampleName in proteinDict)) {
+      proteinDict[sampleName] = 0;
+      return sampleName;
+    } else {
+      proteinDict[sampleName] = proteinDict[sampleName] + 1;
+      const newName = `${sampleName}-${proteinDict[sampleName]}`;
+      const newKey = getSampleKey(protein, newName);
+      if (!existingSampleKeys.includes(newKey)) {
+        //We have a new key => use it
+        existingSampleKeys.push(newKey);
+        return newName;
+      } else {
+        //We created a key that already exist => try again with next iteration (suffix will be incremented)
+        return getSampleNameWithSuffix(protein, sampleName);
+      }
+    }
+  };
+  //Initialize names with samples already in proposal
+  proposalSamples.forEach((sample) => {
+    const protein = sample.Protein_acronym;
+    const sampleCode = sample.BLSample_name;
+    getSampleNameWithSuffix(protein, sampleCode);
+  });
+
+  //Make fixes on data copy
+
+  const ndata: Line[] = JSON.parse(JSON.stringify(data));
+
+  const replacements: AutoReplacement[] = [];
+
+  ndata.forEach((line, row) => {
+    const protein = getField(line, 'protein acronym');
+    const sample = getField(line, 'sample acronym');
+
+    //fix sample names
+    if (protein.value != undefined && sample.value != undefined) {
+      //Remove special characters
+      const noSpecialCharacters = String(sample.value).replaceAll(/[^a-zA-Z0-9-_]/g, '');
+      //Remove duplicates
+      const newName = getSampleNameWithSuffix(String(protein.value), noSpecialCharacters);
+      if (String(sample.value) != newName) {
+        ndata[row][sample.index] = newName;
+        replacements.push({
+          row,
+          col: sample.index,
+          oldValue: sample.value,
+          newValue: newName,
+        });
+      }
+    }
+  });
+
+  return [ndata, replacements];
 }

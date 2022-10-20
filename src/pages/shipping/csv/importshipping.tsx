@@ -1,9 +1,9 @@
 import { useProposal, useProposalSamples, useShipping } from 'hooks/ispyb';
 import Page from 'pages/page';
-import { Alert, Button, Col, Row } from 'react-bootstrap';
+import { Alert, Button, Col, Form, FormCheck, Row } from 'react-bootstrap';
 import { useParams } from 'react-router';
 import CSVReader from 'react-csv-reader';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Shipping } from '../model';
 import { ProposalDetail, ProposalSample } from 'pages/model';
 import Handsontable from 'handsontable';
@@ -12,9 +12,9 @@ import _, { min } from 'lodash';
 import { EXPERIMENT_TYPES } from 'constants/experiments';
 import { spaceGroupLongNames, spaceGroupShortNames } from 'constants/spacegroups';
 import './importshipping.scss';
-import { validateShipping } from 'helpers/mx/shipping/shippingcsv';
+import { autofixShipping, AutoReplacement, validateShipping } from 'helpers/mx/shipping/shippingcsv';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faExclamationTriangle, faFileImport, faSave } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faExclamationTriangle, faFileImport, faSave } from '@fortawesome/free-solid-svg-icons';
 import { CellMeta } from 'handsontable/settings';
 import { CommentObject } from 'handsontable/plugins/comments';
 
@@ -73,6 +73,9 @@ export function ImportShippingFromCSV() {
 
 export function CSVShippingImporter({ shipping, proposal, proposalSamples }: { shipping: Shipping; proposal: ProposalDetail; proposalSamples: ProposalSample[] }) {
   const [data, setData] = useState<(string | number | undefined)[][] | undefined>(undefined);
+
+  const [autoReplacements, setAutoReplacements] = useState<AutoReplacement[]>([]);
+
   const papaparseOptions = {
     header: false,
     dynamicTyping: true,
@@ -80,7 +83,14 @@ export function CSVShippingImporter({ shipping, proposal, proposalSamples }: { s
     comments: '#',
   };
   const onCSVLoaded = (newData: (string | number | undefined)[][]) => {
+    const [fixed, autoReplacements] = autofixShipping(newData, shipping, proposalSamples);
+    setData(fixed);
+    setAutoReplacements(autoReplacements);
+  };
+  const onDataChange = (newData: (string | number | undefined)[][]) => {
     setData(newData);
+    // remove deprecated autoReplacements
+    setAutoReplacements(autoReplacements.filter((r) => r.newValue == newData[r.row][r.col]));
   };
   return (
     <Col>
@@ -113,8 +123,8 @@ export function CSVShippingImporter({ shipping, proposal, proposalSamples }: { s
           'Sample name field is mandatory and no special characters are allowed',
           'Only Unipuck container type at MAX IV',
         ].map((m) => (
-          <Col key={m} md={'auto'}>
-            <Alert style={{ marginTop: 5, padding: 5 }} variant="info">
+          <Col key={m} md={'auto'} style={{ padding: 5 }}>
+            <Alert style={{ padding: 5, margin: 0 }} variant="info">
               <FontAwesomeIcon style={{ marginRight: 5 }} icon={faExclamationTriangle}></FontAwesomeIcon>
               <small>{m} </small>
             </Alert>
@@ -123,7 +133,14 @@ export function CSVShippingImporter({ shipping, proposal, proposalSamples }: { s
       </Row>
       <div style={{ height: 2, marginTop: 10, marginBottom: 20, backgroundColor: '#c3c3c3de' }}></div>
       {data ? (
-        <CSVShippingImporterTable onDataChange={setData} proposal={proposal} shipping={shipping} proposalSamples={proposalSamples} data={data}></CSVShippingImporterTable>
+        <CSVShippingImporterTable
+          onDataChange={onDataChange}
+          proposal={proposal}
+          shipping={shipping}
+          proposalSamples={proposalSamples}
+          data={data}
+          autoReplacements={autoReplacements}
+        ></CSVShippingImporterTable>
       ) : (
         <></>
       )}
@@ -167,6 +184,7 @@ export function CSVShippingImporterTable({
   proposalSamples,
   data,
   onDataChange,
+  autoReplacements,
 }: {
   shipping: Shipping;
   proposal: ProposalDetail;
@@ -174,17 +192,30 @@ export function CSVShippingImporterTable({
   data: (string | number | undefined)[][];
   // eslint-disable-next-line no-unused-vars
   onDataChange: (data: (string | number | undefined)[][]) => void;
+  autoReplacements: AutoReplacement[];
 }) {
+  const [acceptAutoReplacements, setAcceptAutoReplacements] = useState(false);
+
   const errors = validateShipping(data, shipping, proposalSamples);
   const getErrorsForCell = (row: number, col: number) => {
     const res = errors.filter((e) => e.row == row && e.col == col);
     return res;
   };
+  const getAutoReplacementsForCell = (row: number, col: number) => {
+    const res = autoReplacements.filter((r) => r.row == row && r.col == col);
+    return res;
+  };
   const generateCellProperties = (row: number, col: number): CellMeta => {
     const colorClass = getClassForValue(col, data[row][col]);
     const errors = getErrorsForCell(row, col);
-    const classNames = [...(colorClass ? [colorClass] : []), ...(errors.length ? ['error'] : [])];
-    const comment: CommentObject | undefined = errors.length ? { value: errors.map((e) => '- ' + e.message).join('\n'), readOnly: true } : undefined;
+    const autoReplacements = getAutoReplacementsForCell(row, col);
+    const classNames = [...(colorClass ? [colorClass] : []), ...(errors.length ? ['error'] : []), ...(autoReplacements.length ? ['replaced'] : [])];
+    const commentErrors = errors.length ? errors.map((e) => '- ' + e.message).join('\n') : undefined;
+    const commentAutoReplacements = autoReplacements.length ? autoReplacements.map((r) => `- '${r.oldValue}' replaced with '${r.newValue}'`).join('\n') : undefined;
+    const commentValues = [commentAutoReplacements, commentErrors].filter((a) => a != undefined);
+    const commentValue = commentValues.length > 1 ? commentValues.join('\n') : commentValues.length ? commentValues[0] : undefined;
+
+    const comment: CommentObject | undefined = commentValue ? { value: commentValue, readOnly: true } : undefined;
     return { className: classNames, comment };
   };
 
@@ -247,11 +278,13 @@ export function CSVShippingImporterTable({
     onDataChange(ndata);
   }
 
+  const hotTableComponent = useRef<HotTable>(null);
+
   return (
     <Row>
       <Col>
         <Row>
-          <h5>Please check content before importing.</h5>
+          <h5>{errors.length > 0 ? 'Please fix errors before importing' : 'Please check content before importing.'}</h5>
         </Row>
         <Row>
           <small>Fields with same value have same color.</small>
@@ -259,9 +292,11 @@ export function CSVShippingImporterTable({
         <Row>
           <div id="hot-app">
             <HotTable
+              ref={hotTableComponent}
               rowHeights={25}
               height={min([25 * data.length + 55, 500])}
               colHeaders={true}
+              rowHeaders={true}
               comments={true}
               settings={{
                 data: data,
@@ -288,26 +323,83 @@ export function CSVShippingImporterTable({
         </Row>
         {errors.length > 0 ? (
           <Row style={{ maxHeight: 65, overflowY: 'scroll', backgroundColor: 'rgb(195 195 195 / 22%)', borderBottom: '2px solid #c3c3c3de', marginRight: 0, marginLeft: 0 }}>
-            {_(errors)
-              .map((e) => e.message)
-              .uniq()
-              .map((e) => (
-                <Col key={e} md={'auto'}>
-                  <Alert style={{ marginTop: 5, padding: 5 }} variant={'danger'}>
-                    <FontAwesomeIcon style={{ marginRight: 5 }} icon={faExclamationTriangle}></FontAwesomeIcon>
-                    <strong>{e}</strong>
-                  </Alert>
-                </Col>
-              ))
-              .value()}
+            <Col>
+              <Row>
+                <small>{errors.length} validation errors occurred. Click on them to see data:</small>
+              </Row>
+              <Row>
+                {_(errors)
+                  .map((e) => (
+                    <Col key={e.message} md={'auto'} style={{ padding: 5 }}>
+                      <Button
+                        onClick={() => {
+                          hotTableComponent?.current?.hotInstance?.selectCell(e.row, e.col);
+                        }}
+                        style={{ padding: 1 }}
+                        size={'sm'}
+                        variant={'danger'}
+                      >
+                        <FontAwesomeIcon style={{ marginRight: 5 }} icon={faExclamationTriangle}></FontAwesomeIcon>
+                        <strong>{e.message}</strong>
+                      </Button>
+                    </Col>
+                  ))
+                  .value()}
+              </Row>
+            </Col>
+          </Row>
+        ) : null}
+        {autoReplacements.length > 0 ? (
+          <Row style={{ maxHeight: 65, overflowY: 'scroll', backgroundColor: 'rgb(195 195 195 / 22%)', borderBottom: '2px solid #c3c3c3de', marginRight: 0, marginLeft: 0 }}>
+            <Col>
+              <Row>
+                <small>{autoReplacements.length} values have been replaced automatically to fix errors. Click on them to see data:</small>
+              </Row>
+              <Row>
+                {_(autoReplacements)
+                  .map((r) => (
+                    <Col key={`${r.row}-${r.col}`} md={'auto'} style={{ padding: 5 }}>
+                      <Button
+                        onClick={() => {
+                          hotTableComponent?.current?.hotInstance?.selectCell(r.row, r.col);
+                        }}
+                        style={{ padding: 1 }}
+                        size={'sm'}
+                        variant={'warning'}
+                      >
+                        <small>{`'${r.oldValue}' replaced with '${r.newValue}'`}</small>
+                      </Button>
+                    </Col>
+                  ))
+                  .value()}
+              </Row>
+            </Col>
           </Row>
         ) : null}
         <Row style={{ marginTop: 10 }}>
           <Col></Col>
+          {autoReplacements.length ? (
+            <Col md={'auto'}>
+              <Button
+                disabled={acceptAutoReplacements}
+                onClick={() => {
+                  setAcceptAutoReplacements(true);
+                }}
+                variant={acceptAutoReplacements ? 'success' : 'warning'}
+              >
+                <FontAwesomeIcon style={{ marginRight: 10 }} icon={faCheck}></FontAwesomeIcon>
+                {acceptAutoReplacements ? 'Accepted' : 'Accept auto replacements'}
+              </Button>
+            </Col>
+          ) : null}
           <Col md={'auto'}>
             <Button disabled={errors.length > 0}>
               <FontAwesomeIcon style={{ marginRight: 10 }} icon={faSave}></FontAwesomeIcon>
-              {errors.length > 0 ? 'Fix errors to finalize import' : 'Finalize import'}
+              {errors.length > 0
+                ? 'Fix errors to finalize import'
+                : autoReplacements.length > 0 && !acceptAutoReplacements
+                ? 'Accept auto replacements to finalize import'
+                : 'Finalize import'}
             </Button>
           </Col>
         </Row>
