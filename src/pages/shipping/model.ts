@@ -123,34 +123,34 @@ export interface Shipping {
 }
 
 export interface ShippingDewar {
-  barCode: string;
+  barCode?: string;
   code: string;
-  comments: string;
+  comments?: string;
   containerVOs: ShippingContainer[];
   customsValue?: string;
-  dewarId: number;
+  dewarId?: number;
   dewarStatus?: string;
   facilityCode?: string;
-  isReimbursed: boolean;
+  isReimbursed?: boolean;
   isStorageDewar?: string;
   sessionVO?: ShippingSession;
-  storageLocation: string;
+  storageLocation?: string;
   timeStamp?: string;
   trackingNumberFromSynchrotron?: string;
   trackingNumberToSynchrotron?: string;
-  transportValue: number;
+  transportValue?: number;
   type: string;
 }
 
 export interface ShippingContainer {
   barcode?: string;
-  beamlineLocation: string;
+  beamlineLocation?: string;
   capacity: number;
   code: string;
-  containerId: number;
-  containerStatus: string;
+  containerId?: number;
+  containerStatus?: string;
   containerType: containerType | undefined;
-  sampleChangerLocation: string;
+  sampleChangerLocation?: string;
   sampleVOs: ShippingSample[];
 }
 

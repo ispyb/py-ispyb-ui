@@ -1,6 +1,6 @@
 import { store } from 'store';
 import { Site } from 'models';
-import { LabContact } from 'pages/shipping/model';
+import { LabContact, ShippingDewar } from 'pages/shipping/model';
 
 let server = '';
 let token = '';
@@ -205,6 +205,18 @@ export function saveShipment({ proposalName, data }: { proposalName: string; dat
   return {
     url: `${server}/${token}/proposal/${proposalName}/shipping/save`,
     data: asString,
+    headers: { 'content-type': 'application/x-www-form-urlencoded;' },
+  };
+}
+
+export function addDewarsToShipping({ proposalName, shippingId, data }: { proposalName: string; shippingId: number; data: ShippingDewar[] }) {
+  const jsonData = JSON.stringify(data);
+
+  const encoded = `${encodeURIComponent('dewars')}=${encodeURIComponent(jsonData)}`;
+
+  return {
+    url: `${server}/${token}/proposal/${proposalName}/shipping/${shippingId}/dewars/add`,
+    data: encoded,
     headers: { 'content-type': 'application/x-www-form-urlencoded;' },
   };
 }

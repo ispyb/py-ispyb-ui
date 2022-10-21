@@ -146,7 +146,7 @@ export function ContentPane({ shipping, proposalName, mutateShipping }: { shippi
       </Row>
       {shipping.dewarVOs.length > 0 ? <div style={{ height: 2, marginTop: 10, backgroundColor: '#c3c3c3de' }}></div> : null}
       {shipping.dewarVOs
-        .sort((a, b) => a.dewarId - b.dewarId)
+        .sort((a, b) => (a.dewarId ? a.dewarId : 0) - (b.dewarId ? b.dewarId : 0))
         .map((dewar) => (
           <DewarPane key={dewar.dewarId} proposalName={proposalName} dewar={dewar} shipping={shipping} mutateShipping={mutateShipping}></DewarPane>
         ))}
@@ -181,7 +181,7 @@ export function DewarPane({
         <Col>
           <Row>
             {dewar.containerVOs
-              .sort((a, b) => a.containerId - b.containerId)
+              .sort((a, b) => (a.containerId ? a.containerId : 0) - (b.containerId ? b.containerId : 0))
               .map((c) => (
                 <ContainerView key={c.containerId} proposalName={proposalName} container={c} shipping={shipping} dewar={dewar} mutateShipping={mutateShipping}></ContainerView>
               ))}
