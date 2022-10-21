@@ -1,4 +1,4 @@
-import { faEdit, faFileImport, faQuestionCircle, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faFileImport, faFilePdf, faPlus, faPrint, faQuestionCircle, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LazyWrapper from 'components/loading/lazywrapper';
 import LoadingPanel from 'components/loading/loadingpanel';
@@ -17,8 +17,9 @@ import './shipmentview.scss';
 import { TransportPane } from './transportpane';
 
 import { containerCapacities } from 'constants/containers';
-import { addContainer, removeContainer } from 'api/ispyb';
+import { addContainer, getDewarLabels, removeContainer, removeDewar } from 'api/ispyb';
 import axios from 'axios';
+import DownloadButton from 'components/buttons/downloadbutton';
 
 export function ShipmentView({ proposalName, shipment, mutateShipments }: { proposalName: string; shipment?: Shipment; mutateShipments: KeyedMutator<Container[]> }) {
   if (!shipment) {
@@ -132,7 +133,13 @@ export function ContentPane({ shipping, proposalName, mutateShipping }: { shippi
   return (
     <Col style={{ margin: 10 }}>
       <Row>
-        <Col>
+        <Col md={'auto'}>
+          <Button variant="primary">
+            <FontAwesomeIcon style={{ marginRight: 10 }} icon={faPlus}></FontAwesomeIcon>
+            Create parcel
+          </Button>
+        </Col>
+        <Col md={'auto'}>
           <Button
             onClick={() => {
               openInNewTab(importURL);
@@ -141,6 +148,12 @@ export function ContentPane({ shipping, proposalName, mutateShipping }: { shippi
           >
             <FontAwesomeIcon style={{ marginRight: 10 }} icon={faFileImport}></FontAwesomeIcon>
             Import from CSV
+          </Button>
+        </Col>
+        <Col md={'auto'}>
+          <Button variant="primary">
+            <FontAwesomeIcon style={{ marginRight: 10 }} icon={faFilePdf}></FontAwesomeIcon>
+            Export to pdf
           </Button>
         </Col>
       </Row>
@@ -165,6 +178,8 @@ export function DewarPane({
   shipping: Shipping;
   mutateShipping: KeyedMutator<Shipping>;
 }) {
+  const [hide, setHide] = useState(false);
+  if (hide) return null;
   return (
     <Alert style={{ marginTop: 10 }} variant="light">
       <Row>
@@ -187,20 +202,57 @@ export function DewarPane({
               ))}
           </Row>
         </Col>
-        <Col md="auto">
-          <Select
-            className="containerTypeSelect"
-            value={{ label: 'Add container...', value: 0 }}
-            options={Object.entries(containerCapacities).map(([key, value]) => {
-              return { label: key, value: value };
-            })}
-            onChange={(v) => {
-              if (v) {
-                const req = addContainer({ proposalName, shippingId: String(shipping.shippingId), dewarId: String(dewar.dewarId), containerType: v.label, capacity: v.value });
+        <Col md="auto" style={{ marginRight: 10, paddingLeft: 30, borderLeft: '1px solid gray' }}>
+          <Row>
+            <Select
+              className="containerTypeSelect"
+              value={{ label: 'Add container...', value: 0 }}
+              options={Object.entries(containerCapacities).map(([key, value]) => {
+                return { label: key, value: value };
+              })}
+              onChange={(v) => {
+                if (v) {
+                  const req = addContainer({ proposalName, shippingId: String(shipping.shippingId), dewarId: String(dewar.dewarId), containerType: v.label, capacity: v.value });
+                  axios.get(req.url).then(() => mutateShipping());
+                }
+              }}
+            ></Select>
+          </Row>
+          <Row>
+            <Button variant={'primary'} style={{ marginTop: 5 }}>
+              <FontAwesomeIcon icon={faEdit} style={{ marginRight: 5 }}></FontAwesomeIcon>
+              Edit
+            </Button>
+          </Row>
+          <Row>
+            <DownloadButton
+              variant={dewar.dewarStatus ? 'secondary' : 'success'}
+              style={{ marginTop: 5 }}
+              icon={faPrint}
+              title="print label"
+              fileName={`label_parcel_${dewar.code}_${dewar.dewarId}.pdf`}
+              url={getDewarLabels({ proposalName, shippingId: String(shipping.shippingId), dewarId: String(dewar.dewarId) }).url}
+              onClick={() => mutateShipping()}
+            ></DownloadButton>
+          </Row>
+          <Row>
+            <Button
+              variant={'warning'}
+              style={{ marginTop: 5 }}
+              onClick={() => {
+                setHide(true);
+                const req = removeDewar({
+                  proposalName,
+                  shippingId: String(shipping.shippingId),
+                  dewarId: String(dewar.dewarId),
+                });
                 axios.get(req.url).then(() => mutateShipping());
-              }
-            }}
-          ></Select>
+              }}
+            >
+              <FontAwesomeIcon icon={faTrash} style={{ marginRight: 5 }}></FontAwesomeIcon>
+              Remove
+            </Button>
+          </Row>
         </Col>
       </Row>
     </Alert>

@@ -18,8 +18,6 @@ export function ShipmentsTab({ proposalName }: { proposalName: string }) {
   const [selected, setSelected] = useState<Shipment | undefined>(undefined);
   const [showNewShipmentModal, setShowNewShipmentModal] = useState(false);
 
-  console.log(selected);
-
   if (isError) throw Error(isError);
 
   const shipments: Shipment[] = _(data)

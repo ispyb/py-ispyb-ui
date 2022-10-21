@@ -277,3 +277,15 @@ export function removeContainer({ proposalName, shippingId, dewarId, containerId
     url: `${server}/${token}/proposal/${proposalName}/shipping/${shippingId}/dewar/${dewarId}/puck/${containerId}/remove`,
   };
 }
+
+export function getDewarLabels({ proposalName, shippingId, dewarId }: { proposalName: string; shippingId: string; dewarId: string }) {
+  return {
+    url: `${server}/${token}/proposal/${proposalName}/shipping/${shippingId}/dewar/${dewarId}/labels`,
+  };
+}
+
+export function removeDewar({ proposalName, shippingId, dewarId }: { proposalName: string; shippingId: string; dewarId: string }) {
+  return {
+    url: `${server}/${token}/proposal/${proposalName}/shipping/${shippingId}/dewar/${dewarId}/remove`,
+  };
+}

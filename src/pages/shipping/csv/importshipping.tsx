@@ -133,7 +133,7 @@ export function CSVShippingImporter({
           setDone('success');
         },
         () => {
-          setDone('error');
+          setDone('danger');
         }
       );
     }
