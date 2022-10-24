@@ -122,25 +122,27 @@ export interface Shipping {
   timeStamp: string;
 }
 
-export interface ShippingDewar {
+export interface ShippingDewar extends SaveShippingDewar {
+  containerVOs: ShippingContainer[];
+  sessionVO?: ShippingSession;
+}
+export type SaveShippingDewar = {
   barCode?: string;
   code: string;
   comments?: string;
-  containerVOs: ShippingContainer[];
   customsValue?: string;
   dewarId?: number;
   dewarStatus?: string;
   facilityCode?: string;
   isReimbursed?: boolean;
   isStorageDewar?: string;
-  sessionVO?: ShippingSession;
   storageLocation?: string;
   timeStamp?: string;
   trackingNumberFromSynchrotron?: string;
   trackingNumberToSynchrotron?: string;
   transportValue?: number;
   type: string;
-}
+};
 
 export interface ShippingContainer {
   barcode?: string;

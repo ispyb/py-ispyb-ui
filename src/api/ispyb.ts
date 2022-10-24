@@ -1,6 +1,6 @@
 import { store } from 'store';
 import { Site } from 'models';
-import { LabContact, ShippingDewar } from 'pages/shipping/model';
+import { LabContact, SaveShippingDewar, ShippingDewar } from 'pages/shipping/model';
 
 let server = '';
 let token = '';
@@ -66,7 +66,8 @@ export function getMxWorkflow({ proposalName, stepId }: { proposalName: string; 
 }
 
 export function getMXContainers({ proposalName, containerIds }: { proposalName: string; containerIds: string[] }) {
-  return { url: `${server}/${token}/proposal/${proposalName}/mx/sample/containerid/${containerIds.join(',')}/list` };
+  const containers = containerIds.length ? containerIds.join(',') : 'null';
+  return { url: `${server}/${token}/proposal/${proposalName}/mx/sample/containerid/${containers}/list` };
 }
 
 export function getEMDataCollectionsBy({ proposalName, sessionId }: { proposalName: string; sessionId?: string }) {
@@ -281,6 +282,38 @@ export function removeContainer({ proposalName, shippingId, dewarId, containerId
 export function getDewarLabels({ proposalName, shippingId, dewarId }: { proposalName: string; shippingId: string; dewarId: string }) {
   return {
     url: `${server}/${token}/proposal/${proposalName}/shipping/${shippingId}/dewar/${dewarId}/labels`,
+  };
+}
+
+export function getDewarsPdf({ proposalName, sort, dewarIds }: { proposalName: string; sort: 1 | 2; dewarIds: (string | number | undefined)[] }) {
+  return {
+    url: `${server}/${token}/proposal/${proposalName}/mx/sample/dewar/${dewarIds.filter((d) => d != undefined).join(',')}/sortView/${sort}/list/pdf`,
+  };
+}
+
+export function saveParcel({
+  proposalName,
+  shippingId,
+  data,
+}: {
+  proposalName: string;
+  shippingId: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data: SaveShippingDewar;
+}) {
+  const d = data as { [key: string]: string | number | boolean | undefined };
+
+  const asString = Object.keys(d)
+    .map((key) => {
+      const v = d[key];
+      return `${encodeURIComponent(key)}=${v != undefined ? encodeURIComponent(v) : ''}`;
+    })
+    .join('&');
+
+  return {
+    url: `${server}/${token}/proposal/${proposalName}/shipping/${shippingId}/dewar/save`,
+    data: asString,
+    headers: { 'content-type': 'application/x-www-form-urlencoded;' },
   };
 }
 
