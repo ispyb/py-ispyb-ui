@@ -26,6 +26,18 @@ import { EnergyScan, WorkflowStep, FluorescenceSpectra, Sample, DataCollectionGr
 import { ContainerDewar, Proposal, Session } from 'pages/model';
 import { dateToTimestamp } from 'helpers/dateparser';
 import { parse } from 'date-fns';
+import { store } from 'store';
+import { doLogOut } from 'redux/actions/user';
+
+axios.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  function (error) {
+    console.log(JSON.stringify(error));
+    store.dispatch(doLogOut());
+  }
+);
 
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 

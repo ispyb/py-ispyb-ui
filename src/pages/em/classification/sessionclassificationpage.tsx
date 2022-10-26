@@ -6,6 +6,7 @@ import { useEMClassification } from 'hooks/ispyb';
 import { Classification } from 'pages/em/model';
 import ClassificationPanel from 'pages/em/classification/classificationpanel';
 import Menu from 'components/menu/menu';
+
 type Param = {
   sessionId?: string;
   proposalName: string;
