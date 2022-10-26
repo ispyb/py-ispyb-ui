@@ -11,7 +11,7 @@ import { Alert, Button, Card, Col, Container as ContainerB, FormCheck, Nav, Over
 import Select from 'react-select';
 import { KeyedMutator } from 'swr';
 import { InformationPane } from './informationpane';
-import { Container, SaveShippingDewar, Shipment, Shipping, ShippingContainer, ShippingDewar } from './model';
+import { Container, Shipment, Shipping, ShippingContainer, ShippingDewar } from './model';
 
 import './shipmentview.scss';
 import { TransportPane } from './transportpane';
