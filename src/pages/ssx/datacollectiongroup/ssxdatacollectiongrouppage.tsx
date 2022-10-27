@@ -41,7 +41,7 @@ export default function SSXDataCollectionGroupsPage() {
     content = (
       <Card>
         {filtereddcgs.map((dcg) => (
-          <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+          <LazyWrapper key={dcg.dataCollectionGroupId} placeholder={<LoadingPanel></LoadingPanel>}>
             <Suspense fallback={<LoadingPanel></LoadingPanel>}>
               <SSXDataCollectionGroupPane
                 dcg={dcg}
