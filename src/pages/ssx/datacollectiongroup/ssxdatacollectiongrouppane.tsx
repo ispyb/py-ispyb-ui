@@ -170,7 +170,7 @@ function DataCollectionGroupSummary({
     <Col>
       <Row>
         <h4 className="text-center" style={{ margin: 10 }}>
-          Accumulative summary
+          Cumulative summary
         </h4>
       </Row>
       <Row>
