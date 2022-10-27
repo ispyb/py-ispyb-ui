@@ -1,38 +1,25 @@
-import SimpleParameterTable from 'components/table/simpleparametertable';
-import { useDataCollectionGraphData, useDataCollectionGraphs, useSSXDataCollectionHits, useSSXDataCollectionSample } from 'hooks/pyispyb';
-import { Button, ButtonGroup, Col, Row } from 'react-bootstrap';
+import { useDataCollectionGraphData, useDataCollectionGraphs, useSSXDataCollectionHits } from 'hooks/pyispyb';
+import { Col, Row } from 'react-bootstrap';
 import { GraphResponse, SSXDataCollectionResponse } from '../model';
 import { BarChart, Bar, Brush, XAxis, YAxis, CartesianGrid, Tooltip, Legend, RadialBarChart, RadialBar, ResponsiveContainer } from 'recharts';
-import { Suspense, useState } from 'react';
+import { Suspense } from 'react';
 import LoadingPanel from 'components/loading/loadingpanel';
+import ZoomImage from 'components/image/zoomimage';
+import _ from 'lodash';
 
 export default function SSXDataCollectionSummary({ dc }: { dc: SSXDataCollectionResponse }) {
-  const { data: sample, isError } = useSSXDataCollectionSample(dc.DataCollection.dataCollectionId);
-
-  if (isError) throw Error(isError);
-
   return (
     <Row>
-      <Col style={{ maxWidth: 400 }}>
-        <SimpleParameterTable
-          parameters={[
-            { key: 'Sample name', value: sample?.name },
-            { key: 'Experiment type', value: dc.DataCollection.DataCollectionGroup.experimentType },
-            { key: 'Support', value: 'TODO' },
-
-            { key: 'Exposure time', value: dc.DataCollection.exposureTime, units: 's' },
-            { key: 'Repetition rate', value: dc.repetitionRate },
-            { key: 'Wavelength', value: dc.DataCollection.wavelength },
-            { key: 'Flux', value: dc.DataCollection.flux },
-            { key: 'Transmission', value: dc.DataCollection.transmission, units: '%' },
-            { key: 'Detector distance', value: dc.DataCollection.detectorDistance, units: 'mm' },
-          ]}
-        ></SimpleParameterTable>
+      <Col md={'auto'}>
+        <ZoomImage style={{ maxWidth: 350 }} src="/images/temp/max.png"></ZoomImage>
       </Col>
       <Col md={'auto'}>
         <Suspense fallback={<LoadingPanel></LoadingPanel>}>
           <HitsStatistics dc={dc}></HitsStatistics>
         </Suspense>
+      </Col>
+      <Col md={'auto'}>
+        <ZoomImage style={{ maxWidth: 400 }} src="/images/temp/dozor.png"></ZoomImage>
       </Col>
       <Col>
         <Suspense fallback={<LoadingPanel></LoadingPanel>}>
@@ -77,12 +64,8 @@ export function HitsStatistics({ dc }: { dc: SSXDataCollectionResponse }) {
   );
 }
 
-const GRAPHS = ['a', 'b', 'c', 'alpha', 'beta', 'gamma'];
-
 export function UnitCellStatistics({ dc }: { dc: SSXDataCollectionResponse }) {
   const { data: graphs, isError } = useDataCollectionGraphs(dc.DataCollection.dataCollectionId);
-
-  const [selected, setSelected] = useState(0);
 
   if (isError) throw Error(isError);
 
@@ -92,24 +75,16 @@ export function UnitCellStatistics({ dc }: { dc: SSXDataCollectionResponse }) {
 
   return (
     <>
-      <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-        <UnitCellParamGraph graph={graphs[selected]}></UnitCellParamGraph>
-      </Suspense>
-      <Row style={{ marginLeft: 45, marginBottom: 5 }}>
-        <Col></Col>
-        <Col>
-          <ButtonGroup size="sm">
-            {graphs
-              .filter((g) => GRAPHS.includes(g.name))
-              .sort((a, b) => GRAPHS.indexOf(a.name) - GRAPHS.indexOf(b.name))
-              .map((g) => (
-                <Button variant="secondary" active={graphs[selected] == g} onClick={() => setSelected(graphs.indexOf(g))}>
-                  {g.name}
-                </Button>
-              ))}
-          </ButtonGroup>
-        </Col>
-        <Col></Col>
+      <Row>
+        {graphs.map((g) => {
+          return (
+            <Col md={'auto'}>
+              <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+                <UnitCellParamGraph graph={g}></UnitCellParamGraph>
+              </Suspense>
+            </Col>
+          );
+        })}
       </Row>
     </>
   );
@@ -124,14 +99,20 @@ export function UnitCellParamGraph({ graph }: { graph: GraphResponse }) {
     return <></>;
   }
 
-  const data = values.map((a) => {
-    return { value: a.x, frequency: a.y };
-  });
+  const maxValue = _(values)
+    .map((v) => v.y)
+    .max();
+
+  const data = values
+    .filter((a) => (maxValue ? a.y > 0.01 * maxValue : true))
+    .map((a) => {
+      return { value: a.x, frequency: a.y };
+    });
 
   return (
-    <ResponsiveContainer width="100%" height={300} debounce={1}>
+    <ResponsiveContainer width={300} height={150} debounce={1}>
       <BarChart
-        height={300}
+        height={150}
         data={data}
         margin={{
           top: 5,
@@ -146,7 +127,7 @@ export function UnitCellParamGraph({ graph }: { graph: GraphResponse }) {
         <Tooltip />
         <Legend verticalAlign="top" wrapperStyle={{ lineHeight: '30px' }} />
         <Brush dataKey="value" height={20} stroke="#8884d8" />
-        <Bar name={`Unit cell ${graph.name} frequency`} dataKey="frequency" fill="#8884d8" />
+        <Bar name={`${graph.name}`} dataKey="frequency" fill="#8884d8" />
       </BarChart>
     </ResponsiveContainer>
   );

@@ -1,38 +1,12 @@
-import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { dateToTimestamp, formatDateToDayAndPreciseTime } from 'helpers/dateparser';
-import { useSSXDataCollectionSequences } from 'hooks/pyispyb';
 import _ from 'lodash';
-import { Alert, Badge, Col, Row, Toast } from 'react-bootstrap';
+import { Badge, Toast } from 'react-bootstrap';
 import BootstrapTable from 'react-bootstrap-table-next';
-import { SSXDataCollectionResponse, SSXSequenceEventTypeResponse, SSXSequenceResponse } from '../model';
-
-export default function SSXDataCollectionSequence({ dc }: { dc: SSXDataCollectionResponse }) {
-  const { data: sequences, isError } = useSSXDataCollectionSequences(dc.DataCollection.dataCollectionId);
-  if (isError) throw Error(isError);
-
-  if (!sequences)
-    return (
-      <Alert variant="info">
-        <FontAwesomeIcon icon={faInfoCircle} style={{ marginRight: 10 }} />
-        No sequence found.
-      </Alert>
-    );
-
-  return (
-    <Row>
-      {sequences.map((sequence) => (
-        <Col key={sequence.sequenceId}>
-          <Sequence sequence={sequence}></Sequence>
-        </Col>
-      ))}
-    </Row>
-  );
-}
+import { SSXSequenceEventTypeResponse, SSXSequenceResponse } from '../model';
 
 export function Sequence({ sequence }: { sequence: SSXSequenceResponse }) {
   return (
-    <Toast style={{ margin: 10, width: 'auto' }}>
+    <Toast style={{ margin: 10, width: 'auto', boxShadow: 'none' }}>
       <Toast.Header closeButton={false}>
         <strong className="me-auto">{sequence.name || 'Unnamed sequence'}</strong>
         <small>{sequence.sequence_events.length} events</small>

@@ -1,42 +1,7 @@
 import { faFlask, faVial } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { getDataCollectionSampleThumbnail } from 'api/pyispyb';
-import { ZoomImageBearer } from 'components/image/zoomimage';
-import SimpleParameterTable from 'components/table/simpleparametertable';
-import { useSSXDataCollectionSample } from 'hooks/pyispyb';
-import { Col, Row, Table } from 'react-bootstrap';
-import { SSXDataCollectionResponse, SSXSampleResponse } from '../model';
-
-export default function SSXDataCollectionSample({ dc }: { dc: SSXDataCollectionResponse }) {
-  const { data: sample, isError } = useSSXDataCollectionSample(dc.DataCollection.dataCollectionId);
-
-  if (isError) throw Error(isError);
-  return (
-    <Row>
-      <Col>
-        <SimpleParameterTable
-          parameters={[
-            { key: 'Sample name', value: sample?.name },
-            { key: 'Protein', value: sample?.Crystal.Protein.acronym },
-            { key: 'Avg crystal size (X, Y, Z)', value: `${sample?.Crystal.size_X}, ${sample?.Crystal.size_Y}, ${sample?.Crystal.size_Z}` },
-            { key: 'Crystal concentration', value: sample?.Crystal.abundance },
-            { key: 'Support', value: 'TODO' },
-          ]}
-        ></SimpleParameterTable>
-      </Col>
-      <Col>
-        <SamplePreparation sample={sample}></SamplePreparation>
-      </Col>
-      <Col md={'auto'}>
-        <ZoomImageBearer
-          style={{ maxWidth: 300 }}
-          alt="Sample snapshot"
-          src={getDataCollectionSampleThumbnail({ dataCollectionId: dc.DataCollection.dataCollectionId, thumbnailNumber: 1 })}
-        />
-      </Col>
-    </Row>
-  );
-}
+import { Col, Table } from 'react-bootstrap';
+import { SSXSampleResponse } from '../model';
 
 export function SamplePreparation({ sample }: { sample?: SSXSampleResponse }) {
   if (!sample) {

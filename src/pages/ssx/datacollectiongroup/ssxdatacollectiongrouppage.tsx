@@ -2,11 +2,11 @@ import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LazyWrapper from 'components/loading/lazywrapper';
 import LoadingPanel from 'components/loading/loadingpanel';
-import { formatDateToDayAndTime } from 'helpers/dateparser';
+import { formatDateToDayAndTime, parseDate } from 'helpers/dateparser';
 import { useSession, useSSXDataCollectionGroups } from 'hooks/pyispyb';
 import { SessionResponse } from 'pages/model';
 import Page from 'pages/page';
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { Alert, Card } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import SSXDataCollectionGroupPane from './ssxdatacollectiongrouppane';
@@ -27,13 +27,31 @@ export default function SSXDataCollectionGroupsPage() {
 
   let content;
 
-  if (dcgs && dcgs.length && session) {
+  const filtereddcgs = dcgs ? dcgs.sort((a, b) => parseDate(b.startTime).getTime() - parseDate(a.startTime).getTime()).filter((a) => a.nbDataCollection) : undefined;
+
+  const [deployedId, setDeployedId] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    if (!deployedId && filtereddcgs && filtereddcgs.length) {
+      setDeployedId(filtereddcgs[0].dataCollectionGroupId);
+    }
+  }, [filtereddcgs]);
+
+  if (filtereddcgs && filtereddcgs.length && session) {
     content = (
       <Card>
-        {dcgs.map((dcg) => (
+        {filtereddcgs.map((dcg) => (
           <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
             <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-              <SSXDataCollectionGroupPane dcg={dcg} session={session} proposalName={proposalName}></SSXDataCollectionGroupPane>
+              <SSXDataCollectionGroupPane
+                dcg={dcg}
+                session={session}
+                proposalName={proposalName}
+                deployed={dcg.dataCollectionGroupId == deployedId}
+                onDeploy={() => {
+                  setDeployedId(dcg.dataCollectionGroupId);
+                }}
+              ></SSXDataCollectionGroupPane>
             </Suspense>
           </LazyWrapper>
         ))}

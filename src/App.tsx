@@ -21,7 +21,6 @@ import ProposalSessionsPage from 'pages/proposalsessionspage';
 import MXEnergyScanPage from 'pages/mx/energyscan/mxenergyscanpage';
 import MXFluorescencePage from 'pages/mx/fluorescence/fluorescencepage';
 import PrepareExperimentPage from 'pages/prepareexperiment/prepareexperimentpage';
-import SSXDataCollectionsPage from 'pages/ssx/datacollection/ssxdatacollectionspage';
 import SSXDataCollectionGroupsPage from 'pages/ssx/datacollectiongroup/ssxdatacollectiongrouppage';
 
 export default function App() {
@@ -64,7 +63,6 @@ export default function App() {
             <Route path="/:proposalName/MX/:sessionId/workflow/:workflowId/steps/:stepsIds" element={<MXWorkflowPage />} />
             <Route path="/:proposalName/MX/prepare" element={<PrepareExperimentPage />} />
             <Route path="/:proposalName/SSX/:sessionId" element={<SSXDataCollectionGroupsPage />} />
-            <Route path="/:proposalName/SSX/:sessionId/:dataCollectionGroupId" element={<SSXDataCollectionsPage />} />
           </Routes>
         </ErrorBoundary>
       </Suspense>
