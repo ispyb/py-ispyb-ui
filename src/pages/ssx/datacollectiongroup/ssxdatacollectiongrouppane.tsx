@@ -190,9 +190,9 @@ function DataCollectionGroupSummary({
           </Col>
         </Suspense>
       </Row>
-      <Row style={{ margin: 20, maxHeight: 800, padding: 0, backgroundColor: '#d3d3d36b', border: '1px solid lightgray', borderRadius: 10 }}>
+      <Row style={{ margin: 20, padding: 0, backgroundColor: '#d3d3d36b', border: '1px solid lightgray', borderRadius: 10 }}>
         <Col md={'auto'} style={{ margin: 0, marginRight: 20, padding: 0, display: 'flex' }}>
-          <div style={{ maxHeight: 800, overflowY: 'scroll', borderRight: '1px solid lightgray', borderRadius: 10, margin: 0, backgroundColor: '#345a8c8a' }}>
+          <div style={{ overflowY: 'scroll', borderRight: '1px solid lightgray', borderRadius: 10, margin: 0, backgroundColor: '#345a8c8a' }}>
             <div
               className="text-center"
               style={{
