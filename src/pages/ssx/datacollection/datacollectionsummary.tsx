@@ -78,7 +78,7 @@ export function UnitCellStatistics({ dc }: { dc: SSXDataCollectionResponse }) {
       <Row>
         {graphs.map((g) => {
           return (
-            <Col md={'auto'}>
+            <Col key={g.graphId} md={'auto'}>
               <Suspense fallback={<LoadingPanel></LoadingPanel>}>
                 <UnitCellParamGraph graph={g}></UnitCellParamGraph>
               </Suspense>

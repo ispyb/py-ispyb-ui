@@ -30,7 +30,7 @@ export function SamplePreparation({ sample }: { sample?: SSXSampleResponse }) {
               .sort((a, b) => a.Component.ComponentType.name.localeCompare(b.Component.ComponentType.name))
               .map((composition) => {
                 return (
-                  <tr>
+                  <tr key={composition.crystalCompositionId}>
                     <th>{componentTypeDisplayValue(composition.Component.ComponentType.name)}</th>
 
                     <td>{composition.Component.name}</td>
@@ -65,7 +65,7 @@ export function SamplePreparation({ sample }: { sample?: SSXSampleResponse }) {
             .sort((a, b) => a.Component.ComponentType.name.localeCompare(b.Component.ComponentType.name))
             .map((composition) => {
               return (
-                <tr>
+                <tr key={composition.sampleCompositionId}>
                   <th>{componentTypeDisplayValue(composition.Component.ComponentType.name)}</th>
 
                   <td>{composition.Component.name}</td>

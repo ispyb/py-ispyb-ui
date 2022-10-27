@@ -114,7 +114,7 @@ function CompactDataCollectionGroupContent({ dcg, session }: { dcg: DataCollecti
     <Row>
       {fields.map((field) => {
         return (
-          <Col md={'auto'}>
+          <Col key={field.label} md={'auto'}>
             <Card style={{ padding: 5, margin: 5 }}>
               <h5 className="text-center" style={{ padding: 0, margin: 0 }}>
                 <small>{field.label} :</small> <strong>{field.value}</strong>
@@ -210,6 +210,7 @@ function DataCollectionGroupSummary({
             {dcs.map((dc, index) => {
               return (
                 <div
+                  key={index}
                   onClick={() => setSelected(index)}
                   className="text-center"
                   style={{
