@@ -97,7 +97,6 @@ export function Sample({ sample, dcg }: { dc: SSXDataCollectionResponse; session
     { key: 'Support', value: dcg.experimentType.split('SSX')[1] },
     { key: 'Chip model', value: 'TODO' },
     { key: 'Chip pattern', value: 'TODO' },
-    { key: 'pH', value: 'MISSING?' },
   ];
   return (
     <>

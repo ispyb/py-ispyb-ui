@@ -22,6 +22,7 @@ export function SamplePreparation({ sample }: { sample?: SSXSampleResponse }) {
               <th>Name</th>
               <th>Concentration</th>
               <th>Composition</th>
+              <th>pH</th>
             </tr>
           </thead>
           <tbody>
@@ -35,6 +36,7 @@ export function SamplePreparation({ sample }: { sample?: SSXSampleResponse }) {
                     <td>{composition.Component.name}</td>
                     <td>{composition.abundance}</td>
                     <td>{composition.Component.composition}</td>
+                    <td>{composition.ph}</td>
                   </tr>
                 );
               })}
@@ -55,6 +57,7 @@ export function SamplePreparation({ sample }: { sample?: SSXSampleResponse }) {
             <th>Name</th>
             <th>Concentration</th>
             <th>Composition</th>
+            <th>pH</th>
           </tr>
         </thead>
         <tbody>
@@ -68,6 +71,7 @@ export function SamplePreparation({ sample }: { sample?: SSXSampleResponse }) {
                   <td>{composition.Component.name}</td>
                   <td>{composition.abundance}</td>
                   <td>{composition.Component.composition}</td>
+                  <td>{composition.ph}</td>
                 </tr>
               );
             })}
