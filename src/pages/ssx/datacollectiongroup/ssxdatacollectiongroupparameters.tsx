@@ -52,7 +52,7 @@ export default function SSXDataCollectionGroupParameters({
 
 export function StorageRing({ dc, session }: { dc: SSXDataCollectionResponse; session?: SessionResponse; sample?: SSXSampleResponse }) {
   const parameters = [
-    { key: 'Filter mode', value: 'MISSING?' },
+    { key: 'Filling mode', value: session?.BeamLineSetup?.synchrotronMode },
     { key: 'Current', value: 'MISSING?' },
     { key: 'Ondulator', value: session?.BeamLineSetup?.undulatorType1 },
     { key: 'Gap', value: dc.DataCollection.undulatorGap1 },
