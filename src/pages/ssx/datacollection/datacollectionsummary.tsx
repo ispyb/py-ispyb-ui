@@ -1,11 +1,11 @@
 import { useDataCollectionGraphData, useDataCollectionGraphs, useSSXDataCollectionHits } from 'hooks/pyispyb';
 import { Col, Row } from 'react-bootstrap';
 import { GraphResponse, SSXDataCollectionResponse } from '../model';
-import { BarChart, Bar, Brush, XAxis, YAxis, CartesianGrid, Tooltip, Legend, RadialBarChart, RadialBar, ResponsiveContainer } from 'recharts';
 import { Suspense } from 'react';
 import LoadingPanel from 'components/loading/loadingpanel';
 import ZoomImage from 'components/image/zoomimage';
-import _ from 'lodash';
+import _, { round } from 'lodash';
+import PlotWidget from 'components/plotting/plotwidget';
 
 export default function SSXDataCollectionSummary({ dc }: { dc: SSXDataCollectionResponse }) {
   return (
@@ -39,28 +39,27 @@ export function HitsStatistics({ dc }: { dc: SSXDataCollectionResponse }) {
     return <></>;
   }
 
-  const data = [
-    { name: 'images', nb: dc.DataCollection.numberOfImages, fill: '#345a8c' },
-    { name: 'hits', nb: hits.nbHits, fill: '#d0ed57' },
-    { name: 'indexed', nb: hits.nbIndexed, fill: '#a4de6c' },
-  ];
-
-  const style = {
-    bottom: '50%',
-    right: '50%',
-    transform: 'translate(50%, 110%)',
-    lineHeight: '24px',
-  };
-
   return (
-    <>
-      <ResponsiveContainer width={300} height={300} debounce={1}>
-        <RadialBarChart cx="50%" cy="50%" innerRadius="20%" outerRadius="100%" barSize={30} data={data} startAngle={180} endAngle={0}>
-          <RadialBar label={{ position: 'insideStart', fill: '#fff' }} background dataKey="nb" isAnimationActive={false} />
-          <Legend iconSize={10} layout="vertical" verticalAlign="middle" wrapperStyle={style} />
-        </RadialBarChart>
-      </ResponsiveContainer>
-    </>
+    <PlotWidget
+      data={[
+        {
+          type: 'sunburst',
+          labels: ['Images', 'Hits', 'Indexed'],
+          parents: ['', 'Images', 'Hits', 'Hits'],
+          values: [dc.DataCollection.numberOfImages, hits.nbHits, hits.nbIndexed],
+          marker: { line: { width: 1, color: 'white' }, colors: ['rgb(130 174 231)', '#d0ed57', '#a4de6c'] },
+          text: ['', `${round((hits.nbHits / dc.DataCollection.numberOfImages) * 100, 2)}%`, `${round((hits.nbIndexed / dc.DataCollection.numberOfImages) * 100, 2)}%`],
+          textinfo: 'label+text+value',
+          branchvalues: 'total',
+        },
+      ]}
+      layout={{
+        paper_bgcolor: 'transparent',
+        margin: { l: 0, r: 0, b: 0, t: 0 },
+        width: 300,
+        height: 300,
+      }}
+    />
   );
 }
 
@@ -79,9 +78,7 @@ export function UnitCellStatistics({ dc }: { dc: SSXDataCollectionResponse }) {
         {graphs.map((g) => {
           return (
             <Col key={g.graphId} md={'auto'}>
-              <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-                <UnitCellParamGraph graph={g}></UnitCellParamGraph>
-              </Suspense>
+              <UnitCellParamGraph graph={g}></UnitCellParamGraph>
             </Col>
           );
         })}
@@ -103,32 +100,19 @@ export function UnitCellParamGraph({ graph }: { graph: GraphResponse }) {
     .map((v) => v.y)
     .max();
 
-  const data = values
-    .filter((a) => (maxValue ? a.y > 0.01 * maxValue : true))
-    .map((a) => {
-      return { value: a.x, frequency: a.y };
-    });
+  const data = values.filter((a) => (maxValue ? a.y > 0.01 * maxValue : true));
 
   return (
-    <ResponsiveContainer width={300} height={150} debounce={1}>
-      <BarChart
-        height={150}
-        data={data}
-        margin={{
-          top: 5,
-          right: 30,
-          left: 20,
-          bottom: 5,
-        }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis dataKey="value"></XAxis>
-        <YAxis></YAxis>
-        <Tooltip />
-        <Legend verticalAlign="top" wrapperStyle={{ lineHeight: '30px' }} />
-        <Brush dataKey="value" height={20} stroke="#8884d8" />
-        <Bar name={`${graph.name}`} dataKey="frequency" fill="#8884d8" />
-      </BarChart>
-    </ResponsiveContainer>
+    <PlotWidget
+      data={[
+        {
+          type: 'bar',
+          x: data.map((p) => p.x),
+          y: data.map((p) => p.y),
+        },
+      ]}
+      layout={{ height: 150, width: 300, title: `${graph.name}` }}
+      compact
+    />
   );
 }
