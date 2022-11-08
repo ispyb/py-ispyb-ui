@@ -46,7 +46,7 @@ function PlotWidget(props: PlotParams & { compact?: boolean }) {
       />
       <Modal centered size="xl" onHide={() => setFullScreen(false)} show={fullscreen}>
         <Modal.Header closeButton>
-          <h5>Expanded graph {props.layout.title}</h5>
+          <h5>Expanded graph {typeof props.layout.title == 'string' ? props.layout.title : props.layout.title?.text}</h5>
         </Modal.Header>
         <Modal.Body>
           <Plot
