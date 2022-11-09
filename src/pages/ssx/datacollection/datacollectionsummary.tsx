@@ -53,6 +53,7 @@ export function HitsStatistics({ dc }: { dc: SSXDataCollectionResponse }) {
           branchvalues: 'total',
         },
       ]}
+      config={{ displayModeBar: false }}
       layout={{
         paper_bgcolor: 'transparent',
         margin: { l: 0, r: 0, b: 0, t: 0 },

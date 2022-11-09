@@ -24,7 +24,9 @@ function PlotWidget(props: PlotParams & { compact?: boolean }) {
         }}
         config={{
           modeBarButtons: [
-            ['toImage', 'zoomIn2d', 'zoomOut2d', 'resetScale2d'],
+            ['toImage'],
+            ['pan2d', 'zoom2d'],
+            ['zoomIn2d', 'zoomOut2d', 'resetScale2d'],
             [
               {
                 name: 'Expand',
@@ -53,7 +55,7 @@ function PlotWidget(props: PlotParams & { compact?: boolean }) {
             {...props}
             config={{
               displayModeBar: true,
-              modeBarButtons: [['toImage', 'zoomIn2d', 'zoomOut2d', 'resetScale2d']],
+              modeBarButtons: [['toImage'], ['pan2d', 'zoom2d'], ['zoomIn2d', 'zoomOut2d', 'resetScale2d']],
               ...props.config,
             }}
             layout={{
