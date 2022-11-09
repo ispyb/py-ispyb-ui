@@ -7,6 +7,17 @@ import ZoomImage from 'components/image/zoomimage';
 import _, { round } from 'lodash';
 import PlotWidget from 'components/plotting/plotwidget';
 
+function getColorFromHitPercent(hitPercent: number) {
+  if (hitPercent >= 75) {
+    return '#71db44';
+  } else if (hitPercent >= 50) {
+    return '#a2cf4e';
+  } else if (hitPercent >= 25) {
+    return '#edc132';
+  }
+  return '#c9483e';
+}
+
 export default function SSXDataCollectionSummary({ dc }: { dc: SSXDataCollectionResponse }) {
   return (
     <Row>
@@ -39,6 +50,11 @@ export function HitsStatistics({ dc }: { dc: SSXDataCollectionResponse }) {
     return <></>;
   }
 
+  const hitPercent = round((hits.nbHits / dc.DataCollection.numberOfImages) * 100, 2);
+  const hitColor = getColorFromHitPercent(hitPercent);
+  const indexedPercent = round((hits.nbIndexed / dc.DataCollection.numberOfImages) * 100, 2);
+  const indexedColor = getColorFromHitPercent(indexedPercent);
+
   return (
     <PlotWidget
       data={[
@@ -47,8 +63,8 @@ export function HitsStatistics({ dc }: { dc: SSXDataCollectionResponse }) {
           labels: ['Images', 'Hits', 'Indexed'],
           parents: ['', 'Images', 'Hits', 'Hits'],
           values: [dc.DataCollection.numberOfImages, hits.nbHits, hits.nbIndexed],
-          marker: { line: { width: 1, color: 'white' }, colors: ['rgb(130 174 231)', '#d0ed57', '#a4de6c'] },
-          text: ['', `${round((hits.nbHits / dc.DataCollection.numberOfImages) * 100, 2)}%`, `${round((hits.nbIndexed / dc.DataCollection.numberOfImages) * 100, 2)}%`],
+          marker: { line: { width: 1, color: 'white' }, colors: ['rgb(130 174 231)', hitColor, indexedColor] },
+          text: ['', `${hitPercent}%`, `${indexedPercent}%`],
           textinfo: 'label+text+value',
           branchvalues: 'total',
         },
