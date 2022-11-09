@@ -34,7 +34,8 @@ export function dateToTimestamp(dateTime?: string): number {
   return 0;
 }
 
-export function parseDate(dateTime: string): Date {
+export function parseDate(dateTime: string | undefined): Date {
+  if (!dateTime) return new Date(0);
   const formats = ['MMM d, yyyy h:mm:ss aaa', "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"];
   for (const myFormat of formats) {
     if (isMatch(dateTime, myFormat)) {

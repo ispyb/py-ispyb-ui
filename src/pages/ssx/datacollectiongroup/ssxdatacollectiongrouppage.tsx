@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LazyWrapper from 'components/loading/lazywrapper';
 import LoadingPanel from 'components/loading/loadingpanel';
 import { formatDateToDayAndTime, parseDate } from 'helpers/dateparser';
-import { useSession, useSSXDataCollectionGroups } from 'hooks/pyispyb';
+import { useEventsSession, useSession } from 'hooks/pyispyb';
 import { SessionResponse } from 'pages/model';
 import Page from 'pages/page';
 import { Suspense, useEffect, useState } from 'react';
@@ -19,7 +19,7 @@ type Param = {
 export default function SSXDataCollectionGroupsPage() {
   const { sessionId = '', proposalName = '' } = useParams<Param>();
 
-  const { data: dcgs, isError: dcsError } = useSSXDataCollectionGroups(sessionId);
+  const { data: dcgs, isError: dcsError } = useEventsSession({ sessionId: Number(sessionId), proposal: proposalName });
   if (dcsError) throw Error(dcsError);
 
   const { data: session, isError: sessionError } = useSession(sessionId);
@@ -27,13 +27,13 @@ export default function SSXDataCollectionGroupsPage() {
 
   let content;
 
-  const filtereddcgs = dcgs ? dcgs.sort((a, b) => parseDate(b.startTime).getTime() - parseDate(a.startTime).getTime()).filter((a) => a.nbDataCollection) : undefined;
+  const filtereddcgs = dcgs && dcgs.results ? dcgs.results.sort((a, b) => parseDate(b.startTime).getTime() - parseDate(a.startTime).getTime()).filter((a) => a.count) : undefined;
 
   const [deployedId, setDeployedId] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     if (!deployedId && filtereddcgs && filtereddcgs.length) {
-      setDeployedId(filtereddcgs[0].dataCollectionGroupId);
+      setDeployedId(filtereddcgs[0].id);
     }
   }, [filtereddcgs]);
 
@@ -41,15 +41,15 @@ export default function SSXDataCollectionGroupsPage() {
     content = (
       <Card>
         {filtereddcgs.map((dcg) => (
-          <LazyWrapper key={dcg.dataCollectionGroupId} placeholder={<LoadingPanel></LoadingPanel>}>
+          <LazyWrapper key={dcg.id} placeholder={<LoadingPanel></LoadingPanel>}>
             <Suspense fallback={<LoadingPanel></LoadingPanel>}>
               <SSXDataCollectionGroupPane
                 dcg={dcg}
                 session={session}
                 proposalName={proposalName}
-                deployed={dcg.dataCollectionGroupId == deployedId}
+                deployed={dcg.id == deployedId}
                 onDeploy={() => {
-                  setDeployedId(dcg.dataCollectionGroupId);
+                  setDeployedId(dcg.id);
                 }}
               ></SSXDataCollectionGroupPane>
             </Suspense>

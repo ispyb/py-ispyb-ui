@@ -27,9 +27,9 @@ export function doSignIn(authenticator, username, password) {
       .post(authenticator.server, authenticator.json ? data : qs.stringify(data), { 'content-type': 'application/json' })
       .then((response) => {
         /** ISPYB  does not respond with an error code when authentication is failed this is why it is checked if token and roles and retrieved **/
-        const { token, roles, groups } = response.data;
-        if (token && (roles || groups)) {
-          return dispatch({ type: LOGGED_IN, username, token, roles: roles || groups });
+        const { token, roles, groups, permissions } = response.data;
+        if (token && (roles || groups || permissions)) {
+          return dispatch({ type: LOGGED_IN, username, token, roles: roles || groups || permissions });
         }
         throw new Error('Authentication failed');
       })

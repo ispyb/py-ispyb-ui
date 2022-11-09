@@ -13,11 +13,16 @@ import {
   getSSXDataCollectionGroups,
   getSSXDataCollectionGroupSample,
   getSSXDataCollectionGroup,
+  getEventsSession,
+  getEventsDataCollectionGroup,
+  getSample,
 } from 'api/pyispyb';
 import { SSXDataCollectionResponse, SSXSampleResponse, SSXSequenceResponse, GraphResponse, GraphDataResponse, SSXHitsResponse, DataCollectionGroupResponse } from 'pages/ssx/model';
 import { SessionResponse } from 'pages/model';
 import { store } from 'store';
 import { doLogOut } from 'redux/actions/user';
+import { Event } from 'models/Event';
+import { Sample } from 'models/Sample';
 
 const fetcher = (url: string, token: string) =>
   axios
@@ -86,4 +91,23 @@ export function useSSXDataCollectionHits(datacollectionId: number) {
 
 export function useSession(sessionId: string) {
   return doGet<SessionResponse>(getSession({ sessionId }));
+}
+
+interface Paginated<T> {
+  results: [T];
+  total: number;
+  limit: number;
+  skip: number;
+}
+
+export function useEventsSession(params: { sessionId: number; proposal: string }) {
+  return doGet<Paginated<Event>>(getEventsSession(params));
+}
+
+export function useEventsDataCollectionGroup(params: { dataCollectionGroupId: number }) {
+  return doGet<Paginated<Event>>(getEventsDataCollectionGroup(params));
+}
+
+export function useSample(params: { blSampleId: number }) {
+  return doGet<Sample>(getSample(params));
 }

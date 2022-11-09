@@ -6,6 +6,7 @@ import LoadingPanel from 'components/loading/loadingpanel';
 import ZoomImage from 'components/image/zoomimage';
 import _, { round } from 'lodash';
 import PlotWidget from 'components/plotting/plotwidget';
+import { DataCollection } from 'models/Event';
 
 function getColorFromHitPercent(hitPercent: number) {
   if (hitPercent >= 75) {
@@ -18,7 +19,7 @@ function getColorFromHitPercent(hitPercent: number) {
   return '#c9483e';
 }
 
-export default function SSXDataCollectionSummary({ dc }: { dc: SSXDataCollectionResponse }) {
+export default function SSXDataCollectionSummary({ dc }: { dc: DataCollection }) {
   return (
     <Row>
       <Col md={'auto'}>
@@ -41,18 +42,18 @@ export default function SSXDataCollectionSummary({ dc }: { dc: SSXDataCollection
   );
 }
 
-export function HitsStatistics({ dc }: { dc: SSXDataCollectionResponse }) {
-  const { data: hits, isError } = useSSXDataCollectionHits(dc.DataCollection.dataCollectionId);
+export function HitsStatistics({ dc }: { dc: DataCollection }) {
+  const { data: hits, isError } = useSSXDataCollectionHits(dc.dataCollectionId);
 
   if (isError) throw Error(isError);
 
-  if (hits == undefined) {
+  if (hits == undefined || !dc.numberOfImages) {
     return <></>;
   }
 
-  const hitPercent = round((hits.nbHits / dc.DataCollection.numberOfImages) * 100, 2);
+  const hitPercent = round((hits.nbHits / dc.numberOfImages) * 100, 2);
   const hitColor = getColorFromHitPercent(hitPercent);
-  const indexedPercent = round((hits.nbIndexed / dc.DataCollection.numberOfImages) * 100, 2);
+  const indexedPercent = round((hits.nbIndexed / dc.numberOfImages) * 100, 2);
   const indexedColor = getColorFromHitPercent(indexedPercent);
 
   return (
@@ -62,7 +63,7 @@ export function HitsStatistics({ dc }: { dc: SSXDataCollectionResponse }) {
           type: 'sunburst',
           labels: ['Images', 'Hits', 'Indexed'],
           parents: ['', 'Images', 'Hits', 'Hits'],
-          values: [dc.DataCollection.numberOfImages, hits.nbHits, hits.nbIndexed],
+          values: [dc.numberOfImages, hits.nbHits, hits.nbIndexed],
           marker: { line: { width: 1, color: 'white' }, colors: ['rgb(130 174 231)', hitColor, indexedColor] },
           text: ['', `${hitPercent}%`, `${indexedPercent}%`],
           textinfo: 'label+text+value',
@@ -80,8 +81,8 @@ export function HitsStatistics({ dc }: { dc: SSXDataCollectionResponse }) {
   );
 }
 
-export function UnitCellStatistics({ dc }: { dc: SSXDataCollectionResponse }) {
-  const { data: graphs, isError } = useDataCollectionGraphs(dc.DataCollection.dataCollectionId);
+export function UnitCellStatistics({ dc }: { dc: DataCollection }) {
+  const { data: graphs, isError } = useDataCollectionGraphs(dc.dataCollectionId);
 
   if (isError) throw Error(isError);
 

@@ -3,8 +3,8 @@ import { Site } from 'models';
 const sites: Site[] = [
   {
     name: 'ESRF-SSX',
-    server: 'http://py-ispyb-development:8000/ispyb/api/v1/legacy',
-    server_py: 'http://py-ispyb-development:8000/ispyb/api/v1',
+    server: 'http://localhost:8000/ispyb/api/v1/legacy',
+    server_py: 'http://localhost:8000/ispyb/api/v1',
     description: 'European Synchrotron Radiation Facility',
     icon: '../images/site/esrf.png',
     authentication: {
@@ -19,13 +19,13 @@ const sites: Site[] = [
       },
       authenticators: [
         {
-          plugin: 'dummy',
+          plugin: 'ldap',
           title: 'ISPyB',
-          server: 'http://py-ispyb-development:8000/ispyb/api/v1/auth/login',
+          server: 'http://localhost:8000/ispyb/api/v1/auth/login',
           json: true,
           enabled: true,
           site: 'ESRF',
-          message: 'dummy auth',
+          message: 'ldap auth',
         },
       ],
     },

@@ -60,3 +60,15 @@ export function getDataCollectionSampleThumbnail({ dataCollectionId, thumbnailNu
 export function getSession({ sessionId }: { sessionId: string }): RequestInformation {
   return { url: `${server_py}/session/${sessionId}`, token };
 }
+
+export function getEventsSession({ sessionId, proposal }: { sessionId: number; proposal: string }): RequestInformation {
+  return { url: `${server_py}/events?limit=9999&sessionId=${sessionId}&proposal=${proposal}`, token };
+}
+
+export function getEventsDataCollectionGroup({ dataCollectionGroupId }: { dataCollectionGroupId: number }): RequestInformation {
+  return { url: `${server_py}/events?limit=9999&dataCollectionGroupId=${dataCollectionGroupId}`, token };
+}
+
+export function getSample({ blSampleId }: { blSampleId: number }): RequestInformation {
+  return { url: `${server_py}/samples/${blSampleId}`, token };
+}

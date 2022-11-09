@@ -4,7 +4,7 @@ import ZoomImage from 'components/image/zoomimage';
 import LoadingPanel from 'components/loading/loadingpanel';
 import { DefaultLoadingPanel } from 'components/loading/loadingpanel.stories';
 import { formatDateToDayAndTime } from 'helpers/dateparser';
-import { useSSXDataCollectionGroupSample, useSSXDataCollections, useSSXDataCollectionSequences } from 'hooks/pyispyb';
+import { useEventsDataCollectionGroup, useSample } from 'hooks/pyispyb';
 import { random } from 'lodash';
 import { SessionResponse } from 'pages/model';
 import { Suspense, useState } from 'react';
@@ -12,8 +12,7 @@ import { Suspense, useState } from 'react';
 import { Tab, Card, Container, Row, Col, Nav, Button, OverlayTrigger, Tooltip, Spinner } from 'react-bootstrap';
 import { HitsStatistics, UnitCellStatistics } from '../datacollection/datacollectionsummary';
 import SSXDataCollectionSummary from '../datacollection/datacollectionsummary';
-import { DataCollectionGroupResponse, SSXDataCollectionResponse, SSXSampleResponse, SSXSequenceResponse } from '../model';
-import SSXDataCollectionGroupParameters from './ssxdatacollectiongroupparameters';
+import { Event, DataCollection } from 'models/Event';
 
 export default function SSXDataCollectionGroupPane({
   dcg,
@@ -22,13 +21,13 @@ export default function SSXDataCollectionGroupPane({
   deployed,
   onDeploy,
 }: {
-  dcg: DataCollectionGroupResponse;
+  dcg: Event;
   session: SessionResponse;
   proposalName: string;
   deployed: boolean;
   onDeploy: () => void;
 }) {
-  if (!dcg.nbDataCollection) return null;
+  if (!dcg.count) return null;
   return (
     <div style={{ margin: 5, cursor: deployed ? undefined : 'pointer' }} onClick={onDeploy}>
       <Tab.Container defaultActiveKey="Summary">
@@ -37,7 +36,7 @@ export default function SSXDataCollectionGroupPane({
             <Container fluid>
               <Row>
                 <Col md="auto">
-                  <h5>{formatDateToDayAndTime(dcg.startTime)}</h5>
+                  <h5>{dcg.startTime && formatDateToDayAndTime(dcg.startTime)}</h5>
                 </Col>
                 <Col></Col>
                 {deployed && (
@@ -94,19 +93,21 @@ export default function SSXDataCollectionGroupPane({
   );
 }
 
-function CompactDataCollectionGroupContent({ dcg, session }: { dcg: DataCollectionGroupResponse; session: SessionResponse; proposalName: string }) {
-  const { data: dcs } = useSSXDataCollections(String(session.sessionId), String(dcg.dataCollectionGroupId));
-  const { data: sample } = useSSXDataCollectionGroupSample(dcg.dataCollectionGroupId);
-  const { data: sequences } = useSSXDataCollectionSequences(dcs && dcs[0] ? dcs[0].DataCollection.dataCollectionId : 0);
+function CompactDataCollectionGroupContent({ dcg }: { dcg: Event; session: SessionResponse; proposalName: string }) {
+  const { data: sample } = useSample({ blSampleId: dcg.blSampleId ? dcg.blSampleId : 0 });
 
-  if (dcs == undefined || sample == undefined || dcs == undefined || sequences == undefined) return null;
+  if (sample == undefined) return null;
+
+  if (!('DataCollectionGroup' in dcg.Item)) {
+    return null;
+  }
 
   const fields = [
     { label: 'Protein', value: sample.Crystal.Protein.acronym },
     { label: 'Sample', value: sample.name },
-    { label: 'Sample support', value: dcg.experimentType },
-    { label: 'Experiment name', value: sequences[0]?.name },
-    { label: '# Runs', value: dcg.nbDataCollection },
+    { label: 'Sample support', value: dcg.Item.DataCollectionGroup.experimentType },
+    { label: 'Experiment name', value: dcg.Item.SSXDataCollection?.experimentName },
+    { label: '# Runs', value: dcg.count },
     { label: '# Hits (total)', value: random(0, 100000) },
     { label: '# Indexed  (total)', value: random(0, 100000) },
   ];
@@ -127,45 +128,49 @@ function CompactDataCollectionGroupContent({ dcg, session }: { dcg: DataCollecti
   );
 }
 
-function DataCollectionGroupContent({ dcg, session, proposalName }: { dcg: DataCollectionGroupResponse; session: SessionResponse; proposalName: string }) {
-  const { data: dcs } = useSSXDataCollections(String(session.sessionId), String(dcg.dataCollectionGroupId));
-  const { data: sample } = useSSXDataCollectionGroupSample(dcg.dataCollectionGroupId);
-  const { data: sequences } = useSSXDataCollectionSequences(dcs && dcs[0] ? dcs[0].DataCollection.dataCollectionId : 0);
+function DataCollectionGroupContent({ dcg, session, proposalName }: { dcg: Event; session: SessionResponse; proposalName: string }) {
+  // const { data: dcs } = useSSXDataCollections(String(session.sessionId), String(dcg.dataCollectionGroupId));
+  // const { data: sample } = useSSXDataCollectionGroupSample(dcg.dataCollectionGroupId);
+  // const { data: sequences } = useSSXDataCollectionSequences(dcs && dcs[0] ? dcs[0].DataCollection.dataCollectionId : 0);
+  const { data: sample } = useSample({ blSampleId: dcg.blSampleId ? dcg.blSampleId : 0 });
 
-  if (dcs == undefined || sample == undefined || dcs == undefined || sequences == undefined) return null;
+  if (sample == undefined) return null;
+
+  if (!('DataCollectionGroup' in dcg.Item)) {
+    return null;
+  }
 
   return (
     <Row>
       <Tab.Content>
         <Tab.Pane eventKey="Summary" title="Summary">
-          <DataCollectionGroupSummary dcg={dcg} session={session} proposalName={proposalName} dcs={dcs} sample={sample} sequences={sequences}></DataCollectionGroupSummary>
+          <DataCollectionGroupSummary dcg={dcg.Item} session={session} proposalName={proposalName}></DataCollectionGroupSummary>
         </Tab.Pane>
         <Tab.Pane eventKey="Parameters" title="Parameters">
-          <SSXDataCollectionGroupParameters
+          {/* <SSXDataCollectionGroupParameters
             dcg={dcg}
             session={session}
             proposalName={proposalName}
             dcs={dcs}
             sample={sample}
             sequences={sequences}
-          ></SSXDataCollectionGroupParameters>
+          ></SSXDataCollectionGroupParameters> */}
         </Tab.Pane>
       </Tab.Content>
     </Row>
   );
 }
 
-function DataCollectionGroupSummary({
-  dcs,
-}: {
-  dcg: DataCollectionGroupResponse;
-  session: SessionResponse;
-  proposalName: string;
-  dcs: SSXDataCollectionResponse[];
-  sample: SSXSampleResponse;
-  sequences: SSXSequenceResponse[];
-}) {
+function DataCollectionGroupSummary({ dcg }: { dcg: DataCollection; session: SessionResponse; proposalName: string }) {
   const [selected, setSelected] = useState(0);
+
+  const { data: dcs, isError: dcsError } = useEventsDataCollectionGroup({ dataCollectionGroupId: dcg.DataCollectionGroup.dataCollectionGroupId });
+  if (dcsError) throw Error(dcsError);
+
+  if (!dcs?.results) return null;
+
+  const selectedDc = dcs.results[selected];
+
   return (
     <Col>
       <Row>
@@ -180,12 +185,12 @@ function DataCollectionGroupSummary({
           </Col>
           <Col md={'auto'}>
             <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-              <HitsStatistics dc={dcs[0]}></HitsStatistics>
+              <HitsStatistics dc={dcg}></HitsStatistics>
             </Suspense>
           </Col>
           <Col>
             <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-              <UnitCellStatistics dc={dcs[0]}></UnitCellStatistics>
+              <UnitCellStatistics dc={dcg}></UnitCellStatistics>
             </Suspense>
           </Col>
         </Suspense>
@@ -207,7 +212,7 @@ function DataCollectionGroupSummary({
                 <strong>Run #</strong>
               </span>
             </div>
-            {dcs.map((dc, index) => {
+            {dcs.results.map((dc, index) => {
               return (
                 <div
                   key={index}
@@ -238,9 +243,11 @@ function DataCollectionGroupSummary({
             </h4>
           </Row>
           <Row>
-            <Suspense fallback={DefaultLoadingPanel}>
-              <SSXDataCollectionSummary dc={dcs[selected]}></SSXDataCollectionSummary>
-            </Suspense>
+            {'DataCollectionGroup' in selectedDc.Item && (
+              <Suspense fallback={DefaultLoadingPanel}>
+                <SSXDataCollectionSummary dc={selectedDc.Item}></SSXDataCollectionSummary>
+              </Suspense>
+            )}
           </Row>
         </Col>
       </Row>
