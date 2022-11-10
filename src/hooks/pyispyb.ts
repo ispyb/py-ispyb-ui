@@ -16,6 +16,7 @@ import {
   getEventsSession,
   getEventsDataCollectionGroup,
   getSample,
+  getSSXDataCollectionProcessings,
 } from 'api/pyispyb';
 import { SSXDataCollectionResponse, SSXSampleResponse, SSXSequenceResponse, GraphResponse, GraphDataResponse, SSXHitsResponse, DataCollectionGroupResponse } from 'pages/ssx/model';
 import { SessionResponse } from 'pages/model';
@@ -23,6 +24,7 @@ import { store } from 'store';
 import { doLogOut } from 'redux/actions/user';
 import { Event } from 'models/Event';
 import { Sample } from 'models/Sample';
+import { SSXDataCollectionProcessing } from 'models/SSXDataCollectionProcessing';
 
 const fetcher = (url: string, token: string) =>
   axios
@@ -48,56 +50,19 @@ function doGet<T = any>(info: RequestInformation, editData: (data: T) => T = (d)
     mutate,
   };
 }
-
-export function useSSXDataCollections(sessionId: string, dataCollectionGroupId: string) {
-  return doGet<SSXDataCollectionResponse[]>(getSSXDataCollections({ sessionId, dataCollectionGroupId }));
-}
-
-export function useSSXDataCollectionGroups(sessionId: string) {
-  return doGet<DataCollectionGroupResponse[]>(getSSXDataCollectionGroups({ sessionId }));
-}
-
-export function useSSXDataCollectionGroup(dataCollectionGroupId: string) {
-  return doGet<DataCollectionGroupResponse>(getSSXDataCollectionGroup({ dataCollectionGroupId }));
-}
-
-export function useSSXDataCollection(datacollectionId: number) {
-  return doGet<SSXDataCollectionResponse>(getSSXDataCollection({ datacollectionId }));
-}
-
-export function useSSXDataCollectionSample(datacollectionId: number) {
-  return doGet<SSXSampleResponse>(getSSXDataCollectionSample({ datacollectionId }));
-}
-
-export function useSSXDataCollectionGroupSample(datacollectiongroupId: number) {
-  return doGet<SSXSampleResponse>(getSSXDataCollectionGroupSample({ datacollectiongroupId }));
-}
-
-export function useDataCollectionGraphs(datacollectionId: number) {
-  return doGet<GraphResponse[]>(getDataCollectionGraphs({ datacollectionId }));
-}
-
-export function useDataCollectionGraphData(graphId: number) {
-  return doGet<GraphDataResponse[]>(getDataCollectionGraphData({ graphId }));
+interface Paginated<T> {
+  results: [T];
+  total: number;
+  limit: number;
+  skip: number;
 }
 
 export function useSSXDataCollectionSequences(datacollectionId: number) {
   return doGet<SSXSequenceResponse[]>(getSSXDataCollectionSequences({ datacollectionId }));
 }
 
-export function useSSXDataCollectionHits(datacollectionId: number) {
-  return doGet<SSXHitsResponse>(getSSXDataCollectionHits({ datacollectionId }));
-}
-
 export function useSession(sessionId: string) {
   return doGet<SessionResponse>(getSession({ sessionId }));
-}
-
-interface Paginated<T> {
-  results: [T];
-  total: number;
-  limit: number;
-  skip: number;
 }
 
 export function useEventsSession(params: { sessionId: number; proposal: string }) {
@@ -110,4 +75,8 @@ export function useEventsDataCollectionGroup(params: { dataCollectionGroupId: nu
 
 export function useSample(params: { blSampleId: number }) {
   return doGet<Sample>(getSample(params));
+}
+
+export function useSSXDataCollectionProcessings(params: { datacollectionIds: number[]; includeCells?: boolean }) {
+  return doGet<SSXDataCollectionProcessing[]>(getSSXDataCollectionProcessings(params));
 }

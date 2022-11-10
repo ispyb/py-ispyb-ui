@@ -72,3 +72,7 @@ export function getEventsDataCollectionGroup({ dataCollectionGroupId }: { dataCo
 export function getSample({ blSampleId }: { blSampleId: number }): RequestInformation {
   return { url: `${server_py}/samples/${blSampleId}`, token };
 }
+
+export function getSSXDataCollectionProcessings({ datacollectionIds, includeCells = false }: { datacollectionIds: number[]; includeCells?: boolean }): RequestInformation {
+  return { url: `${server_py}/ssx/datacollection/processings?includeCells=${includeCells}&dataCollectionIds=${datacollectionIds.join(',')}`, token };
+}

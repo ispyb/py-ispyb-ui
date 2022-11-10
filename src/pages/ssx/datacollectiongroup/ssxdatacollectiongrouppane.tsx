@@ -4,7 +4,7 @@ import ZoomImage from 'components/image/zoomimage';
 import LoadingPanel from 'components/loading/loadingpanel';
 import { DefaultLoadingPanel } from 'components/loading/loadingpanel.stories';
 import { formatDateToDayAndTime } from 'helpers/dateparser';
-import { useEventsDataCollectionGroup, useSample } from 'hooks/pyispyb';
+import { useEventsDataCollectionGroup, useSample, useSSXDataCollectionProcessings } from 'hooks/pyispyb';
 import { random } from 'lodash';
 import { SessionResponse } from 'pages/model';
 import { Suspense, useState } from 'react';
@@ -13,6 +13,8 @@ import { Tab, Card, Container, Row, Col, Nav, Button, OverlayTrigger, Tooltip, S
 import { HitsStatistics, UnitCellStatistics } from '../datacollection/datacollectionsummary';
 import SSXDataCollectionSummary from '../datacollection/datacollectionsummary';
 import { Event, DataCollection } from 'models/Event';
+import _ from 'lodash';
+import PlotWidget from 'components/plotting/plotwidget';
 
 export default function SSXDataCollectionGroupPane({
   dcg,
@@ -193,6 +195,11 @@ function DataCollectionGroupSummary({ dcg }: { dcg: DataCollection; session: Ses
               <UnitCellStatistics dc={dcg}></UnitCellStatistics>
             </Suspense>
           </Col>
+          <Col md={'auto'}>
+            <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+              <DataCollectionGroupHitGraph dcs={dcs.results}></DataCollectionGroupHitGraph>
+            </Suspense>
+          </Col>
         </Suspense>
       </Row>
       <Row style={{ margin: 20, padding: 0, backgroundColor: '#d3d3d36b', border: '1px solid lightgray', borderRadius: 10 }}>
@@ -252,5 +259,34 @@ function DataCollectionGroupSummary({ dcg }: { dcg: DataCollection; session: Ses
         </Col>
       </Row>
     </Col>
+  );
+}
+
+function DataCollectionGroupHitGraph({ dcs }: { dcs: Event[] }) {
+  const dcIds = dcs.map((v) => v.id);
+  const { data, isError } = useSSXDataCollectionProcessings({ datacollectionIds: dcIds });
+
+  if (isError) throw Error(isError);
+
+  if (data == undefined || !data.length) {
+    return <></>;
+  }
+
+  const x = _.range(1, data.length + 1);
+  const y = data.map((d) => d.nbHits);
+
+  return (
+    <PlotWidget
+      data={[
+        {
+          type: 'bar',
+          y: y,
+          x: x,
+          opacity: 0.75,
+        },
+      ]}
+      layout={{ height: 300, width: 300, title: `hits` }}
+      compact
+    />
   );
 }

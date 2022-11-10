@@ -1,12 +1,11 @@
-import { useDataCollectionGraphData, useDataCollectionGraphs, useSSXDataCollectionHits } from 'hooks/pyispyb';
+import { useSSXDataCollectionProcessings } from 'hooks/pyispyb';
 import { Col, Row } from 'react-bootstrap';
-import { GraphResponse, SSXDataCollectionResponse } from '../model';
 import { Suspense } from 'react';
 import LoadingPanel from 'components/loading/loadingpanel';
 import ZoomImage from 'components/image/zoomimage';
-import _, { round } from 'lodash';
 import PlotWidget from 'components/plotting/plotwidget';
 import { DataCollection } from 'models/Event';
+import _, { round } from 'lodash';
 
 function getColorFromHitPercent(hitPercent: number) {
   if (hitPercent >= 75) {
@@ -43,17 +42,19 @@ export default function SSXDataCollectionSummary({ dc }: { dc: DataCollection })
 }
 
 export function HitsStatistics({ dc }: { dc: DataCollection }) {
-  const { data: hits, isError } = useSSXDataCollectionHits(dc.dataCollectionId);
+  const { data, isError } = useSSXDataCollectionProcessings({ datacollectionIds: [dc.dataCollectionId] });
 
   if (isError) throw Error(isError);
 
-  if (hits == undefined || !dc.numberOfImages) {
+  if (data == undefined || !data.length || !dc.numberOfImages) {
     return <></>;
   }
 
-  const hitPercent = round((hits.nbHits / dc.numberOfImages) * 100, 2);
+  const proc = data[0];
+
+  const hitPercent = round((proc.nbHits / dc.numberOfImages) * 100, 2);
   const hitColor = getColorFromHitPercent(hitPercent);
-  const indexedPercent = round((hits.nbIndexed / dc.numberOfImages) * 100, 2);
+  const indexedPercent = round((proc.nbIndexed / dc.numberOfImages) * 100, 2);
   const indexedColor = getColorFromHitPercent(indexedPercent);
 
   return (
@@ -63,7 +64,7 @@ export function HitsStatistics({ dc }: { dc: DataCollection }) {
           type: 'sunburst',
           labels: ['Images', 'Hits', 'Indexed'],
           parents: ['', 'Images', 'Hits', 'Hits'],
-          values: [dc.numberOfImages, hits.nbHits, hits.nbIndexed],
+          values: [dc.numberOfImages, proc.nbHits, proc.nbIndexed],
           marker: { line: { width: 1, color: 'white' }, colors: ['rgb(130 174 231)', hitColor, indexedColor] },
           text: ['', `${hitPercent}%`, `${indexedPercent}%`],
           textinfo: 'label+text+value',
@@ -82,21 +83,25 @@ export function HitsStatistics({ dc }: { dc: DataCollection }) {
 }
 
 export function UnitCellStatistics({ dc }: { dc: DataCollection }) {
-  const { data: graphs, isError } = useDataCollectionGraphs(dc.dataCollectionId);
+  const { data, isError } = useSSXDataCollectionProcessings({ datacollectionIds: [dc.dataCollectionId], includeCells: true });
 
   if (isError) throw Error(isError);
 
-  if (graphs == undefined || graphs.length == 0) {
+  if (data == undefined || data.length == 0) {
     return <></>;
   }
+
+  const proc = data[0];
+
+  const cells = ['a', 'b', 'c', 'alpha', 'beta', 'gamma'];
 
   return (
     <>
       <Row>
-        {graphs.map((g) => {
+        {cells.map((cell, index) => {
           return (
-            <Col key={g.graphId} md={'auto'}>
-              <UnitCellParamGraph graph={g}></UnitCellParamGraph>
+            <Col key={cell} md={'auto'}>
+              <UnitCellParamGraph name={cell} data={proc.unit_cells.map((row) => row[index])}></UnitCellParamGraph>
             </Col>
           );
         })}
@@ -105,31 +110,50 @@ export function UnitCellStatistics({ dc }: { dc: DataCollection }) {
   );
 }
 
-export function UnitCellParamGraph({ graph }: { graph: GraphResponse }) {
-  const { data: values, isError } = useDataCollectionGraphData(graph.graphId);
+function filterOutliers(someArray: number[]) {
+  // FROM https://stackoverflow.com/a/20811670
 
-  if (isError) throw Error(isError);
+  const values = someArray.concat();
+  values.sort(function (a, b) {
+    return a - b;
+  });
+  const q1 = values[Math.floor(values.length / 4)];
+  const q3 = values[Math.ceil(values.length * (3 / 4))];
+  const iqr = q3 - q1;
+  const maxValue = q3 + iqr * 1.5;
+  const minValue = q1 - iqr * 1.5;
+  return values.filter(function (x) {
+    return x <= maxValue && x >= minValue;
+  });
+}
 
-  if (values == undefined || values.length == 0) {
-    return <></>;
-  }
+export function UnitCellParamGraph({ name, data: dataWithOutliers }: { name: string; data: number[] }) {
+  const data = filterOutliers(dataWithOutliers);
+  const maxValue = _(data).max();
+  const minValue = _(data).min();
 
-  const maxValue = _(values)
-    .map((v) => v.y)
-    .max();
+  if (maxValue == undefined || minValue == undefined) return null;
 
-  const data = values.filter((a) => (maxValue ? a.y > 0.01 * maxValue : true));
+  const range = _.range(minValue, maxValue, (maxValue - minValue) / 100);
+  const binEdges = [...range, maxValue];
+
+  const x = range;
+  const y = range.map((lower, index) => {
+    const higher = binEdges[index + 1];
+    return data.filter((v) => v >= lower && v < higher).length;
+  });
 
   return (
     <PlotWidget
       data={[
         {
           type: 'bar',
-          x: data.map((p) => p.x),
-          y: data.map((p) => p.y),
+          y: y,
+          x: x,
+          opacity: 0.75,
         },
       ]}
-      layout={{ height: 150, width: 300, title: `${graph.name}` }}
+      layout={{ height: 150, width: 300, title: `${name}` }}
       compact
     />
   );
