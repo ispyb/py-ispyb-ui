@@ -1,9 +1,7 @@
-import { dateToTimestamp, formatDateToDayAndPreciseTime } from 'helpers/dateparser';
 import _ from 'lodash';
 import { EventChainResponse, EventType } from 'models/EventChainResponse';
 import { Badge, Toast } from 'react-bootstrap';
 import BootstrapTable from 'react-bootstrap-table-next';
-import { SSXSequenceEventTypeResponse, SSXSequenceResponse } from '../model';
 
 export function EventChain({ eventChain }: { eventChain: EventChainResponse }) {
   return (

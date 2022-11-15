@@ -1,11 +1,11 @@
-import { useSSXDataCollectionProcessingCells, useSSXDataCollectionProcessingCellsHistogram, useSSXDataCollectionProcessingStats } from 'hooks/pyispyb';
+import { useSSXDataCollectionProcessingCellsHistogram, useSSXDataCollectionProcessingStats } from 'hooks/pyispyb';
 import { Col, Row } from 'react-bootstrap';
 import { Suspense } from 'react';
 import LoadingPanel from 'components/loading/loadingpanel';
 import ZoomImage from 'components/image/zoomimage';
 import PlotWidget from 'components/plotting/plotwidget';
 import { DataCollection } from 'models/Event';
-import _, { round } from 'lodash';
+import { round } from 'lodash';
 import { getColorFromHitPercent } from 'helpers/ssx';
 import LazyWrapper from 'components/loading/lazywrapper';
 import { SSXDataCollectionProcessingCellsHistogram } from 'models/SSXDataCollectionProcessingCellsHistogram';
@@ -104,23 +104,6 @@ export function UnitCellStatistics({ dc }: { dc: DataCollection }) {
       </Col>
     </Row>
   );
-}
-
-function filterOutliers(someArray: number[]) {
-  // FROM https://stackoverflow.com/a/20811670
-
-  const values = someArray.concat();
-  values.sort(function (a, b) {
-    return a - b;
-  });
-  const q1 = values[Math.floor(values.length / 4)];
-  const q3 = values[Math.ceil(values.length * (3 / 4))];
-  const iqr = q3 - q1;
-  const maxValue = q3 + iqr * 1.5;
-  const minValue = q1 - iqr * 1.5;
-  return values.filter(function (x) {
-    return x <= maxValue && x >= minValue;
-  });
 }
 
 export function UnitCellParamGraph({ name, data }: { name: string; data: Histogram }) {

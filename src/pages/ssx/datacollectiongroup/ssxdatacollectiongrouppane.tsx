@@ -41,10 +41,6 @@ export default function SSXDataCollectionGroupPane({
           <Card.Header>
             <Container fluid>
               <Row>
-                <Col md="auto">
-                  <h5>{dcg.startTime && formatDateToDayAndTime(dcg.startTime)}</h5>
-                </Col>
-                <Col></Col>
                 {deployed && (
                   <Col md="auto">
                     <Nav className="tabs-datacollectiongroup-panel" variant="tabs">
@@ -57,6 +53,9 @@ export default function SSXDataCollectionGroupPane({
                     </Nav>
                   </Col>
                 )}
+                <Col md="auto">
+                  <h5>{dcg.startTime && formatDateToDayAndTime(dcg.startTime)}</h5>
+                </Col>
               </Row>
             </Container>
           </Card.Header>
@@ -245,7 +244,7 @@ function DataCollectionGroupRunSummary({ dcs }: { dcs: Event[] }) {
       <Col style={{ margin: 0, padding: 0 }}>
         <Row>
           <h4 className="text-center" style={{ margin: 10 }}>
-            Run #{selected + 1} summary ({selectedDc.startTime})
+            Run #{selected + 1} summary ({selectedDc.startTime ? formatDateToDayAndTime(selectedDc.startTime) : ''})
           </h4>
         </Row>
         <Row>
