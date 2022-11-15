@@ -3,3 +3,4 @@ dist
 /build
 /public
 /documentation
+src/models/*.d.ts
