@@ -140,7 +140,7 @@ export function getContainerTypePositions(type: containerType) {
   return undefined;
 }
 
-function findContainerType(typeParam: string | undefined, samples: Sample[] | undefined, sampleByPosition: _.Dictionary<[Sample, ...Sample[]]>) {
+function findContainerType(typeParam: string | undefined, samples: Sample[] | undefined, sampleByPosition: _.Dictionary<Sample[]>) {
   // First look for type in params
   let type = getContainerType(typeParam);
   if (type == undefined) {
