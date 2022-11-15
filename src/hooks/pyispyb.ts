@@ -2,29 +2,26 @@ import useSWR from 'swr';
 import axios from 'axios';
 import {
   RequestInformation,
-  getDataCollectionGraphs,
-  getDataCollectionGraphData,
-  getSSXDataCollections,
-  getSSXDataCollection,
-  getSSXDataCollectionSample,
   getSession,
   getSSXDataCollectionSequences,
-  getSSXDataCollectionHits,
-  getSSXDataCollectionGroups,
-  getSSXDataCollectionGroupSample,
-  getSSXDataCollectionGroup,
   getEventsSession,
   getEventsDataCollectionGroup,
   getSample,
-  getSSXDataCollectionProcessings,
+  getSSXDataCollectionProcessingStats,
+  getSSXDataCollectionProcessingCells,
+  getEventChains,
+  getSSXDataCollectionProcessingCellsHistogram,
 } from 'api/pyispyb';
-import { SSXDataCollectionResponse, SSXSampleResponse, SSXSequenceResponse, GraphResponse, GraphDataResponse, SSXHitsResponse, DataCollectionGroupResponse } from 'pages/ssx/model';
+import { SSXSequenceResponse } from 'pages/ssx/model';
 import { SessionResponse } from 'pages/model';
 import { store } from 'store';
 import { doLogOut } from 'redux/actions/user';
 import { Event } from 'models/Event';
 import { Sample } from 'models/Sample';
-import { SSXDataCollectionProcessing } from 'models/SSXDataCollectionProcessing';
+import { SSXDataCollectionProcessingStats } from 'models/SSXDataCollectionProcessingStats';
+import { SSXDataCollectionProcessingCells } from 'models/SSXDataCollectionProcessingCells';
+import { EventChainResponse } from 'models/EventChainResponse';
+import { SSXDataCollectionProcessingCellsHistogram } from 'models/SSXDataCollectionProcessingCellsHistogram';
 
 const fetcher = (url: string, token: string) =>
   axios
@@ -77,6 +74,18 @@ export function useSample(params: { blSampleId: number }) {
   return doGet<Sample>(getSample(params));
 }
 
-export function useSSXDataCollectionProcessings(params: { datacollectionIds: number[]; includeCells?: boolean }) {
-  return doGet<SSXDataCollectionProcessing[]>(getSSXDataCollectionProcessings(params));
+export function useSSXDataCollectionProcessingStats(params: { datacollectionIds: number[] }) {
+  return doGet<SSXDataCollectionProcessingStats[]>(getSSXDataCollectionProcessingStats(params));
+}
+
+export function useSSXDataCollectionProcessingCells(params: { datacollectionId: number }) {
+  return doGet<SSXDataCollectionProcessingCells>(getSSXDataCollectionProcessingCells(params));
+}
+
+export function useSSXDataCollectionProcessingCellsHistogram(params: { datacollectionId: number }) {
+  return doGet<SSXDataCollectionProcessingCellsHistogram>(getSSXDataCollectionProcessingCellsHistogram(params));
+}
+
+export function useEventChains(params: { datacollectionId: number }) {
+  return doGet<EventChainResponse[]>(getEventChains(params));
 }

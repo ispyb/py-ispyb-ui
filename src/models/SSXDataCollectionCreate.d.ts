@@ -30,10 +30,18 @@ export type FluxEnd = number;
 export type Detectorid = number;
 export type Starttime = string;
 export type Endtime = string;
+export type Beamshape = string;
+export type Polarisation = number;
+export type Undulatorgap1 = number;
 export type Repetitionrate = number;
 export type Energybandwidth = number;
 export type Monostripe = string;
 export type Experimentname = string;
+export type Jetsize = number;
+export type Jetspeed = number;
+export type Laserenergy = number;
+export type Chipmodel = string;
+export type Chippattern = string;
 export type Name = string;
 export type Type = "XrayDetection" | "XrayExposure" | "LaserExcitation" | "ReactionTrigger";
 export type Name1 = string;
@@ -70,10 +78,18 @@ export interface SSXDataCollectionCreate {
   detectorId?: Detectorid;
   startTime: Starttime;
   endTime?: Endtime;
+  beamShape?: Beamshape;
+  polarisation?: Polarisation;
+  undulatorGap1?: Undulatorgap1;
   repetitionRate?: Repetitionrate;
   energyBandwidth?: Energybandwidth;
   monoStripe?: Monostripe;
   experimentName?: Experimentname;
+  jetSize?: Jetsize;
+  jetSpeed?: Jetspeed;
+  laserEnergy?: Laserenergy;
+  chipModel?: Chipmodel;
+  chipPattern?: Chippattern;
   event_chains: EventChains;
 }
 export interface EventChainCreate {
@@ -117,10 +133,18 @@ export function withSSXDataCollectionCreate<TBase extends Constructor>(Base: TBa
     detectorId?: Detectorid;
     startTime: Starttime;
     endTime?: Endtime;
+    beamShape?: Beamshape;
+    polarisation?: Polarisation;
+    undulatorGap1?: Undulatorgap1;
     repetitionRate?: Repetitionrate;
     energyBandwidth?: Energybandwidth;
     monoStripe?: Monostripe;
     experimentName?: Experimentname;
+    jetSize?: Jetsize;
+    jetSpeed?: Jetspeed;
+    laserEnergy?: Laserenergy;
+    chipModel?: Chipmodel;
+    chipPattern?: Chippattern;
     event_chains: EventChains;
   }
 }

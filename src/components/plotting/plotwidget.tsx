@@ -13,13 +13,22 @@ const Plot = lazy(() =>
 
 function PlotWidget(props: PlotParams & { compact?: boolean }) {
   const [fullscreen, setFullScreen] = useState(false);
+  const margin = props.layout.margin;
+  props.layout.margin = props.compact
+    ? {
+        b: props.layout?.xaxis?.title ? 35 : 20,
+        l: props.layout?.yaxis?.title ? 50 : 35,
+        t: 50,
+        r: 5,
+        ...margin,
+      }
+    : props.layout.margin;
   return (
     <>
       <Plot
         {...props}
         layout={{
           modebar: { bgcolor: 'transparent', color: 'black', activecolor: 'black' },
-          margin: props.compact ? { b: 20, l: 35, t: 50, r: 5 } : undefined,
           ...props.layout,
         }}
         config={{

@@ -11,7 +11,7 @@ export type Processingmessage = string;
 export type Processingstarttime = string;
 export type Processingendtime = string;
 export type Processingenvironment = string;
-export type Resultpath = string;
+export type Results = string[];
 
 export interface SSXDataCollectionProcessingCreate {
   processingCommandLine?: Processingcommandline;
@@ -20,7 +20,7 @@ export interface SSXDataCollectionProcessingCreate {
   processingStartTime?: Processingstarttime;
   processingEndTime?: Processingendtime;
   processingEnvironment?: Processingenvironment;
-  resultPath: Resultpath;
+  results: Results;
 }
 
 type Constructor<T = {}> = new (...args: any[]) => T;
@@ -32,6 +32,6 @@ export function withSSXDataCollectionProcessingCreate<TBase extends Constructor>
     processingStartTime?: Processingstarttime;
     processingEndTime?: Processingendtime;
     processingEnvironment?: Processingenvironment;
-    resultPath: Resultpath;
+    results: Results;
   }
 }

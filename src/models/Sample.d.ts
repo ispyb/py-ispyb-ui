@@ -56,12 +56,17 @@ export type Protein = SampleProtein;
 export type Proposalid = string;
 export type Name1 = string;
 export type Acronym = string;
+export type SizeX = number;
+export type SizeY = number;
+export type SizeZ = number;
+export type Abundance = number;
 export type Crystalid = number;
 export type Protein1 = number;
 export type Name2 = string;
 export type Composition1 = string;
 export type Concentration = number;
-export type Abundance = number;
+export type Name3 = string;
+export type Abundance1 = number;
 export type Ratio = number;
 export type Ph = number;
 export type CrystalCompositions = Composition[];
@@ -106,6 +111,10 @@ export interface SampleCrystal {
   cell_beta?: CellBeta;
   cell_gamma?: CellGamma;
   Protein: Protein;
+  size_X?: SizeX;
+  size_Y?: SizeY;
+  size_Z?: SizeZ;
+  abundance?: Abundance;
   crystalId: Crystalid;
   proteinId: Protein1;
   crystal_compositions?: CrystalCompositions;
@@ -117,7 +126,7 @@ export interface SampleProtein {
 }
 export interface Composition {
   Component: Component;
-  abundance?: Abundance;
+  abundance?: Abundance1;
   ratio?: Ratio;
   ph?: Ph;
 }
@@ -125,6 +134,10 @@ export interface Component {
   name: Name2;
   composition?: Composition1;
   concentration?: Concentration;
+  ComponentType: ComponentType;
+}
+export interface ComponentType {
+  name: Name3;
 }
 export interface SampleContainer {
   code: Code;
@@ -167,6 +180,10 @@ export function withSampleCrystal<TBase extends Constructor>(Base: TBase) {
     cell_beta?: CellBeta;
     cell_gamma?: CellGamma;
     Protein: Protein;
+    size_X?: SizeX;
+    size_Y?: SizeY;
+    size_Z?: SizeZ;
+    abundance?: Abundance;
     crystalId: Crystalid;
     proteinId: Protein1;
     crystal_compositions?: CrystalCompositions;
@@ -182,7 +199,7 @@ export function withSampleProtein<TBase extends Constructor>(Base: TBase) {
 export function withComposition<TBase extends Constructor>(Base: TBase) {
   return class WithComposition extends Base {
     Component: Component;
-    abundance?: Abundance;
+    abundance?: Abundance1;
     ratio?: Ratio;
     ph?: Ph;
   }
@@ -192,6 +209,12 @@ export function withComponent<TBase extends Constructor>(Base: TBase) {
     name: Name2;
     composition?: Composition1;
     concentration?: Concentration;
+    ComponentType: ComponentType;
+  }
+}
+export function withComponentType<TBase extends Constructor>(Base: TBase) {
+  return class WithComponentType extends Base {
+    name: Name3;
   }
 }
 export function withSampleContainer<TBase extends Constructor>(Base: TBase) {

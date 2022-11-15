@@ -3,9 +3,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import ZoomImage from 'components/image/zoomimage';
 import LoadingPanel from 'components/loading/loadingpanel';
 import { DefaultLoadingPanel } from 'components/loading/loadingpanel.stories';
-import { formatDateToDayAndTime } from 'helpers/dateparser';
-import { useEventsDataCollectionGroup, useSample, useSSXDataCollectionProcessings } from 'hooks/pyispyb';
-import { random } from 'lodash';
+import { formatDateToDayAndTime, parseDate } from 'helpers/dateparser';
+import { useEventsDataCollectionGroup, useSample, useSSXDataCollectionProcessingStats } from 'hooks/pyispyb';
+import { random, round } from 'lodash';
 import { SessionResponse } from 'pages/model';
 import { Suspense, useState } from 'react';
 
@@ -15,6 +15,10 @@ import SSXDataCollectionSummary from '../datacollection/datacollectionsummary';
 import { Event, DataCollection } from 'models/Event';
 import _ from 'lodash';
 import PlotWidget from 'components/plotting/plotwidget';
+import { SSXDataCollectionProcessingStats } from 'models/SSXDataCollectionProcessingStats';
+import { getColorFromHitPercent } from 'helpers/ssx';
+import SSXDataCollectionGroupParameters from './ssxdatacollectiongroupparameters';
+import LazyWrapper from 'components/loading/lazywrapper';
 
 export default function SSXDataCollectionGroupPane({
   dcg,
@@ -131,9 +135,6 @@ function CompactDataCollectionGroupContent({ dcg }: { dcg: Event; session: Sessi
 }
 
 function DataCollectionGroupContent({ dcg, session, proposalName }: { dcg: Event; session: SessionResponse; proposalName: string }) {
-  // const { data: dcs } = useSSXDataCollections(String(session.sessionId), String(dcg.dataCollectionGroupId));
-  // const { data: sample } = useSSXDataCollectionGroupSample(dcg.dataCollectionGroupId);
-  // const { data: sequences } = useSSXDataCollectionSequences(dcs && dcs[0] ? dcs[0].DataCollection.dataCollectionId : 0);
   const { data: sample } = useSample({ blSampleId: dcg.blSampleId ? dcg.blSampleId : 0 });
 
   if (sample == undefined) return null;
@@ -149,14 +150,9 @@ function DataCollectionGroupContent({ dcg, session, proposalName }: { dcg: Event
           <DataCollectionGroupSummary dcg={dcg.Item} session={session} proposalName={proposalName}></DataCollectionGroupSummary>
         </Tab.Pane>
         <Tab.Pane eventKey="Parameters" title="Parameters">
-          {/* <SSXDataCollectionGroupParameters
-            dcg={dcg}
-            session={session}
-            proposalName={proposalName}
-            dcs={dcs}
-            sample={sample}
-            sequences={sequences}
-          ></SSXDataCollectionGroupParameters> */}
+          <Suspense fallback={DefaultLoadingPanel}>
+            <SSXDataCollectionGroupParameters dcg={dcg} session={session}></SSXDataCollectionGroupParameters>
+          </Suspense>
         </Tab.Pane>
       </Tab.Content>
     </Row>
@@ -164,14 +160,13 @@ function DataCollectionGroupContent({ dcg, session, proposalName }: { dcg: Event
 }
 
 function DataCollectionGroupSummary({ dcg }: { dcg: DataCollection; session: SessionResponse; proposalName: string }) {
-  const [selected, setSelected] = useState(0);
+  const { data: dcsData, isError: dcsError } = useEventsDataCollectionGroup({ dataCollectionGroupId: dcg.DataCollectionGroup.dataCollectionGroupId });
 
-  const { data: dcs, isError: dcsError } = useEventsDataCollectionGroup({ dataCollectionGroupId: dcg.DataCollectionGroup.dataCollectionGroupId });
   if (dcsError) throw Error(dcsError);
 
-  if (!dcs?.results) return null;
+  if (!dcsData?.results) return null;
 
-  const selectedDc = dcs.results[selected];
+  const dcs = dcsData.results.sort((a, b) => parseDate(a.startTime).getTime() - parseDate(b.startTime).getTime());
 
   return (
     <Col>
@@ -180,7 +175,7 @@ function DataCollectionGroupSummary({ dcg }: { dcg: DataCollection; session: Ses
           Cumulative summary
         </h4>
       </Row>
-      <Row>
+      <Row className="flex-nowrap" style={{ overflowX: 'auto', margin: 10 }}>
         <Suspense fallback={DefaultLoadingPanel}>
           <Col md={'auto'}>
             <ZoomImage style={{ maxWidth: 400 }} src="/images/temp/max.png"></ZoomImage>
@@ -190,81 +185,126 @@ function DataCollectionGroupSummary({ dcg }: { dcg: DataCollection; session: Ses
               <HitsStatistics dc={dcg}></HitsStatistics>
             </Suspense>
           </Col>
-          <Col>
+          <Col md={'auto'}>
             <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-              <UnitCellStatistics dc={dcg}></UnitCellStatistics>
+              <DataCollectionGroupHitGraph dcs={dcs}></DataCollectionGroupHitGraph>
             </Suspense>
           </Col>
           <Col md={'auto'}>
-            <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-              <DataCollectionGroupHitGraph dcs={dcs.results}></DataCollectionGroupHitGraph>
-            </Suspense>
+            <LazyWrapper>
+              <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+                <UnitCellStatistics dc={dcg}></UnitCellStatistics>
+              </Suspense>
+            </LazyWrapper>
           </Col>
         </Suspense>
       </Row>
-      <Row style={{ margin: 20, padding: 0, backgroundColor: '#d3d3d36b', border: '1px solid lightgray', borderRadius: 10 }}>
-        <Col md={'auto'} style={{ margin: 0, marginRight: 20, padding: 0, display: 'flex' }}>
-          <div style={{ overflowY: 'scroll', borderRight: '1px solid lightgray', borderRadius: 10, margin: 0, backgroundColor: '#345a8c8a' }}>
-            <div
-              className="text-center"
-              style={{
-                margin: 0,
-                marginBottom: -1,
-                padding: 0,
-                border: '1px solid lightgray',
-                backgroundColor: '#3498db',
-              }}
-            >
-              <span style={{ margin: 5, color: 'white', fontSize: 15 }}>
-                <strong>Run #</strong>
-              </span>
-            </div>
-            {dcs.results.map((dc, index) => {
-              return (
-                <div
-                  key={index}
-                  onClick={() => setSelected(index)}
-                  className="text-center"
-                  style={{
-                    cursor: 'pointer',
-                    margin: 0,
-                    marginBottom: -1,
-                    padding: 0,
-                    border: '1px solid lightgray',
-
-                    backgroundColor: selected == index ? '#345a8c' : undefined,
-                  }}
-                >
-                  <span style={{ margin: 5, color: selected == index ? 'white' : undefined }}>
-                    <strong>#{index + 1}</strong>
-                  </span>
-                </div>
-              );
-            })}
-          </div>
-        </Col>
-        <Col style={{ margin: 0, padding: 0 }}>
-          <Row>
-            <h4 className="text-center" style={{ margin: 10 }}>
-              Run #{selected + 1} summary
-            </h4>
-          </Row>
-          <Row>
-            {'DataCollectionGroup' in selectedDc.Item && (
-              <Suspense fallback={DefaultLoadingPanel}>
-                <SSXDataCollectionSummary dc={selectedDc.Item}></SSXDataCollectionSummary>
-              </Suspense>
-            )}
-          </Row>
-        </Col>
-      </Row>
+      <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+        <DataCollectionGroupRunSummary dcs={dcs}></DataCollectionGroupRunSummary>
+      </Suspense>
     </Col>
+  );
+}
+
+function DataCollectionGroupRunSummary({ dcs }: { dcs: Event[] }) {
+  const { data: stats, isError: statsError } = useSSXDataCollectionProcessingStats({ datacollectionIds: dcs.map((r) => r.id) });
+  const [selected, setSelected] = useState(0);
+
+  if (statsError) throw Error(statsError);
+
+  const selectedDc = dcs[selected];
+
+  return (
+    <Row style={{ margin: 20, padding: 0, backgroundColor: '#d3d3d36b', border: '1px solid lightgray', borderRadius: 10 }}>
+      <Col md={'auto'} style={{ margin: 0, marginRight: 20, padding: 0, display: 'flex' }}>
+        <div style={{ overflowY: 'auto', borderRight: '1px solid lightgray', borderRadius: '10px 0px 0px 10px', margin: 0, backgroundColor: '#345a8c8a' }}>
+          <div
+            className="text-center"
+            style={{
+              margin: 0,
+              marginBottom: -1,
+              padding: 0,
+              border: '1px solid lightgray',
+              backgroundColor: '#3498db',
+            }}
+          >
+            <span style={{ margin: 5, color: 'white', fontSize: 15 }}>
+              <strong>Run #</strong>
+            </span>
+          </div>
+          {dcs.map((dc, index) => {
+            const item = dcs[index].Item;
+            if ('DataCollectionGroup' in item) {
+              return <RunNumberTab key={index} dc={item} selected={selected == index} onClick={() => setSelected(index)} stats={stats} number={index + 1} />;
+            } else {
+              return <RunNumberTab key={index} dc={undefined} selected={selected == index} onClick={() => setSelected(index)} stats={stats} number={index + 1} />;
+            }
+          })}
+        </div>
+      </Col>
+      <Col style={{ margin: 0, padding: 0 }}>
+        <Row>
+          <h4 className="text-center" style={{ margin: 10 }}>
+            Run #{selected + 1} summary ({selectedDc.startTime})
+          </h4>
+        </Row>
+        <Row>
+          {'DataCollectionGroup' in selectedDc.Item && (
+            <Suspense fallback={DefaultLoadingPanel}>
+              <SSXDataCollectionSummary dc={selectedDc.Item}></SSXDataCollectionSummary>
+            </Suspense>
+          )}
+        </Row>
+      </Col>
+    </Row>
+  );
+}
+
+function RunNumberTab({
+  onClick,
+  stats = [],
+  selected,
+  number,
+  dc,
+}: {
+  onClick: () => void;
+  stats: SSXDataCollectionProcessingStats[] | undefined;
+  selected: boolean;
+  number: number;
+  dc: DataCollection | undefined;
+}) {
+  const statsFiltered = stats.filter((s) => dc && s.dataCollectionId == dc.dataCollectionId);
+  const stat = statsFiltered.length ? statsFiltered[0] : undefined;
+  let color = selected ? 'white' : undefined;
+  if (stat && dc && dc.numberOfImages) {
+    const hitPercent = round((stat.nbHits / dc.numberOfImages) * 100, 2);
+    color = getColorFromHitPercent(hitPercent);
+  }
+
+  return (
+    <div
+      onClick={onClick}
+      className="text-center"
+      style={{
+        cursor: 'pointer',
+        margin: 0,
+        marginBottom: -1,
+        padding: 0,
+        border: '1px solid lightgray',
+
+        backgroundColor: selected ? '#345a8c' : '#f5f5f5',
+      }}
+    >
+      <span style={{ margin: 5, color: color }}>
+        <strong>#{number}</strong>
+      </span>
+    </div>
   );
 }
 
 function DataCollectionGroupHitGraph({ dcs }: { dcs: Event[] }) {
   const dcIds = dcs.map((v) => v.id);
-  const { data, isError } = useSSXDataCollectionProcessings({ datacollectionIds: dcIds });
+  const { data, isError } = useSSXDataCollectionProcessingStats({ datacollectionIds: dcIds });
 
   if (isError) throw Error(isError);
 
@@ -273,19 +313,28 @@ function DataCollectionGroupHitGraph({ dcs }: { dcs: Event[] }) {
   }
 
   const x = _.range(1, data.length + 1);
-  const y = data.map((d) => d.nbHits);
+  const y1 = data.map((d) => d.nbHits);
+  const y2 = data.map((d) => d.nbIndexed);
 
   return (
     <PlotWidget
       data={[
         {
           type: 'bar',
-          y: y,
+          y: y1,
           x: x,
           opacity: 0.75,
+          name: 'hits',
+        },
+        {
+          type: 'bar',
+          y: y2,
+          x: x,
+          opacity: 0.75,
+          name: 'indexed',
         },
       ]}
-      layout={{ height: 300, width: 300, title: `hits` }}
+      layout={{ height: 300, width: 400, title: `run number statistics`, xaxis: { title: 'run number' }, yaxis: { title: 'image count' } }}
       compact
     />
   );

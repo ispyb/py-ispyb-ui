@@ -8,11 +8,16 @@
 export type Name = string;
 export type Composition = string;
 export type Concentration = number;
+export type Name1 = string;
 
 export interface Component {
   name: Name;
   composition?: Composition;
   concentration?: Concentration;
+  ComponentType: ComponentType;
+}
+export interface ComponentType {
+  name: Name1;
 }
 
 type Constructor<T = {}> = new (...args: any[]) => T;
@@ -21,5 +26,11 @@ export function withComponent<TBase extends Constructor>(Base: TBase) {
     name: Name;
     composition?: Composition;
     concentration?: Concentration;
+    ComponentType: ComponentType;
+  }
+}
+export function withComponentType<TBase extends Constructor>(Base: TBase) {
+  return class WithComponentType extends Base {
+    name: Name1;
   }
 }

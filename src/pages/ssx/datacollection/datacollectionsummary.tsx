@@ -1,4 +1,4 @@
-import { useSSXDataCollectionProcessings } from 'hooks/pyispyb';
+import { useSSXDataCollectionProcessingCells, useSSXDataCollectionProcessingCellsHistogram, useSSXDataCollectionProcessingStats } from 'hooks/pyispyb';
 import { Col, Row } from 'react-bootstrap';
 import { Suspense } from 'react';
 import LoadingPanel from 'components/loading/loadingpanel';
@@ -6,21 +6,14 @@ import ZoomImage from 'components/image/zoomimage';
 import PlotWidget from 'components/plotting/plotwidget';
 import { DataCollection } from 'models/Event';
 import _, { round } from 'lodash';
-
-function getColorFromHitPercent(hitPercent: number) {
-  if (hitPercent >= 75) {
-    return '#71db44';
-  } else if (hitPercent >= 50) {
-    return '#a2cf4e';
-  } else if (hitPercent >= 25) {
-    return '#edc132';
-  }
-  return '#c9483e';
-}
+import { getColorFromHitPercent } from 'helpers/ssx';
+import LazyWrapper from 'components/loading/lazywrapper';
+import { SSXDataCollectionProcessingCellsHistogram } from 'models/SSXDataCollectionProcessingCellsHistogram';
+import { Histogram } from 'models/Histogram';
 
 export default function SSXDataCollectionSummary({ dc }: { dc: DataCollection }) {
   return (
-    <Row>
+    <Row className="flex-nowrap" style={{ overflowX: 'auto' }}>
       <Col md={'auto'}>
         <ZoomImage style={{ maxWidth: 350 }} src="/images/temp/max.png"></ZoomImage>
       </Col>
@@ -32,17 +25,19 @@ export default function SSXDataCollectionSummary({ dc }: { dc: DataCollection })
       <Col md={'auto'}>
         <ZoomImage style={{ maxWidth: 400 }} src="/images/temp/dozor.png"></ZoomImage>
       </Col>
-      <Col>
-        <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-          <UnitCellStatistics dc={dc}></UnitCellStatistics>
-        </Suspense>
+      <Col md={'auto'}>
+        <LazyWrapper>
+          <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+            <UnitCellStatistics dc={dc}></UnitCellStatistics>
+          </Suspense>
+        </LazyWrapper>
       </Col>
     </Row>
   );
 }
 
 export function HitsStatistics({ dc }: { dc: DataCollection }) {
-  const { data, isError } = useSSXDataCollectionProcessings({ datacollectionIds: [dc.dataCollectionId] });
+  const { data, isError } = useSSXDataCollectionProcessingStats({ datacollectionIds: [dc.dataCollectionId] });
 
   if (isError) throw Error(isError);
 
@@ -83,30 +78,31 @@ export function HitsStatistics({ dc }: { dc: DataCollection }) {
 }
 
 export function UnitCellStatistics({ dc }: { dc: DataCollection }) {
-  const { data, isError } = useSSXDataCollectionProcessings({ datacollectionIds: [dc.dataCollectionId], includeCells: true });
+  const { data, isError } = useSSXDataCollectionProcessingCellsHistogram({ datacollectionId: dc.dataCollectionId });
 
   if (isError) throw Error(isError);
 
-  if (data == undefined || data.length == 0) {
+  if (data == undefined) {
     return <></>;
   }
-
-  const proc = data[0];
-
-  const cells = ['a', 'b', 'c', 'alpha', 'beta', 'gamma'];
+  const cells1: (keyof SSXDataCollectionProcessingCellsHistogram)[] = ['a', 'b', 'c'];
+  const cells2: (keyof SSXDataCollectionProcessingCellsHistogram)[] = ['alpha', 'beta', 'gamma'];
 
   return (
-    <>
-      <Row>
-        {cells.map((cell, index) => {
-          return (
-            <Col key={cell} md={'auto'}>
-              <UnitCellParamGraph name={cell} data={proc.unit_cells.map((row) => row[index])}></UnitCellParamGraph>
-            </Col>
-          );
-        })}
-      </Row>
-    </>
+    <Row>
+      <Col md={'auto'}>
+        <div className="flex-nowrap">
+          {cells1.map((cell) => {
+            return <UnitCellParamGraph name={cell} data={data[cell]}></UnitCellParamGraph>;
+          })}
+        </div>
+        <div className="flex-nowrap">
+          {cells2.map((cell) => {
+            return <UnitCellParamGraph name={cell} data={data[cell]}></UnitCellParamGraph>;
+          })}
+        </div>
+      </Col>
+    </Row>
   );
 }
 
@@ -127,33 +123,48 @@ function filterOutliers(someArray: number[]) {
   });
 }
 
-export function UnitCellParamGraph({ name, data: dataWithOutliers }: { name: string; data: number[] }) {
-  const data = filterOutliers(dataWithOutliers);
-  const maxValue = _(data).max();
-  const minValue = _(data).min();
-
-  if (maxValue == undefined || minValue == undefined) return null;
-
-  const range = _.range(minValue, maxValue, (maxValue - minValue) / 100);
-  const binEdges = [...range, maxValue];
-
-  const x = range;
-  const y = range.map((lower, index) => {
-    const higher = binEdges[index + 1];
-    return data.filter((v) => v >= lower && v < higher).length;
-  });
-
+export function UnitCellParamGraph({ name, data }: { name: string; data: Histogram }) {
   return (
     <PlotWidget
       data={[
         {
           type: 'bar',
-          y: y,
-          x: x,
+          y: data.y,
+          x: data.x,
           opacity: 0.75,
         },
       ]}
-      layout={{ height: 150, width: 300, title: `${name}` }}
+      layout={{
+        height: 150,
+        width: 300,
+        shapes: [
+          {
+            type: 'line',
+            yref: 'paper',
+            y0: 0,
+            y1: 1,
+            x0: data.median,
+            x1: data.median,
+            line: {
+              color: 'red',
+              width: 2,
+              dash: 'solid',
+            },
+          },
+        ],
+        annotations: [
+          {
+            yref: 'paper',
+            y: 1,
+            x: data.median,
+            text: `median = ${data.median}`,
+            showarrow: false,
+            yanchor: 'bottom',
+            font: { color: 'gray', size: 10 },
+          },
+        ],
+        title: `cell ${name}`,
+      }}
       compact
     />
   );

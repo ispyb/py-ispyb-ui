@@ -73,6 +73,17 @@ export function getSample({ blSampleId }: { blSampleId: number }): RequestInform
   return { url: `${server_py}/samples/${blSampleId}`, token };
 }
 
-export function getSSXDataCollectionProcessings({ datacollectionIds, includeCells = false }: { datacollectionIds: number[]; includeCells?: boolean }): RequestInformation {
-  return { url: `${server_py}/ssx/datacollection/processings?includeCells=${includeCells}&dataCollectionIds=${datacollectionIds.join(',')}`, token };
+export function getSSXDataCollectionProcessingStats({ datacollectionIds }: { datacollectionIds: number[] }): RequestInformation {
+  return { url: `${server_py}/ssx/datacollection/processing/stats?dataCollectionIds=${datacollectionIds.join(',')}`, token };
+}
+
+export function getSSXDataCollectionProcessingCells({ datacollectionId }: { datacollectionId: number }): RequestInformation {
+  return { url: `${server_py}/ssx/datacollection/processing/cells?dataCollectionId=${datacollectionId}`, token };
+}
+export function getSSXDataCollectionProcessingCellsHistogram({ datacollectionId }: { datacollectionId: number }): RequestInformation {
+  return { url: `${server_py}/ssx/datacollection/processing/cells/histogram?dataCollectionId=${datacollectionId}`, token };
+}
+
+export function getEventChains({ datacollectionId }: { datacollectionId: number }): RequestInformation {
+  return { url: `${server_py}/eventchain?dataCollectionId=${datacollectionId}`, token };
 }

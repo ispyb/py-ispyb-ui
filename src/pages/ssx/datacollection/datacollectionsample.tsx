@@ -1,15 +1,15 @@
 import { faFlask, faVial } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Sample } from 'models/Sample';
 import { Col, Table } from 'react-bootstrap';
-import { SSXSampleResponse } from '../model';
 
-export function SamplePreparation({ sample }: { sample?: SSXSampleResponse }) {
+export function SamplePreparation({ sample }: { sample?: Sample }) {
   if (!sample) {
     return <p>Could not find sample information.</p>;
   }
   return (
     <Col>
-      {sample.Crystal.crystal_compositions.length ? (
+      {sample.Crystal.crystal_compositions?.length ? (
         <Table size="sm" striped bordered hover style={{ margin: 10 }}>
           <thead>
             <tr>
@@ -26,20 +26,21 @@ export function SamplePreparation({ sample }: { sample?: SSXSampleResponse }) {
             </tr>
           </thead>
           <tbody>
-            {sample.Crystal.crystal_compositions
-              .sort((a, b) => a.Component.ComponentType.name.localeCompare(b.Component.ComponentType.name))
-              .map((composition) => {
-                return (
-                  <tr key={composition.crystalCompositionId}>
-                    <th>{componentTypeDisplayValue(composition.Component.ComponentType.name)}</th>
+            {sample.Crystal.crystal_compositions &&
+              sample.Crystal.crystal_compositions
+                .sort((a, b) => a.Component.ComponentType.name.localeCompare(b.Component.ComponentType.name))
+                .map((composition) => {
+                  return (
+                    <tr key={composition.Component.name}>
+                      <th>{componentTypeDisplayValue(composition.Component.ComponentType.name)}</th>
 
-                    <td>{composition.Component.name}</td>
-                    <td>{composition.abundance}</td>
-                    <td>{composition.Component.composition}</td>
-                    <td>{composition.ph}</td>
-                  </tr>
-                );
-              })}
+                      <td>{composition.Component.name}</td>
+                      <td>{composition.abundance}</td>
+                      <td>{composition.Component.composition}</td>
+                      <td>{composition.ph}</td>
+                    </tr>
+                  );
+                })}
           </tbody>
         </Table>
       ) : (
@@ -61,20 +62,21 @@ export function SamplePreparation({ sample }: { sample?: SSXSampleResponse }) {
           </tr>
         </thead>
         <tbody>
-          {sample.sample_compositions
-            .sort((a, b) => a.Component.ComponentType.name.localeCompare(b.Component.ComponentType.name))
-            .map((composition) => {
-              return (
-                <tr key={composition.sampleCompositionId}>
-                  <th>{componentTypeDisplayValue(composition.Component.ComponentType.name)}</th>
+          {sample.sample_compositions &&
+            sample.sample_compositions
+              .sort((a, b) => a.Component.ComponentType.name.localeCompare(b.Component.ComponentType.name))
+              .map((composition) => {
+                return (
+                  <tr key={composition.Component.name}>
+                    <th>{componentTypeDisplayValue(composition.Component.ComponentType.name)}</th>
 
-                  <td>{composition.Component.name}</td>
-                  <td>{composition.abundance}</td>
-                  <td>{composition.Component.composition}</td>
-                  <td>{composition.ph}</td>
-                </tr>
-              );
-            })}
+                    <td>{composition.Component.name}</td>
+                    <td>{composition.abundance}</td>
+                    <td>{composition.Component.composition}</td>
+                    <td>{composition.ph}</td>
+                  </tr>
+                );
+              })}
         </tbody>
       </Table>
     </Col>
