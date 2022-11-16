@@ -80,8 +80,8 @@ export function getSSXDataCollectionProcessingStats({ datacollectionIds }: { dat
 export function getSSXDataCollectionProcessingCells({ datacollectionId }: { datacollectionId: number }): RequestInformation {
   return { url: `${server_py}/ssx/datacollection/processing/cells?dataCollectionId=${datacollectionId}`, token };
 }
-export function getSSXDataCollectionProcessingCellsHistogram({ datacollectionId }: { datacollectionId: number }): RequestInformation {
-  return { url: `${server_py}/ssx/datacollection/processing/cells/histogram?dataCollectionId=${datacollectionId}`, token };
+export function getSSXDataCollectionProcessingCellsHistogram({ datacollectionIds }: { datacollectionIds: number[] }): RequestInformation {
+  return { url: `${server_py}/ssx/datacollection/processing/cells/histogram?dataCollectionIds=${datacollectionIds.join(',')}`, token };
 }
 
 export function getEventChains({ datacollectionId }: { datacollectionId: number }): RequestInformation {

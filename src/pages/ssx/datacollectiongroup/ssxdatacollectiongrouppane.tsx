@@ -10,15 +10,15 @@ import { SessionResponse } from 'pages/model';
 import { Suspense, useState } from 'react';
 
 import { Tab, Card, Container, Row, Col, Nav, Button, OverlayTrigger, Tooltip, Spinner } from 'react-bootstrap';
-import { HitsStatistics, UnitCellStatistics } from '../datacollection/datacollectionsummary';
 import SSXDataCollectionSummary from '../datacollection/datacollectionsummary';
 import { Event, DataCollection } from 'models/Event';
 import _ from 'lodash';
-import PlotWidget from 'components/plotting/plotwidget';
 import { SSXDataCollectionProcessingStats } from 'models/SSXDataCollectionProcessingStats';
 import { getColorFromHitPercent } from 'helpers/ssx';
 import SSXDataCollectionGroupParameters from './ssxdatacollectiongroupparameters';
 import LazyWrapper from 'components/loading/lazywrapper';
+import { DataCollectionGroupHitGraph, HitsStatisticsCumulative } from '../statistics/hits';
+import { UnitCellStatistics } from '../statistics/cells';
 
 export default function SSXDataCollectionGroupPane({
   dcg,
@@ -181,7 +181,7 @@ function DataCollectionGroupSummary({ dcg }: { dcg: DataCollection; session: Ses
           </Col>
           <Col md={'auto'}>
             <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-              <HitsStatistics dc={dcg}></HitsStatistics>
+              <HitsStatisticsCumulative dcs={dcs}></HitsStatisticsCumulative>
             </Suspense>
           </Col>
           <Col md={'auto'}>
@@ -192,7 +192,7 @@ function DataCollectionGroupSummary({ dcg }: { dcg: DataCollection; session: Ses
           <Col md={'auto'}>
             <LazyWrapper>
               <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-                <UnitCellStatistics dc={dcg}></UnitCellStatistics>
+                <UnitCellStatistics dcIds={dcsData.results.map((dc) => dc.id)}></UnitCellStatistics>
               </Suspense>
             </LazyWrapper>
           </Col>
@@ -298,43 +298,5 @@ function RunNumberTab({
         <strong>#{number}</strong>
       </span>
     </div>
-  );
-}
-
-function DataCollectionGroupHitGraph({ dcs }: { dcs: Event[] }) {
-  const dcIds = dcs.map((v) => v.id);
-  const { data, isError } = useSSXDataCollectionProcessingStats({ datacollectionIds: dcIds });
-
-  if (isError) throw Error(isError);
-
-  if (data == undefined || !data.length) {
-    return <></>;
-  }
-
-  const x = _.range(1, data.length + 1);
-  const y1 = data.map((d) => d.nbHits);
-  const y2 = data.map((d) => d.nbIndexed);
-
-  return (
-    <PlotWidget
-      data={[
-        {
-          type: 'bar',
-          y: y1,
-          x: x,
-          opacity: 0.75,
-          name: 'hits',
-        },
-        {
-          type: 'bar',
-          y: y2,
-          x: x,
-          opacity: 0.75,
-          name: 'indexed',
-        },
-      ]}
-      layout={{ height: 300, width: 400, title: `run number statistics`, xaxis: { title: 'run number' }, yaxis: { title: 'image count' } }}
-      compact
-    />
   );
 }

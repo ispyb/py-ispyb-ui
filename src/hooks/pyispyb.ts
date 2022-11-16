@@ -82,7 +82,7 @@ export function useSSXDataCollectionProcessingCells(params: { datacollectionId: 
   return doGet<SSXDataCollectionProcessingCells>(getSSXDataCollectionProcessingCells(params));
 }
 
-export function useSSXDataCollectionProcessingCellsHistogram(params: { datacollectionId: number }) {
+export function useSSXDataCollectionProcessingCellsHistogram(params: { datacollectionIds: number[] }) {
   return doGet<SSXDataCollectionProcessingCellsHistogram>(getSSXDataCollectionProcessingCellsHistogram(params));
 }
 
