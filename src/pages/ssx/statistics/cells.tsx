@@ -20,12 +20,16 @@ export function UnitCellStatistics({ dcIds }: { dcIds: number[] }) {
       <Col md={'auto'}>
         <div className="flex-nowrap">
           {cells1.map((cell) => {
-            return <UnitCellParamGraph name={cell} data={data[cell]}></UnitCellParamGraph>;
+            const d = data[cell];
+            if (!d) return null;
+            return <UnitCellParamGraph name={cell} data={d}></UnitCellParamGraph>;
           })}
         </div>
         <div className="flex-nowrap">
           {cells2.map((cell) => {
-            return <UnitCellParamGraph name={cell} data={data[cell]}></UnitCellParamGraph>;
+            const d = data[cell];
+            if (!d) return null;
+            return <UnitCellParamGraph name={cell} data={d}></UnitCellParamGraph>;
           })}
         </div>
       </Col>

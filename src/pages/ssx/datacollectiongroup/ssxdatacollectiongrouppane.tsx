@@ -5,7 +5,7 @@ import LoadingPanel from 'components/loading/loadingpanel';
 import { DefaultLoadingPanel } from 'components/loading/loadingpanel.stories';
 import { formatDateToDayAndTime, parseDate } from 'helpers/dateparser';
 import { useEventsDataCollectionGroup, useSample, useSSXDataCollectionProcessingStats } from 'hooks/pyispyb';
-import { random, round } from 'lodash';
+import { round } from 'lodash';
 import { SessionResponse } from 'pages/model';
 import { Suspense, useState } from 'react';
 
@@ -16,7 +16,7 @@ import { SSXDataCollectionProcessingStats } from 'models/SSXDataCollectionProces
 import { getColorFromHitPercent } from 'helpers/ssx';
 import SSXDataCollectionGroupParameters from './ssxdatacollectiongroupparameters';
 import LazyWrapper from 'components/loading/lazywrapper';
-import { DataCollectionGroupHitGraph, HitsStatisticsCumulative } from '../statistics/hits';
+import { CompactHitsStatisticsCumulative, DataCollectionGroupHitGraph, HitsStatisticsCumulative } from '../statistics/hits';
 import { UnitCellStatistics } from '../statistics/cells';
 
 export default function SSXDataCollectionGroupPane({
@@ -32,7 +32,11 @@ export default function SSXDataCollectionGroupPane({
   deployed: boolean;
   onDeploy: () => void;
 }) {
-  if (!dcg.count) return null;
+  const { data: dcsData, isError: dcsError } = useEventsDataCollectionGroup({
+    dataCollectionGroupId: 'DataCollectionGroup' in dcg.Item ? dcg.Item.DataCollectionGroup.dataCollectionGroupId : 0,
+  });
+
+  if (!dcg.count || !dcsData || !dcsData.results.length || dcsError) return null;
   return (
     <div style={{ margin: 5, cursor: deployed ? undefined : 'pointer' }} onClick={onDeploy}>
       <Tab.Container defaultActiveKey="Summary">
@@ -83,9 +87,24 @@ export default function SSXDataCollectionGroupPane({
                 >
                   <CompactDataCollectionGroupContent dcg={dcg} session={session} proposalName={proposalName}></CompactDataCollectionGroupContent>
                 </Suspense>
+                {
+                  <Suspense
+                    fallback={
+                      <Row>
+                        <Col></Col>
+                        <Col md={'auto'}>
+                          <Spinner animation="border" />
+                        </Col>
+                        <Col></Col>
+                      </Row>
+                    }
+                  >
+                    <CompactHitsStatisticsCumulative dcs={dcsData.results}></CompactHitsStatisticsCumulative>
+                  </Suspense>
+                }
                 {deployed && (
                   <Suspense fallback={DefaultLoadingPanel}>
-                    <DataCollectionGroupContent dcg={dcg} session={session} proposalName={proposalName}></DataCollectionGroupContent>
+                    <DataCollectionGroupContent dcs={dcsData.results} dcg={dcg} session={session} proposalName={proposalName}></DataCollectionGroupContent>
                   </Suspense>
                 )}
               </Col>
@@ -112,8 +131,6 @@ function CompactDataCollectionGroupContent({ dcg }: { dcg: Event; session: Sessi
     { label: 'Sample support', value: dcg.Item.DataCollectionGroup.experimentType },
     { label: 'Experiment name', value: dcg.Item.SSXDataCollection?.experimentName },
     { label: '# Runs', value: dcg.count },
-    { label: '# Hits (total)', value: random(0, 100000) },
-    { label: '# Indexed  (total)', value: random(0, 100000) },
   ];
   return (
     <Row>
@@ -132,7 +149,7 @@ function CompactDataCollectionGroupContent({ dcg }: { dcg: Event; session: Sessi
   );
 }
 
-function DataCollectionGroupContent({ dcg, session, proposalName }: { dcg: Event; session: SessionResponse; proposalName: string }) {
+function DataCollectionGroupContent({ dcg, session, proposalName, dcs }: { dcg: Event; dcs: Event[]; session: SessionResponse; proposalName: string }) {
   const { data: sample } = useSample({ blSampleId: dcg.blSampleId ? dcg.blSampleId : 0 });
 
   if (sample == undefined) return null;
@@ -145,7 +162,7 @@ function DataCollectionGroupContent({ dcg, session, proposalName }: { dcg: Event
     <Row>
       <Tab.Content>
         <Tab.Pane eventKey="Summary" title="Summary">
-          <DataCollectionGroupSummary dcg={dcg.Item} session={session} proposalName={proposalName}></DataCollectionGroupSummary>
+          <DataCollectionGroupSummary dcs={dcs} session={session} proposalName={proposalName}></DataCollectionGroupSummary>
         </Tab.Pane>
         <Tab.Pane eventKey="Parameters" title="Parameters">
           <Suspense fallback={DefaultLoadingPanel}>
@@ -157,14 +174,8 @@ function DataCollectionGroupContent({ dcg, session, proposalName }: { dcg: Event
   );
 }
 
-function DataCollectionGroupSummary({ dcg }: { dcg: DataCollection; session: SessionResponse; proposalName: string }) {
-  const { data: dcsData, isError: dcsError } = useEventsDataCollectionGroup({ dataCollectionGroupId: dcg.DataCollectionGroup.dataCollectionGroupId });
-
-  if (dcsError) throw Error(dcsError);
-
-  if (!dcsData?.results) return null;
-
-  const dcs = dcsData.results.sort((a, b) => parseDate(a.startTime).getTime() - parseDate(b.startTime).getTime());
+function DataCollectionGroupSummary({ dcs: dcsData }: { dcs: Event[]; session: SessionResponse; proposalName: string }) {
+  const dcs = dcsData.sort((a, b) => parseDate(a.startTime).getTime() - parseDate(b.startTime).getTime());
 
   return (
     <Col>
@@ -191,7 +202,7 @@ function DataCollectionGroupSummary({ dcg }: { dcg: DataCollection; session: Ses
           <Col md={'auto'}>
             <LazyWrapper>
               <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-                <UnitCellStatistics dcIds={dcsData.results.map((dc) => dc.id)}></UnitCellStatistics>
+                <UnitCellStatistics dcIds={dcs.map((dc) => dc.id)}></UnitCellStatistics>
               </Suspense>
             </LazyWrapper>
           </Col>
@@ -213,9 +224,9 @@ function DataCollectionGroupRunSummary({ dcs }: { dcs: Event[] }) {
   const selectedDc = dcs[selected];
 
   return (
-    <Row style={{ margin: 20, padding: 0, backgroundColor: '#d3d3d36b', border: '1px solid lightgray', borderRadius: 10 }}>
+    <Row style={{ maxHeight: 371, margin: 20, padding: 0, backgroundColor: '#d3d3d36b', border: '1px solid lightgray', borderRadius: 10 }}>
       <Col md={'auto'} style={{ margin: 0, marginRight: 20, padding: 0, display: 'flex' }}>
-        <div style={{ overflowY: 'auto', borderRight: '1px solid lightgray', borderRadius: '10px 0px 0px 10px', margin: 0, backgroundColor: '#345a8c8a' }}>
+        <div style={{ overflowY: 'auto', borderRight: '1px solid lightgray', borderRadius: '10px 0px 0px 10px', margin: 0, backgroundColor: '#345a8c8a', maxHeight: 369 }}>
           <div
             className="text-center"
             style={{

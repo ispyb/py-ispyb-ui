@@ -10,12 +10,12 @@ export type Y = number[];
 export type Median = number;
 
 export interface SSXDataCollectionProcessingCellsHistogram {
-  a: Histogram;
-  b: Histogram;
-  c: Histogram;
-  alpha: Histogram;
-  beta: Histogram;
-  gamma: Histogram;
+  a?: Histogram;
+  b?: Histogram;
+  c?: Histogram;
+  alpha?: Histogram;
+  beta?: Histogram;
+  gamma?: Histogram;
 }
 export interface Histogram {
   x: X;
@@ -26,12 +26,12 @@ export interface Histogram {
 type Constructor<T = {}> = new (...args: any[]) => T;
 export function withSSXDataCollectionProcessingCellsHistogram<TBase extends Constructor>(Base: TBase) {
   return class WithSSXDataCollectionProcessingCellsHistogram extends Base {
-    a: Histogram;
-    b: Histogram;
-    c: Histogram;
-    alpha: Histogram;
-    beta: Histogram;
-    gamma: Histogram;
+    a?: Histogram;
+    b?: Histogram;
+    c?: Histogram;
+    alpha?: Histogram;
+    beta?: Histogram;
+    gamma?: Histogram;
   }
 }
 export function withHistogram<TBase extends Constructor>(Base: TBase) {
