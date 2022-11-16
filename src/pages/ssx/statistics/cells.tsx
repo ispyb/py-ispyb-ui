@@ -1,7 +1,6 @@
 import { useSSXDataCollectionProcessingCellsHistogram } from 'hooks/pyispyb';
 import { Col, Row } from 'react-bootstrap';
 import PlotWidget from 'components/plotting/plotwidget';
-import { Event } from 'models/Event';
 import { SSXDataCollectionProcessingCellsHistogram } from 'models/SSXDataCollectionProcessingCellsHistogram';
 import { Histogram } from 'models/Histogram';
 

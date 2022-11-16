@@ -12,7 +12,6 @@ import { Suspense, useState } from 'react';
 import { Tab, Card, Container, Row, Col, Nav, Button, OverlayTrigger, Tooltip, Spinner } from 'react-bootstrap';
 import SSXDataCollectionSummary from '../datacollection/datacollectionsummary';
 import { Event, DataCollection } from 'models/Event';
-import _ from 'lodash';
 import { SSXDataCollectionProcessingStats } from 'models/SSXDataCollectionProcessingStats';
 import { getColorFromHitPercent } from 'helpers/ssx';
 import SSXDataCollectionGroupParameters from './ssxdatacollectiongroupparameters';
