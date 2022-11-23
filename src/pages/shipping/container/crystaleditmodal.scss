@@ -1,0 +1,9 @@
+@import 'theme.scss';
+
+select {
+  @extend .form-select;
+}
+
+.field {
+  margin-bottom: 5px;
+}

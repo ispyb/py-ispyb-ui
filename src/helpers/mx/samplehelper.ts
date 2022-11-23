@@ -23,16 +23,16 @@ export function getSampleChanger(type?: sampleChangerType): AbstractSampleChange
 }
 
 export function getContainerType(type: string | undefined): containerType | undefined {
-  if (type === 'Unipuck') {
+  if (type?.toLowerCase() === 'unipuck') {
     return 'Unipuck';
   }
-  if (type === 'Spinepuck' || type === 'Puck') {
+  if (type?.toLowerCase() === 'spinepuck' || type?.toLowerCase() === 'puck') {
     return 'Spinepuck';
   }
-  if (type === 'Spinepuck' || type === 'Puck') {
-    return 'Spinepuck';
+  if (type?.toLowerCase() === 'plate') {
+    return 'PLATE';
   }
-  return undefined;
+  return 'OTHER';
 }
 
 export function containerCanGoInLocation(changer: AbstractSampleChanger | undefined, containerType: string | undefined, location: number | undefined) {

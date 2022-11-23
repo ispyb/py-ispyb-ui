@@ -52,12 +52,7 @@ export default function PrepareExperimentPage() {
       }),
       false
     );
-    let req:
-      | {
-          url: string;
-          data: string;
-        }
-      | undefined;
+    let req: ReturnType<typeof updateSampleChangerLocation> | undefined;
     if (beamline != undefined) {
       req = updateSampleChangerLocation({ proposalName, containerId: containerId, beamline: beamline, position });
     } else {
@@ -68,7 +63,7 @@ export default function PrepareExperimentPage() {
       }
     }
     if (req) {
-      axios.post(req.url, req.data, { headers: { 'content-type': 'application/x-www-form-urlencoded' } }).then(
+      axios.post(req.url, req.data, { headers: req.headers }).then(
         () => {
           mutate();
         },

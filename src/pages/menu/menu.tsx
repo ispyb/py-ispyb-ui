@@ -25,7 +25,7 @@ function LogOut(props: { user: User }) {
 export default function Menu({ selected }: { selected?: string }) {
   const user = useSelector((state: RootState) => state.user);
   return (
-    <Col style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: Number.MAX_SAFE_INTEGER }}>
+    <Col style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 999 }}>
       <Row>
         <MainMenu selected={selected} user={user}></MainMenu>
       </Row>
@@ -51,7 +51,7 @@ export function MainMenu({ user, selected }: { user: User; selected?: string }) 
                 return (
                   <Nav>
                     <LinkContainer to={item.to}>
-                      <Nav.Link className={item.key === selected ? 'selectedNav' : 'toto'}>{item.title}</Nav.Link>
+                      <Nav.Link className={item.key === selected ? 'selectedNav' : ''}>{item.title}</Nav.Link>
                     </LinkContainer>
                   </Nav>
                 );
@@ -85,13 +85,14 @@ export function ProposalMenu({ user, selected }: { user: User; selected?: string
       <Container>
         <Navbar.Brand>Proposal {proposalName}</Navbar.Brand>
         <Nav className="me-auto">
-          <Nav className="me-auto">
+          <Nav>
             {[
-              { to: `/${proposalName}/sessions`, title: 'Sessions', selected: 'sessions' },
+              { to: `/${proposalName}/shipping`, title: 'Shipping', selected: 'shipping' },
               { to: `/${proposalName}/MX/prepare`, title: 'Prepare experiment', selected: 'prepare' },
+              { to: `/${proposalName}/sessions`, title: 'Sessions', selected: 'sessions' },
             ].map((item) => {
               return (
-                <Nav>
+                <Nav style={{ marginLeft: 20 }}>
                   <LinkContainer to={item.to}>
                     <Nav.Link className={item.selected == selected ? 'selectedNav' : ''}>{item.title}</Nav.Link>
                   </LinkContainer>

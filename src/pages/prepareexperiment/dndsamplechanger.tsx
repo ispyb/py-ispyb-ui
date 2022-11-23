@@ -6,7 +6,7 @@ import { Col, OverlayTrigger, Popover, Row } from 'react-bootstrap';
 
 import { useDrop } from 'react-dnd';
 import { ItemTypes } from './dndlayer';
-import { Beamline } from 'models';
+import { Beamline, containerType } from 'models';
 
 import './dndsamplechanger.scss';
 import { getContainerType, getSampleChanger } from 'helpers/mx/samplehelper';
@@ -165,7 +165,7 @@ function InfoContainerBtn({ cx, cy, cr, container, proposalName }: { cx: number;
   );
 
   return (
-    <OverlayTrigger show={show} key={'bottom'} placement={'left'} overlay={popover}>
+    <OverlayTrigger show={show} trigger="focus" rootClose onToggle={(v) => setShow(v)} placement={'left'} overlay={popover}>
       <g>
         <circle onClick={() => setShow(!show)} className={show ? 'infoContainerBtnClicked' : 'infoContainerBtn'} cx={x} cy={y} r={r}></circle>
         <text className="infoContainerBtnTxt" x={x} y={y + 2.5}>
@@ -190,7 +190,7 @@ function DroppablePosition({
   r: number;
   position: number;
   beamline: Beamline;
-  containerType: 'Spinepuck' | 'Unipuck';
+  containerType: containerType;
   // eslint-disable-next-line no-unused-vars
   setContainerLocation: (containerId: number, beamline: string, position: string) => void;
 }) {

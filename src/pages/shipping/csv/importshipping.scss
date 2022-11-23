@@ -1,0 +1,50 @@
+@import 'theme.scss';
+td.replaced::before {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  left: 4px;
+  border-top: 3px dotted yellow;
+}
+
+td.error::before {
+  content: '';
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  left: 4px;
+  border-top: 3px dotted red;
+}
+
+td.color1 {
+  background-color: lightblue;
+}
+
+td.color2 {
+  background-color: lightyellow;
+}
+
+td.color3 {
+  background-color: lightgray;
+}
+
+td.color4 {
+  background-color: lightgreen;
+}
+
+td.color5 {
+  background-color: lightpink;
+}
+
+td.color6 {
+  background-color: lightslategray;
+}
+
+td.color7 {
+  background-color: lightseagreen;
+}
+
+td.color8 {
+  background-color: lightsteelblue;
+}

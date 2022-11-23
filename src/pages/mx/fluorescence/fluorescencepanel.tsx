@@ -9,6 +9,7 @@ import ZoomImage from 'components/image/zoomimage';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faWindowRestore } from '@fortawesome/free-solid-svg-icons';
+import { openInNewTab } from 'helpers/opentab';
 
 type Props = {
   sessionId: string;
@@ -17,10 +18,6 @@ type Props = {
 };
 
 export default function FluorescencePanel({ proposalName, spectra, sessionId }: Props) {
-  const openInNewTab = (url: string) => {
-    window.open(url, '_blank', 'noopener,noreferrer');
-  };
-
   const url = `/${proposalName}/MX/${sessionId}/xrf/${spectra.xfeFluorescenceSpectrumId}`;
   return (
     <Card className="themed-card card-energyscan-panel">

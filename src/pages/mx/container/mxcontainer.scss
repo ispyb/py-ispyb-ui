@@ -13,12 +13,13 @@ circle.sampleCollectedSelected {
 circle.sampleFilled {
   fill: $secondary;
 }
-circle.sampleCollected:hover {
-  stroke: $warning;
-  stroke-width: 3;
-}
 circle.sampleEmpty {
   fill: $light;
+}
+
+circle.sample-clickable:hover {
+  stroke: $warning;
+  stroke-width: 3;
 }
 
 text.sampleCollected {
@@ -50,4 +51,13 @@ text.sampleEmpty {
 .puck {
   stroke: #000;
   stroke-width: 1;
+}
+
+.puck-clickable {
+  stroke: #000;
+  stroke-width: 1;
+}
+.puck-clickable:hover {
+  stroke: $warning;
+  stroke-width: 6;
 }
