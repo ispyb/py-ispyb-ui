@@ -4,6 +4,7 @@ import { useAuth } from 'hooks/useAuth';
 import { SITES } from 'config/sites';
 import LoginJava from './LoginJava';
 import LoginPy from './LoginPy';
+import AuthErrorBoundary from 'components/AuthErrorBoundary';
 
 export default function Login() {
   const { site, setSite, siteInitialized } = useAuth();
@@ -46,7 +47,13 @@ export default function Login() {
             </Col>
           )}
           <Row>
-            {site.javaMode ? <LoginJava></LoginJava> : <LoginPy></LoginPy>}
+            {site.javaMode ? (
+              <LoginJava></LoginJava>
+            ) : (
+              <AuthErrorBoundary>
+                <LoginPy></LoginPy>
+              </AuthErrorBoundary>
+            )}
           </Row>
         </>
       )}
