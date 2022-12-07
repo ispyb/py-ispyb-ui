@@ -1,0 +1,15 @@
+/* stylelint-disable-next-line selector-class-pattern */
+.profileContainer {
+  display: flex;
+  flex: 1 1 0;
+  font-size: 0.75rem;
+  min-height: 0;
+  position: relative;
+}
+
+/* stylelint-disable-next-line selector-class-pattern */
+.heatmapContainer {
+  display: flex;
+  flex: 3 1 0;
+  min-height: 0;
+}

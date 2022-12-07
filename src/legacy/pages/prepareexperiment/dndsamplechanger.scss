@@ -1,0 +1,55 @@
+@import 'scss/base.scss';
+
+.cell {
+  fill: rgb(50, 50, 50);
+}
+
+.cellNumber {
+  font-size: 8.25px;
+  text-anchor: middle;
+  pointer-events: none;
+  fill: white;
+}
+
+.cellPositionNumber {
+  font-size: 8.25px;
+  text-anchor: middle;
+  pointer-events: none;
+}
+.cellPosition {
+  fill: $light;
+}
+
+.removeContainerBtnTxt {
+  font-size: 8.25px;
+  text-anchor: middle;
+  pointer-events: none;
+  fill: white;
+}
+
+.removeContainerBtn {
+  fill: $danger;
+}
+.removeContainerBtn:hover {
+  fill: $warning;
+  cursor: pointer;
+}
+
+.infoContainerBtnTxt {
+  font-size: 7px;
+  text-anchor: middle;
+  pointer-events: none;
+  fill: white;
+}
+
+.infoContainerBtn {
+  fill: $info;
+  cursor: pointer;
+}
+.infoContainerBtnClicked {
+  fill: $warning;
+  cursor: pointer;
+}
+.infoContainerBtn:hover {
+  fill: $warning;
+}

@@ -1,119 +1,64 @@
-import { Site } from 'models';
+export interface SiteConfig {
+  name: string;
+  description?: string;
+  host: string;
+  apiPrefix: string;
+  javaMode?: boolean;
+  javaConfig?: JavaSiteConfig;
+  javaName?: string;
+}
 
-const sites: Site[] = [
+export interface JavaSiteConfig {
+  techniques: Record<string, Technique>;
+}
+
+export type sampleChangerType =
+  | 'FlexHCDDual'
+  | 'FlexHCDUnipuckPlate'
+  | 'ISARA'
+  | 'P11SC';
+export type containerType = 'Spinepuck' | 'Unipuck';
+
+export interface Beamline {
+  name: string;
+  sampleChangerType?: sampleChangerType;
+}
+
+export interface Technique {
+  beamlines: Array<Beamline>;
+}
+
+export const SITES: SiteConfig[] = [
   {
-    name: 'ESRF',
-    server: 'https://ispyb.esrf.fr/ispyb/ispyb-ws/rest',
-    description: 'European Synchroton Radiation Facility',
-    icon: '../images/site/esrf.png',
-    authentication: {
-      sso: {
-        enabled: false,
-        plugin: 'keycloak',
-        configuration: {
-          realm: 'ESRF',
-          url: 'https://websso.esrf.fr/auth/',
-          clientId: 'icat',
-        },
-      },
-      authenticators: [
-        {
-          plugin: 'db',
-          title: 'ISPyB',
-          server: 'https://ispyb.esrf.fr/ispyb/ispyb-ws/rest',
-          enabled: true,
-          site: 'ESRF',
-          message: 'Use ISPyB authentication when you log in as a proposal',
-        },
-      ],
-    },
-
-    techniques: {
-      SAXS: { beamlines: [{ name: 'BM29' }] },
-      EM: { beamlines: [{ name: 'CM01' }] },
-      MX: {
-        beamlines: [
-          { name: 'ID23-1', sampleChangerType: 'FlexHCDDual' },
-          { name: 'ID23-2', sampleChangerType: 'FlexHCDUnipuckPlate' },
-          { name: 'ID29', sampleChangerType: 'FlexHCDDual' },
-          { name: 'ID30A-1', sampleChangerType: 'FlexHCDUnipuckPlate' },
-          { name: 'ID30A-2', sampleChangerType: 'FlexHCDDual' },
-          { name: 'ID30A-3', sampleChangerType: 'FlexHCDDual' },
-          { name: 'ID30B', sampleChangerType: 'FlexHCDDual' },
-          { name: 'BM30A', sampleChangerType: 'FlexHCDDual' },
-        ],
-      },
-    },
+    name: 'ESRF-py',
+    description: 'For SSX',
+    host: 'http://py-ispyb-development:8888',
+    apiPrefix: '/ispyb/api/v1',
   },
-
   {
-    name: 'EMBL',
-    server: 'https://ispyb.embl-hamburg.de/ispyb/ispyb-ws/rest',
-    description: 'European Molecular Biology Laboratory',
-    icon: '../images/site/esrf.png',
-    authentication: {
-      sso: {
-        enabled: false,
-      },
-      authenticators: [
-        {
-          plugin: 'db',
-          title: 'ISPyB',
-
-          server: 'https://ispyb.embl-hamburg.de/ispyb/ispyb-ws/rest',
-          enabled: true,
-          site: 'EMBL',
-          message: 'Use ISPyB authentication when you log in as a proposal',
+    name: 'ESRF-java',
+    description: 'For MX/EM',
+    javaName: 'ESRF',
+    host: 'https://ispyb.esrf.fr',
+    apiPrefix: '/ispyb/ispyb-ws/rest',
+    javaMode: true,
+    javaConfig: {
+      techniques: {
+        SAXS: { beamlines: [{ name: 'BM29' }] },
+        EM: { beamlines: [{ name: 'CM01' }] },
+        MX: {
+          beamlines: [
+            { name: 'ID23-1', sampleChangerType: 'FlexHCDDual' },
+            { name: 'ID23-2', sampleChangerType: 'FlexHCDUnipuckPlate' },
+            { name: 'ID29', sampleChangerType: 'FlexHCDDual' },
+            { name: 'ID30A-1', sampleChangerType: 'FlexHCDUnipuckPlate' },
+            { name: 'ID30A-2', sampleChangerType: 'FlexHCDDual' },
+            { name: 'ID30A-3', sampleChangerType: 'FlexHCDDual' },
+            { name: 'ID30B', sampleChangerType: 'FlexHCDDual' },
+            { name: 'BM30A', sampleChangerType: 'FlexHCDDual' },
+          ],
         },
-      ],
-    },
-
-    techniques: {
-      MX: {
-        beamlines: [
-          {
-            name: 'P13',
-          },
-          {
-            name: 'P14',
-          },
-        ],
-      },
-    },
-  },
-
-  {
-    name: 'MAXIV',
-    server: 'https://ispyb.maxiv.lu.se/ispyb/ispyb-ws/rest',
-    description: 'MAX IV Laboratory',
-    icon: '../images/site/esrf.png',
-    authentication: {
-      sso: {
-        enabled: false,
-      },
-      authenticators: [
-        {
-          plugin: 'db',
-          title: 'ISPyB',
-          server: 'https://ispyb.maxiv.lu.se/ispyb/ispyb-ws/rest',
-          enabled: true,
-          site: 'MAXIV',
-          message: 'Use ISPyB authentication when you log in as a proposal',
-        },
-      ],
-    },
-
-    techniques: {
-      MX: {
-        beamlines: [
-          {
-            name: 'BioMAX',
-            sampleChangerType: 'ISARA',
-          },
-        ],
       },
     },
   },
 ];
-
-export default sites;

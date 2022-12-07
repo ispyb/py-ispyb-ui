@@ -8,17 +8,10 @@ theme:
 nav:
   - Home: index.md
   - Installation: installation.md
-  - Developments: developments.md
   - FAQ: faq.md
-
 
 plugins:
   - search
-  - mkdocstrings:
-      default_handler: python
-      custom_templates: templates
-      watch:
-        - ../../exi2
 
 markdown_extensions:
   - codehilite

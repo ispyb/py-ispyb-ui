@@ -1,0 +1,6 @@
+/* stylelint-disable-next-line selector-class-pattern */
+.tooltipValue {
+  font-size: 1.125em;
+  font-weight: 600;
+  margin-top: 0.25rem;
+}

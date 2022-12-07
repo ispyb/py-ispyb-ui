@@ -1,0 +1,29 @@
+.lightbox-holder {
+  cursor: pointer;
+  transition: opacity ease-in-out 0.2s;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  img {
+    width: 100%;
+  }
+}
+
+.lightbox-main {
+  align-items: center;
+  background-color: rgb(240, 240, 240, 0.5);
+  margin: auto;
+  text-align: center;
+  width: fit-content;
+}
+
+.lightbox-wrap {
+  display: flex;
+
+  img {
+    max-height: 100vh;
+    width: calc(100% - 80px);
+  }
+}

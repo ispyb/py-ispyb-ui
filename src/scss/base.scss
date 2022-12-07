@@ -1,0 +1,55 @@
+$white: #fff;
+$gray-100: #f5f5f5;
+$gray-200: #eeeeee;
+$gray-300: #e0e0e0;
+$gray-400: #bdbdbd;
+$gray-500: #9e9e9e;
+$gray-600: #757575;
+$gray-700: #616161;
+$gray-800: #424242;
+$gray-900: #212121;
+$black: #000;
+
+$blue: #1565c0;
+$indigo: #283593;
+$purple: #6a1b9a;
+$pink: #c2185b;
+$red: #d32f2f;
+$orange: #ef6c00;
+$yellow: #f9a825;
+$green: #4caf50;
+$teal: #20c997;
+$cyan: #3498db;
+
+// https://coolors.co/d4e4bc-96acb7-36558f-40376e-48233c
+$secondary: #d4e4bc;
+$tertiary: #96acb7;
+$primary: #36558f;
+$four: #40376e;
+$five: #48233c;
+
+$success: $green;
+$info: $cyan;
+$warning: $yellow;
+$danger: $red;
+$light: $gray-200;
+$dark: rgb(51, 51, 51);
+
+$link-color: $primary;
+
+$pagination: $tertiary;
+$pagination-bg: lighten($pagination, 15%);
+$pagination-color: color-contrast($pagination-bg);
+
+$pagination-active-bg: $pagination;
+$pagination-active-color: color-contrast($pagination-active-bg);
+
+$pagination-hover-bg: darken($pagination, 15%);
+$pagination-hover-color: color-contrast($pagination-hover-bg);
+
+$pagination-disabled-bg: lighten($pagination, 30%);
+$pagination-disabled-color: color-contrast($pagination-disabled-bg);
+
+@import '~bootswatch/dist/flatly/variables';
+@import '~bootstrap/scss/bootstrap';
+@import '~bootswatch/dist/flatly/bootswatch';
