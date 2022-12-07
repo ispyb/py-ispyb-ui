@@ -57,7 +57,6 @@
     "react-router-dom": "^6.2.1",
     "react-scripts": "5.0.1",
     "react-select": "^5.5.6",
-    "react-three": "^0.9.7",
     "recharts": "^2.1.16",
     "rest-hooks": "^6.4.0",
     "rxjs": "^7.5.7",
