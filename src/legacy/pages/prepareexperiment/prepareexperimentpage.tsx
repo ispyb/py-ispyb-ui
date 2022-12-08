@@ -124,6 +124,7 @@ export default function PrepareExperimentPage() {
     .filter((s) => Boolean(shipmentIsProcessing(s)))
     .flatMap((s) => s.dewars)
     .filter((d) => d.containerId !== undefined)
+    .filter((d) => d.containerId !== null)
     .value();
 
   const columns: ColumnDescription<Shipment>[] = [
