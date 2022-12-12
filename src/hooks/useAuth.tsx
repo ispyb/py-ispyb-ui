@@ -1,6 +1,7 @@
 import { AuthenticatedResource } from 'api/resources/Base/Authenticated';
 import { SiteResource } from 'api/resources/Base/Site';
-import { SiteConfig, SITES } from 'config/sites';
+import { SiteConfig } from 'config/definitions/sites';
+import { SITES } from 'config/config';
 import React, { createContext, useContext } from 'react';
 import { useController } from 'rest-hooks';
 

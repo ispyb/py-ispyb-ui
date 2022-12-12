@@ -1,0 +1,10 @@
+
+[build]
+  publish = "build"
+  command = "npm run build"
+
+# Override netlify router to make react router work
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
