@@ -27,6 +27,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons';
 import { Subject } from 'rxjs';
 import moment from 'moment';
+import NbBadge from 'legacy/components/nbBadge';
 
 type Props = {
   sessionId: string;
@@ -99,9 +100,11 @@ export default function DataCollectionGroupPanel({
                       <Nav.Item>
                         <Nav.Link eventKey="Data">
                           Data Collections
-                          <Badge bg="info">
-                            {dataCollectionGroup.totalNumberOfDataCollections}
-                          </Badge>
+                          <NbBadge
+                            value={
+                              dataCollectionGroup.totalNumberOfDataCollections
+                            }
+                          />
                         </Nav.Link>
                       </Nav.Item>
                     )}
@@ -111,21 +114,21 @@ export default function DataCollectionGroupPanel({
                     <Nav.Item>
                       <Nav.Link eventKey="Results">
                         Results
-                        <Badge bg="info">
-                          {getUniqueCount(
+                        <NbBadge
+                          value={getUniqueCount(
                             dataCollectionGroup.autoProcIntegrationId
                           )}
-                        </Badge>
+                        />
                       </Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
                       <Nav.Link eventKey="Workflow">
                         Workflow
-                        <Badge bg="info">
-                          {getUniqueCount(
+                        <NbBadge
+                          value={getUniqueCount(
                             dataCollectionGroup.WorkflowStep_workflowStepId
                           )}
-                        </Badge>
+                        />
                       </Nav.Link>
                     </Nav.Item>
                   </Nav>
