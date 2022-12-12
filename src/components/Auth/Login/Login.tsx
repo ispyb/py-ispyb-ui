@@ -1,7 +1,7 @@
 import { Row, Col, Container, Button } from 'react-bootstrap';
 
 import { useAuth } from 'hooks/useAuth';
-import { SITES } from 'config/sites';
+import { SITES } from 'config/config';
 import LoginJava from './LoginJava';
 import LoginPy from './LoginPy';
 import AuthErrorBoundary from 'components/AuthErrorBoundary';

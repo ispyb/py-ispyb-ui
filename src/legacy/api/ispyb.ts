@@ -1,4 +1,4 @@
-import { SiteConfig } from 'config/sites';
+import { SiteConfig } from 'config/definitions/sites';
 import {
   LabContact,
   SaveShippingDewar,

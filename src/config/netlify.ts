@@ -1,40 +1,6 @@
-export interface SiteConfig {
-  name: string;
-  description?: string;
-  host: string;
-  apiPrefix: string;
-  javaMode?: boolean;
-  javaConfig?: JavaSiteConfig;
-  javaName?: string;
-}
+import { SiteConfig } from 'config/definitions/sites';
 
-export interface JavaSiteConfig {
-  techniques: Record<string, Technique>;
-}
-
-export type sampleChangerType =
-  | 'FlexHCDDual'
-  | 'FlexHCDUnipuckPlate'
-  | 'ISARA'
-  | 'P11SC';
-export type containerType = 'Spinepuck' | 'Unipuck';
-
-export interface Beamline {
-  name: string;
-  sampleChangerType?: sampleChangerType;
-}
-
-export interface Technique {
-  beamlines: Array<Beamline>;
-}
-
-export const SITES: SiteConfig[] = [
-  {
-    name: 'ESRF-py',
-    description: 'For SSX',
-    host: 'http://py-ispyb-development:8888',
-    apiPrefix: '/ispyb/api/v1',
-  },
+export const NETLIFY: SiteConfig[] = [
   {
     name: 'ESRF-java',
     description: 'For MX/EM',
