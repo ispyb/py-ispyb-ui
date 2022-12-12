@@ -1,0 +1,20 @@
+.container {
+  align-items: center;
+  display: flex;
+}
+
+.square {
+  border: solid 1px #000;
+  height: 1rem;
+  width: 1rem;
+}
+
+.option {
+  align-items: center;
+  display: flex;
+}
+
+/* stylelint-disable-next-line selector-class-pattern */
+.optionLabel {
+  margin-left: 0.25rem;
+}

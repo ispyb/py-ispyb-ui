@@ -1,0 +1,33 @@
+@import 'scss/base.scss';
+
+.summary_datacollection_success {
+  width: 10px;
+  height: 10px;
+  border-radius: 99px;
+  -moz-border-radius: 99px;
+  -webkit-border-radius: 99px;
+  background: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    from(lighten($success, 30%)),
+    to($success)
+  );
+  box-shadow: 0 2px 4px #000;
+}
+
+.summary_datacollection_failed {
+  width: 10px;
+  height: 10px;
+  border-radius: 99px;
+  -moz-border-radius: 99px;
+  -webkit-border-radius: 99px;
+  background: -webkit-gradient(
+    linear,
+    left top,
+    left bottom,
+    from(lighten($danger, 30%)),
+    to($danger)
+  );
+  box-shadow: 0 2px 4px #000;
+}

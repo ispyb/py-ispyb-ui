@@ -1,0 +1,117 @@
+html {
+  min-height: 100vh;
+}
+
+* {
+  scroll-margin-top: calc(59px + 10px);
+}
+
+/* Bring z-index up for main header to dropdowns are above breadcrumbs */
+.main-header {
+  min-height: 59px;
+  z-index: 1021;
+}
+
+.breadcrumbs {
+  background-color: $tertiary;
+  box-shadow: rgb(0 0 0 / 10%) 0 0 0.2rem, rgb(0 0 0 / 20%) 0 0.2rem 0.4rem;
+  font-family: Poppins;
+  font-size: 12px;
+  font-weight: 400;
+  padding: 0.25rem 0;
+}
+
+@include media-breakpoint-up(md) {
+  .loading-progress {
+    top: 59px;
+  }
+
+  .breadcrumbs {
+    top: 64px;
+  }
+}
+
+.main-wrapper {
+  margin: 1.5rem 0 0;
+}
+
+.main {
+  h1 {
+    border-bottom: 1px solid $tertiary;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    padding-bottom: 2px;
+  }
+
+  h2 {
+    border-bottom: 1px solid lighten($tertiary, 20%);
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    padding-bottom: 2px;
+  }
+}
+
+.footer {
+  background: url('images/ispyb_gs_medium.png') center center no-repeat;
+  background-position: 50% 85%;
+  color: $tertiary;
+  font-size: 12px;
+  height: 180px;
+  padding: 1.5rem 0;
+}
+
+.main-header {
+  font-family: Poppins;
+  font-size: 18px;
+  font-weight: 400;
+}
+
+.navbar-brand {
+  background: url('images/ispyb_gs_medium.png') no-repeat;
+  background-size: contain;
+  padding-left: 70px;
+}
+
+.event {
+  border: 1px solid $secondary;
+  h3 {
+    // border-bottom: 5px solid $tertiary;
+    font-family: Poppins;
+    font-size: 1rem;
+    font-weight: normal;
+    word-break: break-all;
+    background-color: $tertiary;
+    // padding: 10px;
+    // border-radius: 10px;
+  }
+}
+
+.lazy-image {
+  opacity: 0;
+  transition: opacity ease-in-out 0.5s;
+}
+
+.lazy-image-loaded {
+  opacity: 1;
+}
+
+.react-bootstrap-table table {
+  table-layout: auto !important;
+}
+
+.card-header {
+  background-color: $tertiary !important;
+  color: color-contrast($tertiary) !important;
+}
+
+.card-header .nav-link {
+  color: color-contrast($tertiary) !important;
+}
+
+.card-header .nav-link.active {
+  color: color-contrast($white) !important;
+}
+
+#pageDropDown {
+  background-color: $pagination !important;
+}

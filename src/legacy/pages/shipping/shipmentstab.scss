@@ -1,0 +1,44 @@
+@import 'scss/base.scss';
+
+.shipmentCard {
+  border-bottom: 1px solid gray;
+  color: color-contrast($white) !important;
+  background-color: $white;
+
+  padding: 5px;
+  margin-left: 0px !important;
+}
+
+.shipmentCard:nth-child(odd) {
+  background-color: darken($white, 5%);
+}
+
+.shipmentCard:hover {
+  background-color: darken($white, 15%);
+  cursor: pointer;
+}
+
+.shipmentCardName {
+  font-weight: bold;
+  font-size: small;
+  color: $primary;
+}
+
+.shipmentCardDate {
+  font-style: italic;
+  font-size: smaller;
+}
+
+.shipmentCardCount {
+  font-style: italic;
+  font-size: smaller;
+}
+
+.shipmentCardSelected {
+  color: color-contrast($info) !important;
+  background-color: $info !important;
+}
+
+.shipmentCardSelected .shipmentCardName {
+  color: color-contrast($info) !important;
+}

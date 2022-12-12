@@ -1,5 +1,2 @@
-node_modules
-dist
-/build
-/public
-/documentation
+documentation
+src/models

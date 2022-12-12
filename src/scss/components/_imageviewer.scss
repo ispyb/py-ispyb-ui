@@ -1,0 +1,26 @@
+[class^='_colorBar'] {
+  display: none;
+}
+
+[class^='_canvasArea'] {
+  background: $light;
+  padding: 0 !important;
+}
+
+[class*='_heatmapContainer'] {
+  min-height: 50vh;
+}
+
+@include media-breakpoint-up(md) {
+  [class^='_colorBar'] {
+    display: grid;
+  }
+
+  [class^='_canvasArea'] {
+    padding: 16px 16px 40px 72px;
+  }
+
+  [class*='_heatmapContainer'] {
+    min-height: 70vh;
+  }
+}
