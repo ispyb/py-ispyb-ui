@@ -28,6 +28,7 @@ import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons';
 import { Subject } from 'rxjs';
 import moment from 'moment';
 import NbBadge from 'legacy/components/nbBadge';
+import ResultsDataCollectionGroupPanel from './results/ResultsDataCollectionGroupPanel';
 
 type Props = {
   sessionId: string;
@@ -203,7 +204,10 @@ export default function DataCollectionGroupPanel({
                 </Tab.Pane>
                 <Tab.Pane eventKey="Results" title="Results">
                   <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                    <p>TODO</p>
+                    <ResultsDataCollectionGroupPanel
+                      proposalName={proposalName}
+                      dataCollectionGroup={dataCollectionGroup}
+                    />
                   </LazyWrapper>
                 </Tab.Pane>
                 <Tab.Pane eventKey="Workflow" title="Workflow">

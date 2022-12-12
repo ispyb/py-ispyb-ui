@@ -283,8 +283,15 @@ function rank(results: Shells[]): Shells[] {
 export function getBestResult(
   dataCollectionGroup: DataCollectionGroup
 ): Shells | undefined {
-  const sorted = rank(parseResults(dataCollectionGroup));
+  const sorted = getRankedResults(dataCollectionGroup);
   if (sorted.length > 0) {
     return sorted[0];
   }
+}
+
+export function getRankedResults(
+  dataCollectionGroup: DataCollectionGroup
+): Shells[] {
+  const sorted = rank(parseResults(dataCollectionGroup));
+  return sorted;
 }

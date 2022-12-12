@@ -651,3 +651,15 @@ export function removeDewar({
     url: `/proposal/${proposalName}/shipping/${shippingId}/dewar/${dewarId}/remove`,
   };
 }
+
+export function getAutoProc({
+  proposalName,
+  dataCollectionId,
+}: {
+  proposalName: string;
+  dataCollectionId: string;
+}) {
+  return {
+    url: `/proposal/${proposalName}/mx/autoprocintegration/datacollection/${dataCollectionId}/view`,
+  };
+}

@@ -26,6 +26,7 @@ import {
   getShippingHistory,
   getShippingContainer,
   getProposalSamples,
+  getAutoProc,
 } from 'legacy/api/ispyb';
 import {
   EnergyScan,
@@ -33,6 +34,7 @@ import {
   FluorescenceSpectra,
   Sample,
   DataCollectionGroup,
+  AutoProcInformation,
 } from 'legacy/pages/mx/model';
 import {
   Container,
@@ -340,6 +342,22 @@ export function useShippingContainer(
   return useGet<ShippingContainer>(
     getShippingContainer({ proposalName, shippingId, dewarId, containerId })
       .url,
+    options
+  );
+}
+
+export function useAutoProc(
+  {
+    proposalName,
+    dataCollectionId,
+  }: {
+    proposalName: string;
+    dataCollectionId: string;
+  },
+  options?: GetHookOption
+) {
+  return useGet<AutoProcInformation[][]>(
+    getAutoProc({ proposalName, dataCollectionId }).url,
     options
   );
 }

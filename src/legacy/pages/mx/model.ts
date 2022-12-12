@@ -371,3 +371,58 @@ export interface FluorescenceSpectra {
   workingDirectory?: string;
   xfeFluorescenceSpectrumId: number;
 }
+
+export interface AutoProcInformation {
+  AutoProcIntegration_autoProcIntegrationId: number;
+  AutoProcIntegration_dataCollectionId: number;
+  BLSample_name: string;
+  DataCollection_dataCollectionNumber: number;
+  DataCollection_imagePrefix: string;
+  PhasingStep_phasing_phasingStepType: string;
+  Protein_acronym: string;
+  Protein_proteinId: number;
+  SpaceGroup_spaceGroupShortName: string;
+  anomalous: string;
+  anomalousCompleteness: string;
+  anomalousMultiplicity: string;
+  ccAno: string;
+  ccHalf: string;
+  completeness: string;
+  fractionalPartialBias: string;
+  isa: string;
+  meanIOverSigI: string;
+  multiplicity: string;
+  nTotalObservations: string;
+  nTotalUniqueObservations: string;
+  phasingStepType: string;
+  rMeasAllIPlusIMinus: string;
+  rMeasWithinIPlusIMinus: string;
+  rMerge: string;
+  rPimAllIPlusIMinus: string;
+  rPimWithinIPlusIMinus: string;
+  resolutionLimitHigh: string;
+  resolutionLimitLow: string;
+  scalingStatisticsType: string;
+  sigAno: string;
+  spaceGroupIds: string;
+  spaceGroupShortName: string;
+  v_datacollection_processingEndTime: string;
+  v_datacollection_processingPrograms: string;
+  v_datacollection_processingStartTime: string;
+  v_datacollection_processingStatus: string;
+  v_datacollection_summary_phasing_anomalous: boolean;
+  v_datacollection_summary_phasing_autoProcIntegrationId: number;
+  v_datacollection_summary_phasing_autoProcProgramId: number;
+  v_datacollection_summary_phasing_autoProcScalingId: number;
+  v_datacollection_summary_phasing_autoproc_autoprocId: number;
+  v_datacollection_summary_phasing_autoproc_space_group: string;
+  v_datacollection_summary_phasing_cell_a: number;
+  v_datacollection_summary_phasing_cell_alpha: number;
+  v_datacollection_summary_phasing_cell_b: number;
+  v_datacollection_summary_phasing_cell_beta: number;
+  v_datacollection_summary_phasing_cell_c: number;
+  v_datacollection_summary_phasing_cell_gamma: number;
+  v_datacollection_summary_phasing_dataCollectionId: number;
+  v_datacollection_summary_session_proposalId: number;
+  v_datacollection_summary_session_sessionId: number;
+}
