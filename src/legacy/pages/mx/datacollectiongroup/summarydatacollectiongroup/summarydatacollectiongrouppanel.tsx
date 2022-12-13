@@ -11,7 +11,7 @@ import SecondSection from 'legacy/pages/mx/datacollectiongroup/summarydatacollec
 import ThirdSection from 'legacy/pages/mx/datacollectiongroup/summarydatacollectiongroup/thirdsection';
 import UI from 'legacy/config/ui';
 import { useAutoProc } from 'legacy/hooks/ispyb';
-import { getBestResult } from 'legacy/helpers/mx/resultparser2';
+import { getBestResult } from 'legacy/helpers/mx/resultparser';
 
 export interface Props {
   proposalName: string;

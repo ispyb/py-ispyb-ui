@@ -2,224 +2,169 @@ import {
   spaceGroupLongNames,
   spaceGroupShortNames,
 } from 'legacy/constants/spacegroups';
-import { convertToFixed } from 'legacy/helpers/numerictransformation';
 import _, { trim } from 'lodash';
 import { Dictionary } from 'lodash';
-import { DataCollectionGroup } from 'legacy/pages/mx/model';
+import { AutoProcInformation } from 'legacy/pages/mx/model';
 
-export interface Shell {
-  autoProcId?: string;
-  scalingStatisticsType?: string;
-  completeness?: string;
-  resolutionLimitHigh?: string;
-  resolutionLimitLow?: string;
-  rMerge?: string;
-  meanIOverSigI?: string;
-  ccHalf?: string;
-  spaceGroup?: string;
-  cell_a?: string;
-  cell_b?: string;
-  cell_c?: string;
-  cell_alpha?: string;
-  cell_beta?: string;
-  cell_gamma?: string;
-  anomalous?: boolean;
-  status?: string;
-  progam?: string;
+export interface AutoProcIntegration {
+  id: number;
+  status: string;
+  program: string;
+  anomalous: boolean;
+  overall?: AutoProcStatistics;
+  outer?: AutoProcStatistics;
+  inner?: AutoProcStatistics;
+  cell_a: number;
+  cell_b: number;
+  cell_c: number;
+  cell_alpha: number;
+  cell_beta: number;
+  cell_gamma: number;
+  spaceGroup: string;
 }
 
-export interface Shells {
-  refShell: Shell;
-  shells: Dictionary<Shell>;
+export interface AutoProcStatistics {
+  type: string;
+  resolutionLimitHigh?: number;
+  resolutionLimitLow?: number;
+  multiplicity?: number;
+  completeness?: number;
+  multiplicityAnomalous?: number;
+  completenessAnomalous?: number;
+  meanIOverSigI?: number;
+  rMeas?: number;
+  rMerge?: number;
+  rPim?: number;
+  ccHalf?: number;
+  ccAno?: number;
 }
 
 export function prepareArray(arrayString?: string) {
   if (arrayString) {
-    return _(arrayString).split(',').map(trim);
+    return _(arrayString).split(',').map(trim).value();
   }
-  const a: string[] = [];
-  return _(a);
+  return [];
+}
+
+function toNumber(value: any) {
+  if (value === null || value === undefined) return undefined;
+  const res = Number(value);
+  if (Number.isNaN(res)) return undefined;
+  return res;
 }
 
 export function parseResults(
-  dataCollectionGroup: DataCollectionGroup
-): Shells[] {
-  const {
-    autoProcIntegrationId,
-    autoProcIds,
-    processingStatus,
-    processingPrograms,
-    rMerges,
-    completenessList,
-    resolutionsLimitHigh,
-    resolutionsLimitLow,
-    Autoprocessing_cell_alpha,
-    Autoprocessing_cell_beta,
-    Autoprocessing_cell_gamma,
-    Autoprocessing_cell_a,
-    Autoprocessing_cell_b,
-    Autoprocessing_cell_c,
-    Autoprocessing_anomalous,
-    AutoProc_spaceGroups,
-    scalingStatisticsTypes,
-  } = dataCollectionGroup;
-  const results: Shells[] = [];
-  if (!autoProcIntegrationId) {
-    return results;
-  }
-  const autoProcIntegrationId_array = prepareArray(
-    autoProcIntegrationId
-  ).value();
-  const autoProcIds_array = prepareArray(autoProcIds).value();
-
-  if (!autoProcIntegrationId_array || !autoProcIds_array) {
-    return results;
-  }
-
-  const processingStatus_array = prepareArray(processingStatus).value();
-  const processingPrograms_array = prepareArray(processingPrograms).value();
-  const rMerges_array = prepareArray(rMerges).value();
-  const completenessList_array = prepareArray(completenessList).value();
-  const resolutionsLimitHigh_array = prepareArray(resolutionsLimitHigh).value();
-  const resolutionsLimitLow_array = prepareArray(resolutionsLimitLow).value();
-  const Autoprocessing_cell_alpha_array = prepareArray(
-    Autoprocessing_cell_alpha
-  ).value();
-  const Autoprocessing_cell_beta_array = prepareArray(
-    Autoprocessing_cell_beta
-  ).value();
-  const Autoprocessing_cell_gamma_array = prepareArray(
-    Autoprocessing_cell_gamma
-  ).value();
-  const Autoprocessing_cell_a_array = prepareArray(
-    Autoprocessing_cell_a
-  ).value();
-  const Autoprocessing_cell_b_array = prepareArray(
-    Autoprocessing_cell_b
-  ).value();
-  const Autoprocessing_cell_c_array = prepareArray(
-    Autoprocessing_cell_c
-  ).value();
-  const Autoprocessing_anomalous_array = prepareArray(
-    Autoprocessing_anomalous
-  ).value();
-  const AutoProc_spaceGroups_array = prepareArray(AutoProc_spaceGroups).value();
-  const scalingStatisticsTypes_array = prepareArray(
-    scalingStatisticsTypes
-  ).value();
-
-  //Build autoProcIntegration objects
-  const autoProcIntegrations = _(autoProcIntegrationId_array)
-    .map((id, index) => {
-      return {
-        id: id,
-        status: processingStatus_array[index],
-        anomalous: Autoprocessing_anomalous_array[index] === '1',
-        progam: processingPrograms_array[index],
+  procs: AutoProcInformation[]
+): AutoProcIntegration[] {
+  return procs.map((p) => {
+    const shells = prepareArray(p.scalingStatisticsType);
+    const resolutionLimitHigh = prepareArray(p.resolutionLimitHigh);
+    const resolutionLimitLow = prepareArray(p.resolutionLimitLow);
+    const multiplicity = prepareArray(p.multiplicity);
+    const completeness = prepareArray(p.completeness);
+    const multiplicityAnomalous = prepareArray(p.anomalousMultiplicity);
+    const completenessAnomalous = prepareArray(p.anomalousCompleteness);
+    const meanIOverSigI = prepareArray(p.meanIOverSigI);
+    const rMeas = prepareArray(p.rMeasAllIPlusIMinus);
+    const rMerge = prepareArray(p.rMerge);
+    const rPim = prepareArray(p.rPimWithinIPlusIMinus);
+    const ccHalf = prepareArray(p.ccHalf);
+    const ccAno = prepareArray(p.ccAno);
+    const stats: Dictionary<AutoProcStatistics> = {};
+    shells.forEach((s, i) => {
+      stats[s] = {
+        type: s,
+        resolutionLimitHigh: toNumber(resolutionLimitHigh[i]),
+        resolutionLimitLow: toNumber(resolutionLimitLow[i]),
+        multiplicity: toNumber(multiplicity[i]),
+        completeness: toNumber(completeness[i]),
+        multiplicityAnomalous: toNumber(multiplicityAnomalous[i]),
+        completenessAnomalous: toNumber(completenessAnomalous[i]),
+        meanIOverSigI: toNumber(meanIOverSigI[i]),
+        rMeas: toNumber(rMeas[i]),
+        rMerge: toNumber(rMerge[i]),
+        rPim: toNumber(rPim[i]),
+        ccHalf: toNumber(ccHalf[i]),
+        ccAno: toNumber(ccAno[i]),
       };
-    })
-    .value();
+    });
+    const inner = 'innerShell' in stats ? stats['innerShell'] : undefined;
+    const outer = 'outerShell' in stats ? stats['outerShell'] : undefined;
+    const overall = 'overall' in stats ? stats['overall'] : undefined;
 
-  //Count number of autoProcIntegration for each id
-  const autoProcIntegrationsCount = _(autoProcIntegrations)
-    .groupBy((v) => v.id)
-    .mapValues((v) => {
-      return v.length;
-    })
-    .value();
-
-  //Keep only those with SUCCESS and 3 occurences
-  const filteredautoProcIntegrations = _(autoProcIntegrations)
-    .filter((v) => v.status === 'SUCCESS')
-    .filter((v) => {
-      if (v.id) {
-        return autoProcIntegrationsCount[v.id] === 3;
-      }
-      return false;
-    })
-    .value();
-
-  // Build AutoProc object for each program id
-  const groupedByProgramId = _(autoProcIds_array)
-    .map((id, index) => {
-      const r: Shell = {
-        autoProcId: id,
-        scalingStatisticsType: scalingStatisticsTypes_array[index],
-        completeness: convertToFixed(completenessList_array[index], 1),
-        resolutionLimitHigh: convertToFixed(
-          resolutionsLimitHigh_array[index],
-          1
-        ),
-        resolutionLimitLow: convertToFixed(resolutionsLimitLow_array[index], 1),
-        rMerge: convertToFixed(rMerges_array[index], 1),
-        spaceGroup: AutoProc_spaceGroups_array[index],
-        cell_a: convertToFixed(Autoprocessing_cell_a_array[index], 1),
-        cell_b: convertToFixed(Autoprocessing_cell_b_array[index], 1),
-        cell_c: convertToFixed(Autoprocessing_cell_c_array[index], 1),
-        cell_alpha: convertToFixed(Autoprocessing_cell_alpha_array[index], 1),
-        cell_beta: convertToFixed(Autoprocessing_cell_beta_array[index], 1),
-        cell_gamma: convertToFixed(Autoprocessing_cell_gamma_array[index], 1),
-        ...filteredautoProcIntegrations[index],
-      };
-      return r;
-    })
-    .groupBy((v) => v.autoProcId)
-    .value();
-
-  // Build result
-  for (const programId in groupedByProgramId) {
-    try {
-      const group = groupedByProgramId[programId];
-      const keyByScalingStatisticsType = _.keyBy(
-        group,
-        'scalingStatisticsType'
-      );
-      results.push({
-        refShell: keyByScalingStatisticsType['innerShell'],
-        shells: keyByScalingStatisticsType,
-      });
-    } catch (e) {
-      console.log(e);
-    }
-  }
-
-  return results;
+    return {
+      id: p.AutoProcIntegration_autoProcIntegrationId,
+      status: p.v_datacollection_processingStatus,
+      program: p.v_datacollection_processingPrograms,
+      anomalous: p.v_datacollection_summary_phasing_anomalous,
+      cell_a: p.v_datacollection_summary_phasing_cell_a,
+      cell_b: p.v_datacollection_summary_phasing_cell_b,
+      cell_c: p.v_datacollection_summary_phasing_cell_c,
+      cell_alpha: p.v_datacollection_summary_phasing_cell_alpha,
+      cell_beta: p.v_datacollection_summary_phasing_cell_beta,
+      cell_gamma: p.v_datacollection_summary_phasing_cell_gamma,
+      spaceGroup: p.v_datacollection_summary_phasing_autoproc_space_group,
+      inner,
+      outer,
+      overall,
+    };
+  });
 }
 
-function sort(array: Shells[]) {
-  /** First sorting autoprocessing with rMerge < 10 */
-  const minus10Rmerge = _.filter(array, function (o) {
-    if (o.shells.innerShell) {
-      if (o.shells.innerShell.rMerge) {
-        if (
-          Number(o.shells.innerShell.rMerge) <= 10 &&
-          Number(o.shells.innerShell.rMerge) > 0
-        ) {
-          return true;
-        }
-      }
-    }
-    return false;
+function rank(results: AutoProcIntegration[]): AutoProcIntegration[] {
+  const anomalous = results.filter(function (r) {
+    return (
+      r.anomalous &&
+      (r.inner !== undefined || r.outer !== undefined || r.overall)
+    );
+  });
+  const nonanomalous = results.filter(function (r) {
+    return (
+      !r.anomalous &&
+      (r.inner !== undefined || r.outer !== undefined || r.overall)
+    );
+  });
+  const running = results.filter(function (r) {
+    return r.status === 'RUNNING';
+  });
+  const failed = results.filter(function (r) {
+    return r.status === 'FAILED' || r.status === '0';
+  });
+
+  const anomalousdata = sort(anomalous);
+  const nonanomalousdata = sort(nonanomalous);
+
+  return _.concat(nonanomalousdata, anomalousdata, running, failed);
+}
+
+function sort(array: AutoProcIntegration[]) {
+  /** First sorting autoprocessing with rMerge <= 10 */
+  const minus10Rmerge = array.filter(function (o) {
+    return (
+      o.inner !== undefined &&
+      Number(o.inner.rMerge) <= 10 &&
+      Number(o.inner.rMerge) > 0
+    );
   });
 
   /** Second we get rMerge > 10 */
-  const plus10Rmerge = _.filter(array, function (o) {
-    if (o.shells.innerShell) {
-      if (o.shells.innerShell.rMerge) {
-        if (
-          Number(o.shells.innerShell.rMerge) > 10 ||
-          Number(o.shells.innerShell.rMerge) <= 0
-        ) {
-          return true;
-        }
-      }
-    }
-    return false;
+  const plus10Rmerge = array.filter(function (o) {
+    return (
+      o.inner !== undefined &&
+      (Number(o.inner.rMerge) > 10 || Number(o.inner.rMerge) <= 0)
+    );
   });
 
-  function sortByHighestSymmetry(a: Shells, b: Shells) {
-    const spaceGroupA = a.refShell.spaceGroup?.replace(/\s/g, '');
-    const spaceGroupB = a.refShell.spaceGroup?.replace(/\s/g, '');
+  function sortByrMerge(a: AutoProcIntegration, b: AutoProcIntegration) {
+    return (a.inner?.rMerge || 0) - (b.inner?.rMerge || 0);
+  }
+
+  function sortByHighestSymmetry(
+    a: AutoProcIntegration,
+    b: AutoProcIntegration
+  ) {
+    const spaceGroupA = a.spaceGroup?.replace(/\s/g, '');
+    const spaceGroupB = b.spaceGroup?.replace(/\s/g, '');
 
     let indexOfSpaceGroupA = _.indexOf(spaceGroupShortNames, spaceGroupA);
     if (indexOfSpaceGroupA === -1) {
@@ -233,19 +178,9 @@ function sort(array: Shells[]) {
     }
 
     if (indexOfSpaceGroupA === indexOfSpaceGroupB) {
-      return (
-        parseFloat(a.shells.innerShell.rMerge || '0') -
-        parseFloat(b.shells.innerShell.rMerge || '0')
-      );
+      return sortByrMerge(a, b);
     }
     return indexOfSpaceGroupB - indexOfSpaceGroupA;
-  }
-
-  function sortByrMerge(a: Shells, b: Shells) {
-    return (
-      parseFloat(a.shells.innerShell.rMerge || '0') -
-      parseFloat(b.shells.innerShell.rMerge || '0')
-    );
   }
 
   minus10Rmerge.sort(sortByHighestSymmetry);
@@ -254,44 +189,22 @@ function sort(array: Shells[]) {
   return _.concat(minus10Rmerge, plus10Rmerge);
 }
 
-function rank(results: Shells[]): Shells[] {
-  const anomalous = _.filter(results, function (os) {
-    const o = os.refShell;
-    return o.anomalous === true && (o.status === 'SUCCESS' || o.status === '1');
-  });
-  const nonanomalous = _.filter(results, function (os) {
-    const o = os.refShell;
-    return (
-      o.anomalous === false && (o.status === 'SUCCESS' || o.status === '1')
-    );
-  });
-  const running = _.filter(results, function (os) {
-    const o = os.refShell;
-    return o.status === 'RUNNING';
-  });
-  const failed = _.filter(results, function (os) {
-    const o = os.refShell;
-    return o.status === 'FAILED' || o.status === '0';
-  });
-
-  const anomalousdata = sort(anomalous);
-  const nonanomalousdata = sort(nonanomalous);
-
-  return _.concat(nonanomalousdata, anomalousdata, running, failed);
-}
-
 export function getBestResult(
-  dataCollectionGroup: DataCollectionGroup
-): Shells | undefined {
-  const sorted = getRankedResults(dataCollectionGroup);
-  if (sorted.length > 0) {
+  procs: AutoProcInformation[]
+): AutoProcIntegration | undefined {
+  const sorted = getRankedResults(procs);
+  if (
+    sorted.length > 0 &&
+    (sorted[0].inner || sorted[0].outer || sorted[0].overall)
+  ) {
     return sorted[0];
   }
+  return undefined;
 }
 
 export function getRankedResults(
-  dataCollectionGroup: DataCollectionGroup
-): Shells[] {
-  const sorted = rank(parseResults(dataCollectionGroup));
+  procs: AutoProcInformation[]
+): AutoProcIntegration[] {
+  const sorted = rank(parseResults(procs));
   return sorted;
 }

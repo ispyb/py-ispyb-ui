@@ -29,6 +29,7 @@ import { Subject } from 'rxjs';
 import moment from 'moment';
 import NbBadge from 'legacy/components/nbBadge';
 import ResultsDataCollectionGroupPanel from './results/ResultsDataCollectionGroupPanel';
+import ProcessingSummary from './results/processingSummary';
 
 type Props = {
   sessionId: string;
@@ -240,6 +241,12 @@ export default function DataCollectionGroupPanel({
             </Col>
           </Row>
         </Card.Body>
+        <Suspense>
+          <ProcessingSummary
+            proposalName={proposalName}
+            dataCollectionGroup={dataCollectionGroup}
+          />
+        </Suspense>
       </Card>
     </Tab.Container>
   );

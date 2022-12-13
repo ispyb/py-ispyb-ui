@@ -1,7 +1,6 @@
-import { Shells } from 'legacy/helpers/mx/resultparser';
 import { Col, ProgressBar, Row, Table } from 'react-bootstrap';
 import UnitCellSection from './unitcellsection';
-import { AutoProcIntegration } from 'legacy/helpers/mx/resultparser2';
+import { AutoProcIntegration } from 'legacy/helpers/mx/resultparser';
 
 function getColorProgressBarByCompleness(completeness: number) {
   if (completeness > 90) {

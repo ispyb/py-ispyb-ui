@@ -6,7 +6,7 @@ import Table from 'react-bootstrap/Table';
 import {
   AutoProcIntegration,
   getRankedResults,
-} from 'legacy/helpers/mx/resultparser2';
+} from 'legacy/helpers/mx/resultparser';
 import { useAutoProc } from 'legacy/hooks/ispyb';
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
 import { Badge, Col, Row } from 'react-bootstrap';
