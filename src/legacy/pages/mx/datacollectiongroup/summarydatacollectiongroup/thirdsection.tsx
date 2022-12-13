@@ -1,7 +1,7 @@
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
 import ScreeningSection from './screeningsection';
 import AutoprocIntegrationSection from './autoprocintegrationsection';
-import { AutoProcIntegration } from 'legacy/helpers/mx/resultparser';
+import { AutoProcIntegration } from 'legacy/helpers/mx/results/resultparser';
 
 export default function ThirdSection({
   dataCollectionGroup,

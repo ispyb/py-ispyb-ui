@@ -1,4 +1,5 @@
 import { SiteConfig } from 'config/definitions/sites';
+import { GraphParamType } from 'legacy/helpers/mx/results/resultgraph';
 import {
   LabContact,
   SaveShippingDewar,
@@ -661,5 +662,55 @@ export function getAutoProc({
 }) {
   return {
     url: `/proposal/${proposalName}/mx/autoprocintegration/datacollection/${dataCollectionId}/view`,
+  };
+}
+
+export function getAutoProcXScale({
+  proposalName,
+  autoProcIntegrationId,
+  param,
+}: {
+  proposalName: string;
+  autoProcIntegrationId: string;
+  param: GraphParamType;
+}) {
+  return {
+    url: `/proposal/${proposalName}/mx/autoprocintegration/${autoProcIntegrationId}/xscale/${param}`,
+  };
+}
+
+export function getDownloadAttachmentUrl({
+  proposalName,
+  autoprocattachmentid,
+}: {
+  proposalName: string;
+  autoprocattachmentid: string;
+}) {
+  return {
+    url: `/proposal/${proposalName}/mx/autoprocintegration/autoprocattachmentid/${autoprocattachmentid}/download`,
+  };
+}
+
+export function getAttachmentList({
+  proposalName,
+  autoprocprogramid,
+}: {
+  proposalName: string;
+  autoprocprogramid: string;
+}) {
+  return {
+    url: `/proposal/${proposalName}/mx/autoprocintegration/attachment/autoprocprogramid/${autoprocprogramid}/list`,
+  };
+}
+
+export function getAttachmentsDownloadUrl({
+  proposalName,
+  autoprocprogramid,
+}: {
+  proposalName: string;
+  autoprocprogramid: string;
+}) {
+  return {
+    url: `/proposal/${proposalName}/mx/autoprocintegration/attachment/autoprocprogramid/${autoprocprogramid}/download`,
   };
 }

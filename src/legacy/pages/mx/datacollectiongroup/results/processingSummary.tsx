@@ -5,7 +5,7 @@ import {
   faQuestionCircle,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { getRankedResults } from 'legacy/helpers/mx/resultparser';
+import { getRankedResults } from 'legacy/helpers/mx/results/resultparser';
 import { useAutoProc } from 'legacy/hooks/ispyb';
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
 import { Card, Col, Container, Row } from 'react-bootstrap';

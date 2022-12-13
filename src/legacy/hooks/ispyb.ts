@@ -27,6 +27,8 @@ import {
   getShippingContainer,
   getProposalSamples,
   getAutoProc,
+  getAutoProcXScale,
+  getAttachmentList,
 } from 'legacy/api/ispyb';
 import {
   EnergyScan,
@@ -35,6 +37,7 @@ import {
   Sample,
   DataCollectionGroup,
   AutoProcInformation,
+  AutoProcAttachment,
 } from 'legacy/pages/mx/model';
 import {
   Container,
@@ -54,6 +57,7 @@ import {
 import { dateToTimestamp } from 'legacy/helpers/dateparser';
 import { parse } from 'date-fns';
 import { useAuth } from 'hooks/useAuth';
+import { GraphParamType } from 'legacy/helpers/mx/results/resultgraph';
 
 interface GetHookOption {
   autoRefresh: boolean;
@@ -358,6 +362,51 @@ export function useAutoProc(
 ) {
   return useGet<AutoProcInformation[][]>(
     getAutoProc({ proposalName, dataCollectionId }).url,
+    options
+  );
+}
+
+export function useAutoProcXScale(
+  {
+    proposalName,
+    autoProcIntegrationId,
+    param,
+  }: {
+    proposalName: string;
+    autoProcIntegrationId: string;
+    param: GraphParamType;
+  },
+  options?: GetHookOption
+) {
+  return useGet<string | undefined>(
+    getAutoProcXScale({
+      proposalName,
+      autoProcIntegrationId,
+      param,
+    }).url,
+    options,
+    (d) => {
+      if (!d || !d.includes(',')) return undefined;
+      return d;
+    }
+  );
+}
+
+export function useAttachmentList(
+  {
+    proposalName,
+    autoprocprogramid,
+  }: {
+    proposalName: string;
+    autoprocprogramid: string;
+  },
+  options?: GetHookOption
+) {
+  return useGet<AutoProcAttachment[][]>(
+    getAttachmentList({
+      proposalName,
+      autoprocprogramid,
+    }).url,
     options
   );
 }

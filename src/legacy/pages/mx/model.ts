@@ -426,3 +426,11 @@ export interface AutoProcInformation {
   v_datacollection_summary_session_proposalId: number;
   v_datacollection_summary_session_sessionId: number;
 }
+
+export interface AutoProcAttachment {
+  autoProcProgramAttachmentId: number;
+  fileName?: string;
+  filePath?: string;
+  fileType?: string;
+  recordTimeStamp?: string;
+}
