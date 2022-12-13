@@ -1,12 +1,13 @@
 import { Shells } from 'legacy/helpers/mx/resultparser';
 import { Col, ProgressBar, Row, Table } from 'react-bootstrap';
 import UnitCellSection from './unitcellsection';
+import { AutoProcIntegration } from 'legacy/helpers/mx/resultparser2';
 
-function getColorProgressBarByCompleness(completeness: string) {
-  if (parseFloat(completeness) > 90) {
+function getColorProgressBarByCompleness(completeness: number) {
+  if (completeness > 90) {
     return 'info';
   }
-  if (parseFloat(completeness) > 50) {
+  if (completeness > 50) {
     return 'warning';
   }
   return 'danger';
@@ -14,26 +15,34 @@ function getColorProgressBarByCompleness(completeness: string) {
 
 function getShellStatistics(
   type: string,
-  completeness: string | undefined,
-  resolutionLimitLow: string | undefined,
-  resolutionLimitHigh: string | undefined,
-  rMerge: string | undefined
+  completeness: number | undefined,
+  resolutionLimitLow: number | undefined,
+  resolutionLimitHigh: number | undefined,
+  rMerge: number | undefined
 ) {
   if (completeness === undefined) {
-    completeness = '0';
+    completeness = 0;
   }
   return (
     <tr>
-      <td>{type}</td>
+      <td>
+        <small>{type}</small>
+      </td>
       <td>
         <ProgressBar
           variant={getColorProgressBarByCompleness(completeness)}
-          now={parseFloat(completeness)}
-          label={completeness + '%'}
-        />{' '}
+          now={completeness}
+          label={completeness.toFixed(1) + '%'}
+        />
       </td>
-      <td>{`${resolutionLimitLow} - ${resolutionLimitHigh}`}</td>
-      <td>{rMerge}</td>
+      <td>
+        <small>{`${resolutionLimitLow?.toFixed(
+          1
+        )} - ${resolutionLimitHigh?.toFixed(1)}`}</small>
+      </td>
+      <td>
+        <small>{rMerge?.toFixed(1)}</small>
+      </td>
     </tr>
   );
 }
@@ -42,7 +51,7 @@ export default function AutoprocIntegrationSection({
   bestResult,
   compact,
 }: {
-  bestResult: Shells;
+  bestResult: AutoProcIntegration;
   compact: boolean;
 }) {
   const content = [
@@ -55,45 +64,53 @@ export default function AutoprocIntegrationSection({
       >
         <thead>
           <tr>
-            <td className="parameterValue">{bestResult.refShell.spaceGroup}</td>
-            <td className="parameterValue">Completeness</td>
-            <td className="parameterValue">Res.</td>
-            <td className="parameterValue">Rmerge</td>
+            <td className="parameterValue">
+              <small>{bestResult.spaceGroup}</small>
+            </td>
+            <td className="parameterValue">
+              <small>Compl.</small>
+            </td>
+            <td className="parameterValue">
+              <small>Res.</small>
+            </td>
+            <td className="parameterValue">
+              <small>Rmerge</small>
+            </td>
           </tr>
         </thead>
         <tbody>
           {getShellStatistics(
             'Overall',
-            bestResult.shells.overall.completeness,
-            bestResult.shells.overall.resolutionLimitLow,
-            bestResult.shells.overall.resolutionLimitHigh,
-            bestResult.shells.overall.rMerge
+            bestResult.overall?.completeness,
+            bestResult.overall?.resolutionLimitLow,
+            bestResult.overall?.resolutionLimitHigh,
+            bestResult.overall?.rMerge
           )}
           {getShellStatistics(
             'Inner',
-            bestResult.shells.innerShell.completeness,
-            bestResult.shells.innerShell.resolutionLimitLow,
-            bestResult.shells.innerShell.resolutionLimitHigh,
-            bestResult.shells.innerShell.rMerge
+            bestResult.inner?.completeness,
+            bestResult.inner?.resolutionLimitLow,
+            bestResult.inner?.resolutionLimitHigh,
+            bestResult.inner?.rMerge
           )}
           {getShellStatistics(
             'Outer',
-            bestResult.shells.outerShell.completeness,
-            bestResult.shells.outerShell.resolutionLimitLow,
-            bestResult.shells.outerShell.resolutionLimitHigh,
-            bestResult.shells.outerShell.rMerge
+            bestResult.outer?.completeness,
+            bestResult.outer?.resolutionLimitLow,
+            bestResult.outer?.resolutionLimitHigh,
+            bestResult.outer?.rMerge
           )}
         </tbody>
       </Table>
     </Col>,
     <Col key={1}>
       <UnitCellSection
-        cell_a={bestResult.shells.innerShell.cell_a}
-        cell_b={bestResult.shells.innerShell.cell_b}
-        cell_c={bestResult.shells.innerShell.cell_c}
-        cell_alpha={bestResult.shells.innerShell.cell_alpha}
-        cell_beta={bestResult.shells.innerShell.cell_beta}
-        cell_gamma={bestResult.shells.innerShell.cell_gamma}
+        cell_a={bestResult.cell_a}
+        cell_b={bestResult.cell_b}
+        cell_c={bestResult.cell_c}
+        cell_alpha={bestResult.cell_alpha}
+        cell_beta={bestResult.cell_beta}
+        cell_gamma={bestResult.cell_gamma}
       ></UnitCellSection>
     </Col>,
   ];

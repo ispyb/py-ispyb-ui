@@ -29,18 +29,18 @@ export interface AutoProcIntegration {
 
 export interface AutoProcStatistics {
   type: string;
-  resolutionLimitHigh: number;
-  resolutionLimitLow: number;
-  multiplicity: number;
-  completeness: number;
-  multiplicityAnomalous: number;
-  completenessAnomalous: number;
-  meanIOverSigI: number;
-  rMeas: number;
-  rMerge: number;
-  rPim: number;
-  ccHalf: number;
-  ccAno: number;
+  resolutionLimitHigh?: number;
+  resolutionLimitLow?: number;
+  multiplicity?: number;
+  completeness?: number;
+  multiplicityAnomalous?: number;
+  completenessAnomalous?: number;
+  meanIOverSigI?: number;
+  rMeas?: number;
+  rMerge?: number;
+  rPim?: number;
+  ccHalf?: number;
+  ccAno?: number;
 }
 
 export function prepareArray(arrayString?: string) {
@@ -48,6 +48,13 @@ export function prepareArray(arrayString?: string) {
     return _(arrayString).split(',').map(trim).value();
   }
   return [];
+}
+
+function toNumber(value: any) {
+  if (value === null || value === undefined) return undefined;
+  const res = Number(value);
+  if (Number.isNaN(res)) return undefined;
+  return res;
 }
 
 export function parseResults(
@@ -71,18 +78,18 @@ export function parseResults(
     shells.forEach((s, i) => {
       stats[s] = {
         type: s,
-        resolutionLimitHigh: Number(resolutionLimitHigh[i]),
-        resolutionLimitLow: Number(resolutionLimitLow[i]),
-        multiplicity: Number(multiplicity[i]),
-        completeness: Number(completeness[i]),
-        multiplicityAnomalous: Number(multiplicityAnomalous[i]),
-        completenessAnomalous: Number(completenessAnomalous[i]),
-        meanIOverSigI: Number(meanIOverSigI[i]),
-        rMeas: Number(rMeas[i]),
-        rMerge: Number(rMerge[i]),
-        rPim: Number(rPim[i]),
-        ccHalf: Number(ccHalf[i]),
-        ccAno: Number(ccAno[i]),
+        resolutionLimitHigh: toNumber(resolutionLimitHigh[i]),
+        resolutionLimitLow: toNumber(resolutionLimitLow[i]),
+        multiplicity: toNumber(multiplicity[i]),
+        completeness: toNumber(completeness[i]),
+        multiplicityAnomalous: toNumber(multiplicityAnomalous[i]),
+        completenessAnomalous: toNumber(completenessAnomalous[i]),
+        meanIOverSigI: toNumber(meanIOverSigI[i]),
+        rMeas: toNumber(rMeas[i]),
+        rMerge: toNumber(rMerge[i]),
+        rPim: toNumber(rPim[i]),
+        ccHalf: toNumber(ccHalf[i]),
+        ccAno: toNumber(ccAno[i]),
       };
     });
     const inner = 'innerShell' in stats ? stats['innerShell'] : undefined;
@@ -135,7 +142,7 @@ function rank(results: AutoProcIntegration[]): AutoProcIntegration[] {
 }
 
 function sort(array: AutoProcIntegration[]) {
-  /** First sorting autoprocessing with rMerge < 10 */
+  /** First sorting autoprocessing with rMerge <= 10 */
   const minus10Rmerge = array.filter(function (o) {
     return (
       o.inner !== undefined &&
@@ -190,9 +197,13 @@ export function getBestResult(
   procs: AutoProcInformation[]
 ): AutoProcIntegration | undefined {
   const sorted = getRankedResults(procs);
-  if (sorted.length > 0) {
+  if (
+    sorted.length > 0 &&
+    (sorted[0].inner || sorted[0].outer || sorted[0].overall)
+  ) {
     return sorted[0];
   }
+  return undefined;
 }
 
 export function getRankedResults(

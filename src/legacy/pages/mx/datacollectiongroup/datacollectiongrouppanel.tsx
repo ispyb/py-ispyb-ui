@@ -139,8 +139,8 @@ export default function DataCollectionGroupPanel({
           )}
         </Card.Header>
         <Card.Body>
-          <Row>
-            <Col style={{ display: 'flex' }} md={'auto'}>
+          <Row className="flex-nowrap">
+            <Col style={{ display: 'flex' }} xs={'auto'}>
               <OverlayTrigger
                 key={'right'}
                 placement={'right'}
@@ -168,57 +168,75 @@ export default function DataCollectionGroupPanel({
                 </Button>
               </OverlayTrigger>
             </Col>
-            <Col style={compact ? undefined : { marginTop: 20 }}>
-              <Tab.Content>
-                <Tab.Pane eventKey="Summary" title="Summary">
-                  <SummaryDataCollectionGroupPanel
-                    compact={compact}
-                    proposalName={proposalName}
-                    dataCollectionGroup={dataCollectionGroup}
-                  ></SummaryDataCollectionGroupPanel>
-                </Tab.Pane>
-                <Tab.Pane eventKey="Beamline" title="Beamline Parameters">
-                  <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                    <BeamlineDataCollectionGroupPanel
-                      dataCollectionGroup={dataCollectionGroup}
-                    ></BeamlineDataCollectionGroupPanel>
-                  </LazyWrapper>
-                </Tab.Pane>
-                {UI.MX.showCollectionTab && (
-                  <Tab.Pane eventKey="Data" title="Data Collections">
+            <Col
+              style={
+                compact
+                  ? undefined
+                  : {
+                      marginLeft: 0,
+                      marginRight: 12,
+                      marginTop: 10,
+                      padding: 10,
+                      overflowX: 'auto',
+                    }
+              }
+            >
+              <Container fluid>
+                <Tab.Content>
+                  <Tab.Pane eventKey="Summary" title="Summary">
                     <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
                       <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-                        <CollectionsDataCollectionGroupPanel
+                        <SummaryDataCollectionGroupPanel
+                          compact={compact}
+                          proposalName={proposalName}
                           dataCollectionGroup={dataCollectionGroup}
-                        ></CollectionsDataCollectionGroupPanel>
+                        ></SummaryDataCollectionGroupPanel>
                       </Suspense>
                     </LazyWrapper>
                   </Tab.Pane>
-                )}
-                <Tab.Pane eventKey="Sample" title="Sample">
-                  <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                    <SampleDataCollectionGroupPanel
-                      dataCollectionGroup={dataCollectionGroup}
-                    ></SampleDataCollectionGroupPanel>
-                  </LazyWrapper>
-                </Tab.Pane>
-                <Tab.Pane eventKey="Results" title="Results">
-                  <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                    <ResultsDataCollectionGroupPanel
-                      proposalName={proposalName}
-                      dataCollectionGroup={dataCollectionGroup}
-                    />
-                  </LazyWrapper>
-                </Tab.Pane>
-                <Tab.Pane eventKey="Workflow" title="Workflow">
-                  <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                    <WorkflowDataCollectionGroupPanel
-                      proposalName={proposalName}
-                      dataCollectionGroup={dataCollectionGroup}
-                    ></WorkflowDataCollectionGroupPanel>
-                  </LazyWrapper>
-                </Tab.Pane>
-              </Tab.Content>
+                  <Tab.Pane eventKey="Beamline" title="Beamline Parameters">
+                    <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+                      <BeamlineDataCollectionGroupPanel
+                        dataCollectionGroup={dataCollectionGroup}
+                      ></BeamlineDataCollectionGroupPanel>
+                    </LazyWrapper>
+                  </Tab.Pane>
+                  {UI.MX.showCollectionTab && (
+                    <Tab.Pane eventKey="Data" title="Data Collections">
+                      <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+                        <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+                          <CollectionsDataCollectionGroupPanel
+                            dataCollectionGroup={dataCollectionGroup}
+                          ></CollectionsDataCollectionGroupPanel>
+                        </Suspense>
+                      </LazyWrapper>
+                    </Tab.Pane>
+                  )}
+                  <Tab.Pane eventKey="Sample" title="Sample">
+                    <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+                      <SampleDataCollectionGroupPanel
+                        dataCollectionGroup={dataCollectionGroup}
+                      ></SampleDataCollectionGroupPanel>
+                    </LazyWrapper>
+                  </Tab.Pane>
+                  <Tab.Pane eventKey="Results" title="Results">
+                    <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+                      <ResultsDataCollectionGroupPanel
+                        proposalName={proposalName}
+                        dataCollectionGroup={dataCollectionGroup}
+                      />
+                    </LazyWrapper>
+                  </Tab.Pane>
+                  <Tab.Pane eventKey="Workflow" title="Workflow">
+                    <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+                      <WorkflowDataCollectionGroupPanel
+                        proposalName={proposalName}
+                        dataCollectionGroup={dataCollectionGroup}
+                      ></WorkflowDataCollectionGroupPanel>
+                    </LazyWrapper>
+                  </Tab.Pane>
+                </Tab.Content>
+              </Container>
             </Col>
           </Row>
         </Card.Body>

@@ -1,17 +1,17 @@
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
 import ScreeningSection from './screeningsection';
 import AutoprocIntegrationSection from './autoprocintegrationsection';
-import { getBestResult } from 'legacy/helpers/mx/resultparser';
+import { AutoProcIntegration } from 'legacy/helpers/mx/resultparser2';
 
 export default function ThirdSection({
   dataCollectionGroup,
   compact = false,
+  bestResult,
 }: {
   dataCollectionGroup: DataCollectionGroup;
   compact?: boolean;
+  bestResult?: AutoProcIntegration;
 }) {
-  const bestResult = getBestResult(dataCollectionGroup);
-
   if (bestResult) {
     return (
       <AutoprocIntegrationSection

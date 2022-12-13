@@ -10,6 +10,8 @@ import FirstSection from 'legacy/pages/mx/datacollectiongroup/summarydatacollect
 import SecondSection from 'legacy/pages/mx/datacollectiongroup/summarydatacollectiongroup/secondsection';
 import ThirdSection from 'legacy/pages/mx/datacollectiongroup/summarydatacollectiongroup/thirdsection';
 import UI from 'legacy/config/ui';
+import { useAutoProc } from 'legacy/hooks/ispyb';
+import { getBestResult } from 'legacy/helpers/mx/resultparser2';
 
 export interface Props {
   proposalName: string;
@@ -22,25 +24,35 @@ export default function SummaryDataCollectionGroupPanel({
   dataCollectionGroup,
   compact,
 }: Props) {
+  const { data } = useAutoProc({
+    proposalName,
+    dataCollectionId:
+      dataCollectionGroup.DataCollection_dataCollectionId.toString(),
+  });
+  if (!data || !data.length) return null;
+
+  const bestResult = getBestResult(data.flatMap((d) => d));
+
   return (
     <>
       <Row>
-        <Col xs={12} sm={6} md={3}>
+        <Col sm={12} md={6} lg={3}>
           <FirstSection
             compact={compact}
             dataCollectionGroup={dataCollectionGroup}
           ></FirstSection>
         </Col>
-        <Col xs={12} sm={6} md={2}>
+        <Col sm={12} md={6} lg={2}>
           <SecondSection
             compact={compact}
             dataCollectionGroup={dataCollectionGroup}
           ></SecondSection>
         </Col>
-        <Col xs={12} sm={12} md={compact ? 6 : 2}>
+        <Col md={12} lg={6} xl={compact ? 6 : 3}>
           <ThirdSection
             compact={compact}
             dataCollectionGroup={dataCollectionGroup}
+            bestResult={bestResult}
           ></ThirdSection>
         </Col>
         {!compact && (
