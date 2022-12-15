@@ -36,6 +36,8 @@ export interface Map {
 }
 export interface MapMetaData {
   url: Url;
+  blSubSampleId: number;
+  blSampleId: number;
 }
 export interface MapGridInfo {
   gridInfoId: Gridinfoid;
@@ -58,6 +60,7 @@ export function withMap<TBase extends Constructor>(Base: TBase) {
   return class WithMap extends Base {
     xrfFluorescenceMappingId: Xrffluorescencemappingid;
     colourMap?: Colourmap;
+    opacity?: boolean;
     points?: Points;
     dataFormat: Dataformat;
     _metadata: MapMetaData;

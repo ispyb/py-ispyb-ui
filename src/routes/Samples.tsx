@@ -12,6 +12,12 @@ const ViewSample = React.lazy(() =>
   }))
 );
 
+const SampleReview = React.lazy(() =>
+  import('components/Samples').then((m) => ({
+    default: m.SampleReview,
+  }))
+);
+
 const SampleRoutes = {
   path: 'samples',
   children: [
@@ -21,6 +27,7 @@ const SampleRoutes = {
       breadcrumb: 'Samples',
     },
     { path: ':blSampleId', element: <ViewSample />, breadcrumb: 'View' },
+    { path: 'review/:sessionId', element: <SampleReview />, breadcrumb: 'Review' },
   ],
 };
 
