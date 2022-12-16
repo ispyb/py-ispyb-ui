@@ -28,6 +28,7 @@ export type Endenergy = number;
 export interface Map {
   xrfFluorescenceMappingId: Xrffluorescencemappingid;
   colourMap?: Colourmap;
+  opacity?: boolean;
   points?: Points;
   dataFormat: Dataformat;
   _metadata: MapMetaData;
