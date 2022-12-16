@@ -179,6 +179,77 @@ function Maps({
   );
 }
 
+function SubSamples({
+  subsamples,
+  scaleFactor,
+}: {
+  subsamples: SubSample[];
+  scaleFactor: number;
+}) {
+  return (
+    <>
+      {subsamples.map((subsample) => {
+        if (subsample.type === 'roi') {
+          const width =
+            (subsample.Position1 &&
+              subsample.Position2 &&
+              subsample.Position2?.posX - subsample.Position1?.posX) ||
+            100000;
+          const height =
+            (subsample.Position1 &&
+              subsample.Position2 &&
+              subsample.Position2?.posY - subsample.Position1?.posY) ||
+            100000;
+
+          return (
+            <React.Fragment key={subsample.blSubSampleId}>
+              <Rect
+                key="region"
+                x={subsample.Position1?.posX}
+                y={subsample.Position1?.posY}
+                width={width}
+                height={height}
+                stroke="purple"
+                strokeWidth={1 / scaleFactor}
+              />
+              <Text
+                key="text"
+                text={`${subsample.blSubSampleId}`}
+                stroke="purple"
+                fontSize={1 / scaleFactor}
+                x={subsample.Position1?.posX}
+                y={subsample.Position1?.posY}
+              />
+            </React.Fragment>
+          );
+        }
+
+        return (
+          <React.Fragment key={subsample.blSubSampleId}>
+            <Rect
+              key="point"
+              x={subsample.Position1?.posX}
+              y={subsample.Position1?.posY}
+              width={(1 / scaleFactor) * 10}
+              height={(1 / scaleFactor) * 10}
+              strokeWidth={1 / scaleFactor}
+              fill="green"
+            />
+            <Text
+              key="text"
+              text={`${subsample.blSubSampleId}`}
+              stroke="green"
+              fontSize={1 / scaleFactor}
+              x={subsample.Position1?.posX}
+              y={subsample.Position1?.posY}
+            />
+          </React.Fragment>
+        );
+      })}
+    </>
+  );
+}
+
 function SampleCanvas({ blSampleId }: { blSampleId: number }) {
   const [center, setCenter] = useState<number[]>([0, 0, 0, 0]);
   const [bounds, setBounds] = useState<number[]>([0, 0, 0, 0]);
@@ -351,64 +422,10 @@ function SampleCanvas({ blSampleId }: { blSampleId: number }) {
             ></Rect>
           )}
 
-          {subsamples.results.map((subsample) => {
-            if (subsample.type === 'roi') {
-              const width =
-                (subsample.Position1 &&
-                  subsample.Position2 &&
-                  subsample.Position2?.posX - subsample.Position1?.posX) ||
-                100000;
-              const height =
-                (subsample.Position1 &&
-                  subsample.Position2 &&
-                  subsample.Position2?.posY - subsample.Position1?.posY) ||
-                100000;
-
-              return (
-                <React.Fragment key={subsample.blSubSampleId}>
-                  <Rect
-                    key="region"
-                    x={subsample.Position1?.posX}
-                    y={subsample.Position1?.posY}
-                    width={width}
-                    height={height}
-                    stroke="purple"
-                    strokeWidth={1 / scaleFactor}
-                  />
-                  <Text
-                    key="text"
-                    text={`${subsample.blSubSampleId}`}
-                    stroke="purple"
-                    fontSize={1 / scaleFactor}
-                    x={subsample.Position1?.posX}
-                    y={subsample.Position1?.posY}
-                  />
-                </React.Fragment>
-              );
-            }
-
-            return (
-              <React.Fragment key={subsample.blSubSampleId}>
-                <Rect
-                  key="point"
-                  x={subsample.Position1?.posX}
-                  y={subsample.Position1?.posY}
-                  width={(1 / scaleFactor) * 10}
-                  height={(1 / scaleFactor) * 10}
-                  strokeWidth={1 / scaleFactor}
-                  fill="green"
-                />
-                <Text
-                  key="text"
-                  text={`${subsample.blSubSampleId}`}
-                  stroke="green"
-                  fontSize={1 / scaleFactor}
-                  x={subsample.Position1?.posX}
-                  y={subsample.Position1?.posY}
-                />
-              </React.Fragment>
-            );
-          })}
+          <SubSamples
+            subsamples={subsamples.results}
+            scaleFactor={scaleFactor}
+          />
           <Maps
             maps={maps.results}
             subsamples={subsamples.results}
