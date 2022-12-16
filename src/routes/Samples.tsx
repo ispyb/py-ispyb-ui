@@ -26,8 +26,9 @@ const SampleRoutes = {
       element: <SamplesList focusSearch />,
       breadcrumb: 'Samples',
     },
+    { path: 'review', element: <SampleReview />, breadcrumb: 'Review' },
     { path: ':blSampleId', element: <ViewSample />, breadcrumb: 'View' },
-    { path: 'review/:sessionId', element: <SampleReview />, breadcrumb: 'Review' },
+    
   ],
 };
 
