@@ -15,7 +15,7 @@ export function useSpec() {
  * @param title - a title to give the schema
  * @returns - the schema
  */
-export function useSchema(schema: string, title: string) {
+export function useSchema(schema: string, title?: string) {
   const spec = useSpec();
   return {
     $ref: `#/components/schemas/${schema}`,

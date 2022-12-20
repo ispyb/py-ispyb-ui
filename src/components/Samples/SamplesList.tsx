@@ -12,6 +12,7 @@ import { useSearch } from 'hooks/useSearch';
 import Filter from 'components/Filter';
 import { useSchema } from 'hooks/useSpec';
 import SampleStatus, { DCTypes } from './SampleStatus';
+import { Button } from 'react-bootstrap';
 
 function SampleStatusFilter({ urlKey }: { urlKey: string }) {
   const schema = useSchema('SampleStatus', 'Sample Status');
@@ -53,7 +54,18 @@ export default function SamplesList({ proteinId, focusSearch }: ISamplesList) {
 
   return (
     <section>
-      <h1>Samples</h1>
+      <h1>
+        Samples
+        <Button
+          size="sm"
+          style={{ marginLeft: 10 }}
+          onClick={() => {
+            navigate(`/proposals/${proposal}/samples/edit`);
+          }}
+        >
+          Edit
+        </Button>
+      </h1>
       <SampleStatusFilter urlKey="status" />
       <Search focus={focusSearch} />
       <Table
