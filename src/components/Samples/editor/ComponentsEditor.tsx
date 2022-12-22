@@ -1,16 +1,11 @@
-import {
-  faEdit,
-  faPlus,
-  faRemove,
-  faTrash,
-} from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faPlus, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ComponentResource } from 'api/resources/Sample';
 import Table from 'components/Layout/Table';
 import { usePaging } from 'hooks/usePaging';
 import { usePath } from 'hooks/usePath';
 import { Component } from 'models/Component';
-import { Button, Col, Container, Row } from 'react-bootstrap';
+import { Button, Col, Row } from 'react-bootstrap';
 import { useSuspense } from 'rest-hooks';
 
 export default function ComponentsEditor() {

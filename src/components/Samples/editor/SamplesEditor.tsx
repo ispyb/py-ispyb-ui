@@ -6,6 +6,7 @@ import {
   faTrash,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { ProteinResource } from 'api/resources/Protein';
 import { ComponentResource, SampleResource } from 'api/resources/Sample';
 import Table from 'components/Layout/Table';
 import Loading from 'components/Loading';
@@ -18,7 +19,7 @@ import { Sample, Composition, Crystal } from 'models/Sample';
 import { Suspense, useState } from 'react';
 import { Button, Col, Container, Modal, Row, Form } from 'react-bootstrap';
 import LazyLoad from 'react-lazy-load';
-import ReactSelect from 'react-select';
+import ReactSelect, { GroupBase } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { useSuspense } from 'rest-hooks';
 
@@ -264,6 +265,21 @@ function validateSample(sample: Sample) {
         quantity: quantityError,
       };
     }),
+    Crystal: {
+      Protein: sample.Crystal.Protein?.acronym
+        ? undefined
+        : 'Protein is mandatory',
+      crystal_compositions: sample.Crystal.crystal_compositions?.map((v) => {
+        if (v === undefined) return undefined;
+        const quantityError =
+          v.abundance || v.ph || v.ratio
+            ? undefined
+            : 'One of abundance, ph and ratio is mandatory.';
+        return {
+          quantity: quantityError,
+        };
+      }),
+    },
   };
 }
 
@@ -308,9 +324,9 @@ function EditSampleContent({
         />
         <br />
         <CrystalEdit
-          onChange={onChangeSubForm('crystal')}
+          onChange={onChangeSubForm('Crystal')}
           sample={sampleState}
-          errors={getSubFormErrors(errors, 'crystal')}
+          errors={getSubFormErrors(errors, 'Crystal')}
         />
         <br />
         <Row>
@@ -319,7 +335,9 @@ function EditSampleContent({
             <Button disabled={hasErrors(errors)}>Submit</Button>
           </Col>
           <Col xs="auto">
-            <Button variant={'danger'}>Cancel</Button>
+            <Button variant={'danger'} onClick={onDone}>
+              Cancel
+            </Button>
           </Col>
         </Row>
       </Form>
@@ -340,6 +358,39 @@ function CrystalEdit({
   const getCrystalValue = (crystal: Crystal) => {
     return `${crystal.Protein.acronym} [${crystal.cell_a}, ${crystal.cell_b}, ${crystal.cell_c}, ${crystal.cell_alpha}, ${crystal.cell_beta}, ${crystal.cell_gamma}]`;
   };
+  const proposal = usePath('proposal');
+
+  const proteins = useSuspense(ProteinResource.list(), {
+    proposal: proposal,
+    limit: 1000,
+    skip: 0,
+  });
+
+  const samples = useSuspense(SampleResource.list(), {
+    proposal: proposal,
+    limit: 1000,
+    skip: 0,
+  });
+
+  const crystals = samples.results.map((s) => s.Crystal);
+
+  interface CrystalOption {
+    readonly label: string;
+    readonly value: string;
+  }
+  const crystalOptions: CrystalOption[] = crystals.map((c) => {
+    return {
+      label: getCrystalValue(c),
+      value: getCrystalValue(c),
+    };
+  });
+
+  const crystalOptionsGroup: GroupBase<CrystalOption> = {
+    label: 'Type to search...',
+    options: crystalOptions,
+  };
+
+  const onNewCrystal = {};
 
   return (
     <Col>
@@ -370,41 +421,77 @@ function CrystalEdit({
             </Row>
             <Row>
               <Form.Label>Protein</Form.Label>
-              <ReactSelect />
+              <ReactSelect
+                value={{
+                  label: sample.Crystal.Protein.acronym,
+                  value: sample.Crystal.Protein.acronym,
+                }}
+                options={proteins.results.map((p) => {
+                  return {
+                    label: p.acronym,
+                    value: p.acronym,
+                  };
+                })}
+              />
             </Row>
             <Row>
               <Col>
                 <Form.Label>a</Form.Label>
-                <Form.Control type="number" />
+                <Form.Control
+                  type="number"
+                  value={sample.Crystal.cell_a || undefined}
+                  onChange={onChange.event('cell_a')}
+                />
               </Col>
               <Col>
                 <Form.Label>b</Form.Label>
-                <Form.Control type="number" />
+                <Form.Control
+                  type="number"
+                  value={sample.Crystal.cell_b || undefined}
+                  onChange={onChange.event('cell_b')}
+                />
               </Col>
               <Col>
                 <Form.Label>c</Form.Label>
-                <Form.Control type="number" />
+                <Form.Control
+                  type="number"
+                  value={sample.Crystal.cell_c || undefined}
+                  onChange={onChange.event('cell_c')}
+                />
               </Col>
             </Row>
             <Row>
               <Col>
                 <Form.Label>alpha</Form.Label>
-                <Form.Control type="number" />
+                <Form.Control
+                  type="number"
+                  value={sample.Crystal.cell_alpha || undefined}
+                  onChange={onChange.event('cell_alpha')}
+                />
               </Col>
               <Col>
                 <Form.Label>beta</Form.Label>
-                <Form.Control type="number" />
+                <Form.Control
+                  type="number"
+                  value={sample.Crystal.cell_beta || undefined}
+                  onChange={onChange.event('cell_beta')}
+                />
               </Col>
               <Col>
                 <Form.Label>gamma</Form.Label>
-                <Form.Control type="number" />
+                <Form.Control
+                  type="number"
+                  value={sample.Crystal.cell_gamma || undefined}
+                  onChange={onChange.event('cell_gamma')}
+                />
               </Col>
             </Row>
+            <br />
             <Row>
               <CompositionsEdit
-                onChange={onChange.subForm('sample_compositions')}
-                compositions={sample.sample_compositions || []}
-                errors={getSubFormErrors(errors, 'sample_compositions')}
+                onChange={onChange.subForm('crystal_compositions')}
+                compositions={sample.Crystal.crystal_compositions || []}
+                errors={getSubFormErrors(errors, 'crystal_compositions')}
               />
             </Row>
           </div>
@@ -416,9 +503,11 @@ function CrystalEdit({
                 label: getCrystalValue(sample.Crystal),
                 value: getCrystalValue(sample.Crystal),
               }}
+              options={[crystalOptionsGroup]}
               formatCreateLabel={() => {
                 return 'Create new crystal...';
               }}
+              createOptionPosition={'first'}
               isValidNewOption={() => true}
               onCreateOption={() => setNewCrystal(true)}
             />
@@ -505,11 +594,14 @@ function CompositionEdit({
     const newComponent = _(components.results)
       .filter((c) => c.ComponentType.name === newValue)
       .get(0);
-    if (newComponent) onChange.value('Component')({ ...newComponent });
-    onChange.value('Component')({
-      ComponentType: { name: newValue },
-      name: composition.Component.name,
-    });
+    if (newComponent) {
+      onChange.value('Component')({ ...newComponent });
+    } else {
+      onChange.value('Component')({
+        ComponentType: { name: newValue },
+        name: composition.Component.name,
+      });
+    }
   };
 
   const availableComponents = components.results.filter(
@@ -520,15 +612,34 @@ function CompositionEdit({
     const newComponent = _(availableComponents)
       .filter((c) => c.name === newValue)
       .get(0);
-    if (newComponent) onChange.value('Component')({ ...newComponent });
-    onChange.value('Component')({
-      ComponentType: composition.Component.ComponentType,
-      name: newValue,
-    });
+    if (newComponent) {
+      onChange.value('Component')({ ...newComponent });
+    } else {
+      onChange.value('Component')({
+        ComponentType: composition.Component.ComponentType,
+        name: newValue,
+      });
+    }
   };
 
   const onRemove = () => {
     onChange.remove();
+  };
+
+  interface ComponentOption {
+    readonly label: string;
+    readonly value: string;
+  }
+  const componentOptions: ComponentOption[] = availableComponents.map((c) => {
+    return {
+      label: c.name,
+      value: c.name,
+    };
+  });
+
+  const componentOptionsGroup: GroupBase<ComponentOption> = {
+    label: 'Type to search or create...',
+    options: componentOptions,
   };
 
   return (
@@ -580,17 +691,12 @@ function CompositionEdit({
         </Col>
         <Col>
           <Form.Label>Component</Form.Label>
-          <CreatableSelect
+          <CreatableSelect<ComponentOption>
             value={{
               label: composition.Component.name,
               value: composition.Component.name,
             }}
-            options={availableComponents.map((c) => {
-              return {
-                label: c.name,
-                value: c.name,
-              };
-            })}
+            options={[componentOptionsGroup]}
             onChange={(newValue) =>
               newValue && onSelectComponent(newValue?.value)
             }

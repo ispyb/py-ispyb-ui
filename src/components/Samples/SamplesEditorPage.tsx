@@ -1,5 +1,3 @@
-import Filter from 'components/Filter';
-import { useSchema } from 'hooks/useSpec';
 import { Row, Col } from 'react-bootstrap';
 import ComponentsEditor from './editor/ComponentsEditor';
 import SamplesEditor from './editor/SamplesEditor';

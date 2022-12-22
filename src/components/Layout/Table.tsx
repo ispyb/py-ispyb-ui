@@ -1,4 +1,4 @@
-import { Container, Table as BootstrapTable } from 'react-bootstrap';
+import { Table as BootstrapTable } from 'react-bootstrap';
 import { get } from 'lodash';
 
 import Paginator from 'components/Layout/Paginator';
