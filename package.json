@@ -102,6 +102,7 @@
   "scripts": {
     "start": "PORT=3000 react-scripts start",
     "build": "react-scripts build",
+    "build-prod": "GENERATE_SOURCEMAP=false react-scripts build",
     "test": "jest",
     "eject": "react-scripts eject",
     "prettier": "prettier . --check",
