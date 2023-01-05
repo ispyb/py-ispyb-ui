@@ -1,4 +1,10 @@
-import Options from 'components/Admin/Options';
+import React from 'react';
+
+const Options = React.lazy(() =>
+  import('components/Admin' /* webpackChunkName: "admin" */).then((m) => ({
+    default: m.Options,
+  }))
+);
 
 const AdminRoutes = {
   path: 'admin',

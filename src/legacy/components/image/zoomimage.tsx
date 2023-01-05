@@ -3,6 +3,7 @@ import { Image, Spinner } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 
 import './zoomimage.css';
+import 'react-medium-image-zoom/dist/styles.css';
 import LazyWrapper from 'legacy/components/loading/lazywrapper';
 import { CSSProperties } from 'react';
 import { useAuth } from 'hooks/useAuth';

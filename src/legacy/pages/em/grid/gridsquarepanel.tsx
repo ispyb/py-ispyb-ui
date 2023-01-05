@@ -1,7 +1,6 @@
 import { Col, Container, Row } from 'react-bootstrap';
 import React from 'react';
 import GridSquarePanelHeader from 'legacy/pages/em/grid/gridsquarepanelheader';
-import 'react-medium-image-zoom/dist/styles.css';
 import 'legacy/pages/em/styles.scss';
 import GridSquare from 'legacy/pages/em/grid/gridsquare';
 import { SampleList } from 'legacy/pages/em/model';

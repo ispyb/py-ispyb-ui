@@ -2,11 +2,17 @@ import type {
   BreadcrumbComponentType,
   BreadcrumbMatch,
 } from 'use-react-router-breadcrumbs';
-import SessionStats from 'components/Stats/SessionStats';
+import React from 'react';
 
 const SessionBreadCrumb: BreadcrumbComponentType<'sessionId'> = ({ match }) => {
   return <>{match.params.sessionId}</>;
 };
+
+const SessionStats = React.lazy(() =>
+  import('components/Stats' /* webpackChunkName: "stats" */).then((m) => ({
+    default: m.SessionStats,
+  }))
+);
 
 const StatsRoutes = {
   path: 'stats',

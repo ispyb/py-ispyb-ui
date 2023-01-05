@@ -1,4 +1,11 @@
-import BeamlineOverview from 'components/BeamlineOverview';
+import React from 'react';
+
+const BeamlineOverview = React.lazy(
+  () =>
+    import(
+      'components/BeamlineOverview' /* webpackChunkName: "beamline_overview" */
+    )
+);
 
 const BeamLineRoutes = {
   path: 'beamline',

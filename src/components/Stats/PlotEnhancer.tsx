@@ -1,9 +1,18 @@
-import Plotly from 'plotly.js';
-import Plot, { PlotParams } from 'react-plotly.js';
+import { lazy } from 'react';
+import { PlotParams } from 'react-plotly.js';
+import createPlotlyComponent from 'react-plotly.js/factory';
+
+const Plot = lazy(() =>
+  import('plotly.js-dist-min' /* webpackChunkName: "plotly" */).then(
+    (Plotly) => ({
+      default: createPlotlyComponent(Plotly),
+    })
+  )
+);
 
 // @ts-ignore
 interface PlotParamsOptionalLayout extends PlotParams {
-  layout?: Partial<Plotly.Layout>;
+  layout?: PlotParams['layout'];
   title?: string;
 }
 

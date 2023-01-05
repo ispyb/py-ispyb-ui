@@ -4,9 +4,11 @@ import createPlotlyComponent from 'react-plotly.js/factory';
 // https://reactjs.org/docs/code-splitting.html
 // https://github.com/plotly/react-plotly.js#customizing-the-plotlyjs-bundle
 const Plot = lazy(() =>
-  import('plotly.js-dist').then((Plotly) => ({
-    default: createPlotlyComponent(Plotly),
-  }))
+  import('plotly.js-dist-min' /* webpackChunkName: "plotly" */).then(
+    (Plotly) => ({
+      default: createPlotlyComponent(Plotly),
+    })
+  )
 );
 
 function PlotWidget(props) {
