@@ -54,7 +54,7 @@ export default function SubSamples({
       {subsamples.map((subsample) => {
         const strokeWidth = Math.max(1 / scaleFactor, 1);
         const fontScale = strokeWidth / 4;
-        const textOffset = -5 * strokeWidth;
+        const textOffset = 5 * strokeWidth;
         console.log('sw', strokeWidth);
         if (subsample.type === 'roi') {
           const width =
@@ -94,9 +94,8 @@ export default function SubSamples({
                 fontSize={fontSize}
                 scaleX={fontScale}
                 scaleY={fontScale}
-                x={(subsample.Position1?.posX || 0) + textOffset}
-                y={(subsample.Position1?.posY || 0) + textOffset}
-                zIndex={100}
+                x={(subsample.Position2?.posX || 0) + textOffset}
+                y={(subsample.Position2?.posY || 0) + textOffset}
               />
             </React.Fragment>
           );

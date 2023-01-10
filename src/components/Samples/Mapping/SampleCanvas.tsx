@@ -58,6 +58,22 @@ function SampleCanvasMain({
           y: pointerY - mousePointTo.y * newScale,
         };
         stage.position(newPos);
+
+        const rects = stage.find('Rect')
+        rects.forEach(rect => {
+          rect.setAttrs({
+            strokeWidth: 1/newScale,
+          })
+        })
+  
+        const labels = stage.find('Text')
+        labels.forEach(rect => {
+          rect.scale({
+            x: 1/newScale,
+            y: 1/newScale,
+          })
+        })
+
         stage.batchDraw();
       }
     },
@@ -80,17 +96,17 @@ function SampleCanvasMain({
     );
 
     // @ts-expect-error
-    const minX = Math.min(...minXs);
+    const minX = minXs.length ? Math.min(...minXs) : 0;
     // @ts-expect-error
-    const minY = Math.min(...minYs);
+    const minY = minXs.length ? Math.min(...minYs) : 0;
     // @ts-expect-error
-    const maxX = Math.max(...maxXs);
+    const maxX = minXs.length ? Math.max(...maxXs) : 0;
     // @ts-expect-error
-    const maxY = Math.max(...maxYs);
+    const maxY = minXs.length ? Math.max(...maxYs) : 0;
 
     console.log('constraints', minX, minY, maxX, maxY);
-    const scaleX = 1024 / (maxX - minX);
-    const scaleY = 1024 / (maxY - minY);
+    const scaleX = maxX - minX > 0 ? 1024 / (maxX - minX) : 1;
+    const scaleY = maxY - minY > 0 ? 1024 / (maxY - minY) : 1;
     const scale = scaleX < scaleY ? scaleX : scaleY;
 
     const cenX = Math.round((maxX - minX) / 2 + minX);
@@ -108,14 +124,6 @@ function SampleCanvasMain({
         x: -cenX * scale,
         y: -cenY * scale,
       });
-
-      // const rects = stage.find('Rect')
-      // rects.forEach(rect => {
-      //   rect.setAttrs({
-      //     scaleX: 1/scale,
-      //     scaleY: 1/scale
-      //   })
-      // })
 
       stage.batchDraw();
     }
@@ -156,17 +164,18 @@ function SampleCanvasMain({
           ></Rect>
         )}
 
-        <SubSamples
-          subsamples={subsamples}
-          scaleFactor={scaleFactor}
-          selectedSubSample={selectedSubSample}
-        />
         <Maps
           maps={maps}
           subsamples={subsamples}
           showHidden={showHidden}
           selectedROI={selectedROI}
         />
+        <SubSamples
+          subsamples={subsamples}
+          scaleFactor={scaleFactor}
+          selectedSubSample={selectedSubSample}
+        />
+        
       </Layer>
     </Stage>
   );
