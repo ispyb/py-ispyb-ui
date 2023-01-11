@@ -30,6 +30,7 @@ interface ITable {
   results: Array<IResults>;
   keyId: string;
   onRowClick?: any;
+  rowClasses?: any;
   emptyText?: string;
   paginator?: IPaginatorProps;
   size?: string;
@@ -54,6 +55,7 @@ export default function Table(props: ITable) {
               onClick={() => {
                 if (props.onRowClick) props.onRowClick(row);
               }}
+              className={props.rowClasses && props.rowClasses(row)}
             >
               {props.columns.map((column) => (
                 <td key={column.key} className={column.className}>

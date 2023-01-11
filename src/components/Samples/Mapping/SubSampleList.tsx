@@ -3,15 +3,23 @@ import { useSuspense } from 'rest-hooks';
 import { SubSampleResource } from 'api/resources/SubSample';
 import Table from 'components/Layout/Table';
 import { SubSample } from 'models/SubSample';
+import { usePaging } from 'hooks/usePaging';
 
 export default function SubSampleList({
   blSampleId,
+  selectedSubSample,
   selectSubSample,
 }: {
   blSampleId: number;
+  selectedSubSample: number | undefined;
   selectSubSample: (blubSampleId: number) => void;
 }) {
-  const subsamples = useSuspense(SubSampleResource.list(), { blSampleId });
+  const { skip, limit } = usePaging(10);
+  const subsamples = useSuspense(SubSampleResource.list(), {
+    blSampleId,
+    skip,
+    limit,
+  });
 
   const onRowClick = (row: SubSample) => {
     selectSubSample(row.blSubSampleId);
@@ -23,6 +31,9 @@ export default function SubSampleList({
         keyId="blSubSampleId"
         results={subsamples.results}
         onRowClick={onRowClick}
+        rowClasses={(row: SubSample) =>
+          row.blSubSampleId === selectedSubSample && 'table-active'
+        }
         paginator={{
           total: subsamples.total,
           skip: subsamples.skip,

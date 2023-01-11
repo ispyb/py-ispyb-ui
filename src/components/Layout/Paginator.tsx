@@ -24,12 +24,14 @@ export default function Paginator(props: Props) {
   const nPages = Math.ceil(total / limit);
   const currentPage = skip / limit + 1;
   const nPagesShown = nPages > 3 ? 3 : nPages;
+  
   const nPageStart =
     currentPage === 1
       ? currentPage
-      : currentPage > nPages - 2
+      : currentPage > nPages - 2 && nPages > 2
       ? nPages - 2
       : currentPage - 1;
+
   useEffect(() => {
     if (limitRef.current) {
       limitRef.current.value = searchLimit;
