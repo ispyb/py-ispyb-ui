@@ -182,14 +182,15 @@ function PyHeader() {
                 >
                   Samples
                 </NavDropdown.Item>
-                {proposalInfo._metadata.uiGroups && proposalInfo._metadata.uiGroups.includes('mapping') && (
-                  <NavDropdown.Item
-                    as={NavLink}
-                    to={`/proposals/${proposalName}/samples/review`}
-                  >
-                    Sample Review
-                  </NavDropdown.Item>
-                )}
+                {proposalInfo._metadata.uiGroups &&
+                  proposalInfo._metadata.uiGroups.includes('mapping') && (
+                    <NavDropdown.Item
+                      as={NavLink}
+                      to={`/proposals/${proposalName}/samples/review`}
+                    >
+                      Sample Review
+                    </NavDropdown.Item>
+                  )}
               </>
             </NavDropdown>
           )}
