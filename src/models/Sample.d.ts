@@ -5,6 +5,15 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
+export type Blsampleid = number;
+export type Name = string;
+export type Comments = null | string;
+/**
+ * Location in container
+ */
+export type Location = number;
+export type Containerid = number;
+export type Crystal = SampleCrystal;
 export type CellA = null | number;
 export type CellB = null | number;
 export type CellC = null | number;
@@ -13,7 +22,7 @@ export type CellBeta = null | number;
 export type CellGamma = null | number;
 export type Protein = SampleProtein;
 export type Proposalid = string;
-export type Name = string;
+export type Name1 = string;
 export type Acronym = string;
 export type Proteinid = number;
 export type SizeX = number;
@@ -23,15 +32,71 @@ export type Abundance = number;
 export type Crystalid = number;
 export type Protein1 = number;
 export type Componentid = number;
-export type Name1 = string;
-export type Composition1 = null | string;
 export type Name2 = string;
+export type Composition1 = null | string;
+export type Name3 = string;
 export type Componentid1 = number;
 export type Abundance1 = null | number;
 export type Ratio = null | number;
 export type PH = null | number;
 export type CrystalCompositions = Composition[];
+export type SampleCompositions = Composition[];
+export type SampleSupport = null | string;
+export type Container = SampleContainer;
+export type Code = string;
+/**
+ * Position in sample change
+ */
+export type SampleChangerLocation = string;
+/**
+ * Beamline if container is assigned
+ */
+export type BeamlineLocation = string;
+/**
+ * Number of sub samples
+ */
+export type Subsamples = number;
+/**
+ * Number of data collections
+ */
+export type Datacollections = number;
+/**
+ * Types of data collections
+ */
+export type Types = null | string[];
+/**
+ * Whether this sample is queued for data collection
+ */
+export type Queued = boolean;
+/**
+ * Number of successful strategies
+ */
+export type Strategies = number;
+/**
+ * Number of successful auto-integrations
+ */
+export type Autointegrations = number;
+/**
+ * Highest integration resolution
+ */
+export type Integratedresolution = null | number;
+/**
+ * The associated proposal
+ */
+export type Proposal = string;
 
+export interface Sample {
+  blSampleId: Blsampleid;
+  name: Name;
+  comments?: Comments;
+  location?: Location;
+  containerId?: Containerid;
+  Crystal: Crystal;
+  sample_compositions?: SampleCompositions;
+  loopType?: SampleSupport;
+  Container?: Container;
+  _metadata?: SampleMetaData;
+}
 export interface SampleCrystal {
   cell_a?: CellA;
   cell_b?: CellB;
@@ -50,7 +115,7 @@ export interface SampleCrystal {
 }
 export interface SampleProtein {
   proposalId: Proposalid;
-  name: Name;
+  name: Name1;
   acronym: Acronym;
   proteinId: Proteinid;
 }
@@ -63,15 +128,44 @@ export interface Composition {
 }
 export interface Component {
   componentId: Componentid;
-  name: Name1;
+  name: Name2;
   composition?: Composition1;
   ComponentType: ComponentType;
 }
 export interface ComponentType {
-  name: Name2;
+  name: Name3;
+}
+export interface SampleContainer {
+  code: Code;
+  sampleChangerLocation?: SampleChangerLocation;
+  beamlineLocation?: BeamlineLocation;
+}
+export interface SampleMetaData {
+  subsamples: Subsamples;
+  datacollections: Datacollections;
+  types?: Types;
+  queued?: Queued;
+  strategies?: Strategies;
+  autoIntegrations?: Autointegrations;
+  integratedResolution?: Integratedresolution;
+  proposal?: Proposal;
 }
 
 type Constructor<T = {}> = new (...args: any[]) => T;
+export function withSample<TBase extends Constructor>(Base: TBase) {
+  return class WithSample extends Base {
+    blSampleId: Blsampleid;
+    name: Name;
+    comments?: Comments;
+    location?: Location;
+    containerId?: Containerid;
+    Crystal: Crystal;
+    sample_compositions?: SampleCompositions;
+    loopType?: SampleSupport;
+    Container?: Container;
+    _metadata?: SampleMetaData;
+  }
+}
 export function withSampleCrystal<TBase extends Constructor>(Base: TBase) {
   return class WithSampleCrystal extends Base {
     cell_a?: CellA;
@@ -93,7 +187,7 @@ export function withSampleCrystal<TBase extends Constructor>(Base: TBase) {
 export function withSampleProtein<TBase extends Constructor>(Base: TBase) {
   return class WithSampleProtein extends Base {
     proposalId: Proposalid;
-    name: Name;
+    name: Name1;
     acronym: Acronym;
     proteinId: Proteinid;
   }
@@ -110,13 +204,32 @@ export function withComposition<TBase extends Constructor>(Base: TBase) {
 export function withComponent<TBase extends Constructor>(Base: TBase) {
   return class WithComponent extends Base {
     componentId: Componentid;
-    name: Name1;
+    name: Name2;
     composition?: Composition1;
     ComponentType: ComponentType;
   }
 }
 export function withComponentType<TBase extends Constructor>(Base: TBase) {
   return class WithComponentType extends Base {
-    name: Name2;
+    name: Name3;
+  }
+}
+export function withSampleContainer<TBase extends Constructor>(Base: TBase) {
+  return class WithSampleContainer extends Base {
+    code: Code;
+    sampleChangerLocation?: SampleChangerLocation;
+    beamlineLocation?: BeamlineLocation;
+  }
+}
+export function withSampleMetaData<TBase extends Constructor>(Base: TBase) {
+  return class WithSampleMetaData extends Base {
+    subsamples: Subsamples;
+    datacollections: Datacollections;
+    types?: Types;
+    queued?: Queued;
+    strategies?: Strategies;
+    autoIntegrations?: Autointegrations;
+    integratedResolution?: Integratedresolution;
+    proposal?: Proposal;
   }
 }

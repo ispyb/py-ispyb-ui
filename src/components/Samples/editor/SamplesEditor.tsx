@@ -8,9 +8,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ProteinResource } from 'api/resources/Protein';
 import { ComponentResource, SampleResource } from 'api/resources/Sample';
-import Table from 'components/Layout/Table';
 import Loading from 'components/Loading';
-import { usePaging } from 'hooks/usePaging';
 import { usePath } from 'hooks/usePath';
 import produce from 'immer';
 import _ from 'lodash';
@@ -21,58 +19,9 @@ import { Button, Col, Container, Modal, Row, Form } from 'react-bootstrap';
 import LazyLoad from 'react-lazy-load';
 import ReactSelect, { GroupBase } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
-import { useSuspense } from 'rest-hooks';
+import { useController, useSuspense } from 'rest-hooks';
 
-export default function SamplesEditor() {
-  const proposal = usePath('proposal');
-  const { skip, limit } = usePaging(10, 0, 'samples');
-
-  const samples = useSuspense(SampleResource.list(), {
-    skip,
-    limit,
-    ...(proposal ? { proposal } : {}),
-  });
-
-  return (
-    <>
-      <Row>
-        <Col>
-          <Button size="sm">
-            <FontAwesomeIcon icon={faPlus} /> Create new
-          </Button>
-        </Col>
-      </Row>
-      <Table
-        key={'samples'}
-        columns={[
-          { label: 'Name', key: 'name' },
-          {
-            label: '',
-            key: 'edit',
-            formatter: (row) => <EditSampleModal sample={row} />,
-            headerStyle: { width: 0 },
-          },
-          {
-            label: '',
-            key: 'remove',
-            formatter: (row) => <RemoveSampleButton sample={row} />,
-            headerStyle: { width: 0 },
-          },
-        ]}
-        results={samples.results}
-        keyId={'blSampleId'}
-        paginator={{
-          total: samples.total,
-          skip: samples.skip,
-          limit: samples.limit,
-          suffix: 'samples',
-        }}
-      />
-    </>
-  );
-}
-
-function RemoveSampleButton({ sample }: { sample: Sample }) {
+export function RemoveSampleButton({ sample }: { sample: Sample }) {
   const onClick = () => {};
   return (
     <Button
@@ -86,7 +35,62 @@ function RemoveSampleButton({ sample }: { sample: Sample }) {
   );
 }
 
-function EditSampleModal({ sample }: { sample: Sample }) {
+export function CreateSampleModal({ onDone }: { onDone: () => void }) {
+  const [show, setShow] = useState(false);
+  const onClick = () => {
+    setShow(true);
+  };
+  const proposal = usePath('proposal');
+  const samples = useSuspense(SampleResource.list(), {
+    proposal: proposal,
+    limit: 1000,
+    skip: 0,
+  });
+
+  const crystals = _(samples.results)
+    .map((s) => s.Crystal)
+    .value();
+
+  return (
+    <>
+      <Button
+        size="sm"
+        className="text-nowrap"
+        style={{ marginLeft: 5 }}
+        onClick={onClick}
+      >
+        <FontAwesomeIcon icon={faPlus} /> Create new
+      </Button>
+
+      <Modal
+        centered
+        backdrop="static"
+        size="xl"
+        show={show}
+        onHide={() => setShow(false)}
+      >
+        <Modal.Header>
+          <h5>Create sample</h5>
+        </Modal.Header>
+        <Modal.Body>
+          <LazyLoad>
+            <Suspense fallback={<Loading></Loading>}>
+              <EditSampleContent
+                onDone={() => {
+                  setShow(false);
+                  onDone();
+                }}
+                sample={{ Crystal: crystals[0] } as Sample}
+              />
+            </Suspense>
+          </LazyLoad>
+        </Modal.Body>
+      </Modal>
+    </>
+  );
+}
+
+export function EditSampleModal({ sample }: { sample: Sample }) {
   const [show, setShow] = useState(false);
   const onClick = () => {
     setShow(true);
@@ -131,12 +135,14 @@ type OnChangeFormValueType = (property: _.PropertyPath) => (value: any) => void;
 type OnChangeSubFormType = (property: _.PropertyPath) => SubFormProps;
 
 type OnChangeFormRemoveType = () => void;
+type OnChangeFormReplaceType = (value: any) => void;
 
 type SubFormProps = {
   event: OnChangeFormEventType;
   subForm: OnChangeSubFormType;
   value: OnChangeFormValueType;
   remove: OnChangeFormRemoveType;
+  replace: OnChangeFormReplaceType;
 };
 
 type ErrorListType =
@@ -183,13 +189,14 @@ const hasErrors = (e: ErrorListType): boolean => {
 
 function useFormChangeHandler<T extends Object>(
   v: T
-): [T, OnChangeFormEventType, OnChangeSubFormType] {
+): [T, OnChangeFormValueType, OnChangeFormEventType, OnChangeSubFormType] {
   const [vState, setVState] = useState({ ...v });
 
   const onChange = (property: _.PropertyPath) => {
     return (newValue: any) => {
       const next = produce(vState, (draft) => {
-        set(draft, property, newValue);
+        const v = newValue === '' || newValue === null ? undefined : newValue;
+        set(draft, property, v);
       });
       setVState(next);
       console.log(next);
@@ -243,13 +250,17 @@ function useFormChangeHandler<T extends Object>(
       onChangeFormValue(property)(undefined);
     };
 
+    const replace = (value: any) => {
+      onChangeFormValue(property)(value);
+    };
+
     const subForm: OnChangeSubFormType = (subProperty: _.PropertyPath) => {
       return onChangeSubForm(concatPropertyPath(property, subProperty));
     };
-    return { event, value, subForm, remove };
+    return { event, value, subForm, remove, replace };
   };
 
-  return [vState, onChangeFormEvent, onChangeSubForm];
+  return [vState, onChange, onChangeFormEvent, onChangeSubForm];
 }
 
 function validateSample(sample: Sample) {
@@ -290,10 +301,28 @@ function EditSampleContent({
   sample: Sample;
   onDone: () => void;
 }) {
-  const [sampleState, onChangeForm, onChangeSubForm] =
+  const [sampleState, onChangeValue, onChangeForm, onChangeSubForm] =
     useFormChangeHandler(sample);
 
   const errors: ErrorListType = validateSample(sampleState);
+
+  const controller = useController();
+
+  const onSubmit = () => {
+    if (sampleState.blSampleId) {
+      return controller
+        .fetch(
+          SampleResource.partialUpdate(),
+          { blSampleId: sampleState.blSampleId },
+          sampleState
+        )
+        .then(() => onDone());
+    } else {
+      return controller
+        .fetch(SampleResource.create(), sampleState)
+        .then(() => onDone());
+    }
+  };
 
   return (
     <Container>
@@ -301,7 +330,7 @@ function EditSampleContent({
         <Col>
           <Form.Label>Name</Form.Label>
           <Form.Control
-            value={sampleState.name}
+            value={sampleState.name || ''}
             onChange={onChangeForm('name')}
             type="text"
             isInvalid={getErrorMessage(errors, 'name') !== undefined}
@@ -314,6 +343,21 @@ function EditSampleContent({
             value={sampleState.comments || ''}
             onChange={onChangeForm('comments')}
             type="text"
+          />
+          <Form.Label>Support</Form.Label>
+          <ReactSelect
+            value={{ label: sampleState.loopType, value: sampleState.loopType }}
+            options={['Injector', 'Chip', 'Foils', 'Tape drive', 'Other'].map(
+              (v) => {
+                return {
+                  label: v,
+                  value: v,
+                };
+              }
+            )}
+            onChange={(v) => {
+              v && onChangeValue('loopType')(v.value);
+            }}
           />
         </Col>
         <br />
@@ -332,7 +376,9 @@ function EditSampleContent({
         <Row>
           <Col></Col>
           <Col xs="auto">
-            <Button disabled={hasErrors(errors)}>Submit</Button>
+            <Button disabled={hasErrors(errors)} onClick={onSubmit}>
+              Submit
+            </Button>
           </Col>
           <Col xs="auto">
             <Button variant={'danger'} onClick={onDone}>
@@ -372,7 +418,10 @@ function CrystalEdit({
     skip: 0,
   });
 
-  const crystals = samples.results.map((s) => s.Crystal);
+  const crystals = _(samples.results)
+    .map((s) => s.Crystal)
+    .uniqBy(getCrystalValue)
+    .value();
 
   interface CrystalOption {
     readonly label: string;
@@ -390,7 +439,35 @@ function CrystalEdit({
     options: crystalOptions,
   };
 
-  const onNewCrystal = {};
+  const onSelectProtein = (newValue: string) => {
+    const newProtein = _(proteins.results)
+      .filter((p) => p.acronym === newValue)
+      .get(0);
+    if (newProtein) {
+      onChange.value('Protein')({ ...newProtein });
+    }
+  };
+
+  const onSelectCrystal = (newValue: string) => {
+    const newCrystal = _(crystals)
+      .filter((c) => getCrystalValue(c) === newValue)
+      .get(0);
+    if (newCrystal) {
+      onChange.replace({ ...newCrystal });
+    }
+  };
+
+  const onNewCrystal = () => {
+    setNewCrystal(true);
+    onChange.replace({
+      Protein: proteins.results[0],
+    });
+  };
+
+  const onCloseNewCrystal = () => {
+    setNewCrystal(false);
+    onChange.replace(crystals[0]);
+  };
 
   return (
     <Col>
@@ -413,7 +490,7 @@ function CrystalEdit({
                   size="lg"
                   className="p-0"
                   variant="link"
-                  onClick={() => setNewCrystal(false)}
+                  onClick={onCloseNewCrystal}
                 >
                   <FontAwesomeIcon size="xl" icon={faClose} />
                 </Button>
@@ -432,6 +509,9 @@ function CrystalEdit({
                     value: p.acronym,
                   };
                 })}
+                onChange={(newValue) =>
+                  newValue && onSelectProtein(newValue?.value)
+                }
               />
             </Row>
             <Row>
@@ -439,7 +519,7 @@ function CrystalEdit({
                 <Form.Label>a</Form.Label>
                 <Form.Control
                   type="number"
-                  value={sample.Crystal.cell_a || undefined}
+                  value={sample.Crystal.cell_a || ''}
                   onChange={onChange.event('cell_a')}
                 />
               </Col>
@@ -447,7 +527,7 @@ function CrystalEdit({
                 <Form.Label>b</Form.Label>
                 <Form.Control
                   type="number"
-                  value={sample.Crystal.cell_b || undefined}
+                  value={sample.Crystal.cell_b || ''}
                   onChange={onChange.event('cell_b')}
                 />
               </Col>
@@ -455,7 +535,7 @@ function CrystalEdit({
                 <Form.Label>c</Form.Label>
                 <Form.Control
                   type="number"
-                  value={sample.Crystal.cell_c || undefined}
+                  value={sample.Crystal.cell_c || ''}
                   onChange={onChange.event('cell_c')}
                 />
               </Col>
@@ -465,7 +545,7 @@ function CrystalEdit({
                 <Form.Label>alpha</Form.Label>
                 <Form.Control
                   type="number"
-                  value={sample.Crystal.cell_alpha || undefined}
+                  value={sample.Crystal.cell_alpha || ''}
                   onChange={onChange.event('cell_alpha')}
                 />
               </Col>
@@ -473,7 +553,7 @@ function CrystalEdit({
                 <Form.Label>beta</Form.Label>
                 <Form.Control
                   type="number"
-                  value={sample.Crystal.cell_beta || undefined}
+                  value={sample.Crystal.cell_beta || ''}
                   onChange={onChange.event('cell_beta')}
                 />
               </Col>
@@ -481,7 +561,7 @@ function CrystalEdit({
                 <Form.Label>gamma</Form.Label>
                 <Form.Control
                   type="number"
-                  value={sample.Crystal.cell_gamma || undefined}
+                  value={sample.Crystal.cell_gamma || ''}
                   onChange={onChange.event('cell_gamma')}
                 />
               </Col>
@@ -509,7 +589,10 @@ function CrystalEdit({
               }}
               createOptionPosition={'first'}
               isValidNewOption={() => true}
-              onCreateOption={() => setNewCrystal(true)}
+              onCreateOption={onNewCrystal}
+              onChange={(newValue) =>
+                newValue && onSelectCrystal(newValue?.value)
+              }
             />
           </div>
         )}
@@ -648,7 +731,7 @@ function CompositionEdit({
         <Col>
           <Form.Label>Abundance</Form.Label>
           <Form.Control
-            value={composition.abundance || undefined}
+            value={composition.abundance || ''}
             type="number"
             onChange={onChange.event('abundance')}
             isInvalid={getErrorMessage(errors, 'quantity') !== undefined}
@@ -657,7 +740,7 @@ function CompositionEdit({
         <Col>
           <Form.Label>Ratio</Form.Label>
           <Form.Control
-            value={composition.ratio || undefined}
+            value={composition.ratio || ''}
             type="number"
             onChange={onChange.event('ratio')}
             isInvalid={getErrorMessage(errors, 'quantity') !== undefined}
@@ -666,7 +749,7 @@ function CompositionEdit({
         <Col>
           <Form.Label>pH</Form.Label>
           <Form.Control
-            value={composition.ph || undefined}
+            value={composition.ph || ''}
             type="number"
             onChange={onChange.event('ph')}
             isInvalid={getErrorMessage(errors, 'quantity') !== undefined}

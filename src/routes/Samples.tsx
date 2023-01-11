@@ -6,12 +6,6 @@ const SamplesList = React.lazy(() =>
   }))
 );
 
-const SamplesEditor = React.lazy(() =>
-  import('components/Samples' /* webpackChunkName: "samples" */).then((m) => ({
-    default: m.SamplesEditorPage,
-  }))
-);
-
 const ViewSample = React.lazy(() =>
   import('components/Samples').then((m) => ({
     default: m.ViewSample,
@@ -26,7 +20,6 @@ const SampleRoutes = {
       element: <SamplesList focusSearch />,
       breadcrumb: 'Samples',
     },
-    { path: 'edit', element: <SamplesEditor />, breadcrumb: 'Edit' },
     { path: ':blSampleId', element: <ViewSample />, breadcrumb: 'View' },
   ],
 };
