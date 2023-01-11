@@ -8,6 +8,11 @@ import { SampleResource } from 'api/resources/Sample';
 import SubSampleList from './SubSampleList';
 import SubSampleView from './SubSampleView';
 import SampleCanvas from './SampleCanvas';
+import {
+  useNavigate,
+  useSearchParams,
+  createSearchParams,
+} from 'react-router-dom';
 
 function SubSamplePanel({
   blSampleId,
@@ -23,6 +28,7 @@ function SubSamplePanel({
       <Suspense fallback="subsample list loading">
         <SubSampleList
           blSampleId={blSampleId}
+          selectedSubSample={selectedSubSample}
           selectSubSample={setSelectedSubSample}
         />
       </Suspense>
@@ -37,13 +43,22 @@ function SubSamplePanel({
 }
 
 export default function SampleReview() {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  // @ts-ignore
+  const searchParamsObj = Object.fromEntries([...searchParams]);
+
   const [canvasMounted, setCanvasMount] = useState<boolean>(true);
   const proposal = useProposal();
   const samples = useSuspense(SampleResource.list(), {
     proposal: proposal.proposalName,
   });
   const [selectedSample, setSelectedSample] = useState<number | undefined>(
-    samples.results.length ? samples.results[0].blSampleId : undefined
+    searchParamsObj.blSampleId
+      ? parseInt(searchParamsObj.blSampleId)
+      : samples.results.length
+      ? samples.results[0].blSampleId
+      : undefined
   );
   const [selectedSubSample, setSelectedSubSample] = useState<number>();
 
@@ -59,6 +74,13 @@ export default function SampleReview() {
     setTimeout(() => {
       setCanvasMount(true);
     }, 100);
+    navigate({
+      pathname: '',
+      search: createSearchParams({
+        ...searchParamsObj,
+        blSampleId: `${blSampleId}`,
+      }).toString(),
+    });
   }
 
   console.log('vancas mount', canvasMounted);
@@ -84,7 +106,10 @@ export default function SampleReview() {
                         }
                       >
                         {samples.results.map((sample) => (
-                          <option value={sample.blSampleId}>
+                          <option
+                            key={sample.blSampleId}
+                            value={sample.blSampleId}
+                          >
                             {sample.name}
                           </option>
                         ))}

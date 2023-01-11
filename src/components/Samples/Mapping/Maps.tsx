@@ -5,6 +5,13 @@ import { getXHRBlob } from 'api/resources/XHRFile';
 import { useAuth } from 'hooks/useAuth';
 import { SubSample } from 'models/SubSample';
 import { Map } from 'models/Map';
+import { awaitImage } from './Images';
+
+export function getROIName(map: any): string {
+  return map.XRFFluorescenceMappingROI.scalar
+    ? map.XRFFluorescenceMappingROI.scalar
+    : `${map.XRFFluorescenceMappingROI.element}-${map.XRFFluorescenceMappingROI.edge}`;
+}
 
 export default function Maps({
   maps,
@@ -15,34 +22,30 @@ export default function Maps({
   maps: Map[];
   subsamples: SubSample[];
   showHidden: boolean;
-  selectedROI: number;
+  selectedROI: string;
 }) {
   const { site } = useAuth();
   const { fetch } = useController();
   const [mapsLoaded, setMapsLoaded] = useState<boolean>(false);
-  const [preMaps, setPreMaps] = useState<Record<string, any>>({});
+  const [preMaps, setPreMaps] = useState<Record<string, HTMLImageElement>>({});
 
   useEffect(() => {
     setMapsLoaded(false);
-    setPreMaps([]);
+    setPreMaps({});
 
     async function getMaps() {
-      const preMaps = {};
+      const preMaps: Record<string, HTMLImageElement> = {};
       for (const map of maps) {
-        if (
-          map.XRFFluorescenceMappingROI.xrfFluorescenceMappingROIId !==
-          selectedROI
-        )
-          continue;
-
+        const roiName = getROIName(map);
+        if (roiName !== selectedROI) continue;
         if (!(map.opacity || showHidden)) continue;
 
         const imageData = await fetch(getXHRBlob, {
           src: `${site.host}${map._metadata.url}`,
         });
-        console.log('loaded map', imageData);
-        // @ts-expect-error
-        preMaps[`${map.xrfFluorescenceMappingId}`] = imageData;
+        preMaps[`${map.xrfFluorescenceMappingId}`] = await awaitImage(
+          imageData
+        );
       }
       setPreMaps(preMaps);
     }
@@ -56,7 +59,7 @@ export default function Maps({
     <>
       {mapsLoaded && (
         <>
-          {Object.entries(preMaps).map(([mapId, blob]) => {
+          {Object.entries(preMaps).map(([mapId, imageElement]) => {
             const map = maps.filter(
               (map) => map.xrfFluorescenceMappingId === parseInt(mapId)
             )[0];
@@ -64,9 +67,6 @@ export default function Maps({
               (subsample) =>
                 subsample.blSubSampleId === map._metadata.blSubSampleId
             )[0];
-            console.log('render map', map, mapId);
-            const imageElement = new Image();
-            imageElement.src = blob;
 
             const width =
               (subsample.Position1 &&

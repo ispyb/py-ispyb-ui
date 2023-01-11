@@ -6,7 +6,7 @@ import { getXHRBlob } from 'api/resources/XHRFile';
 import { useAuth } from 'hooks/useAuth';
 import { SampleImage } from 'models/SampleImage';
 
-async function awaitImage(src: string): Promise<HTMLImageElement> {
+export async function awaitImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
     const imageElement = new Image();
     imageElement.onload = () => resolve(imageElement);
@@ -54,7 +54,7 @@ export default function Images({
         const imageData = await fetch(getXHRBlob, {
           src: `${site.host}${image._metadata.url}`,
         });
-        console.log('loaded image', imageData);
+        // console.log('loaded image', imageData);
         preImages[`${image.blSampleImageId}`] = await awaitImage(imageData);
       }
       setPreImages(preImages);
@@ -73,8 +73,6 @@ export default function Images({
             const image = images.filter(
               (image) => image.blSampleImageId === parseInt(imageId)
             )[0];
-            console.log('render image', image, imageId);
-
             return (
               <KonvaImage
                 key={image.blSampleImageId}

@@ -1,5 +1,10 @@
 import React from 'react';
-import { Rect, Text, Line, Group } from 'react-konva';
+import {
+  Rect,
+  Text,
+  Line,
+  // Group
+} from 'react-konva';
 
 import { SubSample } from 'models/SubSample';
 
@@ -12,7 +17,7 @@ interface ICross {
 
 function Cross({ x, y, strokeWidth, fill }: ICross) {
   const size = 10 * strokeWidth;
-  if (!x|| !y) return null
+  if (!x || !y) return null;
   return (
     // <Group
     //   x={x}
@@ -26,11 +31,11 @@ function Cross({ x, y, strokeWidth, fill }: ICross) {
       <Line
         strokeWidth={strokeWidth}
         stroke={fill}
-        points={[x-size, y, x+size, y]}
+        points={[x - size, y, x + size, y]}
       />
       <Line
         strokeWidth={strokeWidth}
-        points={[x, y-size, x, y+size]}
+        points={[x, y - size, x, y + size]}
         stroke={fill}
       />
     </>
@@ -55,7 +60,6 @@ export default function SubSamples({
         const strokeWidth = Math.max(1 / scaleFactor, 1);
         const fontScale = strokeWidth / 4;
         const textOffset = 5 * strokeWidth;
-        console.log('sw', strokeWidth);
         if (subsample.type === 'roi') {
           const width =
             (subsample.Position1 &&

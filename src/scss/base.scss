@@ -50,6 +50,8 @@ $pagination-hover-color: color-contrast($pagination-hover-bg);
 $pagination-disabled-bg: lighten($pagination, 30%);
 $pagination-disabled-color: color-contrast($pagination-disabled-bg);
 
+$table-active-bg: $tertiary;
+
 @import '~bootswatch/dist/flatly/variables';
 @import '~bootstrap/scss/bootstrap';
 @import '~bootswatch/dist/flatly/bootswatch';

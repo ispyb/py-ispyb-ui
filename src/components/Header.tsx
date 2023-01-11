@@ -6,6 +6,7 @@ import { PersonBadge } from 'react-bootstrap-icons';
 
 import { useAuth } from 'hooks/useAuth';
 import { useProposal } from 'hooks/useProposal';
+import { useProposalInfo } from 'hooks/useProposalInfo';
 import { useCurrentUser } from 'hooks/useCurrentUser';
 import AuthErrorBoundary from './AuthErrorBoundary';
 import { JavaHeader } from 'legacy/components/Header';
@@ -119,6 +120,7 @@ export default function Header() {
 
 function PyHeader() {
   const { proposalName } = useProposal();
+  const proposalInfo = useProposalInfo();
   const { pathname } = useLocation();
 
   return (
@@ -180,6 +182,14 @@ function PyHeader() {
                 >
                   Samples
                 </NavDropdown.Item>
+                {proposalInfo._metadata.uiGroups && proposalInfo._metadata.uiGroups.includes('mapping') && (
+                  <NavDropdown.Item
+                    as={NavLink}
+                    to={`/proposals/${proposalName}/samples/review`}
+                  >
+                    Sample Review
+                  </NavDropdown.Item>
+                )}
               </>
             </NavDropdown>
           )}
