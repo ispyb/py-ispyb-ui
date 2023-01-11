@@ -97,7 +97,7 @@ function SampleCanvasMain({
         stage.batchDraw();
       }
     },
-    [stageRef]
+    [stageRef, scaleStroke]
   );
 
   const centerStage = useCallback(() => {

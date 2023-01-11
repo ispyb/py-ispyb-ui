@@ -15,12 +15,12 @@ export async function awaitImage(src: string): Promise<HTMLImageElement> {
   });
 }
 
-function toCanvasCoordinates({ x, y }: { x: number; y: number }): {
+// Coordinates in html5 canvas space are x, -y, and not x, y as you
+// might expect (!)
+export function toCanvasCoordinates({ x, y }: { x: number; y: number }): {
   x: number;
   y: number;
 } {
-  // Coordinates in html5 canvas space are x, -y, and not x, y as you
-  // might expect (!)
   return {
     x,
     y: -y,
