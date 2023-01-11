@@ -28,7 +28,6 @@ const SampleRoutes = {
     },
     { path: 'review', element: <SampleReview />, breadcrumb: 'Review' },
     { path: ':blSampleId', element: <ViewSample />, breadcrumb: 'View' },
-    
   ],
 };
 

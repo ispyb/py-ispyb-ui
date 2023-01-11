@@ -24,7 +24,7 @@ export default function Paginator(props: Props) {
   const nPages = Math.ceil(total / limit);
   const currentPage = skip / limit + 1;
   const nPagesShown = nPages > 3 ? 3 : nPages;
-  
+
   const nPageStart =
     currentPage === 1
       ? currentPage
