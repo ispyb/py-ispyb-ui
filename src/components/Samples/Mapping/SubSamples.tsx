@@ -138,6 +138,8 @@ export default function SubSamples({
             </React.Fragment>
           );
         }
+
+        return null
       })}
     </>
   );
