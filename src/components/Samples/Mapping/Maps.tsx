@@ -38,16 +38,15 @@ export default function Maps({
     async function getMaps() {
       const preMaps: Record<string, HTMLImageElement> = {};
       let loadedCount = 0;
-      for (const map of maps) {
-        const roiName = getROIName(map);
-        if (roiName !== selectedROI) continue;
-        if (!(map.opacity || showHidden)) continue;
-
+      const filteredMaps = maps
+        .filter((map) => getROIName(map) === selectedROI)
+        .filter((map) => map.opacity || showHidden);
+      for (const map of filteredMaps) {
         const imageData = await fetch(getXHRBlob, {
           src: `${site.host}${map._metadata.url}`,
         });
         loadedCount++;
-        setLoadingMessage(`Loaded ${loadedCount}/${maps.length} maps`);
+        setLoadingMessage(`Loaded ${loadedCount}/${filteredMaps.length} maps`);
         preMaps[`${map.xrfFluorescenceMappingId}`] = await awaitImage(
           imageData
         );
