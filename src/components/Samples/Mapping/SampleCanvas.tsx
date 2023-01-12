@@ -166,8 +166,22 @@ function SampleCanvasMain({
         className="position-absolute"
         style={{ right: 10, top: 10, zIndex: 100 }}
       >
-        {imageLoadingMessage}
-        {mapLoadingMessage}
+        {imageLoadingMessage && (
+          <span
+            className="p-1 rounded me-1 opacity-50"
+            style={{ backgroundColor: '#fff' }}
+          >
+            {imageLoadingMessage}
+          </span>
+        )}
+        {mapLoadingMessage && (
+          <span
+            className="p-1 rounded me-1 opacity-50"
+            style={{ backgroundColor: '#fff' }}
+          >
+            {mapLoadingMessage}
+          </span>
+        )}
         <Button onClick={() => centerStage()}>
           <ArrowsMove />
         </Button>
