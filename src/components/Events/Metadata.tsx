@@ -17,7 +17,7 @@ export default function Metadata(props: IMetadataProps) {
     <Container className="g-0">
       <Row className="metadata-list g-0 me-2">
         {props.properties.map((item) => (
-          <Col sm="6">
+          <Col sm="6" key={item.title}>
             <MetadataItem {...item} />
           </Col>
         ))}
@@ -49,14 +49,14 @@ export function MetadataItem(props: IMetadataItemProps) {
   );
   return (
     <React.Fragment key={props.title}>
-      <OverlayTrigger trigger="hover" placement="auto" overlay={popover}>
-        {(props.test === undefined || props.test) && (
+      {(props.test === undefined || props.test) && (
+        <OverlayTrigger trigger={['hover', 'focus']} placement="auto" overlay={popover}>
           <div className="mx-1 mb-2 p-2 bg-light text-truncate">
             <span className="text-primary">{props.title}</span>: {props.content}{' '}
             <span className="text-primary">{props.unit}</span>
           </div>
-        )}
-      </OverlayTrigger>
+        </OverlayTrigger>
+      )}
     </React.Fragment>
   );
 }
