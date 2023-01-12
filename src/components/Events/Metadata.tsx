@@ -50,7 +50,11 @@ export function MetadataItem(props: IMetadataItemProps) {
   return (
     <React.Fragment key={props.title}>
       {(props.test === undefined || props.test) && (
-        <OverlayTrigger trigger={['hover', 'focus']} placement="auto" overlay={popover}>
+        <OverlayTrigger
+          trigger={['hover', 'focus']}
+          placement="auto"
+          overlay={popover}
+        >
           <div className="mx-1 mb-2 p-2 bg-light text-truncate">
             <span className="text-primary">{props.title}</span>: {props.content}{' '}
             <span className="text-primary">{props.unit}</span>
