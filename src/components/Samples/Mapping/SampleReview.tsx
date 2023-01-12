@@ -1,6 +1,6 @@
-import { Suspense, useState, useEffect } from 'react';
+import { Suspense, useState, useEffect, useCallback, useRef } from 'react';
 import { useSuspense } from 'rest-hooks';
-import { Container, Row, Col, Form } from 'react-bootstrap';
+import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import {
   useNavigate,
   useSearchParams,
@@ -13,6 +13,8 @@ import { usePath } from 'hooks/usePath';
 import SubSampleList from './SubSampleList';
 import SubSampleView from './SubSampleView';
 import SampleCanvas from './SampleCanvas';
+import { debounce } from 'lodash';
+import { X } from 'react-bootstrap-icons';
 
 function SubSamplePanel({
   blSampleId,
@@ -42,8 +44,9 @@ function SubSamplePanel({
   );
 }
 
-export default function SampleReview() {
+function SampleReviewMain() {
   const navigate = useNavigate();
+  const searchRef = useRef<HTMLInputElement>(null);
   const [searchParams] = useSearchParams();
   // @ts-ignore
   const searchParamsObj = Object.fromEntries([...searchParams]);
@@ -52,7 +55,7 @@ export default function SampleReview() {
   const proposal = usePath('proposal');
   const samples = useSuspense(SampleResource.list(), {
     proposal,
-    limit: 9999,
+    ...(searchParamsObj.sample ? { search: searchParamsObj.sample } : null),
   });
   const [selectedSample, setSelectedSample] = useState<number | undefined>(
     searchParamsObj.blSampleId
@@ -61,6 +64,7 @@ export default function SampleReview() {
       ? samples.results[0].blSampleId
       : undefined
   );
+  console.log('Selected sample', selectedSample);
   const [selectedSubSample, setSelectedSubSample] = useState<number>();
 
   useEffect(() => {
@@ -69,20 +73,49 @@ export default function SampleReview() {
 
   console.log('SampleReviewMain render', selectedSample);
 
-  function selectSample(blSampleId: number) {
-    setSelectedSample(blSampleId);
-    setCanvasMount(false);
-    setTimeout(() => {
-      setCanvasMount(true);
-    }, 100);
-    navigate({
-      pathname: '',
-      search: createSearchParams({
-        ...searchParamsObj,
-        blSampleId: `${blSampleId}`,
-      }).toString(),
-    });
-  }
+  const selectSample = useCallback(
+    (blSampleId: number) => {
+      setSelectedSample(blSampleId);
+      setCanvasMount(false);
+      setTimeout(() => {
+        setCanvasMount(true);
+      }, 100);
+      navigate({
+        pathname: '',
+        search: createSearchParams({
+          ...searchParamsObj,
+          blSampleId: `${blSampleId}`,
+        }).toString(),
+      });
+    },
+    [setSelectedSample, setCanvasMount, navigate, searchParamsObj]
+  );
+
+  useEffect(() => {
+    if (samples.results.length === 1)
+      selectSample(samples.results[0].blSampleId);
+  }, [samples.results]);
+
+  const search = useCallback(
+    (term: string) => {
+      const { sample, ...newSearchParamsObj } = searchParamsObj;
+      navigate({
+        pathname: '',
+        search: createSearchParams({
+          ...newSearchParamsObj,
+          ...(term ? { sample: term } : null),
+        }).toString(),
+      });
+    },
+    [navigate, searchParamsObj]
+  );
+
+  const debouncedSearch = useCallback(debounce(search, 200), [search]);
+
+  const clearSearch = useCallback(() => {
+    search('');
+    if (searchRef.current) searchRef.current.value = '';
+  }, [search]);
 
   console.log('vancas mount', canvasMounted);
 
@@ -99,22 +132,38 @@ export default function SampleReview() {
                     blSampleId={selectedSample}
                     selectedSubSample={selectedSubSample}
                     selectSample={
-                      <Form.Control
-                        as="select"
-                        defaultValue={selectedSample}
-                        onChange={(event) =>
-                          selectSample(parseInt(event.target.value))
-                        }
-                      >
-                        {samples.results.map((sample) => (
-                          <option
-                            key={sample.blSampleId}
-                            value={sample.blSampleId}
-                          >
-                            {sample.name}
-                          </option>
-                        ))}
-                      </Form.Control>
+                      <>
+                        <Form.Control
+                          placeholder="Search"
+                          onChange={(evt) => debouncedSearch(evt.target.value)}
+                          defaultValue={searchParamsObj.sample}
+                          ref={searchRef}
+                        />
+                        {searchParamsObj.sample && (
+                          <Button onClick={() => clearSearch()}>
+                            <X />
+                          </Button>
+                        )}
+                        <Form.Control
+                          as="select"
+                          defaultValue={selectedSample}
+                          onChange={(event) =>
+                            selectSample(parseInt(event.target.value))
+                          }
+                        >
+                          {samples.results.map((sample) => (
+                            <option
+                              key={sample.blSampleId}
+                              value={sample.blSampleId}
+                            >
+                              {sample.name}
+                            </option>
+                          ))}
+                          {samples.total > samples.limit && (
+                            <option disabled>...</option>
+                          )}
+                        </Form.Control>
+                      </>
                     }
                   />
                 </Suspense>
@@ -131,5 +180,13 @@ export default function SampleReview() {
         )}
       </Container>
     </>
+  );
+}
+
+export default function SampleReview() {
+  return (
+    <Suspense fallback={<span>Loading Samples</span>}>
+      <SampleReviewMain />
+    </Suspense>
   );
 }
