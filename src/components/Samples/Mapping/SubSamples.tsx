@@ -139,7 +139,7 @@ export default function SubSamples({
           );
         }
 
-        return null
+        return null;
       })}
     </>
   );
