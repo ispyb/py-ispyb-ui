@@ -96,7 +96,7 @@ function SampleReviewMain() {
   useEffect(() => {
     if (samples.results.length === 1)
       selectSample(samples.results[0].blSampleId);
-  }, [samples.results]);
+  }, [samples.results]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const search = useCallback(
     (term: string) => {
@@ -112,6 +112,7 @@ function SampleReviewMain() {
     [navigate, searchParamsObj]
   );
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSearch = useCallback(debounce(search, 200), [search]);
 
   const clearSearch = useCallback(() => {
