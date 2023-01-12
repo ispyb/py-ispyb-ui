@@ -2,6 +2,7 @@ import { useSuspense } from 'rest-hooks';
 
 import { SubSampleResource } from 'api/resources/SubSample';
 import Table from 'components/Layout/Table';
+import { DCTypes } from 'components/Samples/SampleStatus';
 import { SubSample } from 'models/SubSample';
 import { usePaging } from 'hooks/usePaging';
 
@@ -50,6 +51,7 @@ export default function SubSampleList({
           {
             label: 'DC Types',
             key: '_metadata.types',
+            formatter: (row) => <DCTypes {...row} />,
             className: 'text-nowrap',
           },
         ]}
