@@ -67,10 +67,12 @@ export default function Maps({
             const map = maps.filter(
               (map) => map.xrfFluorescenceMappingId === parseInt(mapId)
             )[0];
+            if (!map) return null;
             const subsample = subsamples.filter(
               (subsample) =>
                 subsample.blSubSampleId === map._metadata.blSubSampleId
             )[0];
+            if (!subsample) return null;
 
             const width =
               (subsample.Position1 &&
