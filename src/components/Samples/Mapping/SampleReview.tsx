@@ -52,6 +52,7 @@ export default function SampleReview() {
   const proposal = usePath('proposal');
   const samples = useSuspense(SampleResource.list(), {
     proposal,
+    limit: 9999,
   });
   const [selectedSample, setSelectedSample] = useState<number | undefined>(
     searchParamsObj.blSampleId
