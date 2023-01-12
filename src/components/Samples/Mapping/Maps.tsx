@@ -18,12 +18,14 @@ export default function Maps({
   subsamples,
   showHidden,
   selectedROI,
+  mapOpacity,
   setLoadingMessage,
 }: {
   maps: Map[];
   subsamples: SubSample[];
   showHidden: boolean;
   selectedROI: string;
+  mapOpacity: number;
   setLoadingMessage: (message: string) => void;
 }) {
   const { site } = useAuth();
@@ -93,6 +95,7 @@ export default function Maps({
                 y={subsample.Position1?.posY}
                 scaleX={width / map.GridInfo.steps_x}
                 scaleY={height / map.GridInfo.steps_y}
+                opacity={mapOpacity / 100}
               />
             );
           })}
