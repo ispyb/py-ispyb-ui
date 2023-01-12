@@ -32,7 +32,7 @@ export default function SubSampleList({
         results={subsamples.results}
         onRowClick={onRowClick}
         rowClasses={(row: SubSample) =>
-          row.blSubSampleId === selectedSubSample && 'table-active'
+          row.blSubSampleId === selectedSubSample ? 'table-active' : undefined
         }
         paginator={{
           total: subsamples.total,

@@ -1,18 +1,18 @@
 import { Suspense, useState, useEffect } from 'react';
 import { useSuspense } from 'rest-hooks';
 import { Container, Row, Col, Form } from 'react-bootstrap';
-
-import { useProposal } from 'hooks/useProposal';
-import { SampleResource } from 'api/resources/Sample';
-
-import SubSampleList from './SubSampleList';
-import SubSampleView from './SubSampleView';
-import SampleCanvas from './SampleCanvas';
 import {
   useNavigate,
   useSearchParams,
   createSearchParams,
 } from 'react-router-dom';
+
+import { SampleResource } from 'api/resources/Sample';
+import { usePath } from 'hooks/usePath';
+
+import SubSampleList from './SubSampleList';
+import SubSampleView from './SubSampleView';
+import SampleCanvas from './SampleCanvas';
 
 function SubSamplePanel({
   blSampleId,
@@ -49,9 +49,9 @@ export default function SampleReview() {
   const searchParamsObj = Object.fromEntries([...searchParams]);
 
   const [canvasMounted, setCanvasMount] = useState<boolean>(true);
-  const proposal = useProposal();
+  const proposal = usePath('proposal');
   const samples = useSuspense(SampleResource.list(), {
-    proposal: proposal.proposalName,
+    proposal,
   });
   const [selectedSample, setSelectedSample] = useState<number | undefined>(
     searchParamsObj.blSampleId

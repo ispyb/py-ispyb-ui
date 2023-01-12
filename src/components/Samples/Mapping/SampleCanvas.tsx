@@ -24,12 +24,14 @@ function SampleCanvasMain({
   selectedROI,
   selectedSubSample,
   showHidden,
+  showPOI,
 }: {
   images: SampleImage[];
   subsamples: SubSample[];
   maps: Map[];
   selectedROI: string;
   showHidden: boolean;
+  showPOI: boolean;
   selectedSubSample: number | undefined;
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -37,6 +39,8 @@ function SampleCanvasMain({
   const [bounds, setBounds] = useState<number[]>([0, 0, 0, 0]);
   const [scaleFactor, setScaleFactor] = useState<number>(1);
   const [parentSize, setParentSize] = useState<number[]>([1000, 800]);
+  const [imageLoadingMessage, setImageLoadingMessage] = useState<string>('');
+  const [mapLoadingMessage, setMapLoadingMessage] = useState<string>('');
 
   const stageRef = useRef<Konva.Stage>(null);
 
@@ -49,28 +53,30 @@ function SampleCanvasMain({
     }
   }, [wrapRef]);
 
-  const scaleStroke = useCallback(
-    (scale: number) => {
-      const stage = stageRef.current;
-      if (stage !== null) {
-        const rects = stage.find('Rect');
-        rects.forEach((rect) => {
-          rect.setAttrs({
-            strokeWidth: 1 / scale,
-          });
+  const scaleStroke = useCallback(() => {
+    const stage = stageRef.current;
+    if (stage !== null) {
+      const scale = stage.scaleX();
+      const rects = stage.find('Rect');
+      rects.forEach((rect) => {
+        rect.setAttrs({
+          strokeWidth: 1 / scale,
         });
+      });
 
-        const labels = stage.find('Text');
-        labels.forEach((rect) => {
-          rect.scale({
-            x: 1 / scale,
-            y: 1 / scale,
-          });
+      const labels = stage.find('Text');
+      labels.forEach((rect) => {
+        rect.scale({
+          x: 1 / scale,
+          y: 1 / scale,
         });
-      }
-    },
-    [stageRef]
-  );
+      });
+    }
+  }, [stageRef]);
+
+  useEffect(() => {
+    scaleStroke();
+  }, [showPOI, scaleStroke]);
 
   const zoomStage = useCallback(
     (event: any) => {
@@ -93,7 +99,7 @@ function SampleCanvasMain({
           y: pointerY - mousePointTo.y * newScale,
         };
         stage.position(newPos);
-        scaleStroke(newScale);
+        scaleStroke();
         stage.batchDraw();
       }
     },
@@ -142,7 +148,7 @@ function SampleCanvasMain({
         x: -cenX * scale + parentSize[0] / 2,
         y: -cenY * scale + parentSize[1] / 2,
       });
-      scaleStroke(scale);
+      scaleStroke();
       stage.batchDraw();
     }
   }, [subsamples, parentSize, scaleStroke]);
@@ -156,13 +162,16 @@ function SampleCanvasMain({
 
   return (
     <div className="stage-wrapper position-relative" ref={wrapRef}>
-      <Button
-        onClick={() => centerStage()}
+      <div
         className="position-absolute"
         style={{ right: 10, top: 10, zIndex: 100 }}
       >
-        <ArrowsMove />
-      </Button>
+        {imageLoadingMessage}
+        {mapLoadingMessage}
+        <Button onClick={() => centerStage()}>
+          <ArrowsMove />
+        </Button>
+      </div>
       <Stage
         key="canvas"
         width={parentSize[0]}
@@ -173,7 +182,7 @@ function SampleCanvasMain({
         style={{ border: '1px solid #ccc' }}
       >
         <Layer imageSmoothingEnabled={false}>
-          <Images images={images} />
+          <Images images={images} setLoadingMessage={setImageLoadingMessage} />
           {showBounds && bounds && bounds[0] > 0 && (
             <Rect
               key="bounds"
@@ -203,11 +212,13 @@ function SampleCanvasMain({
             subsamples={subsamples}
             showHidden={showHidden}
             selectedROI={selectedROI}
+            setLoadingMessage={setMapLoadingMessage}
           />
           <SubSamples
             subsamples={subsamples}
             scaleFactor={scaleFactor}
             selectedSubSample={selectedSubSample}
+            showPOI={showPOI}
           />
         </Layer>
       </Stage>
@@ -241,6 +252,7 @@ export default function SampleCanvas({
     (maps.results.length && getROIName(maps.results[0])) || ''
   );
   const [showHidden, setShowHidden] = useState<boolean>(false);
+  const [showPOI, setShowPOI] = useState<boolean>(true);
 
   return (
     <div>
@@ -266,6 +278,13 @@ export default function SampleCanvas({
               label="Show Hidden Maps"
               onChange={(e) => setShowHidden(e.target.checked)}
             />
+            <Form.Check
+              style={{ flex: 1 }}
+              className="ms-2 text-nowrap"
+              type="switch"
+              label="Hide POIs"
+              onChange={(e) => setShowPOI(!e.target.checked)}
+            />
           </Form>
         </Container>
       </Navbar>
@@ -275,6 +294,7 @@ export default function SampleCanvas({
         maps={maps.results}
         selectedROI={selectedROI}
         showHidden={showHidden}
+        showPOI={showPOI}
         selectedSubSample={selectedSubSample}
       />
     </div>
