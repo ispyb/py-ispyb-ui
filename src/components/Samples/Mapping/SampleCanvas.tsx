@@ -25,6 +25,7 @@ function SampleCanvasMain({
   selectedSubSample,
   showHidden,
   showPOI,
+  mapOpacity,
 }: {
   images: SampleImage[];
   subsamples: SubSample[];
@@ -32,6 +33,7 @@ function SampleCanvasMain({
   selectedROI: string;
   showHidden: boolean;
   showPOI: boolean;
+  mapOpacity: number;
   selectedSubSample: number | undefined;
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -227,6 +229,7 @@ function SampleCanvasMain({
             showHidden={showHidden}
             selectedROI={selectedROI}
             setLoadingMessage={setMapLoadingMessage}
+            mapOpacity={mapOpacity}
           />
           <SubSamples
             subsamples={subsamples}
@@ -267,6 +270,7 @@ export default function SampleCanvas({
   );
   const [showHidden, setShowHidden] = useState<boolean>(false);
   const [showPOI, setShowPOI] = useState<boolean>(true);
+  const [mapOpacity, setMapOpacity] = useState<number>(100);
 
   return (
     <div>
@@ -292,6 +296,14 @@ export default function SampleCanvas({
               label="Show Hidden Maps"
               onChange={(e) => setShowHidden(e.target.checked)}
             />
+            <Form.Range
+              className="ms-2"
+              min={0}
+              max={100}
+              defaultValue={mapOpacity}
+              onChange={(evt) => setMapOpacity(parseInt(evt.target.value))}
+            />
+            <Form.Label className="ms-2 text-nowrap">Map Opacity</Form.Label>
             <Form.Check
               style={{ flex: 1 }}
               className="ms-2 text-nowrap"
@@ -309,6 +321,7 @@ export default function SampleCanvas({
         selectedROI={selectedROI}
         showHidden={showHidden}
         showPOI={showPOI}
+        mapOpacity={mapOpacity}
         selectedSubSample={selectedSubSample}
       />
     </div>
