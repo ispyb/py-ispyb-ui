@@ -29,9 +29,11 @@ export function toCanvasCoordinates({ x, y }: { x: number; y: number }): {
 
 export default function Images({
   images,
+  setLoadingMessage,
 }: // blSampleId,
 {
   images: SampleImage[];
+  setLoadingMessage: (message: string) => void;
   // blSampleId: number;
 }) {
   const { site } = useAuth();
@@ -50,20 +52,23 @@ export default function Images({
 
     async function getImages() {
       const preImages: Record<string, HTMLImageElement> = {};
+      let loadedCount = 0;
       for (const image of images) {
         const imageData = await fetch(getXHRBlob, {
           src: `${site.host}${image._metadata.url}`,
         });
+        loadedCount++;
+        setLoadingMessage(`Loaded ${loadedCount}/${images.length} images`);
         // console.log('loaded image', imageData);
         preImages[`${image.blSampleImageId}`] = await awaitImage(imageData);
       }
       setPreImages(preImages);
+      setImagesLoaded(true);
+      setLoadingMessage('');
+      console.log('images loaded');
     }
     getImages();
-    console.log('images loaded');
-
-    setImagesLoaded(true);
-  }, [images, fetch, site.host]);
+  }, [images, fetch, site.host, setLoadingMessage]);
 
   return (
     <>

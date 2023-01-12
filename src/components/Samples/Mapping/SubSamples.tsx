@@ -49,10 +49,12 @@ export default function SubSamples({
   subsamples,
   scaleFactor,
   selectedSubSample,
+  showPOI,
 }: {
   subsamples: SubSample[];
   scaleFactor: number;
   selectedSubSample: number | undefined;
+  showPOI: boolean;
 }) {
   return (
     <>
@@ -105,31 +107,37 @@ export default function SubSamples({
           );
         }
 
-        return (
-          <React.Fragment key={subsample.blSubSampleId}>
-            <Cross
-              key="point"
-              x={subsample.Position1?.posX}
-              y={subsample.Position1?.posY}
-              strokeWidth={strokeWidth}
-              fill={
-                subsample.blSubSampleId === selectedSubSample ? 'red' : 'green'
-              }
-            />
-            <Text
-              key="text"
-              text={`${subsample.blSubSampleId}`}
-              stroke={
-                subsample.blSubSampleId === selectedSubSample ? 'red' : 'green'
-              }
-              fontSize={fontSize}
-              scaleX={fontScale}
-              scaleY={fontScale}
-              x={(subsample.Position1?.posX || 0) + textOffset}
-              y={(subsample.Position1?.posY || 0) + textOffset}
-            />
-          </React.Fragment>
-        );
+        if (subsample.type === 'poi' && showPOI) {
+          return (
+            <React.Fragment key={subsample.blSubSampleId}>
+              <Cross
+                key="point"
+                x={subsample.Position1?.posX}
+                y={subsample.Position1?.posY}
+                strokeWidth={strokeWidth}
+                fill={
+                  subsample.blSubSampleId === selectedSubSample
+                    ? 'red'
+                    : 'green'
+                }
+              />
+              <Text
+                key="text"
+                text={`${subsample.blSubSampleId}`}
+                stroke={
+                  subsample.blSubSampleId === selectedSubSample
+                    ? 'red'
+                    : 'green'
+                }
+                fontSize={fontSize}
+                scaleX={fontScale}
+                scaleY={fontScale}
+                x={(subsample.Position1?.posX || 0) + textOffset}
+                y={(subsample.Position1?.posY || 0) + textOffset}
+              />
+            </React.Fragment>
+          );
+        }
       })}
     </>
   );

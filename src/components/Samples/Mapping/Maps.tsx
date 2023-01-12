@@ -18,11 +18,13 @@ export default function Maps({
   subsamples,
   showHidden,
   selectedROI,
+  setLoadingMessage,
 }: {
   maps: Map[];
   subsamples: SubSample[];
   showHidden: boolean;
   selectedROI: string;
+  setLoadingMessage: (message: string) => void;
 }) {
   const { site } = useAuth();
   const { fetch } = useController();
@@ -35,6 +37,7 @@ export default function Maps({
 
     async function getMaps() {
       const preMaps: Record<string, HTMLImageElement> = {};
+      let loadedCount = 0;
       for (const map of maps) {
         const roiName = getROIName(map);
         if (roiName !== selectedROI) continue;
@@ -43,17 +46,19 @@ export default function Maps({
         const imageData = await fetch(getXHRBlob, {
           src: `${site.host}${map._metadata.url}`,
         });
+        loadedCount++;
+        setLoadingMessage(`Loaded ${loadedCount}/${maps.length} maps`);
         preMaps[`${map.xrfFluorescenceMappingId}`] = await awaitImage(
           imageData
         );
       }
       setPreMaps(preMaps);
+      setMapsLoaded(true);
+      setLoadingMessage('');
+      console.log('maps loaded');
     }
     getMaps();
-    console.log('maps loaded');
-
-    setMapsLoaded(true);
-  }, [maps, fetch, site.host, selectedROI, showHidden]);
+  }, [maps, fetch, site.host, selectedROI, showHidden, setLoadingMessage]);
 
   return (
     <>
