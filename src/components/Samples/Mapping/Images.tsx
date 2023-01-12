@@ -78,7 +78,7 @@ export default function Images({
             const image = images.filter(
               (image) => image.blSampleImageId === parseInt(imageId)
             )[0];
-            if (!image) return null
+            if (!image) return null;
             return (
               <KonvaImage
                 key={image.blSampleImageId}
