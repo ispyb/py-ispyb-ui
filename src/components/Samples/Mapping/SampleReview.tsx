@@ -55,6 +55,8 @@ function SampleReviewMain() {
   const proposal = usePath('proposal');
   const samples = useSuspense(SampleResource.list(), {
     proposal,
+    order: 'asc',
+    order_by: 'name',
     ...(searchParamsObj.sample ? { search: searchParamsObj.sample } : null),
   });
   const [selectedSample, setSelectedSample] = useState<number | undefined>(
