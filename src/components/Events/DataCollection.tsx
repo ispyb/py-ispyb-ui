@@ -16,6 +16,7 @@ import Default from './DataCollections/Default';
 import Mesh from './DataCollections/Mesh';
 import EM from './DataCollections/EM';
 import SSX from './DataCollections/SSX/SSX';
+import Map from './DataCollections/Mapping/Map';
 
 function renderInner({
   item,
@@ -33,6 +34,8 @@ function renderInner({
     EM: EM,
     'SSX-Chip': SSX,
     'SSX-Jet': SSX,
+    'XRF map': Map,
+    'XRF map xas': Map,
   };
 
   const Component =
