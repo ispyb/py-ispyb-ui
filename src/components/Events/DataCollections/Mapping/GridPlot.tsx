@@ -101,11 +101,15 @@ function GridPlotMain({
 
   const mapWidth =
     gridInfo.steps_x && gridInfo.dx_mm
-      ? gridInfo.steps_x * (1 / pixelsPerMicronX) * gridInfo.dx_mm * 1e3
+      ? Math.abs(
+          gridInfo.steps_x * (1 / pixelsPerMicronX) * gridInfo.dx_mm * 1e3
+        )
       : 1;
   const mapHeight =
     gridInfo.steps_y && gridInfo.dy_mm
-      ? gridInfo.steps_y * (1 / -pixelsPerMicronY) * gridInfo.dy_mm * 1e3
+      ? Math.abs(
+          gridInfo.steps_y * (1 / pixelsPerMicronY) * gridInfo.dy_mm * 1e3
+        )
       : 1;
 
   const zoomStage = useCallback(
