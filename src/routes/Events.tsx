@@ -2,9 +2,25 @@ import type {
   BreadcrumbComponentType,
   BreadcrumbMatch,
 } from 'use-react-router-breadcrumbs';
-import EventsList from 'components/Events/EventsList';
-import SampleChanger from 'components/Samples/SampleChanger';
-import ImageViewer from 'components/Events/DataCollections/Braggy/ImageViewer';
+import React from 'react';
+
+const EventsList = React.lazy(() =>
+  import('components/Events' /* webpackChunkName: "events" */).then((m) => ({
+    default: m.EventsList,
+  }))
+);
+
+const ImageViewer = React.lazy(() =>
+  import('components/Events').then((m) => ({
+    default: m.ImageViewer,
+  }))
+);
+
+const SampleChanger = React.lazy(() =>
+  import('components/Samples' /* webpackChunkName: "samples" */).then((m) => ({
+    default: m.SampleChanger,
+  }))
+);
 
 const SessionBreadCrumb: BreadcrumbComponentType<'sessionId'> = ({ match }) => {
   return <>{match.params.sessionId}</>;

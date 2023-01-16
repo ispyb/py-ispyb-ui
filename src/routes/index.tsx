@@ -9,11 +9,19 @@ import AdminRoutes from 'routes/Admin';
 import BeamLineRoutes from 'routes/BeamLine';
 
 import PrivateRoute from 'components/Auth/PrivateRoute';
-import Home from 'components/Home';
-import Calendar from 'components/Calendar';
+
 import PyRoute from 'components/Auth/PyRoute';
 import JavaRoute from 'components/Auth/JavaRoute';
 import javaRoutes from 'legacy/routes';
+import React from 'react';
+
+const Home = React.lazy(
+  () => import('components/Home' /* webpackChunkName: "home" */)
+);
+
+const Calendar = React.lazy(
+  () => import('components/Calendar' /* webpackChunkName: "calendar" */)
+);
 
 export interface TitledBreadcrumbsRoute extends BreadcrumbsRoute {
   titleBreadcrumb?: ({ match }: { match: BreadcrumbMatch<string> }) => string;

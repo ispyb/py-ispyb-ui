@@ -1,7 +1,6 @@
 import { Col, Container, Row } from 'react-bootstrap';
 import React from 'react';
 import SimpleParameterTable from 'legacy/components/table/simpleparametertable';
-import 'react-medium-image-zoom/dist/styles.css';
 import { SampleList } from 'legacy/pages/em/model';
 
 export default function GridSquarePanelHeader({
