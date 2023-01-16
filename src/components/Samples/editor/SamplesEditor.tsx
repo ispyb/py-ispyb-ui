@@ -271,9 +271,18 @@ function validateSample(sample: Sample) {
       const quantityError =
         v.abundance || v.ph || v.ratio
           ? undefined
-          : 'One of abundance, ph and ratio is mandatory.';
+          : 'One of concentration, ph and ratio is mandatory.';
+
+      const componentError =
+        v.Component === undefined ||
+        Object.keys(v.Component).length === 0 ||
+        v.Component.name === undefined ||
+        v.Component.ComponentType === undefined
+          ? 'Please select component and type.'
+          : undefined;
       return {
         quantity: quantityError,
+        Component: componentError,
       };
     }),
     Crystal: {
@@ -285,9 +294,17 @@ function validateSample(sample: Sample) {
         const quantityError =
           v.abundance || v.ph || v.ratio
             ? undefined
-            : 'One of abundance, ph and ratio is mandatory.';
+            : 'One of concentration, ph and ratio is mandatory.';
+        const componentError =
+          v.Component === undefined ||
+          Object.keys(v.Component).length === 0 ||
+          v.Component.name === undefined ||
+          v.Component.ComponentType === undefined
+            ? 'Please select component and type.'
+            : undefined;
         return {
           quantity: quantityError,
+          Component: componentError,
         };
       }),
     },
@@ -619,7 +636,9 @@ function CompositionsEdit({
 
   const onNewComponent = () => {
     onChange.value(compositions.length)({
-      Component: { ...components.results[0] },
+      Component: {
+        ...(components.results.length ? components.results[0] : {}),
+      },
     });
   };
 
@@ -671,7 +690,7 @@ function CompositionEdit({
     .uniq()
     .value();
 
-  const selectedType = composition.Component.ComponentType.name;
+  const selectedType = composition.Component?.ComponentType?.name;
 
   const onSelectType = (newValue: string) => {
     const newComponent = _(components.results)
@@ -729,7 +748,7 @@ function CompositionEdit({
     <Form>
       <Row className="align-items-end">
         <Col>
-          <Form.Label>Abundance</Form.Label>
+          <Form.Label>Concentration</Form.Label>
           <Form.Control
             value={composition.abundance || ''}
             type="number"
@@ -776,8 +795,8 @@ function CompositionEdit({
           <Form.Label>Component</Form.Label>
           <CreatableSelect<ComponentOption>
             value={{
-              label: composition.Component.name,
-              value: composition.Component.name,
+              label: composition.Component?.name,
+              value: composition.Component?.name,
             }}
             options={[componentOptionsGroup]}
             onChange={(newValue) =>
@@ -793,10 +812,19 @@ function CompositionEdit({
         </Col>
       </Row>
       <Row>
-        <div className="is-invalid"></div>
-        <Form.Control.Feedback type="invalid">
-          {getErrorMessage(errors, 'quantity')}
-        </Form.Control.Feedback>
+        <Col xs={'auto'}>
+          <div className="is-invalid"></div>
+          <Form.Control.Feedback type="invalid">
+            {getErrorMessage(errors, 'quantity')}
+          </Form.Control.Feedback>
+        </Col>
+        <Col></Col>
+        <Col xs={'auto'}>
+          <div className="is-invalid"></div>
+          <Form.Control.Feedback type="invalid" style={{ paddingRight: 60 }}>
+            {getErrorMessage(errors, 'Component')}
+          </Form.Control.Feedback>
+        </Col>
       </Row>
     </Form>
   );
