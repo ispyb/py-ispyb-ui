@@ -62,17 +62,21 @@ export default function Map(props: IDataCollection) {
               content: item.exposureTime,
               unit: 's',
             },
-            {
-              title: 'Step Size',
-              content: `${(item.GridInfo?.[0].dx_mm || 0) * 1e3} x ${
-                (item.GridInfo?.[0].dy_mm || 0) * 1e3
-              }`,
-              unit: 'µm',
-            },
-            {
-              title: 'Steps',
-              content: `${item.GridInfo?.[0].steps_x} x ${item.GridInfo?.[0].steps_y}`,
-            },
+            ...(item.GridInfo?.length
+              ? [
+                  {
+                    title: 'Step Size',
+                    content: `${(item.GridInfo?.[0].dx_mm || 0) * 1e3} x ${
+                      (item.GridInfo?.[0].dy_mm || 0) * 1e3
+                    }`,
+                    unit: 'µm',
+                  },
+                  {
+                    title: 'Steps',
+                    content: `${item.GridInfo?.[0].steps_x} x ${item.GridInfo?.[0].steps_y}`,
+                  },
+                ]
+              : []),
           ]}
         />
       </Col>
