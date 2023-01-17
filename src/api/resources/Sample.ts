@@ -1,5 +1,5 @@
 import createPaginatedResource from './Base/Paginated';
-import { SampleBase } from 'models/Sample';
+import { ConcentrationTypeBase, SampleBase } from 'models/Sample';
 import { ComponentBase } from 'models/Component';
 
 export class SampleEntity extends SampleBase {
@@ -26,4 +26,17 @@ export class ComponentEntity extends ComponentBase {
 export const ComponentResource = createPaginatedResource({
   path: '/samples/components/:componentId',
   schema: ComponentEntity,
+});
+
+class ConcentrationTypeEntity extends ConcentrationTypeBase {
+  readonly concentrationTypeId: number;
+
+  pk() {
+    return this.concentrationTypeId?.toString();
+  }
+}
+
+export const ConcentrationTypeResource = createPaginatedResource({
+  path: '/samples/concentration/types/:concentrationTypeId',
+  schema: ConcentrationTypeEntity,
 });

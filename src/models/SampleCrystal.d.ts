@@ -30,6 +30,9 @@ export type Componentid1 = number;
 export type Abundance1 = null | number;
 export type Ratio = null | number;
 export type PH = null | number;
+export type Id = number;
+export type Name3 = string;
+export type Symbol = string;
 export type CrystalCompositions = Composition[];
 
 export interface SampleCrystal {
@@ -60,6 +63,7 @@ export interface Composition {
   abundance?: Abundance1;
   ratio?: Ratio;
   ph?: PH;
+  ConcentrationType?: ConcentrationType;
 }
 export interface Component {
   componentId: Componentid;
@@ -69,6 +73,11 @@ export interface Component {
 }
 export interface ComponentType {
   name: Name2;
+}
+export interface ConcentrationType {
+  concentrationTypeId: Id;
+  name: Name3;
+  symbol: Symbol;
 }
 
 type Constructor<T = {}> = new (...args: any[]) => T;
@@ -105,6 +114,7 @@ export function withComposition<TBase extends Constructor>(Base: TBase) {
     abundance?: Abundance1;
     ratio?: Ratio;
     ph?: PH;
+    ConcentrationType?: ConcentrationType;
   }
 }
 export function withComponent<TBase extends Constructor>(Base: TBase) {
@@ -118,5 +128,12 @@ export function withComponent<TBase extends Constructor>(Base: TBase) {
 export function withComponentType<TBase extends Constructor>(Base: TBase) {
   return class WithComponentType extends Base {
     name: Name2;
+  }
+}
+export function withConcentrationType<TBase extends Constructor>(Base: TBase) {
+  return class WithConcentrationType extends Base {
+    concentrationTypeId: Id;
+    name: Name3;
+    symbol: Symbol;
   }
 }

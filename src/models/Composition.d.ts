@@ -13,6 +13,9 @@ export type Componentid1 = number;
 export type Abundance = null | number;
 export type Ratio = null | number;
 export type PH = null | number;
+export type Id = number;
+export type Name2 = string;
+export type Symbol = string;
 
 export interface Composition {
   Component: Component;
@@ -20,6 +23,7 @@ export interface Composition {
   abundance?: Abundance;
   ratio?: Ratio;
   ph?: PH;
+  ConcentrationType?: ConcentrationType;
 }
 export interface Component {
   componentId: Componentid;
@@ -30,6 +34,11 @@ export interface Component {
 export interface ComponentType {
   name: Name1;
 }
+export interface ConcentrationType {
+  concentrationTypeId: Id;
+  name: Name2;
+  symbol: Symbol;
+}
 
 type Constructor<T = {}> = new (...args: any[]) => T;
 export function withComposition<TBase extends Constructor>(Base: TBase) {
@@ -39,6 +48,7 @@ export function withComposition<TBase extends Constructor>(Base: TBase) {
     abundance?: Abundance;
     ratio?: Ratio;
     ph?: PH;
+    ConcentrationType?: ConcentrationType;
   }
 }
 export function withComponent<TBase extends Constructor>(Base: TBase) {
@@ -52,5 +62,12 @@ export function withComponent<TBase extends Constructor>(Base: TBase) {
 export function withComponentType<TBase extends Constructor>(Base: TBase) {
   return class WithComponentType extends Base {
     name: Name1;
+  }
+}
+export function withConcentrationType<TBase extends Constructor>(Base: TBase) {
+  return class WithConcentrationType extends Base {
+    concentrationTypeId: Id;
+    name: Name2;
+    symbol: Symbol;
   }
 }

@@ -7,22 +7,57 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ProteinResource } from 'api/resources/Protein';
-import { ComponentResource, SampleResource } from 'api/resources/Sample';
+import {
+  ComponentResource,
+  ConcentrationTypesRessource,
+  SampleResource,
+} from 'api/resources/Sample';
 import Loading from 'components/Loading';
 import { usePath } from 'hooks/usePath';
-import produce from 'immer';
 import _ from 'lodash';
-import { set } from 'lodash';
 import { Sample, Composition, Crystal } from 'models/Sample';
 import { Suspense, useState } from 'react';
-import { Button, Col, Container, Modal, Row, Form } from 'react-bootstrap';
+import {
+  Button,
+  Col,
+  Container,
+  Modal,
+  Row,
+  Form,
+  Alert,
+} from 'react-bootstrap';
 import LazyLoad from 'react-lazy-load';
 import ReactSelect, { GroupBase } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { useController, useSuspense } from 'rest-hooks';
+import {
+  useFormChangeHandler,
+  ErrorListType,
+  getErrorMessage,
+  getSubFormErrors,
+  hasErrors,
+  SubFormProps,
+} from './formlogic';
 
-export function RemoveSampleButton({ sample }: { sample: Sample }) {
-  const onClick = () => {};
+export function RemoveSampleButton({
+  sample,
+  onDone,
+}: {
+  sample: Sample;
+  onDone: () => void;
+}) {
+  const controller = useController();
+
+  const onClick = () => {
+    controller
+      .fetch(SampleResource.delete(), {
+        blSampleId: sample.blSampleId,
+      })
+      .then(() => onDone());
+  };
+
+  if (sample._metadata?.datacollections || sample._metadata?.autoIntegrations)
+    return null;
   return (
     <Button
       size="sm"
@@ -90,11 +125,19 @@ export function CreateSampleModal({ onDone }: { onDone: () => void }) {
   );
 }
 
-export function EditSampleModal({ sample }: { sample: Sample }) {
+export function EditSampleModal({
+  sample,
+  onDone,
+}: {
+  sample: Sample;
+  onDone: () => void;
+}) {
   const [show, setShow] = useState(false);
   const onClick = () => {
     setShow(true);
   };
+  const collected =
+    sample._metadata?.datacollections || sample._metadata?.autoIntegrations;
   return (
     <>
       <Button size="sm" className="text-nowrap" onClick={onClick}>
@@ -112,10 +155,19 @@ export function EditSampleModal({ sample }: { sample: Sample }) {
           <h5>Edit sample</h5>
         </Modal.Header>
         <Modal.Body>
+          {collected ? (
+            <Alert variant="warning">
+              This sample is already collected. Are you sure you want to edit
+              it?
+            </Alert>
+          ) : null}
           <LazyLoad>
             <Suspense fallback={<Loading></Loading>}>
               <EditSampleContent
-                onDone={() => setShow(false)}
+                onDone={() => {
+                  setShow(false);
+                  onDone();
+                }}
                 sample={sample}
               />
             </Suspense>
@@ -124,143 +176,6 @@ export function EditSampleModal({ sample }: { sample: Sample }) {
       </Modal>
     </>
   );
-}
-
-type OnChangeFormEventType = (
-  property: _.PropertyPath
-) => React.ChangeEventHandler;
-
-type OnChangeFormValueType = (property: _.PropertyPath) => (value: any) => void;
-
-type OnChangeSubFormType = (property: _.PropertyPath) => SubFormProps;
-
-type OnChangeFormRemoveType = () => void;
-type OnChangeFormReplaceType = (value: any) => void;
-
-type SubFormProps = {
-  event: OnChangeFormEventType;
-  subForm: OnChangeSubFormType;
-  value: OnChangeFormValueType;
-  remove: OnChangeFormRemoveType;
-  replace: OnChangeFormReplaceType;
-};
-
-type ErrorListType =
-  | { [k: string]: ErrorListType }
-  | undefined
-  | ErrorListType[]
-  | string[]
-  | string;
-
-const getSubFormErrors = (
-  e: ErrorListType,
-  path: string | number
-): ErrorListType => {
-  if (e === undefined) return undefined;
-  if (typeof e === 'string') return undefined;
-  return _.get(e, path, undefined);
-};
-const getErrorMessage = (
-  e: ErrorListType,
-  path?: string | number
-): string | undefined => {
-  if (e === undefined) return undefined;
-  if (!path && typeof e === 'string') return e;
-  if (path) return _.get(e, path, undefined);
-  return undefined;
-};
-
-const hasErrors = (e: ErrorListType): boolean => {
-  if (e === undefined) return false;
-  if (typeof e === 'string') return true;
-  if (!Array.isArray(e)) {
-    for (const path in e) {
-      const v = e[path];
-      if (typeof v == 'string') return true;
-      if (hasErrors(v)) return true;
-    }
-  } else {
-    for (const v of e) {
-      if (hasErrors(v)) return true;
-    }
-  }
-  return false;
-};
-
-function useFormChangeHandler<T extends Object>(
-  v: T
-): [T, OnChangeFormValueType, OnChangeFormEventType, OnChangeSubFormType] {
-  const [vState, setVState] = useState({ ...v });
-
-  const onChange = (property: _.PropertyPath) => {
-    return (newValue: any) => {
-      const next = produce(vState, (draft) => {
-        const v = newValue === '' || newValue === null ? undefined : newValue;
-        set(draft, property, v);
-      });
-      setVState(next);
-      console.log(next);
-    };
-  };
-
-  const onChangeFormEvent: OnChangeFormEventType = (
-    property: _.PropertyPath
-  ) => {
-    return (e: React.ChangeEvent<HTMLInputElement>) => {
-      onChange(property)(e.target.value);
-    };
-  };
-
-  const onChangeFormValue: OnChangeFormValueType = (
-    property: _.PropertyPath
-  ) => {
-    return (value: any) => {
-      onChange(property)(value);
-    };
-  };
-
-  const onChangeSubForm: OnChangeSubFormType = (property: _.PropertyPath) => {
-    function concatPropertyPath(
-      a: _.PropertyPath,
-      b: _.PropertyPath
-    ): _.PropertyPath {
-      if (Array.isArray(a)) {
-        if (Array.isArray(b)) {
-          return [...a, ...b];
-        } else {
-          return [...a, b];
-        }
-      } else {
-        if (Array.isArray(b)) {
-          return [a, ...b];
-        } else {
-          return [a as any, b];
-        }
-      }
-    }
-    const event: OnChangeFormEventType = (subProperty: _.PropertyPath) => {
-      return onChangeFormEvent(concatPropertyPath(property, subProperty));
-    };
-
-    const value: OnChangeFormValueType = (subProperty: _.PropertyPath) => {
-      return onChangeFormValue(concatPropertyPath(property, subProperty));
-    };
-
-    const remove = () => {
-      onChangeFormValue(property)(undefined);
-    };
-
-    const replace = (value: any) => {
-      onChangeFormValue(property)(value);
-    };
-
-    const subForm: OnChangeSubFormType = (subProperty: _.PropertyPath) => {
-      return onChangeSubForm(concatPropertyPath(property, subProperty));
-    };
-    return { event, value, subForm, remove, replace };
-  };
-
-  return [vState, onChange, onChangeFormEvent, onChangeSubForm];
 }
 
 function validateSample(sample: Sample) {
@@ -285,29 +200,34 @@ function validateSample(sample: Sample) {
         Component: componentError,
       };
     }),
-    Crystal: {
-      Protein: sample.Crystal.Protein?.acronym
-        ? undefined
-        : 'Protein is mandatory',
-      crystal_compositions: sample.Crystal.crystal_compositions?.map((v) => {
-        if (v === undefined) return undefined;
-        const quantityError =
-          v.abundance || v.ph || v.ratio
-            ? undefined
-            : 'One of concentration, ph and ratio is mandatory.';
-        const componentError =
-          v.Component === undefined ||
-          Object.keys(v.Component).length === 0 ||
-          v.Component.name === undefined ||
-          v.Component.ComponentType === undefined
-            ? 'Please select component and type.'
-            : undefined;
-        return {
-          quantity: quantityError,
-          Component: componentError,
-        };
-      }),
-    },
+    Crystal:
+      sample.Crystal === undefined
+        ? 'Crystal is mandatory'
+        : {
+            Protein: sample.Crystal.Protein?.acronym
+              ? undefined
+              : 'Protein is mandatory',
+            crystal_compositions: sample.Crystal.crystal_compositions?.map(
+              (v) => {
+                if (v === undefined) return undefined;
+                const quantityError =
+                  v.abundance || v.ph || v.ratio
+                    ? undefined
+                    : 'One of concentration, ph and ratio is mandatory.';
+                const componentError =
+                  v.Component === undefined ||
+                  Object.keys(v.Component).length === 0 ||
+                  v.Component.name === undefined ||
+                  v.Component.ComponentType === undefined
+                    ? 'Please select component and type.'
+                    : undefined;
+                return {
+                  quantity: quantityError,
+                  Component: componentError,
+                };
+              }
+            ),
+          },
   };
 }
 
@@ -388,6 +308,7 @@ function EditSampleContent({
           onChange={onChangeSubForm('Crystal')}
           sample={sampleState}
           errors={getSubFormErrors(errors, 'Crystal')}
+          crystalError={getErrorMessage(errors, 'Crystal')}
         />
         <br />
         <Row>
@@ -412,14 +333,30 @@ function CrystalEdit({
   sample,
   onChange,
   errors,
+  crystalError,
 }: {
   sample: Sample;
   onChange: SubFormProps;
   errors: ErrorListType;
+  crystalError: string | undefined;
 }) {
   const [newCrystal, setNewCrystal] = useState(false);
   const getCrystalValue = (crystal: Crystal) => {
-    return `${crystal.Protein.acronym} [${crystal.cell_a}, ${crystal.cell_b}, ${crystal.cell_c}, ${crystal.cell_alpha}, ${crystal.cell_beta}, ${crystal.cell_gamma}]`;
+    if (crystal === undefined) return 'undefined';
+    const cells = [
+      crystal.cell_a,
+      crystal.cell_b,
+      crystal.cell_c,
+      crystal.cell_alpha,
+      crystal.cell_beta,
+      crystal.cell_gamma,
+    ];
+    if (cells.every((v) => !v)) {
+      return `${crystal.Protein.acronym}`;
+    }
+    return `${crystal.Protein.acronym} [${cells
+      .map((c) => (c ? c : 'null'))
+      .join(', ')}]`;
   };
   const proposal = usePath('proposal');
 
@@ -593,25 +530,48 @@ function CrystalEdit({
             </Row>
           </div>
         ) : (
-          <div>
-            <h4>Crystal</h4>
-            <CreatableSelect
-              value={{
-                label: getCrystalValue(sample.Crystal),
-                value: getCrystalValue(sample.Crystal),
-              }}
-              options={[crystalOptionsGroup]}
-              formatCreateLabel={() => {
-                return 'Create new crystal...';
-              }}
-              createOptionPosition={'first'}
-              isValidNewOption={() => true}
-              onCreateOption={onNewCrystal}
-              onChange={(newValue) =>
-                newValue && onSelectCrystal(newValue?.value)
-              }
-            />
-          </div>
+          <Col>
+            <Row>
+              <h4>Crystal</h4>
+            </Row>
+            <Row>
+              <CreatableSelect
+                value={{
+                  label: getCrystalValue(sample.Crystal),
+                  value: getCrystalValue(sample.Crystal),
+                }}
+                options={[crystalOptionsGroup]}
+                formatCreateLabel={() => {
+                  return 'Create new crystal...';
+                }}
+                createOptionPosition={'first'}
+                isValidNewOption={() => true}
+                onCreateOption={onNewCrystal}
+                onChange={(newValue) =>
+                  newValue && onSelectCrystal(newValue?.value)
+                }
+                styles={{
+                  control: (styles) => ({
+                    ...styles,
+                    ...(crystalError !== undefined
+                      ? { borderColor: '#d32f2f' }
+                      : {}),
+                  }),
+                }}
+              />
+            </Row>
+            <Row>
+              <Col xs={'auto'}>
+                <div className="is-invalid"></div>
+                <Form.Control.Feedback
+                  type="invalid"
+                  style={{ paddingRight: 60 }}
+                >
+                  {crystalError}
+                </Form.Control.Feedback>
+              </Col>
+            </Row>
+          </Col>
         )}
       </section>
     </Col>
@@ -683,6 +643,8 @@ function CompositionEdit({
     proposal: proposal,
   });
 
+  const concentrationTypes = useSuspense(ConcentrationTypesRessource.list());
+
   if (composition === undefined) return null;
 
   const types = _(components.results)
@@ -724,6 +686,17 @@ function CompositionEdit({
     }
   };
 
+  const onSelectConcentrationType = (newValue: string | undefined) => {
+    if (!newValue) {
+      onChange.value('ConcentrationType')(undefined);
+    } else {
+      const newType = _(concentrationTypes)
+        .filter((c) => c.symbol === newValue)
+        .get(0);
+      onChange.value('ConcentrationType')(newType);
+    }
+  };
+
   const onRemove = () => {
     onChange.remove();
   };
@@ -745,18 +718,66 @@ function CompositionEdit({
   };
 
   return (
-    <Form>
+    <>
       <Row className="align-items-end">
         <Col>
           <Form.Label>Concentration</Form.Label>
-          <Form.Control
-            value={composition.abundance || ''}
-            type="number"
-            onChange={onChange.event('abundance')}
-            isInvalid={getErrorMessage(errors, 'quantity') !== undefined}
-          />
+          <Row>
+            <Col xs={6} style={{ paddingRight: 0, marginRight: -1 }}>
+              <Form.Control
+                value={composition.abundance || ''}
+                type="number"
+                onChange={onChange.event('abundance')}
+                isInvalid={getErrorMessage(errors, 'quantity') !== undefined}
+                style={{
+                  borderTopRightRadius: 0,
+                  borderBottomRightRadius: 0,
+                  height: '100%',
+                }}
+              />
+            </Col>
+            <Col xs={6} style={{ paddingLeft: 0 }}>
+              <ReactSelect
+                options={concentrationTypes
+                  .sort((t1, t2) => t1.name.localeCompare(t2.name))
+                  .map((v) => ({
+                    value: v.symbol,
+                    label: v.name,
+                  }))}
+                styles={{
+                  control: (styles) => ({
+                    ...styles,
+                    borderTopLeftRadius: 0,
+                    borderBottomLeftRadius: 0,
+                    ...(getErrorMessage(errors, 'quantity') !== undefined
+                      ? { borderColor: '#d32f2f' }
+                      : {}),
+                  }),
+                }}
+                placeholder="unit"
+                value={
+                  composition.ConcentrationType
+                    ? {
+                        value: composition.ConcentrationType.symbol,
+                        label: composition.ConcentrationType.name,
+                      }
+                    : undefined
+                }
+                onChange={(newValue) => {
+                  onSelectConcentrationType(newValue?.value);
+                }}
+                formatOptionLabel={(option, { context }) =>
+                  context === 'value'
+                    ? `${option.value}`
+                    : `${option.label} - ${option.value}`
+                }
+                isClearable
+              ></ReactSelect>
+            </Col>
+          </Row>
         </Col>
-        <Col>
+
+        <Col lg={2}>
           <Form.Label>Ratio</Form.Label>
           <Form.Control
             value={composition.ratio || ''}
@@ -765,7 +786,7 @@ function CompositionEdit({
             isInvalid={getErrorMessage(errors, 'quantity') !== undefined}
           />
         </Col>
-        <Col>
+        <Col lg={2}>
           <Form.Label>pH</Form.Label>
           <Form.Control
             value={composition.ph || ''}
@@ -774,7 +795,7 @@ function CompositionEdit({
             isInvalid={getErrorMessage(errors, 'quantity') !== undefined}
           />
         </Col>
-        <Col>
+        <Col lg={2}>
           <Form.Label>Type</Form.Label>
           <CreatableSelect
             value={{
@@ -789,9 +810,17 @@ function CompositionEdit({
             })}
             onChange={(newValue) => newValue && onSelectType(newValue?.value)}
             onCreateOption={(input) => input && onSelectType(input)}
+            styles={{
+              control: (styles) => ({
+                ...styles,
+                ...(getErrorMessage(errors, 'Component') !== undefined
+                  ? { borderColor: '#d32f2f' }
+                  : {}),
+              }),
+            }}
           />
         </Col>
-        <Col>
+        <Col lg={2}>
           <Form.Label>Component</Form.Label>
           <CreatableSelect<ComponentOption>
             value={{
@@ -803,10 +832,23 @@ function CompositionEdit({
               newValue && onSelectComponent(newValue?.value)
             }
             onCreateOption={(input) => input && onSelectComponent(input)}
+            styles={{
+              control: (styles) => ({
+                ...styles,
+                ...(getErrorMessage(errors, 'Component') !== undefined
+                  ? { borderColor: '#d32f2f' }
+                  : {}),
+              }),
+            }}
           />
         </Col>
-        <Col xs={'auto'}>
-          <Button variant={'danger'} size="sm" onClick={onRemove}>
+        <Col lg={'auto'}>
+          <Button
+            variant={'danger'}
+            size="sm"
+            onClick={onRemove}
+            style={{ width: '100%', marginTop: 5, marginBottom: 5 }}
+          >
             <FontAwesomeIcon icon={faRemove} />
           </Button>
         </Col>
@@ -826,6 +868,6 @@ function CompositionEdit({
           </Form.Control.Feedback>
         </Col>
       </Row>
-    </Form>
+    </>
   );
 }

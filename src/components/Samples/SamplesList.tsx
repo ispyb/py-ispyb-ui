@@ -121,14 +121,16 @@ export default function SamplesList({ proteinId, focusSearch }: ISamplesList) {
                 {
                   label: '',
                   key: 'edit',
-                  formatter: (row: Sample) => <EditSampleModal sample={row} />,
+                  formatter: (row: Sample) => (
+                    <EditSampleModal sample={row} onDone={forceRefresh} />
+                  ),
                   headerStyle: { width: 0 },
                 },
                 {
                   label: '',
                   key: 'remove',
                   formatter: (row: Sample) => (
-                    <RemoveSampleButton sample={row} />
+                    <RemoveSampleButton sample={row} onDone={forceRefresh} />
                   ),
                   headerStyle: { width: 0 },
                 },
