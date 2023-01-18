@@ -83,7 +83,7 @@ export default function Map(props: IDataCollection) {
       <Col xs="12" md="4" className="bg-light">
         <DataViewer
           selectedPoint={selectedPoint}
-          dataCollectionId={item.dataCollectionId}
+          dataCollection={item}
         />
       </Col>
       <Col xs="12" md="4">
