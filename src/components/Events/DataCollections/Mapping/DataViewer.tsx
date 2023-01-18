@@ -52,7 +52,7 @@ function useDataPoint({
     dataCollectionId,
     path: path,
     // Selection in h5grove is zero-offset
-    selection: [selectedPoint-1],
+    selection: [selectedPoint - 1],
     flatten,
   });
   return data.data;

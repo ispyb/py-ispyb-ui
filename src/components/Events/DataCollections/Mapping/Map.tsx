@@ -81,10 +81,7 @@ export default function Map(props: IDataCollection) {
         />
       </Col>
       <Col xs="12" md="4" className="bg-light">
-        <DataViewer
-          selectedPoint={selectedPoint}
-          dataCollection={item}
-        />
+        <DataViewer selectedPoint={selectedPoint} dataCollection={item} />
       </Col>
       <Col xs="12" md="4">
         {item.GridInfo && item.GridInfo.length > 0 && (

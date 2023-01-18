@@ -27,8 +27,6 @@ export class H5DataResource extends AuthenticatedResource {
           path: params.path,
         };
 
-        console.log("keyed", keyed)
-
         return keyed;
       },
     });
