@@ -1,8 +1,4 @@
-import { H5DataResource } from 'api/resources/H5Grove/Data';
-import { H5MetaResource } from 'api/resources/H5Grove/Meta';
-import NetworkErrorPage from 'components/NetworkErrorPage';
-import { DataCollection as DataCollectionType } from 'models/Event.d';
-import { Suspense, useState, useMemo, useEffect } from 'react';
+import { Suspense, useState, useMemo } from 'react';
 import { Form } from 'react-bootstrap';
 import { useInView } from 'react-intersection-observer';
 import { useSuspense } from 'rest-hooks';
@@ -19,22 +15,35 @@ import {
 import { range } from 'lodash';
 import ndarray from 'ndarray';
 
+import { H5DataResource } from 'api/resources/H5Grove/Data';
+import { H5MetaResource } from 'api/resources/H5Grove/Meta';
+import NetworkErrorPage from 'components/NetworkErrorPage';
+import { DataCollection as DataCollectionType } from 'models/Event.d';
+
 function useDataSeries({
   dataCollectionId,
   path,
 }: {
   dataCollectionId: number;
   path: string;
-}): Series[] {
+}): Record<string, Series[]> {
   const meta = useSuspense(H5MetaResource.list(), {
     dataCollectionId,
     path: path,
   });
-  // @ts-expect-error
-  return useMemo(
-    () => meta.children.filter((child: any) => child.shape.length > 1),
-    [meta]
-  );
+  const children = meta.children as Series[];
+  return useMemo(() => {
+    const seriesTypes = {
+      2: children.filter((child) => child.shape.length === 2),
+      3: children.filter((child) => child.shape.length === 3),
+    };
+
+    // @ts-expect-error
+    if (!seriesTypes['2'].length) delete seriesTypes['2'];
+    // @ts-expect-error
+    if (!seriesTypes['3'].length) delete seriesTypes['3'];
+    return seriesTypes;
+  }, [children]);
 }
 
 function useDataPoint({
@@ -73,31 +82,29 @@ function Plot1d({ data, series }: PlotData) {
   const xDomain = useCombinedDomain(useDomains([xdata])) || DEFAULT_DOMAIN;
 
   return (
-    <div className="h5web-plot">
-      <VisCanvas
-        abscissaConfig={{
-          visDomain: xDomain,
-          showGrid: true,
-          label: 'Channel',
-        }}
-        ordinateConfig={{
-          visDomain: yDomain,
-          showGrid: true,
-          label: 'Count',
-        }}
-      >
-        {series.map((c) => (
-          <DataCurve
-            key={c.name}
-            abscissas={xdata}
-            ordinates={data}
-            color={COLORS[0]}
-          />
-        ))}
-        <Pan />
-        <Zoom />
-      </VisCanvas>
-    </div>
+    <VisCanvas
+      abscissaConfig={{
+        visDomain: xDomain,
+        showGrid: true,
+        label: 'Channel',
+      }}
+      ordinateConfig={{
+        visDomain: yDomain,
+        showGrid: true,
+        label: 'Count',
+      }}
+    >
+      {series.map((c) => (
+        <DataCurve
+          key={c.name}
+          abscissas={xdata}
+          ordinates={data}
+          color={COLORS[0]}
+        />
+      ))}
+      <Pan />
+      <Zoom />
+    </VisCanvas>
   );
 }
 
@@ -112,19 +119,17 @@ function Plot2d({ data, series }: PlotData) {
   );
 
   return (
-    <div>
-      <HeatmapVis
-        dataArray={dataArray}
-        // @ts-expect-error
-        domain={domain}
-        // scaleType={scaleType}
-        // colorMap={colorMap}
-        // invertColorMap={invertColorMap}
-        showGrid={true}
-        interactions={{ selectToZoom: { modifierKey: ZOOM_KEY } }}
-        show
-      />
-    </div>
+    <HeatmapVis
+      dataArray={dataArray}
+      // @ts-expect-error
+      domain={domain}
+      // scaleType={scaleType}
+      // colorMap={colorMap}
+      // invertColorMap={invertColorMap}
+      showGrid={true}
+      interactions={{ selectToZoom: { modifierKey: ZOOM_KEY } }}
+      show
+    />
   );
 }
 
@@ -135,7 +140,7 @@ interface Series {
 }
 
 interface IDataPlot extends IDataViewer {
-  series: Series;
+  series: Series[];
 }
 
 function DataPlot(props: IDataPlot) {
@@ -143,15 +148,15 @@ function DataPlot(props: IDataPlot) {
   const { dataCollectionId, imageContainerSubPath = '/' } = dataCollection;
   const data = useDataPoint({
     dataCollectionId,
-    path: `${imageContainerSubPath}/${series.name}`,
+    path: `${imageContainerSubPath}/${series[0].name}`,
     selectedPoint,
-    flatten: series.shape.length === 3,
+    flatten: series[0].shape.length === 3,
   });
 
-  return series.shape.length === 2 ? (
-    <Plot1d data={data} series={[series]} />
+  return series[0].shape.length === 2 ? (
+    <Plot1d data={data} series={series} />
   ) : (
-    <Plot2d data={data} series={[series]} />
+    <Plot2d data={data} series={series} />
   );
 }
 
@@ -160,30 +165,37 @@ interface IDataViewer {
   dataCollection: DataCollectionType;
 }
 
-function DataViewerMain(props: IDataViewer) {
+export function DataViewerMain(props: IDataViewer) {
   const { dataCollectionId, imageContainerSubPath = '/' } =
     props.dataCollection;
-  const series = useDataSeries({
+  const seriesTypes = useDataSeries({
     dataCollectionId,
     path: '/' + imageContainerSubPath,
   });
 
-  const [selectedSeries, setSelectedSeries] = useState<number>(
-    series.length && 0
+  const [selectedSeries, setSelectedSeries] = useState<string>(
+    Object.keys(seriesTypes).length ? Object.keys(seriesTypes)[0] : '2'
   );
-
-  useEffect(() => {
-    console.log('series', dataCollectionId, series);
-  }, [series, dataCollectionId]);
 
   return (
     <>
-      <Form.Control as="select">
-        {series.map((serie, id) => (
-          <option value={id}>{serie.name}</option>
-        ))}
-      </Form.Control>
-      <DataPlot {...props} series={series[selectedSeries]} />
+      {Object.keys(seriesTypes).length > 1 && (
+        <Form.Control
+          as="select"
+          onChange={(evt) => setSelectedSeries(evt.target.value)}
+        >
+          {Object.entries(seriesTypes).map(
+            ([seriesType, series]: [string, Series[]]) => (
+              <option value={seriesType}>
+                {series.map((serie) => serie.name).join(',')}
+              </option>
+            )
+          )}
+        </Form.Control>
+      )}
+      <Suspense fallback="Loading...">
+        <DataPlot {...props} series={seriesTypes[selectedSeries]} />
+      </Suspense>
     </>
   );
 }
