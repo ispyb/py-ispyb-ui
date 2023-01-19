@@ -223,6 +223,13 @@ function SampleCanvasMain({
             ></Rect>
           )}
 
+          <SubSamples
+            subsamples={subsamples}
+            scaleFactor={scaleFactor}
+            selectedSubSample={selectedSubSample}
+            showPOI={showPOI}
+          />
+
           <Maps
             maps={maps}
             subsamples={subsamples}
@@ -230,12 +237,6 @@ function SampleCanvasMain({
             selectedROI={selectedROI}
             setLoadingMessage={setMapLoadingMessage}
             mapOpacity={mapOpacity}
-          />
-          <SubSamples
-            subsamples={subsamples}
-            scaleFactor={scaleFactor}
-            selectedSubSample={selectedSubSample}
-            showPOI={showPOI}
           />
         </Layer>
       </Stage>

@@ -39,6 +39,7 @@ export interface MapMetaData {
   url: Url;
   blSubSampleId: number;
   blSampleId: number;
+  dataCollectionId: number;
 }
 export interface MapGridInfo {
   gridInfoId: Gridinfoid;

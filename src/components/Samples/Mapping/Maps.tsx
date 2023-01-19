@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useController } from 'rest-hooks';
 import { Image as KonvaImage } from 'react-konva';
 import { getXHRBlob } from 'api/resources/XHRFile';
@@ -61,6 +61,24 @@ export default function Maps({
     getMaps();
   }, [maps, fetch, site.host, selectedROI, showHidden, setLoadingMessage]);
 
+  const selectPoint = useCallback((evt: any) => {
+    const rel = evt.target.getRelativePointerPosition();
+    const x = Math.floor(rel.x);
+    const y = Math.floor(rel.y);
+
+    const filteredMaps = maps.filter(
+      (map) =>
+        map.xrfFluorescenceMappingId ===
+        evt.target.attrs.xrfFluorescenceMappingId
+    );
+    if (!filteredMaps.length) return;
+    const map = filteredMaps[0];
+
+    // point is 1-offset
+    const point = x + y * (map.GridInfo.steps_x ? map.GridInfo.steps_x : 1) + 1;
+    console.log('point', point);
+  }, [maps]);
+
   return (
     <>
       {mapsLoaded && (
@@ -96,6 +114,10 @@ export default function Maps({
                 scaleX={width / map.GridInfo.steps_x}
                 scaleY={height / map.GridInfo.steps_y}
                 opacity={mapOpacity / 100}
+                onClick={selectPoint}
+                attrs={{
+                  xrfFluorescenceMappingId: map.xrfFluorescenceMappingId,
+                }}
               />
             );
           })}
