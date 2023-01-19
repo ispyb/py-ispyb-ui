@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useController } from 'rest-hooks';
 import { Image as KonvaImage } from 'react-konva';
 import { getXHRBlob } from 'api/resources/XHRFile';
@@ -13,6 +13,11 @@ export function getROIName(map: any): string {
     : `${map.XRFFluorescenceMappingROI.element}-${map.XRFFluorescenceMappingROI.edge}`;
 }
 
+export interface SelectPoint {
+  dataCollectionId: number;
+  selectedPoint: number;
+}
+
 export default function Maps({
   maps,
   subsamples,
@@ -20,6 +25,7 @@ export default function Maps({
   selectedROI,
   mapOpacity,
   setLoadingMessage,
+  selectPoint,
 }: {
   maps: Map[];
   subsamples: SubSample[];
@@ -27,12 +33,12 @@ export default function Maps({
   selectedROI: string;
   mapOpacity: number;
   setLoadingMessage: (message: string) => void;
+  selectPoint?: (point: SelectPoint) => void;
 }) {
   const { site } = useAuth();
   const { fetch } = useController();
   const [mapsLoaded, setMapsLoaded] = useState<boolean>(false);
   const [preMaps, setPreMaps] = useState<Record<string, HTMLImageElement>>({});
-
   useEffect(() => {
     setMapsLoaded(false);
     setPreMaps({});
@@ -61,23 +67,37 @@ export default function Maps({
     getMaps();
   }, [maps, fetch, site.host, selectedROI, showHidden, setLoadingMessage]);
 
-  const selectPoint = useCallback((evt: any) => {
-    const rel = evt.target.getRelativePointerPosition();
-    const x = Math.floor(rel.x);
-    const y = Math.floor(rel.y);
+  const onClick = useCallback(
+    (evt: any) => {
+      const rel = evt.target.getRelativePointerPosition();
+      const x = Math.floor(rel.x);
+      const y = Math.floor(rel.y);
 
-    const filteredMaps = maps.filter(
-      (map) =>
-        map.xrfFluorescenceMappingId ===
-        evt.target.attrs.xrfFluorescenceMappingId
-    );
-    if (!filteredMaps.length) return;
-    const map = filteredMaps[0];
+      const filteredMaps = maps.filter(
+        (map) =>
+          map.xrfFluorescenceMappingId ===
+          evt.target.attrs.xrfFluorescenceMappingId
+      );
+      if (!filteredMaps.length) return;
+      const map = filteredMaps[0];
 
-    // point is 1-offset
-    const point = x + y * (map.GridInfo.steps_x ? map.GridInfo.steps_x : 1) + 1;
-    console.log('point', point);
-  }, [maps]);
+      // point is 1-offset
+      const point =
+        x + y * (map.GridInfo.steps_x ? map.GridInfo.steps_x : 1) + 1;
+      console.log(
+        'dataCollectionId',
+        map._metadata.dataCollectionId,
+        'point',
+        point
+      );
+      if (selectPoint)
+        selectPoint({
+          dataCollectionId: map._metadata.dataCollectionId,
+          selectedPoint: point,
+        });
+    },
+    [maps, selectPoint]
+  );
 
   return (
     <>
@@ -114,7 +134,7 @@ export default function Maps({
                 scaleX={width / map.GridInfo.steps_x}
                 scaleY={height / map.GridInfo.steps_y}
                 opacity={mapOpacity / 100}
-                onClick={selectPoint}
+                onClick={onClick}
                 attrs={{
                   xrfFluorescenceMappingId: map.xrfFluorescenceMappingId,
                 }}
