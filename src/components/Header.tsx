@@ -111,8 +111,14 @@ export default function Header() {
         <Navbar.Brand as={Link} to="/">
           Home
         </Navbar.Brand>
-        {isAuthenticated && !site.javaMode && <PyHeader />}
-        {isAuthenticated && site.javaMode && <JavaHeader />}
+        <Suspense fallback="...">
+          <AuthErrorBoundary>
+            <>
+              {isAuthenticated && !site.javaMode && <PyHeader />}
+              {isAuthenticated && site.javaMode && <JavaHeader />}
+            </>
+          </AuthErrorBoundary>
+        </Suspense>
       </Container>
     </Navbar>
   );
