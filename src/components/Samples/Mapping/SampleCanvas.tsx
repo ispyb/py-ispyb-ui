@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useSuspense } from 'rest-hooks';
 import { Stage, Layer, Rect } from 'react-konva';
 import Konva from 'konva';
@@ -288,9 +288,13 @@ export default function SampleCanvas({
   });
   const maps = useSuspense(MapResource.list(), { blSampleId, limit: 9999 });
 
-  const mapROIs = maps.results
-    .map((map) => getROIName(map))
-    .filter((v, i, a) => a.indexOf(v) === i);
+  const mapROIs = useMemo(
+    () =>
+      maps.results
+        .map((map) => getROIName(map))
+        .filter((v, i, a) => a.indexOf(v) === i),
+    [maps]
+  );
   const [selectedROI, setSelectedROI] = useState<string>(
     (maps.results.length && getROIName(maps.results[0])) || ''
   );

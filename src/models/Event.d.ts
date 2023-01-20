@@ -165,6 +165,7 @@ export interface DataCollection {
   fileTemplate?: DataFileTemplate;
   imageContainerSubPath?: ImageSubPath;
   numberOfImages?: NumberOfImagesPoints;
+  numberOfPasses?: number;
   wavelength?: Wavelength;
   exposureTime?: ExposureTime;
   flux?: Flux;

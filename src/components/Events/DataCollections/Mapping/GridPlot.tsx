@@ -1,4 +1,11 @@
-import { Suspense, useState, useRef, useEffect, useCallback } from 'react';
+import {
+  Suspense,
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+  useMemo,
+} from 'react';
 import { Stage, Layer, Rect, Image as KonvaImage } from 'react-konva';
 import { useController, useSuspense } from 'rest-hooks';
 import { Form } from 'react-bootstrap';
@@ -15,29 +22,36 @@ import { GridInfo } from 'models/Event.d';
 interface GridPlotProps {
   gridInfo: GridInfo;
   dataCollectionId: number;
+  dataCollectionGroupId?: number;
   setSelectedPoint?: (point: number) => void;
   snapshotAvailable: boolean;
   snapshotId?: number;
+  scrollMaps?: boolean;
 }
 
 function GridPlotMain({
   gridInfo,
   dataCollectionId,
+  dataCollectionGroupId,
   setSelectedPoint,
   snapshotAvailable,
   snapshotId = 1,
+  scrollMaps,
 }: GridPlotProps) {
   const { fetch } = useController();
   const { site } = useAuth();
 
   const wrapRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<Konva.Stage>(null);
+  const rangeRef = useRef<HTMLInputElement>(null);
 
   const [parentSize, setParentSize] = useState<number[]>([150, 150]);
   const [sampleSnapshot, setSampleSnapshot] = useState<HTMLImageElement>();
 
   const maps = useSuspense(MapResource.list(), {
-    dataCollectionId,
+    ...(dataCollectionGroupId
+      ? { dataCollectionGroupId }
+      : { dataCollectionId }),
     limit: 9999,
   });
 
@@ -111,6 +125,34 @@ function GridPlotMain({
           gridInfo.steps_y * (1 / pixelsPerMicronY) * gridInfo.dy_mm * 1e3
         )
       : 1;
+
+  const mapROIs = useMemo(
+    () =>
+      maps &&
+      maps.results
+        .map((map) => getROIName(map))
+        .filter((v, i, a) => a.indexOf(v) === i),
+    [maps]
+  );
+
+  const [selectedMapROI, setSelectedMapROI] = useState<string | undefined>(
+    mapROIs.length ? mapROIs[0] : undefined
+  );
+
+  const filteredMaps = useMemo(
+    () =>
+      maps && maps.results.filter((map) => getROIName(map) === selectedMapROI),
+    [maps, selectedMapROI]
+  );
+
+  useEffect(() => {
+    if (filteredMaps && filteredMaps.length) {
+      setSelectedMap(filteredMaps[0].xrfFluorescenceMappingId);
+      if (rangeRef.current) {
+        rangeRef.current.value = '0';
+      }
+    }
+  }, [selectedMapROI, filteredMaps]);
 
   const zoomStage = useCallback(
     (event: any) => {
@@ -196,21 +238,53 @@ function GridPlotMain({
         className="position-absolute"
         style={{ right: 0, top: 0, zIndex: 100 }}
       >
-        {maps.results.length > 0 && (
-          <Form.Control
-            size="sm"
-            as="select"
-            onChange={(evt) => setSelectedMap(parseInt(evt.target.value))}
-          >
-            {maps.results.map((map) => (
-              <option
-                key={map.xrfFluorescenceMappingId}
-                value={map.xrfFluorescenceMappingId}
+        {!scrollMaps && (
+          <>
+            {maps.results.length > 0 && (
+              <Form.Control
+                size="sm"
+                as="select"
+                onChange={(evt) => setSelectedMap(parseInt(evt.target.value))}
               >
-                {getROIName(map)}
-              </option>
-            ))}
-          </Form.Control>
+                {maps.results.map((map) => (
+                  <option
+                    key={map.xrfFluorescenceMappingId}
+                    value={map.xrfFluorescenceMappingId}
+                  >
+                    {getROIName(map)}
+                  </option>
+                ))}
+              </Form.Control>
+            )}
+          </>
+        )}
+        {scrollMaps && (
+          <>
+            <Form.Control
+              size="sm"
+              as="select"
+              onChange={(evt) => setSelectedMapROI(evt.target.value)}
+            >
+              {mapROIs.map((mapROI) => (
+                <option key={mapROI} value={mapROI}>
+                  {mapROI}
+                </option>
+              ))}
+            </Form.Control>
+            <Form.Range
+              ref={rangeRef}
+              className="ms-2"
+              min={0}
+              max={filteredMaps && filteredMaps.length - 1}
+              defaultValue={0}
+              onChange={(evt) =>
+                setSelectedMap(
+                  filteredMaps[parseInt(evt.target.value)]
+                    .xrfFluorescenceMappingId
+                )
+              }
+            />
+          </>
         )}
       </div>
       <Stage

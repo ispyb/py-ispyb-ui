@@ -12,11 +12,15 @@ interface IPerImageAnalysis {
   dataCollectionId: number;
   endTime?: string;
   refresh?: boolean;
+  xAxisTitle?: string;
+  yAxisTitle?: string;
 }
 
 function PerImageAnalysisMain({
   dataCollectionId,
   endTime,
+  xAxisTitle,
+  yAxisTitle,
   refresh = true,
 }: IPerImageAnalysis) {
   const opts = {
@@ -55,10 +59,10 @@ function PerImageAnalysisMain({
         yaxis: `y${axis + 1}`,
       }))}
       layout={{
-        xaxis: { domain: [0, 0.8] },
-        //   yaxis: {
-        //     title: seriesNames[series?.[0]],
-        //   },
+        xaxis: { domain: [0, 0.8], title: xAxisTitle },
+        yaxis: {
+          title: yAxisTitle,
+        },
         yaxis2: {
           // title: seriesNames[series?.[1]],
           side: 'right',
