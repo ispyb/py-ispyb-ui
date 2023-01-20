@@ -34,19 +34,19 @@ function DataPointModalMain({
       title="Attachments"
     >
       <Modal.Header closeButton>
-        <Modal.Title>
-          Data Viewer
-        </Modal.Title>
+        <Modal.Title>Data Viewer</Modal.Title>
       </Modal.Header>
 
       <Modal.Body>
-        <Metadata properties={[
-          { title: 'Point', content: selectedPoint},
-          {
-            title: 'File',
-            content: `${dataCollection.imageDirectory}/${dataCollection.fileTemplate}`
-          }
-        ]} />
+        <Metadata
+          properties={[
+            { title: 'Point', content: selectedPoint },
+            {
+              title: 'File',
+              content: `${dataCollection.imageDirectory}/${dataCollection.fileTemplate}`,
+            },
+          ]}
+        />
         <Suspense fallback="Loading...">
           {dataCollection && (
             <div style={{ minHeight: '70vh', display: 'flex' }}>
