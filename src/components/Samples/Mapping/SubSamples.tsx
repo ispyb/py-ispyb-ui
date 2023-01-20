@@ -88,6 +88,7 @@ export default function SubSamples({
                     : 'purple'
                 }
                 strokeWidth={strokeWidth}
+                listening={false}
               />
               <Text
                 key="text"
