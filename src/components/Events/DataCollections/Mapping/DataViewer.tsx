@@ -51,20 +51,27 @@ function useDataPoint({
   path,
   selectedPoint,
   flatten = false,
+  fetch = true,
 }: {
   dataCollectionId: number;
   path: string;
   selectedPoint: number;
   flatten: boolean;
+  fetch: boolean;
 }) {
-  const data = useSuspense(H5DataResource.list(), {
-    dataCollectionId,
-    path: path,
-    // Selection in h5grove is zero-offset
-    selection: [selectedPoint - 1],
-    flatten,
-  });
-  return data.data;
+  const data = useSuspense(
+    H5DataResource.list(),
+    fetch
+      ? {
+          dataCollectionId,
+          path: path,
+          // Selection in h5grove is zero-offset
+          selection: [selectedPoint - 1],
+          flatten,
+        }
+      : null
+  );
+  return data && data.data;
 }
 
 const COLORS = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728'];
@@ -82,6 +89,7 @@ function Plot1d({ data, series }: PlotData) {
   const xDomain = useCombinedDomain(useDomains([xdata])) || DEFAULT_DOMAIN;
 
   return (
+    <figure style={{display: 'flex', flex: '1 1 0', margin: 0}}>
     <VisCanvas
       abscissaConfig={{
         visDomain: xDomain,
@@ -105,6 +113,7 @@ function Plot1d({ data, series }: PlotData) {
       <Pan />
       <Zoom />
     </VisCanvas>
+    </figure>
   );
 }
 
@@ -119,17 +128,19 @@ function Plot2d({ data, series }: PlotData) {
   );
 
   return (
-    <HeatmapVis
-      dataArray={dataArray}
-      // @ts-expect-error
-      domain={domain}
-      // scaleType={scaleType}
-      // colorMap={colorMap}
-      // invertColorMap={invertColorMap}
-      showGrid={true}
-      interactions={{ selectToZoom: { modifierKey: ZOOM_KEY } }}
-      show
-    />
+    <div className="braggy" style={{display: 'flex', flex: 1}}>
+      <HeatmapVis
+        dataArray={dataArray}
+        // @ts-expect-error
+        domain={domain}
+        // scaleType={scaleType}
+        // colorMap={colorMap}
+        // invertColorMap={invertColorMap}
+        showGrid={true}
+        interactions={{ selectToZoom: { modifierKey: ZOOM_KEY } }}
+        show
+      />
+    </div>
   );
 }
 
@@ -148,11 +159,13 @@ function DataPlot(props: IDataPlot) {
   const { dataCollectionId, imageContainerSubPath = '/' } = dataCollection;
   const data = useDataPoint({
     dataCollectionId,
-    path: `${imageContainerSubPath}/${series[0].name}`,
+    path: `${imageContainerSubPath}/${series?.[0].name}`,
     selectedPoint,
-    flatten: series[0].shape.length === 3,
+    flatten: series?.[0].shape.length === 3,
+    fetch: series && series.length > 0,
   });
 
+  if (!(series && series.length > 0)) return <p>No Data</p>;
   return series[0].shape.length === 2 ? (
     <Plot1d data={data} series={series} />
   ) : (
@@ -178,7 +191,7 @@ export function DataViewerMain(props: IDataViewer) {
   );
 
   return (
-    <>
+    <div style={{display: 'flex', flexDirection: 'column', flex: 1}}>
       {Object.keys(seriesTypes).length > 1 && (
         <Form.Control
           as="select"
@@ -196,7 +209,7 @@ export function DataViewerMain(props: IDataViewer) {
       <Suspense fallback="Loading...">
         <DataPlot {...props} series={seriesTypes[selectedSeries]} />
       </Suspense>
-    </>
+    </div>
   );
 }
 

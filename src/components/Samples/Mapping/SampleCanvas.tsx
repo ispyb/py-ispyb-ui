@@ -2,8 +2,15 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useSuspense } from 'rest-hooks';
 import { Stage, Layer, Rect } from 'react-konva';
 import Konva from 'konva';
-import { Button, Container, Form, Navbar } from 'react-bootstrap';
-import { ArrowsMove } from 'react-bootstrap-icons';
+import {
+  Button,
+  Container,
+  Form,
+  Navbar,
+  ToggleButton,
+  ToggleButtonGroup,
+} from 'react-bootstrap';
+import { ArrowsMove, Bullseye } from 'react-bootstrap-icons';
 
 import { SubSampleResource } from 'api/resources/SubSample';
 import { MapResource } from 'api/resources/Map';
@@ -14,8 +21,9 @@ import { Map } from 'models/Map';
 import { SampleImage } from 'models/SampleImage';
 
 import Images from './Images';
-import Maps, { getROIName } from './Maps';
+import Maps, { getROIName, SelectPoint } from './Maps';
 import SubSamples from './SubSamples';
+import DataPointModal from './DataPointModal';
 
 function SampleCanvasMain({
   images,
@@ -26,6 +34,7 @@ function SampleCanvasMain({
   showHidden,
   showPOI,
   mapOpacity,
+  enableCursor,
 }: {
   images: SampleImage[];
   subsamples: SubSample[];
@@ -34,6 +43,7 @@ function SampleCanvasMain({
   showHidden: boolean;
   showPOI: boolean;
   mapOpacity: number;
+  enableCursor: boolean;
   selectedSubSample: number | undefined;
 }) {
   const wrapRef = useRef<HTMLDivElement>(null);
@@ -43,6 +53,9 @@ function SampleCanvasMain({
   const [parentSize, setParentSize] = useState<number[]>([1000, 800]);
   const [imageLoadingMessage, setImageLoadingMessage] = useState<string>('');
   const [mapLoadingMessage, setMapLoadingMessage] = useState<string>('');
+
+  const [showModal, setShowModal] = useState<boolean>(false);
+  const [selectedPoint, setSelectedPoint] = useState<SelectPoint | null>(null);
 
   const stageRef = useRef<Konva.Stage>(null);
 
@@ -162,8 +175,25 @@ function SampleCanvasMain({
   const showBounds = false;
   const showCenter = false;
 
+  const selectPoint = useCallback(
+    (point: SelectPoint) => {
+      if (!enableCursor) return;
+      setSelectedPoint(point);
+      setShowModal(true);
+    },
+    [setSelectedPoint, enableCursor]
+  );
+
   return (
     <div className="stage-wrapper position-relative" ref={wrapRef}>
+      {selectedPoint && (
+        <DataPointModal
+          dataCollectionId={selectedPoint.dataCollectionId}
+          selectedPoint={selectedPoint.selectedPoint}
+          show={showModal}
+          onHide={() => setShowModal(false)}
+        />
+      )}
       <div
         className="position-absolute"
         style={{ right: 10, top: 10, zIndex: 100 }}
@@ -237,6 +267,7 @@ function SampleCanvasMain({
             selectedROI={selectedROI}
             setLoadingMessage={setMapLoadingMessage}
             mapOpacity={mapOpacity}
+            selectPoint={selectPoint}
           />
         </Layer>
       </Stage>
@@ -272,6 +303,7 @@ export default function SampleCanvas({
   const [showHidden, setShowHidden] = useState<boolean>(false);
   const [showPOI, setShowPOI] = useState<boolean>(true);
   const [mapOpacity, setMapOpacity] = useState<number>(100);
+  const [enableCursor, setEnableCursor] = useState<boolean>(false);
 
   return (
     <div>
@@ -290,6 +322,16 @@ export default function SampleCanvas({
                 </option>
               ))}
             </Form.Control>
+            <ToggleButton
+              value="1"
+              type="checkbox"
+              size="sm"
+              className="ms-1"
+              checked={enableCursor}
+              onClick={() => setEnableCursor(!enableCursor)}
+            >
+              <Bullseye />
+            </ToggleButton>
             <Form.Check
               style={{ flex: 1 }}
               className="ms-2 text-nowrap"
@@ -323,6 +365,7 @@ export default function SampleCanvas({
         showHidden={showHidden}
         showPOI={showPOI}
         mapOpacity={mapOpacity}
+        enableCursor={enableCursor}
         selectedSubSample={selectedSubSample}
       />
     </div>

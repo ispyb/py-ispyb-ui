@@ -73,7 +73,7 @@ function ImageViewerMain() {
 
   return (
     <section>
-      <div>
+      <div className="braggy">
         <div className="d-flex">
           <div className="d-flex">
             <InputGroup>

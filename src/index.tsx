@@ -5,6 +5,7 @@ import { CacheProvider } from 'rest-hooks';
 import SuspenseRouter from './SuspenseRouter';
 import App from './App';
 // import reportWebVitals from './reportWebVitals';
+import '@h5web/lib/dist/styles.css';
 import './scss/main.scss';
 import { AuthProvider } from 'hooks/useAuth';
 
