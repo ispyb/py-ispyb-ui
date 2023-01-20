@@ -5,12 +5,12 @@ import { Link } from 'react-router-dom';
 import Metadata from 'components/Events/Metadata';
 import { DataCollectionBox } from 'components/Events/DataCollection';
 import { IDataCollection } from 'components/Events/DataCollections/Default';
-import { toEnergy } from 'utils/numbers';
 
 import GridPlot from './GridPlot';
 import DataViewer from './DataViewer';
+import { toEnergy } from 'utils/numbers';
 
-export default function Map(props: IDataCollection) {
+export default function MapXAS(props: IDataCollection) {
   const { parent, item } = props;
   const [selectedPoint, setSelectedPoint] = useState<number | undefined>(
     undefined
@@ -99,9 +99,15 @@ export default function Map(props: IDataCollection) {
         {item.GridInfo && item.GridInfo.length > 0 && (
           <GridPlot
             gridInfo={item.GridInfo[0]}
+            dataCollectionGroupId={
+              parent.count > 1
+                ? item.DataCollectionGroup.dataCollectionGroupId
+                : undefined
+            }
             dataCollectionId={item.dataCollectionId}
             setSelectedPoint={setSelectedPoint}
             snapshotAvailable={item._metadata.snapshots['1']}
+            scrollMaps={parent.count > 1}
           />
         )}
       </Col>
