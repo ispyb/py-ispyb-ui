@@ -2,13 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useSuspense } from 'rest-hooks';
 import { Stage, Layer, Rect } from 'react-konva';
 import Konva from 'konva';
-import {
-  Button,
-  Container,
-  Form,
-  Navbar,
-  ToggleButton,
-} from 'react-bootstrap';
+import { Button, Container, Form, Navbar, ToggleButton } from 'react-bootstrap';
 import { ArrowsMove, Bullseye } from 'react-bootstrap-icons';
 
 import { SubSampleResource } from 'api/resources/SubSample';

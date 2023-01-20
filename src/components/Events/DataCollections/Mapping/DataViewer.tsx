@@ -89,30 +89,30 @@ function Plot1d({ data, series }: PlotData) {
   const xDomain = useCombinedDomain(useDomains([xdata])) || DEFAULT_DOMAIN;
 
   return (
-    <figure style={{display: 'flex', flex: '1 1 0', margin: 0}}>
-    <VisCanvas
-      abscissaConfig={{
-        visDomain: xDomain,
-        showGrid: true,
-        label: 'Channel',
-      }}
-      ordinateConfig={{
-        visDomain: yDomain,
-        showGrid: true,
-        label: 'Count',
-      }}
-    >
-      {series.map((c) => (
-        <DataCurve
-          key={c.name}
-          abscissas={xdata}
-          ordinates={data}
-          color={COLORS[0]}
-        />
-      ))}
-      <Pan />
-      <Zoom />
-    </VisCanvas>
+    <figure style={{ display: 'flex', flex: '1 1 0', margin: 0 }}>
+      <VisCanvas
+        abscissaConfig={{
+          visDomain: xDomain,
+          showGrid: true,
+          label: 'Channel',
+        }}
+        ordinateConfig={{
+          visDomain: yDomain,
+          showGrid: true,
+          label: 'Count',
+        }}
+      >
+        {series.map((c) => (
+          <DataCurve
+            key={c.name}
+            abscissas={xdata}
+            ordinates={data}
+            color={COLORS[0]}
+          />
+        ))}
+        <Pan />
+        <Zoom />
+      </VisCanvas>
     </figure>
   );
 }
@@ -128,7 +128,7 @@ function Plot2d({ data, series }: PlotData) {
   );
 
   return (
-    <div className="braggy" style={{display: 'flex', flex: 1}}>
+    <div className="braggy" style={{ display: 'flex', flex: 1 }}>
       <HeatmapVis
         dataArray={dataArray}
         // @ts-expect-error
@@ -191,7 +191,7 @@ export function DataViewerMain(props: IDataViewer) {
   );
 
   return (
-    <div style={{display: 'flex', flexDirection: 'column', flex: 1}}>
+    <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
       {Object.keys(seriesTypes).length > 1 && (
         <Form.Control
           as="select"
