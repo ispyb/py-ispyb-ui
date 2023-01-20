@@ -46,10 +46,10 @@ function GridPlotMain({
   );
   const [mapImage, setMapImage] = useState<HTMLImageElement>();
   const [selectedPoint, setLocalSelectedPoint] = useState<
-    Record<string, number>
+    Record<string, number | undefined>
   >({
-    x: 0,
-    y: 0,
+    x: undefined,
+    y: undefined,
   });
 
   useEffect(() => {
@@ -181,6 +181,15 @@ function GridPlotMain({
     [gridInfo.steps_x, setSelectedPoint]
   );
 
+  const setPointer = useCallback(
+    (pointerType: string = 'default') => {
+      if (stageRef.current) {
+        stageRef.current.content.style.cursor = pointerType;
+      }
+    },
+    [stageRef]
+  );
+
   return (
     <div className="position-relative border border-light ms-2" ref={wrapRef}>
       <div
@@ -223,24 +232,30 @@ function GridPlotMain({
               scaleY={mapHeight / gridInfo.steps_y}
               image={mapImage}
               onClick={selectPoint}
+              onMouseEnter={() => setPointer('pointer')}
+              onMouseLeave={() => setPointer()}
             />
           )}
-          {selectedPoint && gridInfo.steps_x && gridInfo.steps_y && (
-            <Rect
-              opacity={0.7}
-              x={
-                snapshot_offsetXPixel +
-                (mapWidth / gridInfo.steps_x) * selectedPoint.x
-              }
-              y={
-                snapshot_offsetYPixel +
-                +((mapHeight / gridInfo.steps_y) * selectedPoint.y)
-              }
-              width={mapWidth / gridInfo.steps_x}
-              height={mapHeight / gridInfo.steps_y}
-              fill="red"
-            />
-          )}
+          {selectedPoint &&
+            selectedPoint.x !== undefined &&
+            selectedPoint.y !== undefined &&
+            gridInfo.steps_x &&
+            gridInfo.steps_y && (
+              <Rect
+                opacity={0.7}
+                x={
+                  snapshot_offsetXPixel +
+                  (mapWidth / gridInfo.steps_x) * selectedPoint.x
+                }
+                y={
+                  snapshot_offsetYPixel +
+                  +((mapHeight / gridInfo.steps_y) * selectedPoint.y)
+                }
+                width={mapWidth / gridInfo.steps_x}
+                height={mapHeight / gridInfo.steps_y}
+                fill="red"
+              />
+            )}
         </Layer>
       </Stage>
     </div>

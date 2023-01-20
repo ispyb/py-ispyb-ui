@@ -6,6 +6,7 @@ import { useAuth } from 'hooks/useAuth';
 import { SubSample } from 'models/SubSample';
 import { Map } from 'models/Map';
 import { awaitImage } from './Images';
+import { KonvaEventObject } from 'konva/lib/Node';
 
 export function getROIName(map: any): string {
   return map.XRFFluorescenceMappingROI.scalar
@@ -26,6 +27,7 @@ export default function Maps({
   mapOpacity,
   setLoadingMessage,
   selectPoint,
+  enableCursor,
 }: {
   maps: Map[];
   subsamples: SubSample[];
@@ -34,6 +36,7 @@ export default function Maps({
   mapOpacity: number;
   setLoadingMessage: (message: string) => void;
   selectPoint?: (point: SelectPoint) => void;
+  enableCursor: boolean;
 }) {
   const { site } = useAuth();
   const { fetch } = useController();
@@ -99,6 +102,17 @@ export default function Maps({
     [maps, selectPoint]
   );
 
+  const setCursor = useCallback(
+    (evt: KonvaEventObject<MouseEvent>, pointerType: string = 'default') => {
+      if (!enableCursor) return;
+      if (evt.target.parent?.parent) {
+        // @ts-expect-error
+        evt.target.parent.parent.content.style.cursor = pointerType;
+      }
+    },
+    [enableCursor]
+  );
+
   return (
     <>
       {mapsLoaded && (
@@ -138,6 +152,8 @@ export default function Maps({
                 attrs={{
                   xrfFluorescenceMappingId: map.xrfFluorescenceMappingId,
                 }}
+                onMouseEnter={(evt) => setCursor(evt, 'pointer')}
+                onMouseLeave={(evt) => setCursor(evt)}
               />
             );
           })}

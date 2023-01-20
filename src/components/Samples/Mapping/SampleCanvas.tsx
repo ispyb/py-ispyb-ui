@@ -8,7 +8,6 @@ import {
   Form,
   Navbar,
   ToggleButton,
-  ToggleButtonGroup,
 } from 'react-bootstrap';
 import { ArrowsMove, Bullseye } from 'react-bootstrap-icons';
 
@@ -267,6 +266,7 @@ function SampleCanvasMain({
             selectedROI={selectedROI}
             setLoadingMessage={setMapLoadingMessage}
             mapOpacity={mapOpacity}
+            enableCursor={enableCursor}
             selectPoint={selectPoint}
           />
         </Layer>
