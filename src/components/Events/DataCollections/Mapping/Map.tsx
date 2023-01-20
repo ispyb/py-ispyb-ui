@@ -11,7 +11,9 @@ import DataViewer from './DataViewer';
 
 export default function Map(props: IDataCollection) {
   const { parent, item } = props;
-  const [selectedPoint, setSelectedPoint] = useState<number>(0);
+  const [selectedPoint, setSelectedPoint] = useState<number | undefined>(
+    undefined
+  );
 
   const res = (
     <Row className="g-0">
@@ -81,7 +83,12 @@ export default function Map(props: IDataCollection) {
         />
       </Col>
       <Col xs="12" md="4" className="bg-light">
-        <DataViewer selectedPoint={selectedPoint} dataCollection={item} />
+        {selectedPoint !== undefined && (
+          <DataViewer selectedPoint={selectedPoint} dataCollection={item} />
+        )}
+        {selectedPoint === undefined && (
+          <p>Select a point to view the related data</p>
+        )}
       </Col>
       <Col xs="12" md="4">
         {item.GridInfo && item.GridInfo.length > 0 && (
