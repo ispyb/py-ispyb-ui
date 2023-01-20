@@ -246,13 +246,6 @@ function SampleCanvasMain({
             ></Rect>
           )}
 
-          <SubSamples
-            subsamples={subsamples}
-            scaleFactor={scaleFactor}
-            selectedSubSample={selectedSubSample}
-            showPOI={showPOI}
-          />
-
           <Maps
             maps={maps}
             subsamples={subsamples}
@@ -262,6 +255,13 @@ function SampleCanvasMain({
             mapOpacity={mapOpacity}
             enableCursor={enableCursor}
             selectPoint={selectPoint}
+          />
+
+          <SubSamples
+            subsamples={subsamples}
+            scaleFactor={scaleFactor}
+            selectedSubSample={selectedSubSample}
+            showPOI={showPOI}
           />
         </Layer>
       </Stage>
