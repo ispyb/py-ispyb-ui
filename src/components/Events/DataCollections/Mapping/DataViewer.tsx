@@ -2,17 +2,7 @@ import { Suspense, useState, useMemo } from 'react';
 import { Form } from 'react-bootstrap';
 import { useInView } from 'react-intersection-observer';
 import { useSuspense } from 'rest-hooks';
-import {
-  HeatmapVis,
-  VisCanvas,
-  DataCurve,
-  Zoom,
-  Pan,
-  Domain,
-  useCombinedDomain,
-  useDomains,
-} from '@h5web/lib';
-import { range } from 'lodash';
+import { HeatmapVis, Domain, LineVis, getDomain } from '@h5web/lib';
 import ndarray from 'ndarray';
 
 import { H5DataResource } from 'api/resources/H5Grove/Data';
@@ -74,7 +64,7 @@ function useDataPoint({
   return data && data.data;
 }
 
-const COLORS = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728'];
+// const COLORS = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728'];
 const DEFAULT_DOMAIN: Domain = [0.1, 1];
 
 interface PlotData {
@@ -83,37 +73,21 @@ interface PlotData {
 }
 
 function Plot1d({ data, series }: PlotData) {
-  const xdata = useMemo(() => range(data.length), [data]);
-
-  const yDomain = useCombinedDomain(useDomains([data])) || DEFAULT_DOMAIN;
-  const xDomain = useCombinedDomain(useDomains([xdata])) || DEFAULT_DOMAIN;
+  const dataArray = useMemo(() => ndarray(data), [data]);
+  const yDomain = getDomain(dataArray) || DEFAULT_DOMAIN;
 
   return (
-    <figure style={{ display: 'flex', flex: '1 1 0', margin: 0 }}>
-      <VisCanvas
-        abscissaConfig={{
-          visDomain: xDomain,
-          showGrid: true,
+    <div className="h5web-1dplot">
+      <LineVis
+        dataArray={dataArray}
+        domain={yDomain}
+        abscissaParams={{
           label: 'Channel',
         }}
-        ordinateConfig={{
-          visDomain: yDomain,
-          showGrid: true,
-          label: 'Count',
-        }}
-      >
-        {series.map((c) => (
-          <DataCurve
-            key={c.name}
-            abscissas={xdata}
-            ordinates={data}
-            color={COLORS[0]}
-          />
-        ))}
-        <Pan />
-        <Zoom />
-      </VisCanvas>
-    </figure>
+        ordinateLabel="Count"
+        renderTooltip={(data) => <>{data}</>}
+      />
+    </div>
   );
 }
 
@@ -123,7 +97,7 @@ function Plot2d({ data, series }: PlotData) {
   const domain = useMemo(() => [0, 255], []);
   const dataArray = useMemo(
     () =>
-      ndarray(new Float32Array(data), [series[0].shape[2], series[0].shape[1]]),
+      ndarray(new Float32Array(data), [series[0].shape[1], series[0].shape[2]]),
     [data, series]
   );
 
