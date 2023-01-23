@@ -28,6 +28,9 @@
 }
 
 .h5web-1dplot {
+  display: flex;
+  flex: 1;
+  
   // TODO: Bug here in h5web
   [class^='_r3fRoot'] {
     overflow: visible !important;
