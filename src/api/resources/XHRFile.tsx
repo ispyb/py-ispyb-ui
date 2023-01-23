@@ -12,6 +12,21 @@ import { useAuth } from 'hooks/useAuth';
 
 // const emptyImage = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
 
+class NetworkError extends Error {
+  status: number;
+  response: any;
+  name = 'NetworkError';
+
+  constructor(response: any) {
+    super(
+      response.statusText ||
+        /* istanbul ignore next */ `Network response not 'ok': ${response.status}`,
+    );
+    this.status = response.status;
+    this.response = response;
+  }
+}
+
 export const getXHRArrayBuffer: EndpointInstance<
   (this: EndpointInstance, { src }: { src: string }) => Promise<ArrayBuffer>,
   ArrayBuffer,
@@ -35,7 +50,7 @@ export const getXHRArrayBuffer: EndpointInstance<
       xhr.onload = function (e) {
         if (xhr.status === 0 || xhr.status !== 200) {
           console.warn('XHR onLoad bad status', xhr.status);
-          reject(xhr.status);
+          reject(new NetworkError(xhr));
         }
 
         resolve(this.response);
@@ -110,7 +125,7 @@ export const getXHRBlob: EndpointInstance<
         if (xhr.status === 0 || xhr.status !== 200) {
           console.warn('XHR onLoad bad status', xhr.status);
           // resolve(emptyImage);
-          reject(xhr.status);
+          reject(new NetworkError(xhr));
         }
 
         const headers = parseHeadersAsDict(xhr.getAllResponseHeaders());
