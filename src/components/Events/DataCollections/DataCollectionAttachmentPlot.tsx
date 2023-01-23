@@ -39,12 +39,11 @@ function DataCollectionAttachmentPlotMain({
       : null
   );
   const enc = new TextDecoder('utf-8');
+  if (!buffer) return <p>No data available</p>
+
   const text = enc.decode(buffer);
   const stripped = text.replace('# ', '');
-  const parsed = useMemo(
-    () => parse(stripped, { delimiter: '\t', header: true }),
-    [stripped]
-  );
+  const parsed = parse(stripped, { delimiter: '\t', header: true })
 
   const xSeries = parsed.meta.fields?.[0];
   const series = parsed.meta.fields?.slice(1);
