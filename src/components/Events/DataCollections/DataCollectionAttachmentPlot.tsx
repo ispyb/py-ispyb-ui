@@ -4,9 +4,8 @@ import { useResource, useSuspense } from 'rest-hooks';
 import { parse } from 'papaparse';
 
 import { DataCollectionFileAttachmentResource } from 'api/resources/DataCollectionFileAttachment';
-import { getXHRArrayBuffer } from 'api/resources/XHRFile';
+import { ErrorBoundary, getXHRArrayBuffer } from 'api/resources/XHRFile';
 import PlotEnhancer from 'components/Stats/PlotEnhancer';
-import NetworkErrorPage from 'components/NetworkErrorPage';
 
 interface IDataCollectionAttachmentPlot {
   dataCollectionId: number;
@@ -92,11 +91,11 @@ export default function DataCollectionAttachmentPlot(
   return (
     <>
       {inView && (
-        <NetworkErrorPage>
+        <ErrorBoundary>
           <Suspense fallback="Loading...">
             <DataCollectionAttachmentPlotMain {...props} />
           </Suspense>
-        </NetworkErrorPage>
+        </ErrorBoundary>
       )}
       {!inView && <div ref={ref}></div>}
     </>
