@@ -20,7 +20,7 @@ class NetworkError extends Error {
   constructor(response: any) {
     super(
       response.statusText ||
-        /* istanbul ignore next */ `Network response not 'ok': ${response.status}`,
+        /* istanbul ignore next */ `Network response not 'ok': ${response.status}`
     );
     this.status = response.status;
     this.response = response;
