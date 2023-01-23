@@ -79,6 +79,13 @@ function SampleCanvasMain({
           y: 1 / scale,
         });
       });
+
+      const lines = stage.find('Line');
+      lines.forEach((line) => {
+        line.setAttrs({
+          strokeWidth: 1 / scale,
+        });
+      });
     }
   }, [stageRef]);
 
