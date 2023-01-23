@@ -8,7 +8,7 @@ export function ParsedErrorMain({ error }: { error: NetworkError }) {
   useEffect(() => {
     setJson({});
     error.response
-      ?.clone?.()
+      ?.clone()
       .json()
       .then((jsonTmp) => setJson(jsonTmp))
       .catch((err) => console.log('Couldnt load json', err));
