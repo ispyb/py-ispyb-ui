@@ -62,6 +62,7 @@ export interface DataCollectionGroup {
   Detector_detectorModel?: string;
   BLSample_name?: string;
   hasMR?: number;
+  SpaceGroupModelResolvedByMr?: string;
   ScreeningStrategySubWedge_axisStart?: number;
   numberOfGridSquares?: number;
   DataCollection_imageDirectory?: string;
@@ -135,6 +136,7 @@ export interface DataCollectionGroup {
   DataCollection_xtalSnapshotFullPath3?: string;
   DataCollection_axisStart?: number;
   hasPhasing?: number;
+  SpaceGroupModelResolvedByPhasing?: string;
   DataCollection_flux_end?: number;
   BLSession_protectedData?: string;
   totalNumberOfImages?: number;

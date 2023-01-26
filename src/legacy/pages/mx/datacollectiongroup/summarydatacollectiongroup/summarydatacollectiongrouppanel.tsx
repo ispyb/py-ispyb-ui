@@ -1,4 +1,4 @@
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, Alert } from 'react-bootstrap';
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
 import {
   getDiffrationThumbnail,
@@ -101,6 +101,18 @@ export default function SummaryDataCollectionGroupPanel({
           </Col>
         )}
       </Row>
+      {dataCollectionGroup.SpaceGroupModelResolvedByMr && (
+        <Alert variant="success">
+          Automatic MR appears to have worked with the space group{' '}
+          {dataCollectionGroup.SpaceGroupModelResolvedByMr}
+        </Alert>
+      )}
+      {dataCollectionGroup.SpaceGroupModelResolvedByPhasing && (
+        <Alert variant="success">
+          Automatic SAD appears to have worked with the space group{' '}
+          {dataCollectionGroup.SpaceGroupModelResolvedByPhasing}
+        </Alert>
+      )}
       {!compact && (
         <Row>
           <h6>Comments</h6>

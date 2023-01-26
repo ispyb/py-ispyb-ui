@@ -27,7 +27,6 @@ export default function ProcessingSummary({
       dataCollectionGroup.DataCollection_dataCollectionId.toString(),
   });
   if (!data || data.flatMap((d) => d).length === 0) return null;
-  console.log(data);
 
   const results = getRankedResults(data.flatMap((d) => d)).filter(
     (v) =>

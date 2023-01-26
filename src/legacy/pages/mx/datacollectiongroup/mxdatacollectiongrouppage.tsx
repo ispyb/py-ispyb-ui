@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import MXPage from 'legacy/pages/mx/mxpage';
 import {
   Anchor,
+  Button,
   ButtonGroup,
   Card,
   Dropdown,
@@ -51,6 +52,8 @@ export default function MXDataCollectionGroupPage() {
   const [filterContainers, setFilterContainers] = useState(false);
   const [selectedGroups, setSelectedGroups] = useState([] as number[]);
   const [selectedPipelines, setSelectedPipelines] = useState<string[]>([]);
+  const [filterMR, setFilterMR] = useState(false);
+  const [filterSAD, setFilterSAD] = useState(false);
 
   if (dataCollectionGroups && dataCollectionGroups.length) {
     const containerIds = _(dataCollectionGroups)
@@ -59,13 +62,21 @@ export default function MXDataCollectionGroupPage() {
       .sort()
       .value();
 
-    const filteredDataCollectionGroups = filterContainers
+    const filteredDataCollectionGroupsByContainer = filterContainers
       ? dataCollectionGroups.filter(
           (g) =>
             g.DataCollection_dataCollectionGroupId &&
             selectedGroups.includes(g.DataCollection_dataCollectionGroupId)
         )
       : dataCollectionGroups;
+
+    const filteredDataCollectionGroups =
+      filteredDataCollectionGroupsByContainer.filter(
+        (dcg) =>
+          !(filterMR || filterSAD) ||
+          (filterMR && dcg.SpaceGroupModelResolvedByMr) ||
+          (filterSAD && dcg.SpaceGroupModelResolvedByPhasing)
+      );
 
     return (
       <MXPage sessionId={sessionId} proposalName={proposalName}>
@@ -139,6 +150,22 @@ export default function MXDataCollectionGroupPage() {
                   setSelected={setSelectedPipelines}
                 />
               </Suspense>
+            </ButtonGroup>
+            <ButtonGroup style={{ marginRight: 50 }}>
+              <Button
+                size="sm"
+                variant={filterMR ? 'primary' : 'light'}
+                onClick={() => setFilterMR(!filterMR)}
+              >
+                MR
+              </Button>
+              <Button
+                size="sm"
+                variant={filterSAD ? 'primary' : 'light'}
+                onClick={() => setFilterSAD(!filterSAD)}
+              >
+                SAD
+              </Button>
               <OverlayTrigger
                 key={'bottom'}
                 placement={'bottom'}

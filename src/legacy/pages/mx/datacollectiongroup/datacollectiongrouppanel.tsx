@@ -67,8 +67,11 @@ export default function DataCollectionGroupPanel({
   const { data: procs } = useAutoProc({
     proposalName,
     dataCollectionId:
-      dataCollectionGroup.DataCollection_dataCollectionId.toString(),
+      dataCollectionGroup.DataCollection_dataCollectionId?.toString() || '-1',
   });
+
+  if (dataCollectionGroup.DataCollection_dataCollectionId === undefined)
+    return null;
 
   const pipelines = parseResults(procs?.flatMap((v) => v) || []).filter(
     (v) =>
