@@ -131,7 +131,7 @@ export default function MXDataCollectionGroupPage() {
               ></DownloadOptions>
             </ButtonGroup>
             <ButtonGroup style={{ marginRight: 50 }}>
-              <Suspense>
+              <Suspense fallback={<SelectPipelinesFallback />}>
                 <SelectPipelines
                   dataCollectionGroups={filteredDataCollectionGroups}
                   proposalName={proposalName}
@@ -263,6 +263,21 @@ export default function MXDataCollectionGroupPage() {
   );
 }
 
+function SelectPipelinesFallback() {
+  return (
+    <Dropdown>
+      <Dropdown.Toggle
+        disabled={true}
+        size="sm"
+        variant="primary"
+        style={{ marginRight: 2, marginLeft: 2 }}
+      >
+        Select pipelines
+      </Dropdown.Toggle>
+    </Dropdown>
+  );
+}
+
 function SelectPipelines({
   dataCollectionGroups,
   proposalName,
@@ -283,14 +298,14 @@ function SelectPipelines({
     dataCollectionId: ids ? ids : '-1',
   });
 
-  if (data === undefined || !data.length) return null;
+  if (data === undefined || !data.length) return <SelectPipelinesFallback />;
   const options = _(parseResults(data.flatMap((v) => v)))
     .map((v) => v.program)
     .uniq()
     .sort()
     .value();
 
-  if (options.length === 0) return null;
+  if (options.length === 0) return <SelectPipelinesFallback />;
   const allSelected = _(options).every((o) => selected.includes(o));
 
   return (
