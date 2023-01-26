@@ -13,11 +13,13 @@ import { Card, Col, Container, Row } from 'react-bootstrap';
 export interface Props {
   proposalName: string;
   dataCollectionGroup: DataCollectionGroup;
+  selectedPipelines: string[];
 }
 
 export default function ProcessingSummary({
   proposalName,
   dataCollectionGroup,
+  selectedPipelines,
 }: Props) {
   const { data } = useAutoProc({
     proposalName,
@@ -27,7 +29,10 @@ export default function ProcessingSummary({
   if (!data || data.flatMap((d) => d).length === 0) return null;
   console.log(data);
 
-  const results = getRankedResults(data.flatMap((d) => d));
+  const results = getRankedResults(data.flatMap((d) => d)).filter(
+    (v) =>
+      selectedPipelines.includes(v.program) || selectedPipelines.length === 0
+  );
 
   return (
     <Card.Footer>

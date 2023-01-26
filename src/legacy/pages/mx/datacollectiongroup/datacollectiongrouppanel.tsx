@@ -30,6 +30,8 @@ import moment from 'moment';
 import NbBadge from 'legacy/components/nbBadge';
 import ResultsDataCollectionGroupPanel from './results/ResultsDataCollectionGroupPanel';
 import ProcessingSummary from './results/processingSummary';
+import { useAutoProc } from 'legacy/hooks/ispyb';
+import { parseResults } from 'legacy/helpers/mx/results/resultparser';
 
 type Props = {
   sessionId: string;
@@ -37,6 +39,7 @@ type Props = {
   dataCollectionGroup: DataCollectionGroup;
   defaultCompact: boolean;
   compactToggle: Subject<boolean>;
+  selectedPipelines: string[];
 };
 
 function getUniqueCount(commaSeparatedList?: string): number {
@@ -52,6 +55,7 @@ export default function DataCollectionGroupPanel({
   dataCollectionGroup,
   defaultCompact,
   compactToggle,
+  selectedPipelines,
 }: Props) {
   const [compact, setCompact] = useState(defaultCompact);
   compactToggle.subscribe({
@@ -59,6 +63,17 @@ export default function DataCollectionGroupPanel({
       setCompact(value);
     },
   });
+
+  const { data: procs } = useAutoProc({
+    proposalName,
+    dataCollectionId:
+      dataCollectionGroup.DataCollection_dataCollectionId.toString(),
+  });
+
+  const pipelines = parseResults(procs?.flatMap((v) => v) || []).filter(
+    (v) =>
+      selectedPipelines.includes(v.program) || selectedPipelines.length === 0
+  );
 
   return (
     <Tab.Container
@@ -116,11 +131,7 @@ export default function DataCollectionGroupPanel({
                     <Nav.Item>
                       <Nav.Link eventKey="Results">
                         Results
-                        <NbBadge
-                          value={getUniqueCount(
-                            dataCollectionGroup.autoProcIntegrationId
-                          )}
-                        />
+                        <NbBadge value={pipelines.length} />
                       </Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
@@ -225,6 +236,7 @@ export default function DataCollectionGroupPanel({
                       <ResultsDataCollectionGroupPanel
                         proposalName={proposalName}
                         dataCollectionGroup={dataCollectionGroup}
+                        selectedPipelines={selectedPipelines}
                       />
                     </LazyWrapper>
                   </Tab.Pane>
@@ -245,6 +257,7 @@ export default function DataCollectionGroupPanel({
           <ProcessingSummary
             proposalName={proposalName}
             dataCollectionGroup={dataCollectionGroup}
+            selectedPipelines={selectedPipelines}
           />
         </Suspense>
       </Card>

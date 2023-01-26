@@ -9,11 +9,13 @@ import { ResultGraph } from './resultGraph';
 export interface Props {
   proposalName: string;
   dataCollectionGroup: DataCollectionGroup;
+  selectedPipelines: string[];
 }
 
 export default function ResultsDataCollectionGroupPanel({
   proposalName,
   dataCollectionGroup,
+  selectedPipelines,
 }: Props) {
   const [view, setView] = useState(0);
 
@@ -24,7 +26,10 @@ export default function ResultsDataCollectionGroupPanel({
   });
   if (!data || !data.length) return null;
 
-  const results = getRankedResults(data.flatMap((d) => d));
+  const results = getRankedResults(data.flatMap((d) => d)).filter(
+    (v) =>
+      selectedPipelines.includes(v.program) || selectedPipelines.length === 0
+  );
 
   return (
     <Col>

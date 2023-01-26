@@ -2,13 +2,15 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import MXPage from 'legacy/pages/mx/mxpage';
 import {
+  Anchor,
   ButtonGroup,
   Card,
+  Dropdown,
   OverlayTrigger,
   ToggleButton,
   Tooltip,
 } from 'react-bootstrap';
-import { useMXDataCollectionsBy } from 'legacy/hooks/ispyb';
+import { useAutoProc, useMXDataCollectionsBy } from 'legacy/hooks/ispyb';
 import DataCollectionGroupPanel from 'legacy/pages/mx/datacollectiongroup/datacollectiongrouppanel';
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
 import LazyWrapper from 'legacy/components/loading/lazywrapper';
@@ -18,6 +20,7 @@ import { Subject } from 'rxjs';
 import _ from 'lodash';
 import ContainerFilter from '../container/containerfilter';
 import {
+  faCheckCircle,
   faDotCircle,
   faFilePdf,
   faFileWord,
@@ -29,6 +32,7 @@ import {
   getMXDataCollectionSummary,
 } from 'legacy/api/ispyb';
 import DownloadOptions from 'legacy/components/buttons/downloadoptions';
+import { parseResults } from 'legacy/helpers/mx/results/resultparser';
 
 type Param = {
   sessionId: string;
@@ -46,6 +50,7 @@ export default function MXDataCollectionGroupPage() {
   const compactToggle = new Subject<boolean>();
   const [filterContainers, setFilterContainers] = useState(false);
   const [selectedGroups, setSelectedGroups] = useState([] as number[]);
+  const [selectedPipelines, setSelectedPipelines] = useState<string[]>([]);
 
   if (dataCollectionGroups && dataCollectionGroups.length) {
     const containerIds = _(dataCollectionGroups)
@@ -74,6 +79,12 @@ export default function MXDataCollectionGroupPage() {
             }}
           >
             <ButtonGroup style={{ marginRight: 50 }}>
+              <SelectPipelines
+                dataCollectionGroups={filteredDataCollectionGroups}
+                proposalName={proposalName}
+                selected={selectedPipelines}
+                setSelected={setSelectedPipelines}
+              />
               <DownloadOptions
                 title="Summary"
                 options={[
@@ -229,6 +240,7 @@ export default function MXDataCollectionGroupPage() {
                     dataCollectionGroup={dataCollectionGroup}
                     proposalName={proposalName}
                     sessionId={sessionId}
+                    selectedPipelines={selectedPipelines}
                   ></DataCollectionGroupPanel>
                 </LazyWrapper>
               </div>
@@ -244,5 +256,91 @@ export default function MXDataCollectionGroupPage() {
         <p>No data collection groups found.</p>
       </Card>
     </MXPage>
+  );
+}
+
+function SelectPipelines({
+  dataCollectionGroups,
+  proposalName,
+  selected,
+  setSelected,
+}: {
+  dataCollectionGroups: DataCollectionGroup[];
+  proposalName: string;
+  selected: string[];
+  setSelected: (_: string[]) => void;
+}) {
+  const ids = dataCollectionGroups
+    .map((d) => d.DataCollection_dataCollectionId)
+    .join(',');
+  const { data } = useAutoProc({
+    proposalName,
+    dataCollectionId: ids,
+  });
+
+  if (data === undefined || !data.length) return null;
+  const options = _(parseResults(data.flatMap((v) => v)))
+    .map((v) => v.program)
+    .uniq()
+    .sort()
+    .value();
+
+  if (options.length === 0) return null;
+  const allSelected = _(options).every((o) => selected.includes(o));
+
+  return (
+    <Dropdown>
+      <Dropdown.Toggle
+        disabled={false}
+        size="sm"
+        variant="primary"
+        style={{ marginRight: 2, marginLeft: 2 }}
+      >
+        Select pipelines
+      </Dropdown.Toggle>
+      <Dropdown.Menu>
+        <Dropdown.Item
+          as={Anchor}
+          onClick={(e) => {
+            if (allSelected) {
+              setSelected([]);
+            } else {
+              setSelected(options);
+            }
+            e.stopPropagation();
+          }}
+        >
+          <strong style={{ borderBottom: '1px solid black' }}>
+            {allSelected ? 'Unselect all' : 'Select all'}
+          </strong>
+        </Dropdown.Item>
+        {options.map((v) => (
+          <Dropdown.Item
+            as={Anchor}
+            onClick={(e) => {
+              if (selected.includes(v)) {
+                setSelected(selected.filter((e) => e !== v));
+              } else {
+                setSelected([...selected, v]);
+              }
+              e.stopPropagation();
+            }}
+          >
+            {selected.includes(v) ? (
+              <div>
+                <FontAwesomeIcon
+                  icon={faCheckCircle}
+                  style={{ marginRight: 5 }}
+                  color="green"
+                ></FontAwesomeIcon>
+                {v}
+              </div>
+            ) : (
+              <div style={{ marginLeft: 21 }}>{v}</div>
+            )}
+          </Dropdown.Item>
+        ))}
+      </Dropdown.Menu>
+    </Dropdown>
   );
 }
