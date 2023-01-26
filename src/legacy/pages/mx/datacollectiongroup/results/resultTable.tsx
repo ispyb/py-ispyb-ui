@@ -139,6 +139,7 @@ function ResultLine({ result }: { result: AutoProcIntegration }) {
         />
         <ResultCol
           colored
+          thresholds={{ good: 2, bad: 1 }}
           values={[
             result.overall?.meanIOverSigI?.toFixed(1),
             result.inner?.meanIOverSigI?.toFixed(1),
@@ -171,6 +172,7 @@ function ResultLine({ result }: { result: AutoProcIntegration }) {
         />
         <ResultCol
           colored
+          thresholds={{ good: 0.95, bad: 0.3 }}
           values={[
             result.overall?.ccHalf?.toFixed(1),
             result.inner?.ccHalf?.toFixed(1),
@@ -204,11 +206,13 @@ function ResultCol({
   tags = [],
   colSpan,
   colored = false,
+  thresholds = undefined,
 }: {
   values?: (string | number | undefined)[];
   tags?: (string | number | undefined)[];
   colSpan?: number;
   colored?: boolean;
+  thresholds?: { good: number; bad: number } | undefined;
 }) {
   const colors = colored
     ? ['blue', 'purple', 'green']
@@ -216,13 +220,32 @@ function ResultCol({
   return (
     <td colSpan={colSpan}>
       <Col>
-        {values.map((v, i) => (
-          <Row key={v}>
-            <small style={{ color: colors[i] }} className="text-center">
-              {v !== undefined ? v : ''}
-            </small>
-          </Row>
-        ))}
+        {values.map((v, i) => {
+          if (thresholds && v !== undefined) {
+            const bg =
+              v <= thresholds.bad
+                ? '#ff88888c'
+                : v >= thresholds.good
+                ? '#94ff948c'
+                : '#aeecff8c';
+            return (
+              <Row key={v}>
+                <small style={{ color: colors[i] }} className="text-center">
+                  <div style={{ backgroundColor: bg }}>
+                    {v !== undefined ? v : ''}
+                  </div>
+                </small>
+              </Row>
+            );
+          }
+          return (
+            <Row key={v}>
+              <small style={{ color: colors[i] }} className="text-center">
+                {v !== undefined ? v : ''}
+              </small>
+            </Row>
+          );
+        })}
         {tags.map((t) => (
           <Row>
             <Col></Col>
