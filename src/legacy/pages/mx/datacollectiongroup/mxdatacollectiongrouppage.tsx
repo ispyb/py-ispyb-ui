@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import MXPage from 'legacy/pages/mx/mxpage';
 import {
@@ -79,12 +79,6 @@ export default function MXDataCollectionGroupPage() {
             }}
           >
             <ButtonGroup style={{ marginRight: 50 }}>
-              <SelectPipelines
-                dataCollectionGroups={filteredDataCollectionGroups}
-                proposalName={proposalName}
-                selected={selectedPipelines}
-                setSelected={setSelectedPipelines}
-              />
               <DownloadOptions
                 title="Summary"
                 options={[
@@ -137,6 +131,14 @@ export default function MXDataCollectionGroupPage() {
               ></DownloadOptions>
             </ButtonGroup>
             <ButtonGroup style={{ marginRight: 50 }}>
+              <Suspense>
+                <SelectPipelines
+                  dataCollectionGroups={filteredDataCollectionGroups}
+                  proposalName={proposalName}
+                  selected={selectedPipelines}
+                  setSelected={setSelectedPipelines}
+                />
+              </Suspense>
               <OverlayTrigger
                 key={'bottom'}
                 placement={'bottom'}
@@ -234,14 +236,16 @@ export default function MXDataCollectionGroupPage() {
                 style={compact ? { margin: 1 } : { margin: 5 }}
               >
                 <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                  <DataCollectionGroupPanel
-                    compactToggle={compactToggle}
-                    defaultCompact={compact}
-                    dataCollectionGroup={dataCollectionGroup}
-                    proposalName={proposalName}
-                    sessionId={sessionId}
-                    selectedPipelines={selectedPipelines}
-                  ></DataCollectionGroupPanel>
+                  <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+                    <DataCollectionGroupPanel
+                      compactToggle={compactToggle}
+                      defaultCompact={compact}
+                      dataCollectionGroup={dataCollectionGroup}
+                      proposalName={proposalName}
+                      sessionId={sessionId}
+                      selectedPipelines={selectedPipelines}
+                    ></DataCollectionGroupPanel>
+                  </Suspense>
                 </LazyWrapper>
               </div>
             )
@@ -272,10 +276,11 @@ function SelectPipelines({
 }) {
   const ids = dataCollectionGroups
     .map((d) => d.DataCollection_dataCollectionId)
+    .slice(0, 10)
     .join(',');
   const { data } = useAutoProc({
     proposalName,
-    dataCollectionId: ids,
+    dataCollectionId: ids ? ids : '-1',
   });
 
   if (data === undefined || !data.length) return null;

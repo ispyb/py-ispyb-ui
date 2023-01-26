@@ -131,7 +131,12 @@ export default function DataCollectionGroupPanel({
                     <Nav.Item>
                       <Nav.Link eventKey="Results">
                         Results
-                        <NbBadge value={pipelines.length} />
+                        <NbBadge
+                          value={
+                            pipelines.filter((p) => p.status === 'SUCCESS')
+                              .length
+                          }
+                        />
                       </Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
