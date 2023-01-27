@@ -11,6 +11,7 @@ import StatsRoutes from './Stats';
 import { SessionRoutes, CalendarRoutes } from './Proposals';
 import SampleRoutes from './Samples';
 import ProteinRoutes from './Proteins';
+import QueueRoutes from './Queue';
 
 const ProposalBreadCrumb: BreadcrumbComponentType<'proposal'> = ({
   match,
@@ -32,6 +33,7 @@ const ProposalRoutes = {
     ShippingRoutes,
     EventsRoutes,
     StatsRoutes,
+    QueueRoutes,
   ],
 };
 
