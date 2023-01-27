@@ -18,4 +18,6 @@ export class _ContainerQueueSampleResource extends PaginatedResource {
   static urlRoot = 'containers/queue/samples';
 }
 
-export const ContainerQueueSampleResource = withContainerQueueSample(_ContainerQueueSampleResource);
+export const ContainerQueueSampleResource = withContainerQueueSample(
+  _ContainerQueueSampleResource
+);

@@ -23,10 +23,9 @@ function useDataSeries({
   });
   const children = meta.children as Series[];
   return useMemo(() => {
-    const twoD = children.filter((child) => child.shape.length === 2)
-    const threeD = children.filter((child) => child.shape.length === 3)
-    const seriesTypes: Record<string, Series[]> = {
-    };
+    const twoD = children.filter((child) => child.shape.length === 2);
+    const threeD = children.filter((child) => child.shape.length === 3);
+    const seriesTypes: Record<string, Series[]> = {};
 
     if (twoD.length) seriesTypes['2'] = twoD;
     if (threeD.length) seriesTypes['3'] = threeD;
