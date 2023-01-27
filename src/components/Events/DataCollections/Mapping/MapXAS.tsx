@@ -9,6 +9,7 @@ import { IDataCollection } from 'components/Events/DataCollections/Default';
 import GridPlot from './GridPlot';
 import DataViewer from './DataViewer';
 import { toEnergy } from 'utils/numbers';
+import StatusBadge from '../StatusBadge';
 
 export default function MapXAS(props: IDataCollection) {
   const { parent, item } = props;
@@ -47,7 +48,10 @@ export default function MapXAS(props: IDataCollection) {
               title: 'Type',
               content: item.DataCollectionGroup.experimentType,
             },
-            { title: 'Status', content: item.runStatus },
+            {
+              title: 'Status',
+              content: <StatusBadge status={item.runStatus} />,
+            },
             {
               title: 'Finished',
               content: parent.endTime,

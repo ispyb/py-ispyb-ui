@@ -52,6 +52,8 @@ export function DCTypes(sample: Sample) {
     'Mesh',
     'XRF map',
     'XRF map xas',
+    'XRD map',
+    'XRF xrd map',
     'Energy Scan',
     'EM',
     'Tomo',
