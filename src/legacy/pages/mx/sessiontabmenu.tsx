@@ -50,7 +50,7 @@ export default function SessionTabMenu({
           as={NavLink}
           to={`/legacy/proposals/${proposalName}/MX/${sessionId}/xrf`}
         >
-          Flourescence Spectra <NbBadge value={spectras?.length} />
+          Fluorescence Spectra <NbBadge value={spectras?.length} />
         </Nav.Link>
       </Nav.Item>
     </Nav>
