@@ -9,6 +9,7 @@ import { toEnergy } from 'utils/numbers';
 
 import GridPlot from './GridPlot';
 import DataViewer from './DataViewer';
+import StatusBadge from '../StatusBadge';
 
 export default function Map(props: IDataCollection) {
   const { parent, item } = props;
@@ -47,7 +48,10 @@ export default function Map(props: IDataCollection) {
               title: 'Type',
               content: item.DataCollectionGroup.experimentType,
             },
-            { title: 'Status', content: item.runStatus },
+            {
+              title: 'Status',
+              content: <StatusBadge status={item.runStatus} />,
+            },
             {
               title: 'Finished',
               content: parent.endTime,

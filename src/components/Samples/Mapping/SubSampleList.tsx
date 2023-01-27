@@ -5,6 +5,7 @@ import Table from 'components/Layout/Table';
 import { DCTypes } from 'components/Samples/SampleStatus';
 import { SubSample } from 'models/SubSample';
 import { usePaging } from 'hooks/usePaging';
+import SubSampleType from 'components/Samples/SubSampleType';
 
 export default function SubSampleList({
   blSampleId,
@@ -42,7 +43,12 @@ export default function SubSampleList({
         }}
         columns={[
           { label: '#', key: 'blSubSampleId', className: 'text-break' },
-          { label: 'Type', key: 'type', className: 'text-nowrap' },
+          {
+            label: 'Type',
+            key: 'type',
+            className: 'text-nowrap',
+            formatter: (row) => <SubSampleType type={row.type} />,
+          },
           {
             label: 'Data',
             key: '_metadata.datacollections',

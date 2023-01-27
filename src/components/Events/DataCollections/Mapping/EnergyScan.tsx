@@ -10,6 +10,7 @@ import { AutoProcProgramMessageStatus } from 'models/AutoProcProgramMessageStatu
 import { DataCollectionBox } from 'components/Events/DataCollection';
 import DataCollectionAttachmentPlot from '../DataCollectionAttachmentPlot';
 import { toEnergy } from 'utils/numbers';
+import StatusBadge from '../StatusBadge';
 
 export interface IDataCollection {
   item: DataCollectionType;
@@ -41,7 +42,10 @@ export default function EnergyScan(props: IDataCollection) {
               title: 'Type',
               content: item.DataCollectionGroup.experimentType,
             },
-            { title: 'Status', content: item.runStatus },
+            {
+              title: 'Status',
+              content: <StatusBadge status={item.runStatus} />,
+            },
             {
               title: 'Duration',
               content: parent.duration ? Math.round(parent.duration) : 0,
