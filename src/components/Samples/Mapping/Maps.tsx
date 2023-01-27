@@ -93,7 +93,7 @@ export default function Maps({
         'point',
         point
       );
-      if (selectPoint)
+      if (selectPoint && map._metadata.dataCollectionId)
         selectPoint({
           dataCollectionId: map._metadata.dataCollectionId,
           selectedPoint: point,
