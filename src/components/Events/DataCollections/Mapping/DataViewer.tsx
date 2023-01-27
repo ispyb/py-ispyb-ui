@@ -23,15 +23,13 @@ function useDataSeries({
   });
   const children = meta.children as Series[];
   return useMemo(() => {
-    const seriesTypes = {
-      2: children.filter((child) => child.shape.length === 2),
-      3: children.filter((child) => child.shape.length === 3),
+    const twoD = children.filter((child) => child.shape.length === 2)
+    const threeD = children.filter((child) => child.shape.length === 3)
+    const seriesTypes: Record<string, Series[]> = {
     };
 
-    // @ts-expect-error
-    if (!seriesTypes['2'].length) delete seriesTypes['2'];
-    // @ts-expect-error
-    if (!seriesTypes['3'].length) delete seriesTypes['3'];
+    if (twoD.length) seriesTypes['2'] = twoD;
+    if (threeD.length) seriesTypes['3'] = threeD;
     return seriesTypes;
   }, [children]);
 }
@@ -94,7 +92,7 @@ function Plot1d({ data, series }: PlotData) {
 export const ZOOM_KEY = 'Shift';
 
 function Plot2d({ data, series }: PlotData) {
-  const domain = useMemo(() => [0, 255], []);
+  const domain = useMemo(() => [0, 255] as Domain, []);
   const dataArray = useMemo(
     () =>
       ndarray(new Float32Array(data), [series[0].shape[1], series[0].shape[2]]),
@@ -105,14 +103,8 @@ function Plot2d({ data, series }: PlotData) {
     <div className="braggy" style={{ display: 'flex', flex: 1 }}>
       <HeatmapVis
         dataArray={dataArray}
-        // @ts-expect-error
         domain={domain}
-        // scaleType={scaleType}
-        // colorMap={colorMap}
-        // invertColorMap={invertColorMap}
-        showGrid={true}
         interactions={{ selectToZoom: { modifierKey: ZOOM_KEY } }}
-        show
       />
     </div>
   );
