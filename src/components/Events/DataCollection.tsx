@@ -37,6 +37,8 @@ function renderInner({
     'SSX-Chip': SSX,
     'SSX-Jet': SSX,
     'XRF map': Map,
+    'XRD map': Map,
+    'XRF xrd map': Map,
     'XRF map xas': MapXAS,
     'Energy scan': EnergyScan,
   };
