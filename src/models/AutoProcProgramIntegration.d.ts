@@ -102,8 +102,8 @@ export interface ProcessingJob {
   ProcessingJobParameters?: Processingjobparameters;
 }
 export interface ProcessingJobParameter {
-  parameterKey: Parameterkey;
-  parameterValue: Parametervalue;
+  parameterKey?: Parameterkey;
+  parameterValue?: Parametervalue;
 }
 export interface AutoProcProgramMetadata {
   attachments?: Attachments;
@@ -196,8 +196,8 @@ export function withProcessingJob<TBase extends Constructor>(Base: TBase) {
 }
 export function withProcessingJobParameter<TBase extends Constructor>(Base: TBase) {
   return class WithProcessingJobParameter extends Base {
-    parameterKey: Parameterkey;
-    parameterValue: Parametervalue;
+    parameterKey?: Parameterkey;
+    parameterValue?: Parametervalue;
   }
 }
 export function withAutoProcProgramMetadata<TBase extends Constructor>(Base: TBase) {

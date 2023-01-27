@@ -9,14 +9,14 @@ export type Parameterkey = string;
 export type Parametervalue = string;
 
 export interface ProcessingJobParameter {
-  parameterKey: Parameterkey;
-  parameterValue: Parametervalue;
+  parameterKey?: Parameterkey;
+  parameterValue?: Parametervalue;
 }
 
 type Constructor<T = {}> = new (...args: any[]) => T;
 export function withProcessingJobParameter<TBase extends Constructor>(Base: TBase) {
   return class WithProcessingJobParameter extends Base {
-    parameterKey: Parameterkey;
-    parameterValue: Parametervalue;
+    parameterKey?: Parameterkey;
+    parameterValue?: Parametervalue;
   }
 }

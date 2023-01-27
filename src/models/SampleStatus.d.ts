@@ -8,6 +8,6 @@
 /**
  * An enumeration.
  */
-export type SampleStatus = "Sample Action" | "Data Collected" | "Strategy" | "Auto Integrated";
+export type SampleStatus = "Sample Action" | "Data Collected" | "Strategy" | "Auto Integrated" | "Processed";
 
 type Constructor<T = {}> = new (...args: any[]) => T;

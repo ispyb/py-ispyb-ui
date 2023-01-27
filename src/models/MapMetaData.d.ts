@@ -9,14 +9,23 @@
  * Url to map image
  */
 export type Url = string;
+export type Blsubsampleid = number;
+export type Blsampleid = number;
+export type Datacollectionid = number;
 
 export interface MapMetaData {
   url: Url;
+  blSubSampleId?: Blsubsampleid;
+  blSampleId?: Blsampleid;
+  dataCollectionId?: Datacollectionid;
 }
 
 type Constructor<T = {}> = new (...args: any[]) => T;
 export function withMapMetaData<TBase extends Constructor>(Base: TBase) {
   return class WithMapMetaData extends Base {
     url: Url;
+    blSubSampleId?: Blsubsampleid;
+    blSampleId?: Blsampleid;
+    dataCollectionId?: Datacollectionid;
   }
 }

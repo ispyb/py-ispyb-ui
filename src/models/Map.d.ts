@@ -7,12 +7,16 @@
 
 export type Xrffluorescencemappingid = number;
 export type Colourmap = string;
+export type Opacity = number;
 export type Points = number;
 export type Dataformat = string;
 /**
  * Url to map image
  */
 export type Url = string;
+export type Blsubsampleid = number;
+export type Blsampleid = number;
+export type Datacollectionid = number;
 export type Gridinfoid = number;
 export type StepsX = number;
 export type StepsY = number;
@@ -28,7 +32,7 @@ export type Endenergy = number;
 export interface Map {
   xrfFluorescenceMappingId: Xrffluorescencemappingid;
   colourMap?: Colourmap;
-  opacity?: boolean;
+  opacity?: Opacity;
   points?: Points;
   dataFormat: Dataformat;
   _metadata: MapMetaData;
@@ -37,9 +41,9 @@ export interface Map {
 }
 export interface MapMetaData {
   url: Url;
-  blSubSampleId: number;
-  blSampleId: number;
-  dataCollectionId: number;
+  blSubSampleId?: Blsubsampleid;
+  blSampleId?: Blsampleid;
+  dataCollectionId?: Datacollectionid;
 }
 export interface MapGridInfo {
   gridInfoId: Gridinfoid;
@@ -62,7 +66,7 @@ export function withMap<TBase extends Constructor>(Base: TBase) {
   return class WithMap extends Base {
     xrfFluorescenceMappingId: Xrffluorescencemappingid;
     colourMap?: Colourmap;
-    opacity?: boolean;
+    opacity?: Opacity;
     points?: Points;
     dataFormat: Dataformat;
     _metadata: MapMetaData;
@@ -73,6 +77,9 @@ export function withMap<TBase extends Constructor>(Base: TBase) {
 export function withMapMetaData<TBase extends Constructor>(Base: TBase) {
   return class WithMapMetaData extends Base {
     url: Url;
+    blSubSampleId?: Blsubsampleid;
+    blSampleId?: Blsampleid;
+    dataCollectionId?: Datacollectionid;
   }
 }
 export function withMapGridInfo<TBase extends Constructor>(Base: TBase) {
