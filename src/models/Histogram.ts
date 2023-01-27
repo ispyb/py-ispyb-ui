@@ -23,3 +23,4 @@ export function withHistogram<TBase extends Constructor>(Base: TBase) {
     median: Median;
   }
 }
+
