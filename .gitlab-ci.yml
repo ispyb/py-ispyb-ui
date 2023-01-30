@@ -1,0 +1,12 @@
+---
+include:
+  - project: 'kits-maxiv/cfg-maxiv-gitlabci'
+    file: '/Docker.gitlab-ci.yml'
+
+variables:
+  IMAGE_NAME: $CI_PROJECT_NAME
+  DOCKERFILE: "./Dockerfile"
+  DOCKER_REGISTRY_LOGIN: $HARBOR_IMS_ROBOT_USER
+  DOCKER_REGISTRY_PASSWORD: $HARBOR_IMS_ROBOT_PASS
+  MAJOR_TAG: $CI_COMMIT_TAG
+

@@ -1,23 +1,11 @@
-FROM node:16-alpine
+FROM node:19-alpine as build-step
+WORKDIR /usr/app
+COPY . /usr/app
+RUN npm install
 
-ENV NODE_ENV production
+ENV REACT_APP_ISPYB_ENV MAXIV
 
-COPY . /py-ispyb-ui
-WORKDIR /py-ispyb-ui
 
-COPY package*.json ./
-
-RUN apk --no-cache add git curl \
-  && npm install \
-  && npm install -g serve
-
-COPY . ./
-
-EXPOSE 3000 5000
-
-ENTRYPOINT ["/bin/sh", "/py-ispyb-ui/entrypoint"]
-CMD ["serve", "-s", "build"]
-
-#HEALTHCHECK --start-period=90s --timeout=5s --retries=1 CMD /py-ispyb-ui/healthcheck
-HEALTHCHECK --start-period=90s --timeout=5s --retries=1 CMD curl -f http://localhost:3000/ || exit 1
+EXPOSE 3000
+CMD ["npm", "start"]
 

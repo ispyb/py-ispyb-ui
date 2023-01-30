@@ -12,6 +12,9 @@ services:
       - "traefik.frontend.rule=Host:py-ispyb-ui.localhost"
       - "traefik.docker.network=traefik-network"
       - "traefik.port=3000"
+    volumes:
+      - ./src:/usr/app/src
+      - ./public:/usr/app/public
     networks:
       - traefik-network
     ports:
