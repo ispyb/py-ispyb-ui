@@ -26,7 +26,10 @@ export default function ResultsDataCollectionGroupPanel({
   });
   if (!data || !data.length) return null;
 
-  const results = getRankedResults(data.flatMap((d) => d)).filter(
+  const results = getRankedResults(
+    data.flatMap((d) => d),
+    true
+  ).filter(
     (v) =>
       selectedPipelines.includes(v.program) || selectedPipelines.length === 0
   );

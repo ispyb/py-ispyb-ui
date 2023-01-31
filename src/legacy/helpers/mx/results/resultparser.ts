@@ -92,6 +92,26 @@ export function parseResults(
     const outer = 'outerShell' in stats ? stats['outerShell'] : undefined;
     const overall = 'overall' in stats ? stats['overall'] : undefined;
 
+    if (
+      p.v_datacollection_processingStatus === 'SUCCESS' &&
+      [inner, outer, overall].every((v) => v === undefined)
+    )
+      return {
+        id: p.AutoProcIntegration_autoProcIntegrationId,
+        status: 'NO_RESULTS',
+        program: p.v_datacollection_processingPrograms,
+        anomalous: p.v_datacollection_summary_phasing_anomalous,
+        cell_a: p.v_datacollection_summary_phasing_cell_a,
+        cell_b: p.v_datacollection_summary_phasing_cell_b,
+        cell_c: p.v_datacollection_summary_phasing_cell_c,
+        cell_alpha: p.v_datacollection_summary_phasing_cell_alpha,
+        cell_beta: p.v_datacollection_summary_phasing_cell_beta,
+        cell_gamma: p.v_datacollection_summary_phasing_cell_gamma,
+        spaceGroup: p.v_datacollection_summary_phasing_autoproc_space_group,
+        inner,
+        outer,
+        overall,
+      };
     return {
       id: p.AutoProcIntegration_autoProcIntegrationId,
       status: p.v_datacollection_processingStatus,
@@ -111,7 +131,10 @@ export function parseResults(
   });
 }
 
-function rank(results: AutoProcIntegration[]): AutoProcIntegration[] {
+function rank(
+  results: AutoProcIntegration[],
+  successOnly: boolean = false
+): AutoProcIntegration[] {
   const anomalous = results.filter(function (r) {
     return (
       r.anomalous &&
@@ -130,11 +153,20 @@ function rank(results: AutoProcIntegration[]): AutoProcIntegration[] {
   const failed = results.filter(function (r) {
     return r.status === 'FAILED' || r.status === '0';
   });
+  const noResult = results.filter(function (r) {
+    return r.status === 'NO_RESULTS';
+  });
 
   const anomalousdata = sort(anomalous);
   const nonanomalousdata = sort(nonanomalous);
 
-  return _.concat(nonanomalousdata, anomalousdata, running, failed);
+  return _.concat(
+    nonanomalousdata,
+    anomalousdata,
+    successOnly ? [] : noResult,
+    successOnly ? [] : running,
+    successOnly ? [] : failed
+  );
 }
 
 function sort(array: AutoProcIntegration[]) {
@@ -190,9 +222,10 @@ function sort(array: AutoProcIntegration[]) {
 }
 
 export function getBestResult(
-  procs: AutoProcInformation[]
+  procs: AutoProcInformation[],
+  successOnly: boolean = true
 ): AutoProcIntegration | undefined {
-  const sorted = getRankedResults(procs);
+  const sorted = getRankedResults(procs, successOnly);
   if (
     sorted.length > 0 &&
     (sorted[0].inner || sorted[0].outer || sorted[0].overall)
@@ -203,8 +236,9 @@ export function getBestResult(
 }
 
 export function getRankedResults(
-  procs: AutoProcInformation[]
+  procs: AutoProcInformation[],
+  successOnly: boolean = false
 ): AutoProcIntegration[] {
-  const sorted = rank(parseResults(procs));
+  const sorted = rank(parseResults(procs), successOnly);
   return sorted;
 }

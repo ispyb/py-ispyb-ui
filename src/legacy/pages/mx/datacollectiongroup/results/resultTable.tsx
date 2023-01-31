@@ -229,7 +229,7 @@ function ResultCol({
                 ? '#94ff948c'
                 : '#aeecff8c';
             return (
-              <Row key={v}>
+              <Row key={`v${i}`}>
                 <small style={{ color: colors[i] }} className="text-center">
                   <div style={{ backgroundColor: bg }}>
                     {v !== undefined ? v : ''}
@@ -239,15 +239,15 @@ function ResultCol({
             );
           }
           return (
-            <Row key={v}>
+            <Row key={`v${i}`}>
               <small style={{ color: colors[i] }} className="text-center">
                 {v !== undefined ? v : ''}
               </small>
             </Row>
           );
         })}
-        {tags.map((t) => (
-          <Row>
+        {tags.map((t, i) => (
+          <Row key={`t${i}`}>
             <Col></Col>
             <Col xs={'auto'}>
               <Badge bg={getBg(t)}>{t}</Badge>
@@ -263,5 +263,6 @@ function ResultCol({
 function getBg(value: string | number | undefined) {
   if (value?.toString().toUpperCase() === 'FAILED') return 'danger';
   if (value?.toString().toUpperCase() === 'RUNNING') return 'warning';
+  if (value?.toString().toUpperCase() === 'NO_RESULTS') return 'warning';
   return 'info';
 }

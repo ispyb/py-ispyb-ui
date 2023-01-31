@@ -2,13 +2,22 @@ import {
   faCheckCircle,
   faCircleExclamation,
   faCirclePlay,
+  faCircleQuestion,
   faQuestionCircle,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getRankedResults } from 'legacy/helpers/mx/results/resultparser';
 import { useAutoProc } from 'legacy/hooks/ispyb';
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
-import { Card, Col, Container, Row } from 'react-bootstrap';
+import {
+  Card,
+  Col,
+  Container,
+  OverlayTrigger,
+  Popover,
+  Row,
+  Tooltip,
+} from 'react-bootstrap';
 
 export interface Props {
   proposalName: string;
@@ -40,7 +49,19 @@ export default function ProcessingSummary({
           {results.map((r) => {
             return (
               <Col sm={'auto'} key={r.id}>
-                <StatusIcon status={r.status} /> <small>{r.program}</small>
+                <OverlayTrigger
+                  trigger={['focus', 'hover']}
+                  placement="bottom"
+                  overlay={
+                    <Popover>
+                      <Popover.Body>{r.status}</Popover.Body>
+                    </Popover>
+                  }
+                >
+                  <div>
+                    <StatusIcon status={r.status} /> <small>{r.program}</small>
+                  </div>
+                </OverlayTrigger>
               </Col>
             );
           })}
@@ -59,6 +80,8 @@ function StatusIcon({ status }: { status: string }) {
     [icon, color] = [faCirclePlay, 'orange'];
   if (status.toUpperCase() === 'SUCCESS')
     [icon, color] = [faCheckCircle, 'green'];
+  if (status.toUpperCase() === 'NO_RESULTS')
+    [icon, color] = [faCircleQuestion, 'blue'];
   if (status.toUpperCase() === '1') [icon, color] = [faCheckCircle, 'green'];
   return <FontAwesomeIcon color={color} icon={icon} />;
 }
