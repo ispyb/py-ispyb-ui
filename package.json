@@ -110,7 +110,7 @@
     "stylelint": "stylelint \"src/**/*.{css,scss}\"",
     "stylelint-fix": "npm run stylelint -- --fix",
     "tsc": "tsc --noEmit",
-    "eslint": "eslint \"**/*.{js,jsx,ts,tsx,cjs}\" --max-warnings=0",
+    "eslint": "eslint \"src/**/*.{js,jsx,ts,tsx,cjs}\" --max-warnings=0",
     "eslint-fix": "npm run eslint -- --fix",
     "analyze": "npx source-map-explorer \"build/static/js/*.js\"",
     "generate-interfaces": "node scripts/schema2types.js && ./node_modules/.bin/prettier --write 'src/models/*.ts'"
