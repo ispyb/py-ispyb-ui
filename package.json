@@ -119,7 +119,8 @@
     "extends": [
       "react-app",
       "react-app/jest",
-      "plugin:react/recommended"
+      "plugin:react/recommended",
+      "plugin:react/jsx-runtime"
     ]
   },
   "browserslist": {
