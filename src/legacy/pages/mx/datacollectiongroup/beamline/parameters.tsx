@@ -8,47 +8,50 @@ import {
 } from 'legacy/helpers/numerictransformation';
 import { PropsWithChildren } from 'react';
 
+import MasonryLayout from 'components/Layout/Mansonry';
+
 export default function MXDataCollectionGroupParameters({
   dataCollectionGroup,
 }: {
   dataCollectionGroup: DataCollectionGroup;
 }) {
+  const breakpointColumnsObj = {
+    default: 6,
+    1700: 3,
+    1200: 2,
+    850: 1,
+  };
+
   return (
-    <Container fluid>
-      <Row>
-        <ParamCol title="Collection">
-          <Collection dataCollectionGroup={dataCollectionGroup}></Collection>
-        </ParamCol>
-        <ParamCol title="Sample">
-          <Sample dataCollectionGroup={dataCollectionGroup}></Sample>
-        </ParamCol>
-        <ParamCol title="Synchrotron">
-          <Synchrotron dataCollectionGroup={dataCollectionGroup}></Synchrotron>
-        </ParamCol>
-        <ParamCol title="Beam">
-          <Beam dataCollectionGroup={dataCollectionGroup}></Beam>
-        </ParamCol>
-        <ParamCol title="Optics">
-          <Optics dataCollectionGroup={dataCollectionGroup}></Optics>
-        </ParamCol>
-        <ParamCol title="Detector">
-          <Detector dataCollectionGroup={dataCollectionGroup}></Detector>
-        </ParamCol>
-      </Row>
-    </Container>
+    <MasonryLayout breakpointCols={breakpointColumnsObj} separator={true}>
+      <ParamCol title="Collection">
+        <Collection dataCollectionGroup={dataCollectionGroup}></Collection>
+      </ParamCol>
+      <ParamCol title="Sample">
+        <Sample dataCollectionGroup={dataCollectionGroup}></Sample>
+      </ParamCol>
+      <ParamCol title="Synchrotron">
+        <Synchrotron dataCollectionGroup={dataCollectionGroup}></Synchrotron>
+      </ParamCol>
+      <ParamCol title="Beam">
+        <Beam dataCollectionGroup={dataCollectionGroup}></Beam>
+      </ParamCol>
+      <ParamCol title="Optics">
+        <Optics dataCollectionGroup={dataCollectionGroup}></Optics>
+      </ParamCol>
+      <ParamCol title="Detector">
+        <Detector dataCollectionGroup={dataCollectionGroup}></Detector>
+      </ParamCol>
+    </MasonryLayout>
   );
 }
 
 function ParamCol({ title, children }: PropsWithChildren<{ title: string }>) {
   return (
-    <Col xxl={2} xl={4} lg={6} md={12} sm={12} xs={12}>
-      <Card>
-        <Card.Body>
-          <h5 className="text-center text-primary">{title}</h5>
-          <Container>{children}</Container>
-        </Card.Body>
-      </Card>
-    </Col>
+    <>
+      <h5 className="text-center text-primary">{title}</h5>
+      <Container>{children}</Container>
+    </>
   );
 }
 
