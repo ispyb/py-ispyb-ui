@@ -17,7 +17,8 @@ function getShellStatistics(
   completeness: number | undefined,
   resolutionLimitLow: number | undefined,
   resolutionLimitHigh: number | undefined,
-  rMerge: number | undefined
+  rMerge: number | undefined,
+  meanIOverSigI: number | undefined
 ) {
   if (completeness === undefined) {
     completeness = 0;
@@ -41,6 +42,9 @@ function getShellStatistics(
       </td>
       <td>
         <small>{rMerge?.toFixed(1)}</small>
+      </td>
+      <td>
+        <small>{meanIOverSigI?.toFixed(1)}</small>
       </td>
     </tr>
   );
@@ -75,6 +79,9 @@ export default function AutoprocIntegrationSection({
             <td className="parameterValue">
               <small>Rmerge</small>
             </td>
+            <td className="parameterValue">
+              <small>I/Sigma</small>
+            </td>
           </tr>
         </thead>
         <tbody>
@@ -83,21 +90,24 @@ export default function AutoprocIntegrationSection({
             bestResult.inner?.completeness,
             bestResult.inner?.resolutionLimitLow,
             bestResult.inner?.resolutionLimitHigh,
-            bestResult.inner?.rMerge
+            bestResult.inner?.rMerge,
+            bestResult.inner?.meanIOverSigI
           )}
           {getShellStatistics(
             'Outer',
             bestResult.outer?.completeness,
             bestResult.outer?.resolutionLimitLow,
             bestResult.outer?.resolutionLimitHigh,
-            bestResult.outer?.rMerge
+            bestResult.outer?.rMerge,
+            bestResult.outer?.meanIOverSigI
           )}
           {getShellStatistics(
             'Overall',
             bestResult.overall?.completeness,
             bestResult.overall?.resolutionLimitLow,
             bestResult.overall?.resolutionLimitHigh,
-            bestResult.overall?.rMerge
+            bestResult.overall?.rMerge,
+            bestResult.overall?.meanIOverSigI
           )}
         </tbody>
       </Table>
