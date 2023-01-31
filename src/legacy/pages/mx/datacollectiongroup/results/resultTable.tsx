@@ -90,101 +90,101 @@ function ResultLine({ result }: { result: AutoProcIntegration }) {
             result.cell_gamma.toFixed(1),
           ]}
         />
-        <ResultCol colored values={['Overall', 'Inner', 'Outer']} />
+        <ResultCol colored values={['Inner', 'Outer', 'Overall']} />
         <ResultCol
           colored
           values={[
-            `${result.overall?.resolutionLimitLow?.toFixed(
-              1
-            )} - ${result.overall?.resolutionLimitHigh?.toFixed(1)}`,
             `${result.inner?.resolutionLimitLow?.toFixed(
               1
             )} - ${result.inner?.resolutionLimitHigh?.toFixed(1)}`,
             `${result.outer?.resolutionLimitLow?.toFixed(
               1
             )} - ${result.outer?.resolutionLimitHigh?.toFixed(1)}`,
+            `${result.overall?.resolutionLimitLow?.toFixed(
+              1
+            )} - ${result.overall?.resolutionLimitHigh?.toFixed(1)}`,
           ]}
         />
         <ResultCol
           colored
           values={[
-            result.overall?.multiplicity?.toFixed(1),
             result.inner?.multiplicity?.toFixed(1),
             result.outer?.multiplicity?.toFixed(1),
+            result.overall?.multiplicity?.toFixed(1),
           ]}
         />
         <ResultCol
           colored
           values={[
-            result.overall?.completeness?.toFixed(1),
             result.inner?.completeness?.toFixed(1),
             result.outer?.completeness?.toFixed(1),
+            result.overall?.completeness?.toFixed(1),
           ]}
         />
         <ResultCol
           colored
           values={[
-            result.overall?.multiplicityAnomalous?.toFixed(1),
             result.inner?.multiplicityAnomalous?.toFixed(1),
             result.outer?.multiplicityAnomalous?.toFixed(1),
+            result.overall?.multiplicityAnomalous?.toFixed(1),
           ]}
         />
         <ResultCol
           colored
           values={[
-            result.overall?.completenessAnomalous?.toFixed(1),
             result.inner?.completenessAnomalous?.toFixed(1),
             result.outer?.completenessAnomalous?.toFixed(1),
+            result.overall?.completenessAnomalous?.toFixed(1),
           ]}
         />
         <ResultCol
           colored
           thresholds={{ good: 2, bad: 1 }}
           values={[
-            result.overall?.meanIOverSigI?.toFixed(1),
             result.inner?.meanIOverSigI?.toFixed(1),
             result.outer?.meanIOverSigI?.toFixed(1),
+            result.overall?.meanIOverSigI?.toFixed(1),
           ]}
         />
         <ResultCol
           colored
           values={[
-            result.overall?.rMeas?.toFixed(1),
             result.inner?.rMeas?.toFixed(1),
             result.outer?.rMeas?.toFixed(1),
+            result.overall?.rMeas?.toFixed(1),
           ]}
         />
         <ResultCol
           colored
           values={[
-            result.overall?.rMerge?.toFixed(1),
             result.inner?.rMerge?.toFixed(1),
             result.outer?.rMerge?.toFixed(1),
+            result.overall?.rMerge?.toFixed(1),
           ]}
         />
         <ResultCol
           colored
           values={[
-            result.overall?.rPim?.toFixed(1),
             result.inner?.rPim?.toFixed(1),
             result.outer?.rPim?.toFixed(1),
+            result.overall?.rPim?.toFixed(1),
           ]}
         />
         <ResultCol
           colored
           thresholds={{ good: 0.7, bad: 0.3 }}
           values={[
-            result.overall?.ccHalf?.toFixed(1),
             result.inner?.ccHalf?.toFixed(1),
             result.outer?.ccHalf?.toFixed(1),
+            result.overall?.ccHalf?.toFixed(1),
           ]}
         />
         <ResultCol
           colored
           values={[
-            result.overall?.ccAno?.toFixed(1),
             result.inner?.ccAno?.toFixed(1),
             result.outer?.ccAno?.toFixed(1),
+            result.overall?.ccAno?.toFixed(1),
           ]}
         />
       </tr>
@@ -215,7 +215,7 @@ function ResultCol({
   thresholds?: { good: number; bad: number } | undefined;
 }) {
   const colors = colored
-    ? ['blue', 'purple', 'green']
+    ? ['purple', 'green', 'blue']
     : [undefined, undefined, undefined];
   return (
     <td colSpan={colSpan}>

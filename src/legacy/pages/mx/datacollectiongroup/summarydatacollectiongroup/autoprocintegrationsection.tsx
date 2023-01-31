@@ -79,13 +79,6 @@ export default function AutoprocIntegrationSection({
         </thead>
         <tbody>
           {getShellStatistics(
-            'Overall',
-            bestResult.overall?.completeness,
-            bestResult.overall?.resolutionLimitLow,
-            bestResult.overall?.resolutionLimitHigh,
-            bestResult.overall?.rMerge
-          )}
-          {getShellStatistics(
             'Inner',
             bestResult.inner?.completeness,
             bestResult.inner?.resolutionLimitLow,
@@ -98,6 +91,13 @@ export default function AutoprocIntegrationSection({
             bestResult.outer?.resolutionLimitLow,
             bestResult.outer?.resolutionLimitHigh,
             bestResult.outer?.rMerge
+          )}
+          {getShellStatistics(
+            'Overall',
+            bestResult.overall?.completeness,
+            bestResult.overall?.resolutionLimitLow,
+            bestResult.overall?.resolutionLimitHigh,
+            bestResult.overall?.rMerge
           )}
         </tbody>
       </Table>
