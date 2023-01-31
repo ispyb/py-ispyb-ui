@@ -7,7 +7,6 @@ import {
 } from 'legacy/api/ispyb';
 import ZoomImage from 'legacy/components/image/zoomimage';
 import FirstSection from 'legacy/pages/mx/datacollectiongroup/summarydatacollectiongroup/firstsection';
-import SecondSection from 'legacy/pages/mx/datacollectiongroup/summarydatacollectiongroup/secondsection';
 import ThirdSection from 'legacy/pages/mx/datacollectiongroup/summarydatacollectiongroup/thirdsection';
 import UI from 'legacy/config/ui';
 import { useAutoProc } from 'legacy/hooks/ispyb';
@@ -41,12 +40,6 @@ export default function SummaryDataCollectionGroupPanel({
             compact={compact}
             dataCollectionGroup={dataCollectionGroup}
           ></FirstSection>
-        </Col>
-        <Col sm={12} md={6} lg={2}>
-          <SecondSection
-            compact={compact}
-            dataCollectionGroup={dataCollectionGroup}
-          ></SecondSection>
         </Col>
         <Col md={12} lg={6} xl={compact ? 6 : 3}>
           <ThirdSection

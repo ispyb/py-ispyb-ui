@@ -172,7 +172,7 @@ function ResultLine({ result }: { result: AutoProcIntegration }) {
         />
         <ResultCol
           colored
-          thresholds={{ good: 0.95, bad: 0.3 }}
+          thresholds={{ good: 0.7, bad: 0.3 }}
           values={[
             result.overall?.ccHalf?.toFixed(1),
             result.inner?.ccHalf?.toFixed(1),

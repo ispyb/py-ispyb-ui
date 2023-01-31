@@ -1,5 +1,5 @@
 import { SSXDataCollectionProcessingStatsResource } from 'api/resources/SSX/SSXDataCollectionProcessingStats';
-import { IMetadataItemProps, MetadataItem } from 'components/Events/Metadata';
+import { IMetadataItemProps, MetadataRow } from 'components/Events/Metadata';
 import {
   getColorFromHitPercent,
   getColorFromIndexedPercent,
@@ -34,13 +34,7 @@ export function CompactSSXContent({
   ];
   return (
     <Col>
-      <Row>
-        {fields.map((field) => (
-          <Col key={field.title}>
-            <MetadataItem {...field} />
-          </Col>
-        ))}
-      </Row>
+      <MetadataRow properties={fields} />
       <Row>
         {' '}
         <CompactSSXStats dcs={dcs}></CompactSSXStats>
