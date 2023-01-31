@@ -1,4 +1,4 @@
-import { Card, Col, Container, Row } from 'react-bootstrap';
+import { Container } from 'react-bootstrap';
 import { MetadataCol } from 'components/Events/Metadata';
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
 import {
