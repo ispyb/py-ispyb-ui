@@ -1,6 +1,7 @@
 import React from 'react';
 import { TitledBreadcrumbsRoute } from 'routes';
 import {
+  BreadcrumbComponentProps,
   BreadcrumbComponentType,
   BreadcrumbMatch,
 } from 'use-react-router-breadcrumbs';
@@ -114,7 +115,7 @@ const ShippingPage = React.lazy(() =>
 
 const ProposalBreadCrumb: BreadcrumbComponentType<'proposalName'> = ({
   match,
-}) => {
+}: BreadcrumbComponentProps<'proposalName'>) => {
   return <>{match.params.proposalName}</>;
 };
 

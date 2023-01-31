@@ -1,4 +1,5 @@
 import type {
+  BreadcrumbComponentProps,
   BreadcrumbComponentType,
   BreadcrumbMatch,
 } from 'use-react-router-breadcrumbs';
@@ -22,13 +23,15 @@ const SampleChanger = React.lazy(() =>
   }))
 );
 
-const SessionBreadCrumb: BreadcrumbComponentType<'sessionId'> = ({ match }) => {
+const SessionBreadCrumb: BreadcrumbComponentType<'sessionId'> = ({
+  match,
+}: BreadcrumbComponentProps<'sessionId'>) => {
   return <>{match.params.sessionId}</>;
 };
 
 const DataCollectionBreadCrumb: BreadcrumbComponentType<'dataCollectionId'> = ({
   match,
-}) => {
+}: BreadcrumbComponentProps<'dataCollectionId'>) => {
   return <>{match.params.dataCollectionId}</>;
 };
 
