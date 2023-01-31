@@ -29,13 +29,7 @@ export function ResultTable({ results }: { results: AutoProcIntegration[] }) {
               <small>Multiplicity</small>
             </th>
             <th className="text-center">
-              <small>Completeness %</small>
-            </th>
-            <th className="text-center">
               <small>Anomalous multiplicity</small>
-            </th>
-            <th className="text-center">
-              <small>Anomalous completeness %</small>
             </th>
             <th className="text-center">
               <small>{'<I/Sigma>'}</small>
@@ -54,6 +48,12 @@ export function ResultTable({ results }: { results: AutoProcIntegration[] }) {
             </th>
             <th className="text-center">
               <small>ccAno</small>
+            </th>
+            <th className="text-center">
+              <small>Completeness %</small>
+            </th>
+            <th className="text-center">
+              <small>Anomalous completeness %</small>
             </th>
           </tr>
         </thead>
@@ -116,25 +116,9 @@ function ResultLine({ result }: { result: AutoProcIntegration }) {
         <ResultCol
           colored
           values={[
-            result.inner?.completeness?.toFixed(1),
-            result.outer?.completeness?.toFixed(1),
-            result.overall?.completeness?.toFixed(1),
-          ]}
-        />
-        <ResultCol
-          colored
-          values={[
             result.inner?.multiplicityAnomalous?.toFixed(1),
             result.outer?.multiplicityAnomalous?.toFixed(1),
             result.overall?.multiplicityAnomalous?.toFixed(1),
-          ]}
-        />
-        <ResultCol
-          colored
-          values={[
-            result.inner?.completenessAnomalous?.toFixed(1),
-            result.outer?.completenessAnomalous?.toFixed(1),
-            result.overall?.completenessAnomalous?.toFixed(1),
           ]}
         />
         <ResultCol
@@ -185,6 +169,22 @@ function ResultLine({ result }: { result: AutoProcIntegration }) {
             result.inner?.ccAno?.toFixed(1),
             result.outer?.ccAno?.toFixed(1),
             result.overall?.ccAno?.toFixed(1),
+          ]}
+        />
+        <ResultCol
+          colored
+          values={[
+            result.inner?.completeness?.toFixed(1),
+            result.outer?.completeness?.toFixed(1),
+            result.overall?.completeness?.toFixed(1),
+          ]}
+        />
+        <ResultCol
+          colored
+          values={[
+            result.inner?.completenessAnomalous?.toFixed(1),
+            result.outer?.completenessAnomalous?.toFixed(1),
+            result.overall?.completenessAnomalous?.toFixed(1),
           ]}
         />
       </tr>
