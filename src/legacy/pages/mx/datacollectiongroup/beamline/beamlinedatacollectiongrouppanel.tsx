@@ -6,6 +6,7 @@ import ThirdSection from './thirdsection';
 import FourthSection from './fourthsection';
 import FifthSection from './fifthsection';
 import SixthSection from './sixthsection';
+import MXDataCollectionGroupParameters from './parameters';
 
 export interface Props {
   dataCollectionGroup: DataCollectionGroup;
@@ -14,6 +15,11 @@ export interface Props {
 export default function BeamlineDataCollectionGroupPanel({
   dataCollectionGroup,
 }: Props) {
+  return (
+    <MXDataCollectionGroupParameters
+      dataCollectionGroup={dataCollectionGroup}
+    />
+  );
   return (
     <Container fluid>
       <Row>
