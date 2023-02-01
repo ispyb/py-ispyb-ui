@@ -174,8 +174,8 @@ function DragableContainer({
       <Col style={{ height: 20 }}>
         <Row>
           <p style={{ height: 20, padding: 0, margin: 0, textAlign: 'center' }}>
-            <strong>[{d.shippingName.slice(0, 15)}]</strong>{' '}
-            {d.containerCode.slice(0, 15)}
+            <strong>[{d.shippingName?.slice(0, 15)}]</strong>{' '}
+            {d.containerCode?.slice(0, 15)}
           </p>
         </Row>
       </Col>
