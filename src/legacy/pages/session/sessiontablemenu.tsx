@@ -80,6 +80,7 @@ export default function SessionTableMenu({
         {checkList &&
           checkList.map((item: ToggleButtonProps) => (
             <ToggleButton
+              key={item.value}
               {...item}
               variant={item.checked ? 'primary' : 'outline-primary'}
             >

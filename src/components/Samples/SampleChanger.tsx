@@ -150,7 +150,7 @@ export default function SampleChanger(props: ISampleChanger) {
       <div className="d-flex">
         <div style={{ flex: colWidth }}></div>
         {changerPositions.map((_, changerPosition) => (
-          <div style={{ flex: colWidth }}>
+          <div style={{ flex: colWidth }} key={changerPosition}>
             <h2>
               {changerPosition + 1}{' '}
               {containers[changerPosition + 1] &&
@@ -159,16 +159,20 @@ export default function SampleChanger(props: ISampleChanger) {
             </h2>
             {containers[changerPosition + 1] &&
               Object.entries(containers[changerPosition + 1]).map(
-                ([_, code]) => <div className="text-break">{code}</div>
+                ([_, code]) => (
+                  <div className="text-break" key={code}>
+                    {code}
+                  </div>
+                )
               )}
           </div>
         ))}
       </div>
       {containerPositions.map((_, containerPositon) => (
-        <div className="d-flex">
+        <div className="d-flex" key={containerPositon}>
           <div style={{ flex: colWidth }}>{containerPositon + 1}</div>
           {changerPositions.map((_, changerPosition) => (
-            <div style={{ flex: colWidth }}>
+            <div style={{ flex: colWidth }} key={changerPosition}>
               {getSample(changerPosition, containerPositon)}
             </div>
           ))}

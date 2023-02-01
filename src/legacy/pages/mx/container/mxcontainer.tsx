@@ -97,6 +97,7 @@ export function MXContainer({
 
           return (
             <SampleSVG
+              key={n}
               position={position}
               n={n}
               refSample={refSample}
@@ -262,6 +263,7 @@ export function EmptyContainer({
 
           return (
             <SampleSVG
+              key={n}
               clickableContainer={false}
               position={position}
               n={n}

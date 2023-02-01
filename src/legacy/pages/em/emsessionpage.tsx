@@ -25,8 +25,12 @@ export default function EMSessionPage() {
     <EMPage sessionId={sessionId} proposalName={proposalName}>
       <Card>
         <div style={{ margin: 10 }}>
-          {sampleList.map((sample) => (
-            <GridSquarePanel sampleList={sample} sessionId={sessionId} />
+          {sampleList.map((sample, i) => (
+            <GridSquarePanel
+              key={i}
+              sampleList={sample}
+              sessionId={sessionId}
+            />
           ))}
         </div>
       </Card>

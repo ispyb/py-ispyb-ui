@@ -18,8 +18,8 @@ export default function GridSquarePanel({
       <Container fluid>
         <Row>
           {grids &&
-            grids.map((grid) => (
-              <Col xs={12} sm={4} md={4} lg={2}>
+            grids.map((grid, i) => (
+              <Col key={i} xs={12} sm={4} md={4} lg={2}>
                 <GridSquare
                   startTime={grid.startTime}
                   proposalName={proposalName}

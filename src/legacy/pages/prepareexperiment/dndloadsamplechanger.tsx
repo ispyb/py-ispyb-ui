@@ -65,7 +65,7 @@ export default function DnDLoadSampleChanger({
             <Row>
               {dewars?.map((d) => {
                 return (
-                  <Col style={{ display: 'flex' }}>
+                  <Col key={d.dewarId} style={{ display: 'flex' }}>
                     <div style={{ margin: 'auto' }}>
                       <DragableContainer
                         d={d}

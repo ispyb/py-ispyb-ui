@@ -216,7 +216,12 @@ export default function MXDataCollectionGroupPage() {
           )}
           {filteredDataCollectionGroups.map(
             (dataCollectionGroup: DataCollectionGroup) => (
-              <div style={compact ? { margin: 1 } : { margin: 5 }}>
+              <div
+                key={
+                  dataCollectionGroup.DataCollectionGroup_dataCollectionGroupId
+                }
+                style={compact ? { margin: 1 } : { margin: 5 }}
+              >
                 <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
                   <DataCollectionGroupPanel
                     compactToggle={compactToggle}

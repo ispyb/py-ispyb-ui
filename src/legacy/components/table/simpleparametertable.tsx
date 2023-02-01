@@ -29,7 +29,7 @@ export default function SimpleParameterTable({
       <tbody>
         {parameters.map((parameter) => {
           return (
-            <tr className={parameter.className}>
+            <tr key={parameter.key} className={parameter.className}>
               <td style={{ fontSize: 'smaller' }}>{parameter.key}</td>
               <td style={{ fontSize: 'x-small' }}>
                 {parameter.valueTooltip && (

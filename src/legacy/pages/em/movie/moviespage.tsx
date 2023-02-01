@@ -89,7 +89,10 @@ export default function MoviesPage() {
       </Menu>
 
       {parsedMovies.map((movie: Movie) => (
-        <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+        <LazyWrapper
+          key={movie.Movie_movieId}
+          placeholder={<LoadingPanel></LoadingPanel>}
+        >
           <Card style={{ margin: 3 }}>
             <Card.Body>
               <MoviePanel

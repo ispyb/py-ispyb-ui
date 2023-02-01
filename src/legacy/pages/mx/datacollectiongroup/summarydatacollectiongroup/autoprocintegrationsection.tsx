@@ -46,7 +46,7 @@ export default function AutoprocIntegrationSection({
   compact: boolean;
 }) {
   const content = [
-    <Col>
+    <Col key={0}>
       <Table
         size="sm"
         style={{ whiteSpace: 'nowrap' }}
@@ -86,7 +86,7 @@ export default function AutoprocIntegrationSection({
         </tbody>
       </Table>
     </Col>,
-    <Col>
+    <Col key={1}>
       <UnitCellSection
         cell_a={bestResult.shells.innerShell.cell_a}
         cell_b={bestResult.shells.innerShell.cell_b}

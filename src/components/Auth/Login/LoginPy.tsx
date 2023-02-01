@@ -146,7 +146,9 @@ export default function LoginPy() {
                   required
                 >
                   {passwordPlugins.map((plugin) => (
-                    <option value={plugin.name}>{plugin.name}</option>
+                    <option key={plugin.name} value={plugin.name}>
+                      {plugin.name}
+                    </option>
                   ))}
                 </Form.Control>
               </Col>

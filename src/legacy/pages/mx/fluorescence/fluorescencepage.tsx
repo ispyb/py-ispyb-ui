@@ -32,7 +32,7 @@ export default function MXFluorescencePage() {
       <MXPage sessionId={sessionId} proposalName={proposalName}>
         <Card>
           {spectras.map((spectra) => (
-            <div style={{ margin: 5 }}>
+            <div style={{ margin: 5 }} key={spectra.xfeFluorescenceSpectrumId}>
               <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
                 <FluorescencePanel
                   sessionId={sessionId}

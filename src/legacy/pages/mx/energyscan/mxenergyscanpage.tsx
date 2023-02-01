@@ -32,7 +32,7 @@ export default function MXEnergyScanPage() {
       <MXPage sessionId={sessionId} proposalName={proposalName}>
         <Card>
           {energyScans.map((energyScan) => (
-            <div style={{ margin: 5 }}>
+            <div style={{ margin: 5 }} key={energyScan.energyScanId}>
               <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
                 <EnergyScanPanel
                   sessionId={sessionId}

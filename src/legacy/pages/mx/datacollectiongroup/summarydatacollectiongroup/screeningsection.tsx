@@ -71,7 +71,7 @@ export default function ScreeningSection({
   compact: boolean;
 }) {
   const content = [
-    <Col>
+    <Col key={0}>
       <Table responsive className="parameterKey" style={{ marginBottom: 0 }}>
         <tbody>
           <Indexed dataCollectionGroup={dataCollectionGroup}></Indexed>
@@ -81,7 +81,7 @@ export default function ScreeningSection({
         </tbody>
       </Table>
     </Col>,
-    <Col>
+    <Col key={1}>
       <Table responsive className="parameterKey" style={{ marginBottom: 0 }}>
         <tbody>
           {getRankingResolution(dataCollectionGroup)}
@@ -92,7 +92,7 @@ export default function ScreeningSection({
         </tbody>
       </Table>
     </Col>,
-    <Col>
+    <Col key={2}>
       <Table responsive className="parameterKey">
         <tbody>
           <StrategyOscRange
@@ -108,7 +108,7 @@ export default function ScreeningSection({
         </tbody>
       </Table>
     </Col>,
-    <Col>{getUnitCellSection(dataCollectionGroup)}</Col>,
+    <Col key={3}>{getUnitCellSection(dataCollectionGroup)}</Col>,
   ];
   return compact ? <Row>{content}</Row> : <Col>{content}</Col>;
 }
