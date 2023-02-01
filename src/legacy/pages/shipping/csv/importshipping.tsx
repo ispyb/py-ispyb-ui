@@ -40,6 +40,7 @@ import { CommentObject } from 'handsontable/plugins/comments';
 import { CONTAINER_TYPES } from 'legacy/models';
 import { addDewarsToShipping } from 'legacy/api/ispyb';
 import axios from 'axios';
+import { useAuth } from 'hooks/useAuth';
 
 type Param = {
   proposalName: string;
@@ -134,6 +135,7 @@ export function CSVShippingImporter({
     []
   );
   const [done, setDone] = useState<string | undefined>(undefined);
+  const { site, token } = useAuth();
 
   const onCSVLoaded = (newData: Line[]) => {
     const autoReplacements = autofixShipping(
@@ -179,7 +181,8 @@ export function CSVShippingImporter({
         shippingId: shipping.shippingId,
         data: parcels,
       });
-      axios.post(req.url, req.data, { headers: req.headers }).then(
+      const fullUrl = `${site.host}${site.apiPrefix}/${token}${req.url}`;
+      axios.post(fullUrl, req.data, { headers: req.headers }).then(
         () => {
           setDone('success');
         },

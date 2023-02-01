@@ -38,6 +38,7 @@ import axios from 'axios';
 import { CrystalEditor } from './crystaleditor';
 import { validateContainers } from 'legacy/helpers/mx/shipping/containervalidation';
 import { EXPERIMENT_TYPES } from 'legacy/constants/experiments';
+import { useAuth } from 'hooks/useAuth';
 
 type Param = {
   proposalName: string;
@@ -193,6 +194,8 @@ function ContainerEditor({
   const [changed, setChanged] = useState(false);
   const [modifiedCrystals, setModifiedCrystals] = useState<Crystal[]>([]);
   const [name, setName] = useState(container.code);
+
+  const { site, token } = useAuth();
 
   const synchronized =
     !changed && JSON.stringify(data) === JSON.stringify(upToDateData);
@@ -421,7 +424,8 @@ function ContainerEditor({
         containerId: String(container.containerId),
         data: toSave,
       });
-      axios.post(request.url, request.data, { headers: request.headers }).then(
+      const fullUrl = `${site.host}${site.apiPrefix}/${token}${request.url}`;
+      axios.post(fullUrl, request.data, { headers: request.headers }).then(
         () => {
           forceRefresh();
         },

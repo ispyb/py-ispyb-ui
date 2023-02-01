@@ -44,72 +44,77 @@ export default function DnDLoadSampleChanger({
   );
 
   return (
-    <Col>
-      <Row>
-        <Col></Col>
-        <Col md={'auto'}>
-          <Alert variant="info">
-            <FontAwesomeIcon
-              icon={faInfoCircle}
-              style={{ marginRight: 10 }}
-            ></FontAwesomeIcon>
-            Select destination beamline and drag containers to their location.
-          </Alert>
-        </Col>
-
-        <Col></Col>
-      </Row>
-      <Row>
-        <DndProvider backend={HTML5Backend}>
-          <div style={{ position: 'relative' }}>
+    <DndProvider backend={HTML5Backend}>
+      <Col>
+        <Row>
+          <Col xs={'auto'} style={{ maxHeight: 500, overflow: 'auto' }}>
+            {dewars?.map((d) => {
+              return (
+                <Row key={d.dewarId}>
+                  <div style={{ margin: 'auto' }}>
+                    <DragableContainer
+                      d={d}
+                      beamlines={beamlines}
+                      proposalName={proposalName}
+                    ></DragableContainer>
+                  </div>
+                </Row>
+              );
+            })}
+          </Col>
+          <Col>
             <Row>
-              {dewars?.map((d) => {
-                return (
-                  <Col key={d.dewarId} style={{ display: 'flex' }}>
-                    <div style={{ margin: 'auto' }}>
-                      <DragableContainer
-                        d={d}
-                        beamlines={beamlines}
-                        proposalName={proposalName}
-                      ></DragableContainer>
-                    </div>
-                  </Col>
-                );
-              })}
-            </Row>
-            <Row style={{ marginTop: 20 }}>
               <Col></Col>
               <Col md={'auto'}>
-                <BeamLineSelector
-                  beamline={beamline}
-                  beamlines={beamlines}
-                  setBeamline={setBeamline}
-                ></BeamLineSelector>
+                <Alert variant="info">
+                  <FontAwesomeIcon
+                    icon={faInfoCircle}
+                    style={{ marginRight: 10 }}
+                  ></FontAwesomeIcon>
+                  Select destination beamline and drag containers to their
+                  location.
+                </Alert>
               </Col>
               <Col></Col>
             </Row>
             <Row>
-              <div
-                style={{
-                  width: 400,
-                  margin: 'auto',
-                  marginTop: 10,
-                  marginBottom: 20,
-                }}
-              >
-                <DnDSampleChanger
-                  beamline={beamline}
-                  setContainerLocation={setContainerLocation}
-                  proposalName={proposalName}
-                  containers={dewars}
-                ></DnDSampleChanger>
+              <div style={{ position: 'relative' }}>
+                <Row className="flex-nowrap"></Row>
+                <Row style={{ marginTop: 20 }}>
+                  <Col></Col>
+                  <Col md={'auto'}>
+                    <BeamLineSelector
+                      beamline={beamline}
+                      beamlines={beamlines}
+                      setBeamline={setBeamline}
+                    ></BeamLineSelector>
+                  </Col>
+                  <Col></Col>
+                </Row>
+                <Row>
+                  <div
+                    style={{
+                      width: 400,
+                      margin: 'auto',
+                      marginTop: 10,
+                      marginBottom: 20,
+                    }}
+                  >
+                    <DnDSampleChanger
+                      beamline={beamline}
+                      setContainerLocation={setContainerLocation}
+                      proposalName={proposalName}
+                      containers={dewars}
+                    ></DnDSampleChanger>
+                  </div>
+                </Row>
               </div>
+              <CustomDragLayer proposalName={proposalName}></CustomDragLayer>
             </Row>
-          </div>
-          <CustomDragLayer proposalName={proposalName}></CustomDragLayer>
-        </DndProvider>
-      </Row>
-    </Col>
+          </Col>
+        </Row>
+      </Col>
+    </DndProvider>
   );
 }
 
