@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import { Suspense } from 'react';
 
 import { useParams } from 'react-router-dom';
 import { Card, Tab, Tabs } from 'react-bootstrap';

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Card } from 'react-bootstrap';
 import { Classification } from 'legacy/pages/em/model';
 import { getClassificationThumbnail } from 'legacy/api/ispyb';

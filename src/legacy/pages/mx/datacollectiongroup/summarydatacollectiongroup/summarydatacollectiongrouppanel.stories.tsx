@@ -1,4 +1,3 @@
-import React from 'react';
 import SummaryDataCollectionGroupPanel from 'legacy/pages/mx/datacollectiongroup/summarydatacollectiongroup/summarydatacollectiongrouppanel';
 
 const dataCollectionGroup = {

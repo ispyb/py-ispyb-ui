@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react';
+import { PropsWithChildren } from 'react';
 import SessionTabMenu from 'legacy/pages/mx/sessiontabmenu';
 
 type Props = PropsWithChildren<{

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useMoviesByDataCollectionId } from 'legacy/hooks/ispyb';
 import { Card, ButtonGroup, Badge, ToggleButton } from 'react-bootstrap';
@@ -89,7 +89,10 @@ export default function MoviesPage() {
       </Menu>
 
       {parsedMovies.map((movie: Movie) => (
-        <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+        <LazyWrapper
+          key={movie.Movie_movieId}
+          placeholder={<LoadingPanel></LoadingPanel>}
+        >
           <Card style={{ margin: 3 }}>
             <Card.Body>
               <MoviePanel

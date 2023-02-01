@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { Navbar, Container } from 'react-bootstrap';
 export default function Menu(props) {
   return (

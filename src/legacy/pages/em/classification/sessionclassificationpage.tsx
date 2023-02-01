@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import EMPage from 'legacy/pages/em/empage';
 import { Card, Accordion, Container, Row, Col, Form } from 'react-bootstrap';
@@ -67,7 +67,7 @@ export default function SessionClassificationPage() {
         <div style={{ margin: 10 }}>
           <Accordion>
             {groups.map((group, i) => (
-              <Accordion.Item eventKey={i.toString()}>
+              <Accordion.Item key={i} eventKey={i.toString()}>
                 <Accordion.Header>
                   <span>
                     Classification #{i + 1}: {group.length} classes{' '}
@@ -83,8 +83,8 @@ export default function SessionClassificationPage() {
                         .sort((a: Classification, b: Classification) => {
                           return b.classDistribution - a.classDistribution;
                         })
-                        .map((c) => (
-                          <Col style={{ margin: 2 }}>
+                        .map((c, i) => (
+                          <Col key={i} style={{ margin: 2 }}>
                             <ClassificationPanel
                               classification={c}
                               proposalName={proposalName}

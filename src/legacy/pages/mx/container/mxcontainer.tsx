@@ -97,6 +97,7 @@ export function MXContainer({
 
           return (
             <SampleSVG
+              key={n}
               position={position}
               n={n}
               refSample={refSample}
@@ -262,6 +263,7 @@ export function EmptyContainer({
 
           return (
             <SampleSVG
+              key={n}
               clickableContainer={false}
               position={position}
               n={n}
@@ -314,7 +316,7 @@ function ContainerSVG({
         ></circle>
       )}
       {maxPosition === 16 && (
-        <g fill="#888888" stroke="#888888" pointer-events="none">
+        <g fill="#888888" stroke="#888888" pointerEvents="none">
           <circle
             cx={containerRadius}
             cy={containerRadius * 1.05}
@@ -324,19 +326,19 @@ function ContainerSVG({
             cx={containerRadius * 0.9}
             cy={containerRadius * 0.95}
             r={containerRadius * 0.05}
-            stroke-width="1"
+            strokeWidth="1"
           ></circle>
           <circle
             cx={containerRadius * 1.1}
             cy={containerRadius * 0.95}
             r={containerRadius * 0.05}
-            stroke-width="1"
+            strokeWidth="1"
           ></circle>
           <circle
             cx={containerRadius}
             cy={containerRadius * 1.5}
             r={containerRadius * 0.05}
-            stroke-width="1"
+            strokeWidth="1"
           ></circle>
         </g>
       )}
@@ -404,7 +406,7 @@ function SampleSVG({
           {sampleCircle}
         </OverlayTrigger>
         <text className={type} x={position.x} y={position.y}>
-          <tspan dx="0" dy="3" pointer-events="none">
+          <tspan dx="0" dy="3" pointerEvents="none">
             {n}
           </tspan>
         </text>
@@ -421,7 +423,7 @@ function SampleSVG({
         r={containerRadius * 0.175}
       ></circle>
       <text x={position.x} y={position.y} className="sampleEmpty">
-        <tspan dx="0" dy="3" pointer-events="none">
+        <tspan dx="0" dy="3" pointerEvents="none">
           {n}
         </tspan>
       </text>

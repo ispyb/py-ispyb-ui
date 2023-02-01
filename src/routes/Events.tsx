@@ -1,8 +1,9 @@
+import React from 'react';
 import type {
+  BreadcrumbComponentProps,
   BreadcrumbComponentType,
   BreadcrumbMatch,
 } from 'use-react-router-breadcrumbs';
-import React from 'react';
 
 const EventsList = React.lazy(() =>
   import('components/Events' /* webpackChunkName: "events" */).then((m) => ({
@@ -22,13 +23,15 @@ const SampleChanger = React.lazy(() =>
   }))
 );
 
-const SessionBreadCrumb: BreadcrumbComponentType<'sessionId'> = ({ match }) => {
+const SessionBreadCrumb: BreadcrumbComponentType<'sessionId'> = ({
+  match,
+}: BreadcrumbComponentProps<'sessionId'>) => {
   return <>{match.params.sessionId}</>;
 };
 
 const DataCollectionBreadCrumb: BreadcrumbComponentType<'dataCollectionId'> = ({
   match,
-}) => {
+}: BreadcrumbComponentProps<'dataCollectionId'>) => {
   return <>{match.params.dataCollectionId}</>;
 };
 

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Container, Row, Col, Popover, OverlayTrigger } from 'react-bootstrap';
 
 export interface IMetadataItemProps {
@@ -19,8 +18,8 @@ export default function Metadata(props: IMetadataProps) {
         {props.properties
           .filter((item) => item.test === undefined || item.test)
           .map((item) => (
-            <Col sm={6}>
-              <MetadataItem key={item.title} {...item} />
+            <Col key={item.title} sm={6}>
+              <MetadataItem {...item} />
             </Col>
           ))}
       </Row>
@@ -34,7 +33,7 @@ export function MetadataCol(props: IMetadataProps) {
       {props.properties
         .filter((item) => item.test === undefined || item.test)
         .map((item) => (
-          <Row>
+          <Row key={item.title}>
             <MetadataItem {...item} />
           </Row>
         ))}
@@ -48,7 +47,7 @@ export function MetadataRow(props: IMetadataProps) {
       {props.properties
         .filter((item) => item.test === undefined || item.test)
         .map((item) => (
-          <Col>
+          <Col key={item.title}>
             <MetadataItem {...item} />
           </Col>
         ))}

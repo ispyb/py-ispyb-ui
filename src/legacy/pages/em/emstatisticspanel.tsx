@@ -1,4 +1,3 @@
-import React from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import PlotWidget from 'legacy/components/plotting/plotwidget';
 import { StatisticsPlotData } from 'legacy/pages/em/model';

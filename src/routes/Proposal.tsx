@@ -1,4 +1,5 @@
 import type {
+  BreadcrumbComponentProps,
   BreadcrumbComponentType,
   BreadcrumbMatch,
 } from 'use-react-router-breadcrumbs';
@@ -11,7 +12,9 @@ import { SessionRoutes, CalendarRoutes } from './Proposals';
 import SampleRoutes from './Samples';
 import ProteinRoutes from './Proteins';
 
-const ProposalBreadCrumb: BreadcrumbComponentType<'proposal'> = ({ match }) => {
+const ProposalBreadCrumb: BreadcrumbComponentType<'proposal'> = ({
+  match,
+}: BreadcrumbComponentProps<'proposal'>) => {
   return <>{match.params.proposal}</>;
 };
 

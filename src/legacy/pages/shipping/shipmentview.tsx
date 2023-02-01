@@ -294,7 +294,10 @@ export function ContentPane({
           (a, b) => (a.dewarId ? a.dewarId : 0) - (b.dewarId ? b.dewarId : 0)
         )
         .map((dewar) => (
-          <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+          <Suspense
+            key={dewar.dewarId}
+            fallback={<LoadingPanel></LoadingPanel>}
+          >
             <DewarPane
               statisticsMode={statisticsMode}
               key={dewar.dewarId}
@@ -396,7 +399,7 @@ export function ExportPane({
           (a, b) => (a.dewarId ? a.dewarId : 0) - (b.dewarId ? b.dewarId : 0)
         )
         .map((dewar) => (
-          <div>
+          <div key={dewar.dewarId}>
             <FormCheck
               style={{
                 position: 'relative',

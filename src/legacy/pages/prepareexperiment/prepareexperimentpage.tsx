@@ -337,7 +337,13 @@ export function ToggleShipmentStatus({
   return (
     <OverlayTrigger
       placement="right"
-      overlay={<Tooltip>Set status to '{newStatus}'</Tooltip>}
+      overlay={
+        <Tooltip>
+          {"Set status to '"}
+          {newStatus}
+          {"'"}
+        </Tooltip>
+      }
     >
       <Button style={{ padding: 0 }} variant="link" onClick={onClick}>
         <FontAwesomeIcon

@@ -83,7 +83,9 @@ function BeamLineGroupHome({ beamLineGroups }: { beamLineGroups: string[] }) {
       {beamLineGroups.length > 1 && (
         <select onChange={(e) => setBeamLineGroup(e.target.value)}>
           {beamLineGroups.map((group) => (
-            <option value={group}>{group}</option>
+            <option key={group} value={group}>
+              {group}
+            </option>
           ))}
         </select>
       )}

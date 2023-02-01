@@ -1,5 +1,4 @@
 import { Proposal } from 'legacy/pages/model';
-import React from 'react';
 import { Badge, Button, Row, Tooltip, OverlayTrigger } from 'react-bootstrap';
 import BootstrapTable, { ColumnDescription } from 'react-bootstrap-table-next';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
