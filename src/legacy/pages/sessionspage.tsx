@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import UI from 'legacy/config/ui';
 import format from 'date-fns/format';
 import SessionTable from 'legacy/pages/session/sessiontable';

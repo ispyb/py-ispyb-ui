@@ -1,5 +1,3 @@
-import React from 'react';
-
 const ShippingList = React.lazy(() =>
   import('components/Shippings' /* webpackChunkName: "shipping" */).then(
     (m) => ({

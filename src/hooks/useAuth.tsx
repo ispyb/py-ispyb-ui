@@ -2,7 +2,7 @@ import { AuthenticatedResource } from 'api/resources/Base/Authenticated';
 import { SiteResource } from 'api/resources/Base/Site';
 import { SiteConfig } from 'config/definitions/sites';
 import { SITES } from 'config/config';
-import React, { createContext, useContext } from 'react';
+import { createContext, useContext } from 'react';
 import { useController } from 'rest-hooks';
 
 export interface JavaPerson {

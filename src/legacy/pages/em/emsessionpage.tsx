@@ -1,4 +1,3 @@
-import React from 'react';
 import { useParams } from 'react-router-dom';
 import EMPage from 'legacy/pages/em/empage';
 import { Card } from 'react-bootstrap';

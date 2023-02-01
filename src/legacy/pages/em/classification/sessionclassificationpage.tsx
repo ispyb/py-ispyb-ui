@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import EMPage from 'legacy/pages/em/empage';
 import { Card, Accordion, Container, Row, Col, Form } from 'react-bootstrap';

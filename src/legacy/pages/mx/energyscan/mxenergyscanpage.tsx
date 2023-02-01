@@ -1,4 +1,3 @@
-import React from 'react';
 import { useParams } from 'react-router-dom';
 import MXPage from 'legacy/pages/mx/mxpage';
 import { Alert, Card } from 'react-bootstrap';

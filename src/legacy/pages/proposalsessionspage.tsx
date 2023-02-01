@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import UI from 'legacy/config/ui';
 import SessionTable from 'legacy/pages/session/sessiontable';
 import { useSessions } from 'legacy/hooks/ispyb';

@@ -1,4 +1,4 @@
-import React, { PropsWithChildren, ReactNode, useState } from 'react';
+import { PropsWithChildren, ReactNode, useState } from 'react';
 import LazyLoad from 'react-lazy-load';
 
 export type LazyWrapperType = PropsWithChildren<{

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Badge, Button } from 'react-bootstrap';
 import { toColumn } from 'legacy/components/table/helper';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Container, Row, Col, Popover, OverlayTrigger } from 'react-bootstrap';
 
 export interface IMetadataItemProps {

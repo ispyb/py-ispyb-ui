@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Menu from 'legacy/components/menu/menu';
 import moment, { Moment } from 'moment';
 import { useSearchParams } from 'react-router-dom';

@@ -1,4 +1,3 @@
-import React from 'react';
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
 import SimpleParameterTable from 'legacy/components/table/simpleparametertable';
 import {

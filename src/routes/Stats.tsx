@@ -3,7 +3,6 @@ import type {
   BreadcrumbMatch,
   BreadcrumbComponentProps,
 } from 'use-react-router-breadcrumbs';
-import React from 'react';
 
 const SessionBreadCrumb: BreadcrumbComponentType<'sessionId'> = ({
   match,

@@ -1,4 +1,3 @@
-import React from 'react';
 import { Row, Col } from 'react-bootstrap';
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
 import {

@@ -1,4 +1,3 @@
-import React from 'react';
 import { useProposals } from 'legacy/hooks/ispyb';
 import ProposalTable from './proposal/proposaltable';
 

@@ -1,5 +1,4 @@
 import Calendar from 'components/Calendar';
-import React from 'react';
 
 const ProposalsList = React.lazy(() =>
   import('components/Proposals' /* webpackChunkName: "proposals" */).then(

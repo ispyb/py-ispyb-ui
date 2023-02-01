@@ -1,4 +1,3 @@
-import React from 'react';
 import ErrorUserMessage from 'legacy/components/usermessages/errorusermessage';
 
 const l = { title: 'ErrorUserMessage', component: ErrorUserMessage };

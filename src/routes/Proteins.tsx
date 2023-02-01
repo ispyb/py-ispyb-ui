@@ -1,5 +1,3 @@
-import React from 'react';
-
 const ProteinsList = React.lazy(() =>
   import('components/Proteins' /* webpackChunkName: "proteins" */).then(
     (m) => ({

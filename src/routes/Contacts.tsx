@@ -1,5 +1,3 @@
-import React from 'react';
-
 const LabContactList = React.lazy(() =>
   import('components/LabContacts' /* webpackChunkName: "contacts" */).then(
     (m) => ({

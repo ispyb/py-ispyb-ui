@@ -3,7 +3,6 @@ import type {
   BreadcrumbComponentType,
   BreadcrumbMatch,
 } from 'use-react-router-breadcrumbs';
-import React from 'react';
 
 const EventsList = React.lazy(() =>
   import('components/Events' /* webpackChunkName: "events" */).then((m) => ({

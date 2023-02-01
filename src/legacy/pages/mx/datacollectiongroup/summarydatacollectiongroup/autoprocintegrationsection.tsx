@@ -1,5 +1,4 @@
 import { Shells } from 'legacy/helpers/mx/resultparser';
-import React from 'react';
 import { Col, ProgressBar, Row, Table } from 'react-bootstrap';
 import UnitCellSection from './unitcellsection';
 

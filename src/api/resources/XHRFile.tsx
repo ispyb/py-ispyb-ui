@@ -1,10 +1,4 @@
-import React, {
-  ReactNode,
-  Component,
-  ErrorInfo,
-  Suspense,
-  useState,
-} from 'react';
+import { ReactNode, Component, ErrorInfo, Suspense, useState } from 'react';
 import { useResource } from '@rest-hooks/core';
 import { Endpoint, EndpointInstance } from '@rest-hooks/endpoint';
 import classNames from 'classnames';

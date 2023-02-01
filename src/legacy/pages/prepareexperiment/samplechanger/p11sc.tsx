@@ -1,6 +1,5 @@
 import { containerType } from 'legacy/models';
 import { AbstractSampleChanger } from './abstractsamplechanger';
-import React from 'react';
 
 export class P11SC extends AbstractSampleChanger {
   plotCells(): JSX.Element {
