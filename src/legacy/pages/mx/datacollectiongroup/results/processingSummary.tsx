@@ -16,7 +16,6 @@ import {
   OverlayTrigger,
   Popover,
   Row,
-  Tooltip,
 } from 'react-bootstrap';
 
 export interface Props {

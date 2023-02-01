@@ -27,8 +27,8 @@ export default function MasonryLayout(props: MasonryLayoutProps) {
         props.columnClassName,
       ])}
     >
-      {props.children.map((c) => (
-        <div>{c}</div>
+      {props.children.map((c, i) => (
+        <div key={c.key || i}>{c}</div>
       ))}
     </Masonry>
   );

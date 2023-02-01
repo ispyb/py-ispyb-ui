@@ -363,6 +363,7 @@ function SelectPipelines({
         </Dropdown.Item>
         {options.map((v) => (
           <Dropdown.Item
+            key={v}
             as={Anchor}
             onClick={(e) => {
               if (selected.includes(v)) {
