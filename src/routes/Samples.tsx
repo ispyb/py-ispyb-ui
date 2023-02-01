@@ -1,3 +1,5 @@
+import React from 'react';
+
 const SamplesList = React.lazy(() =>
   import('components/Samples' /* webpackChunkName: "samples" */).then((m) => ({
     default: m.SamplesList,

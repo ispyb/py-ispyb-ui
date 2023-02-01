@@ -1,3 +1,4 @@
+import React from 'react';
 import { AuthenticatedResource } from 'api/resources/Base/Authenticated';
 import { SiteResource } from 'api/resources/Base/Site';
 import { SiteConfig } from 'config/definitions/sites';

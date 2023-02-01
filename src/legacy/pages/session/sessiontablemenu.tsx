@@ -78,9 +78,9 @@ export default function SessionTableMenu({
     <Menu>
       <ButtonGroup className="mb-2">
         {checkList &&
-          checkList.map((item: ToggleButtonProps) => (
+          checkList.map((item: ToggleButtonProps, i) => (
             <ToggleButton
-              key={item.value}
+              key={i}
               {...item}
               variant={item.checked ? 'primary' : 'outline-primary'}
             >

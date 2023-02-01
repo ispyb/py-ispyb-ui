@@ -1,3 +1,4 @@
+import React from 'react';
 import { Form, Col, Row, InputGroup } from 'react-bootstrap';
 
 // export const ColFieldFactory = (baseProps) => {
