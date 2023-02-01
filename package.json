@@ -121,7 +121,10 @@
       "react-app/jest",
       "plugin:react/recommended",
       "plugin:react/jsx-runtime"
-    ]
+    ],
+    "rules": {
+      "react/no-unknown-property": "off"
+    }
   },
   "browserslist": {
     "production": [
