@@ -1,7 +1,7 @@
 import { ContainerDewar } from 'legacy/pages/model';
 import { MXContainer } from 'legacy/pages/mx/container/mxcontainer';
 import { useState, useEffect } from 'react';
-import { Alert, Col, Row } from 'react-bootstrap';
+import { Alert, Anchor, Col, Dropdown, Row } from 'react-bootstrap';
 
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -13,7 +13,7 @@ import { CustomDragLayer, ItemTypes } from './dndlayer';
 import DnDSampleChanger from './dndsamplechanger';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { faArrowRight, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import {
   getContainerBeamline,
   getContainerType,
@@ -43,30 +43,78 @@ export default function DnDLoadSampleChanger({
     findBestDefaultBeamline(beamlines, dewars)
   );
 
+  const [filterUnset, setFilterUnset] = useState(true);
+
   return (
     <DndProvider backend={HTML5Backend}>
       <Col>
         <Row>
-          <Col xs={'auto'} style={{ maxHeight: 500, overflow: 'auto' }}>
-            {dewars?.map((d) => {
-              return (
-                <Row key={d.dewarId}>
-                  <div style={{ margin: 'auto' }}>
-                    <DragableContainer
-                      d={d}
-                      beamlines={beamlines}
-                      proposalName={proposalName}
-                    ></DragableContainer>
-                  </div>
-                </Row>
-              );
-            })}
+          <Col xs={'auto'}>
+            <Row>
+              <Dropdown style={{ paddingRight: 0 }}>
+                <Dropdown.Toggle
+                  disabled={false}
+                  size="sm"
+                  variant="primary"
+                  style={{ width: '100%', borderRadius: 0 }}
+                >
+                  {filterUnset ? 'Show not loaded' : 'Show all'}
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  <Dropdown.Item
+                    as={Anchor}
+                    onClick={(e) => setFilterUnset(false)}
+                  >
+                    Show all
+                  </Dropdown.Item>
+                  <Dropdown.Item
+                    as={Anchor}
+                    onClick={(e) => setFilterUnset(true)}
+                  >
+                    Show not loaded
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+            </Row>
+            <Row>
+              <Col
+                style={{
+                  maxHeight: 600,
+                  overflow: 'auto',
+                  marginLeft: 15,
+                }}
+              >
+                {dewars
+                  ?.filter((d) => !filterUnset || !d.beamlineLocation)
+                  ?.map((d) => {
+                    return (
+                      <>
+                        <Row key={d.dewarId}>
+                          <div style={{ margin: 'auto' }}>
+                            <DragableContainer
+                              d={d}
+                              beamlines={beamlines}
+                              proposalName={proposalName}
+                            ></DragableContainer>
+                          </div>
+                        </Row>
+                        <Row style={{ borderTop: '1px solid gray' }}></Row>
+                      </>
+                    );
+                  })}
+              </Col>
+            </Row>
+          </Col>
+
+          <Col xs={'auto'} style={{ borderLeft: '1px solid black' }} />
+          <Col xs={'auto'} className="d-flex align-items-center" align="center">
+            <FontAwesomeIcon style={{ height: 50 }} icon={faArrowRight} />
           </Col>
           <Col>
             <Row>
               <Col></Col>
               <Col md={'auto'}>
-                <Alert variant="info">
+                <Alert variant="info" style={{ marginTop: 15 }}>
                   <FontAwesomeIcon
                     icon={faInfoCircle}
                     style={{ marginRight: 10 }}
@@ -175,18 +223,25 @@ function DragableContainer({
   const changer = getSampleChanger(beamline?.sampleChangerType);
   const pos = changer?.getPosition(Number(d.sampleChangerLocation));
   return (
-    <div style={{ width: 100, height: 160 }}>
-      <Col style={{ height: 20 }}>
+    <div style={{ maxWidth: 100 }}>
+      <Col>
         <Row>
-          <p style={{ height: 20, padding: 0, margin: 0, textAlign: 'center' }}>
-            <strong>[{d.shippingName?.slice(0, 15)}]</strong>{' '}
-            {d.containerCode?.slice(0, 15)}
+          <p
+            style={{
+              padding: 0,
+              margin: 0,
+              textAlign: 'center',
+            }}
+          >
+            <strong>[{d.shippingName}]</strong> {d.containerCode}
           </p>
         </Row>
       </Col>
       <div
         ref={drag}
         style={{
+          width: 100,
+          height: 100,
           backgroundColor: 'white',
           cursor: 'grab',
           opacity: isDragging ? 0 : 1,
@@ -200,7 +255,13 @@ function DragableContainer({
         ></MXContainer>
       </div>
       {pos && (
-        <Col>
+        <Col
+          style={{
+            backgroundColor: 'lightgreen',
+            borderRadius: 10,
+            marginBottom: 5,
+          }}
+        >
           <Row>
             <p style={{ padding: 0, margin: 0, textAlign: 'center' }}>
               {d.beamlineLocation}
