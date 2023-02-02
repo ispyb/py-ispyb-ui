@@ -1,10 +1,7 @@
-import {
-  spaceGroupLongNames,
-  spaceGroupShortNames,
-} from 'legacy/constants/spacegroups';
 import _, { trim } from 'lodash';
 import { Dictionary } from 'lodash';
 import { AutoProcInformation } from 'legacy/pages/mx/model';
+import { getSpaceGroup } from 'helpers/spacegroups';
 
 export interface AutoProcIntegration {
   id: number;
@@ -195,24 +192,19 @@ function sort(array: AutoProcIntegration[]) {
     a: AutoProcIntegration,
     b: AutoProcIntegration
   ) {
-    const spaceGroupA = a.spaceGroup?.replace(/\s/g, '');
-    const spaceGroupB = b.spaceGroup?.replace(/\s/g, '');
+    const spaceGroupA = getSpaceGroup(a.spaceGroup);
+    const spaceGroupB = getSpaceGroup(b.spaceGroup);
 
-    let indexOfSpaceGroupA = _.indexOf(spaceGroupShortNames, spaceGroupA);
-    if (indexOfSpaceGroupA === -1) {
-      /** If not found check with long name */
-      indexOfSpaceGroupA = _.indexOf(spaceGroupLongNames, spaceGroupA);
-    }
-
-    let indexOfSpaceGroupB = _.indexOf(spaceGroupShortNames, spaceGroupB);
-    if (indexOfSpaceGroupB === -1) {
-      indexOfSpaceGroupB = _.indexOf(spaceGroupLongNames, spaceGroupB);
-    }
-
-    if (indexOfSpaceGroupA === indexOfSpaceGroupB) {
+    if (
+      spaceGroupA?.symopsExcludingCentering ===
+      spaceGroupB?.symopsExcludingCentering
+    ) {
       return sortByrMerge(a, b);
     }
-    return indexOfSpaceGroupB - indexOfSpaceGroupA;
+    return (
+      (spaceGroupB?.symopsExcludingCentering || 0) -
+      (spaceGroupA?.symopsExcludingCentering || 0)
+    );
   }
 
   minus10Rmerge.sort(sortByHighestSymmetry);

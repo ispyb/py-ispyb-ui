@@ -1,6 +1,17 @@
-import { Col, ProgressBar, Row, Table } from 'react-bootstrap';
+import {
+  Alert,
+  Card,
+  Col,
+  OverlayTrigger,
+  ProgressBar,
+  Row,
+  Table,
+  Tooltip,
+} from 'react-bootstrap';
 import UnitCellSection from './unitcellsection';
 import { AutoProcIntegration } from 'legacy/helpers/mx/results/resultparser';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 
 function getColorProgressBarByCompleness(completeness: number) {
   if (completeness > 90) {
@@ -50,7 +61,7 @@ function getShellStatistics(
   );
 }
 
-export default function AutoprocIntegrationSection({
+export default function BestResultSection({
   bestResult,
   compact,
 }: {
@@ -120,8 +131,49 @@ export default function AutoprocIntegrationSection({
         cell_alpha={bestResult.cell_alpha}
         cell_beta={bestResult.cell_beta}
         cell_gamma={bestResult.cell_gamma}
+        spaceGroup={bestResult.spaceGroup}
       ></UnitCellSection>
     </Col>,
   ];
-  return compact ? <Row>{content}</Row> : <Col>{content}</Col>;
+  return compact ? (
+    <Row>{content}</Row>
+  ) : (
+    <Card style={{ padding: 20 }}>
+      <Card.Body>
+        <Col>
+          <OverlayTrigger
+            trigger={['focus', 'hover']}
+            overlay={
+              <Tooltip>
+                You can adjust criteria for best result selection in the session
+                menu at the top of the page.
+              </Tooltip>
+            }
+          >
+            <h5 className={'text-center m-0'}>
+              Best result{' '}
+              <FontAwesomeIcon
+                size={'xs'}
+                color="lightgray"
+                icon={faQuestionCircle}
+              />
+            </h5>
+          </OverlayTrigger>
+          <div className={'text-center'} style={{ textDecoration: 'italic' }}>
+            <small>
+              <i>from {bestResult.program}</i>
+            </small>
+          </div>
+          <div
+            style={{
+              marginTop: 10,
+              marginBottom: 10,
+              borderTop: '1px solid lightgray',
+            }}
+          />
+          {content}
+        </Col>
+      </Card.Body>
+    </Card>
+  );
 }

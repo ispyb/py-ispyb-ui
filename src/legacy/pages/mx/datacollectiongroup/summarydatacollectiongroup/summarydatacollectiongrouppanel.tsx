@@ -95,13 +95,13 @@ export default function SummaryDataCollectionGroupPanel({
         )}
       </Row>
       {dataCollectionGroup.SpaceGroupModelResolvedByMr && (
-        <Alert variant="success">
+        <Alert variant="success" className={'mt-3'}>
           Automatic MR appears to have worked with the space group{' '}
           {dataCollectionGroup.SpaceGroupModelResolvedByMr}
         </Alert>
       )}
       {dataCollectionGroup.SpaceGroupModelResolvedByPhasing && (
-        <Alert variant="success">
+        <Alert variant="success" className={'mt-3'}>
           Automatic SAD appears to have worked with the space group{' '}
           {dataCollectionGroup.SpaceGroupModelResolvedByPhasing}
         </Alert>

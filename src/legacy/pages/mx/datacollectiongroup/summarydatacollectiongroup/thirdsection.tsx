@@ -1,6 +1,6 @@
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
 import ScreeningSection from './screeningsection';
-import AutoprocIntegrationSection from './autoprocintegrationsection';
+import BestResultSection from './autoprocintegrationsection';
 import { AutoProcIntegration } from 'legacy/helpers/mx/results/resultparser';
 
 export default function ThirdSection({
@@ -14,10 +14,10 @@ export default function ThirdSection({
 }) {
   if (bestResult) {
     return (
-      <AutoprocIntegrationSection
+      <BestResultSection
         compact={compact}
         bestResult={bestResult}
-      ></AutoprocIntegrationSection>
+      ></BestResultSection>
     );
   }
   return (

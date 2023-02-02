@@ -15,10 +15,6 @@ import HotTable, { HotColumn } from '@handsontable/react';
 import _, { min } from 'lodash';
 import { EXPERIMENT_TYPES } from 'legacy/constants/experiments';
 
-import {
-  spaceGroupLongNames,
-  spaceGroupShortNames,
-} from 'legacy/constants/spacegroups';
 import './importshipping.scss';
 import {
   autofixShipping,
@@ -41,6 +37,7 @@ import { CONTAINER_TYPES } from 'legacy/models';
 import { addDewarsToShipping } from 'legacy/api/ispyb';
 import axios from 'axios';
 import { useAuth } from 'hooks/useAuth';
+import { SPACE_GROUPS } from 'helpers/spacegroups';
 
 type Param = {
   proposalName: string;
@@ -459,7 +456,9 @@ export function CSVShippingImporterTable({
       title: 'Spacegroup',
       source: [
         '',
-        ..._(spaceGroupShortNames).concat(spaceGroupLongNames).uniq().value(),
+        ..._(SPACE_GROUPS)
+          .map((v) => v.name)
+          .value(),
       ],
       type: 'autocomplete',
       filter: true,
@@ -490,7 +489,9 @@ export function CSVShippingImporterTable({
       title: 'Forced<br />Spacegroup',
       source: [
         '',
-        ..._(spaceGroupShortNames).concat(spaceGroupLongNames).uniq().value(),
+        ..._(SPACE_GROUPS)
+          .map((v) => v.name)
+          .value(),
       ],
       type: 'autocomplete',
       filter: true,
