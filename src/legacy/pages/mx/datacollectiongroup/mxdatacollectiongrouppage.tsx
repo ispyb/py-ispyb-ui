@@ -23,16 +23,9 @@ import ContainerFilter from '../container/containerfilter';
 import {
   faCheckCircle,
   faDotCircle,
-  faFilePdf,
-  faFileWord,
   faListAlt,
   faListUl,
 } from '@fortawesome/free-solid-svg-icons';
-import {
-  getMXDataCollectionAnalysis,
-  getMXDataCollectionSummary,
-} from 'legacy/api/ispyb';
-import DownloadOptions from 'legacy/components/buttons/downloadoptions';
 import { parseResults } from 'legacy/helpers/mx/results/resultparser';
 
 type Param = {
@@ -89,58 +82,7 @@ export default function MXDataCollectionGroupPage() {
               alignSelf: 'flex-end',
             }}
           >
-            <ButtonGroup style={{ marginRight: 50 }}>
-              <DownloadOptions
-                title="Summary"
-                options={[
-                  {
-                    href: getMXDataCollectionSummary({
-                      sessionId,
-                      proposalName,
-                      format: 'pdf',
-                    }).url,
-                    fileName: `Report_${proposalName}_${sessionId}.pdf`,
-                    title: 'PDF',
-                    icon: faFilePdf,
-                  },
-                  {
-                    href: getMXDataCollectionSummary({
-                      sessionId,
-                      proposalName,
-                      format: 'rtf',
-                    }).url,
-                    fileName: `Report_${proposalName}_${sessionId}.rtf`,
-                    title: 'RTF',
-                    icon: faFileWord,
-                  },
-                ]}
-              ></DownloadOptions>
-              <DownloadOptions
-                title="Analysis"
-                options={[
-                  {
-                    href: getMXDataCollectionAnalysis({
-                      sessionId,
-                      proposalName,
-                      format: 'pdf',
-                    }).url,
-                    fileName: `AnalysisReport_${proposalName}_${sessionId}.pdf`,
-                    title: 'PDF',
-                    icon: faFilePdf,
-                  },
-                  {
-                    href: getMXDataCollectionAnalysis({
-                      sessionId,
-                      proposalName,
-                      format: 'rtf',
-                    }).url,
-                    fileName: `AnalysisReport_${proposalName}_${sessionId}.rtf`,
-                    title: 'RTF',
-                    icon: faFileWord,
-                  },
-                ]}
-              ></DownloadOptions>
-            </ButtonGroup>
+            <ButtonGroup style={{ marginRight: 50 }}></ButtonGroup>
             <ButtonGroup style={{ marginRight: 50 }}>
               <Suspense fallback={<SelectPipelinesFallback />}>
                 <SelectPipelines
