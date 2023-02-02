@@ -31,7 +31,11 @@ import NbBadge from 'legacy/components/nbBadge';
 import ResultsDataCollectionGroupPanel from './results/ResultsDataCollectionGroupPanel';
 import ProcessingSummary from './results/processingSummary';
 import { useAutoProc } from 'legacy/hooks/ispyb';
-import { parseResults } from 'legacy/helpers/mx/results/resultparser';
+import {
+  parseResults,
+  ResultRankParam,
+  ResultRankShell,
+} from 'legacy/helpers/mx/results/resultparser';
 
 type Props = {
   sessionId: string;
@@ -40,6 +44,8 @@ type Props = {
   defaultCompact: boolean;
   compactToggle: Subject<boolean>;
   selectedPipelines: string[];
+  resultRankShell: ResultRankShell;
+  resultRankParam: ResultRankParam;
 };
 
 function getUniqueCount(commaSeparatedList?: string): number {
@@ -56,6 +62,8 @@ export default function DataCollectionGroupPanel({
   defaultCompact,
   compactToggle,
   selectedPipelines,
+  resultRankShell,
+  resultRankParam,
 }: Props) {
   const [compact, setCompact] = useState(defaultCompact);
   compactToggle.subscribe({
@@ -213,6 +221,9 @@ export default function DataCollectionGroupPanel({
                           compact={compact}
                           proposalName={proposalName}
                           dataCollectionGroup={dataCollectionGroup}
+                          selectedPipelines={selectedPipelines}
+                          resultRankParam={resultRankParam}
+                          resultRankShell={resultRankShell}
                         ></SummaryDataCollectionGroupPanel>
                       </Suspense>
                     </LazyWrapper>
@@ -248,6 +259,8 @@ export default function DataCollectionGroupPanel({
                         proposalName={proposalName}
                         dataCollectionGroup={dataCollectionGroup}
                         selectedPipelines={selectedPipelines}
+                        resultRankParam={resultRankParam}
+                        resultRankShell={resultRankShell}
                       />
                     </LazyWrapper>
                   </Tab.Pane>
@@ -269,6 +282,8 @@ export default function DataCollectionGroupPanel({
             proposalName={proposalName}
             dataCollectionGroup={dataCollectionGroup}
             selectedPipelines={selectedPipelines}
+            resultRankParam={resultRankParam}
+            resultRankShell={resultRankShell}
           />
         </Suspense>
       </Card>

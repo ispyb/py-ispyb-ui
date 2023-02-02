@@ -149,6 +149,7 @@ export interface DataCollectionGroup {
   ScreeningOutput_mosaicity?: number;
   Detector_detectorMode?: string;
   BeamLineSetup_polarisation?: number;
+  scalingStatisticsType?: string;
 }
 
 export interface DataCollection {

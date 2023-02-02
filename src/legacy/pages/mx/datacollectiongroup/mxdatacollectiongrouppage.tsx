@@ -26,7 +26,11 @@ import {
   faListAlt,
   faListUl,
 } from '@fortawesome/free-solid-svg-icons';
-import { parseResults } from 'legacy/helpers/mx/results/resultparser';
+import {
+  parseResults,
+  ResultRankParam,
+  ResultRankShell,
+} from 'legacy/helpers/mx/results/resultparser';
 
 type Param = {
   sessionId: string;
@@ -47,6 +51,10 @@ export default function MXDataCollectionGroupPage() {
   const [selectedPipelines, setSelectedPipelines] = useState<string[]>([]);
   const [filterMR, setFilterMR] = useState(false);
   const [filterSAD, setFilterSAD] = useState(false);
+  const [filterScaling, setFilterScaling] = useState(false);
+
+  const resultRankShell: ResultRankShell = 'Inner';
+  const resultRankParam: ResultRankParam = 'Rmerge';
 
   if (dataCollectionGroups && dataCollectionGroups.length) {
     const containerIds = _(dataCollectionGroups)
@@ -66,9 +74,10 @@ export default function MXDataCollectionGroupPage() {
     const filteredDataCollectionGroups =
       filteredDataCollectionGroupsByContainer.filter(
         (dcg) =>
-          !(filterMR || filterSAD) ||
+          !(filterMR || filterSAD || filterScaling) ||
           (filterMR && dcg.SpaceGroupModelResolvedByMr) ||
-          (filterSAD && dcg.SpaceGroupModelResolvedByPhasing)
+          (filterSAD && dcg.SpaceGroupModelResolvedByPhasing) ||
+          (filterScaling && dcg.scalingStatisticsType)
       );
 
     return (
@@ -94,6 +103,13 @@ export default function MXDataCollectionGroupPage() {
               </Suspense>
             </ButtonGroup>
             <ButtonGroup style={{ marginRight: 50 }}>
+              <Button
+                size="sm"
+                variant={filterScaling ? 'primary' : 'light'}
+                onClick={() => setFilterScaling(!filterScaling)}
+              >
+                Scaling
+              </Button>
               <Button
                 size="sm"
                 variant={filterMR ? 'primary' : 'light'}
@@ -213,6 +229,8 @@ export default function MXDataCollectionGroupPage() {
                       proposalName={proposalName}
                       sessionId={sessionId}
                       selectedPipelines={selectedPipelines}
+                      resultRankParam={resultRankParam}
+                      resultRankShell={resultRankShell}
                     ></DataCollectionGroupPanel>
                   </Suspense>
                 </LazyWrapper>

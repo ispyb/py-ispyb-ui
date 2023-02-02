@@ -1,4 +1,8 @@
-import { getRankedResults } from 'legacy/helpers/mx/results/resultparser';
+import {
+  getRankedResults,
+  ResultRankParam,
+  ResultRankShell,
+} from 'legacy/helpers/mx/results/resultparser';
 import { useAutoProc } from 'legacy/hooks/ispyb';
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
 import { Button, Col, Row } from 'react-bootstrap';
@@ -10,12 +14,16 @@ export interface Props {
   proposalName: string;
   dataCollectionGroup: DataCollectionGroup;
   selectedPipelines: string[];
+  resultRankShell: ResultRankShell;
+  resultRankParam: ResultRankParam;
 }
 
 export default function ResultsDataCollectionGroupPanel({
   proposalName,
   dataCollectionGroup,
   selectedPipelines,
+  resultRankShell,
+  resultRankParam,
 }: Props) {
   const [view, setView] = useState(0);
 
@@ -28,6 +36,8 @@ export default function ResultsDataCollectionGroupPanel({
 
   const results = getRankedResults(
     data.flatMap((d) => d),
+    resultRankShell,
+    resultRankParam,
     true
   ).filter(
     (v) =>

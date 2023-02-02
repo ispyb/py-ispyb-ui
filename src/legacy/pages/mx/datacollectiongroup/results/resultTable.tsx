@@ -1,3 +1,4 @@
+import { getSpaceGroup } from 'helpers/spacegroups';
 import { AutoProcIntegration } from 'legacy/helpers/mx/results/resultparser';
 import { Table, Col, Row, Badge } from 'react-bootstrap';
 
@@ -75,7 +76,12 @@ function ResultLine({ result }: { result: AutoProcIntegration }) {
           values={[result.program]}
           tags={result.anomalous ? ['ANOM'] : []}
         />
-        <ResultCol values={[result.spaceGroup]} />
+        <ResultCol
+          values={[
+            getSpaceGroup(result.spaceGroup)?.name,
+            getSpaceGroup(result.spaceGroup)?.symopsExcludingCentering,
+          ]}
+        />
         <ResultCol
           values={[
             result.cell_a.toFixed(1),

@@ -36,6 +36,16 @@ export interface AutoProcStatistics {
   ccAno?: number;
 }
 
+export const RESULT_RANK_SHELLS = ['Inner', 'Outer', 'Overall'] as const;
+export type ResultRankShell = typeof RESULT_RANK_SHELLS[number];
+export const RESULT_RANK_PARAM = [
+  '<I/Sigma>',
+  'cc(1/2)',
+  'ccAno',
+  'Rmerge',
+] as const;
+export type ResultRankParam = typeof RESULT_RANK_PARAM[number];
+
 export function prepareArray(arrayString?: string) {
   if (arrayString) {
     return _(arrayString).split(',').map(trim).value();
@@ -130,18 +140,24 @@ export function parseResults(
 
 function rank(
   results: AutoProcIntegration[],
+  rankShell: ResultRankShell,
+  rankParam: ResultRankParam,
   successOnly: boolean = false
 ): AutoProcIntegration[] {
   const anomalous = results.filter(function (r) {
     return (
       r.anomalous &&
-      (r.inner !== undefined || r.outer !== undefined || r.overall)
+      (r.inner !== undefined ||
+        r.outer !== undefined ||
+        r.overall !== undefined)
     );
   });
   const nonanomalous = results.filter(function (r) {
     return (
       !r.anomalous &&
-      (r.inner !== undefined || r.outer !== undefined || r.overall)
+      (r.inner !== undefined ||
+        r.outer !== undefined ||
+        r.overall !== undefined)
     );
   });
   const running = results.filter(function (r) {
@@ -154,8 +170,12 @@ function rank(
     return r.status === 'NO_RESULTS';
   });
 
-  const anomalousdata = sort(anomalous);
-  const nonanomalousdata = sort(nonanomalous);
+  const anomalousdata = anomalous.sort((a, b) =>
+    sort(a, b, rankShell, rankParam)
+  );
+  const nonanomalousdata = nonanomalous.sort((a, b) =>
+    sort(a, b, rankShell, rankParam)
+  );
 
   return _.concat(
     nonanomalousdata,
@@ -166,58 +186,61 @@ function rank(
   );
 }
 
-function sort(array: AutoProcIntegration[]) {
-  /** First sorting autoprocessing with rMerge <= 10 */
-  const minus10Rmerge = array.filter(function (o) {
-    return (
-      o.inner !== undefined &&
-      Number(o.inner.rMerge) <= 10 &&
-      Number(o.inner.rMerge) > 0
-    );
-  });
-
-  /** Second we get rMerge > 10 */
-  const plus10Rmerge = array.filter(function (o) {
-    return (
-      o.inner !== undefined &&
-      (Number(o.inner.rMerge) > 10 || Number(o.inner.rMerge) <= 0)
-    );
-  });
-
-  function sortByrMerge(a: AutoProcIntegration, b: AutoProcIntegration) {
-    return (a.inner?.rMerge || 0) - (b.inner?.rMerge || 0);
+function sort(
+  a: AutoProcIntegration,
+  b: AutoProcIntegration,
+  rankShell: ResultRankShell,
+  rankParam: ResultRankParam
+): number {
+  function getShell(i: AutoProcIntegration) {
+    if (rankShell === 'Inner') return i.inner;
+    if (rankShell === 'Outer') return i.outer;
+    if (rankShell === 'Overall') return i.overall;
+    return undefined;
   }
 
-  function sortByHighestSymmetry(
-    a: AutoProcIntegration,
-    b: AutoProcIntegration
-  ) {
-    const spaceGroupA = getSpaceGroup(a.spaceGroup);
-    const spaceGroupB = getSpaceGroup(b.spaceGroup);
+  function getValue(i: AutoProcIntegration) {
+    if (rankParam === '<I/Sigma>') return getShell(i)?.meanIOverSigI;
+    if (rankParam === 'Rmerge') return getShell(i)?.rMerge;
+    if (rankParam === 'cc(1/2)') return getShell(i)?.ccHalf;
+    if (rankParam === 'ccAno') return getShell(i)?.ccAno;
+  }
 
-    if (
-      spaceGroupA?.symopsExcludingCentering ===
-      spaceGroupB?.symopsExcludingCentering
-    ) {
-      return sortByrMerge(a, b);
-    }
+  function getOrder() {
+    if (rankParam === '<I/Sigma>') return -1;
+    if (rankParam === 'Rmerge') return 1;
+    if (rankParam === 'cc(1/2)') return -1;
+    if (rankParam === 'ccAno') return -1;
+    return -1;
+  }
+
+  const spaceGroupA = getSpaceGroup(a.spaceGroup);
+  const spaceGroupB = getSpaceGroup(b.spaceGroup);
+
+  if (
+    spaceGroupA?.symopsExcludingCentering !==
+    spaceGroupB?.symopsExcludingCentering
+  )
     return (
       (spaceGroupB?.symopsExcludingCentering || 0) -
       (spaceGroupA?.symopsExcludingCentering || 0)
     );
-  }
 
-  minus10Rmerge.sort(sortByHighestSymmetry);
-  plus10Rmerge.sort(sortByrMerge);
-
-  return _.concat(minus10Rmerge, plus10Rmerge);
+  const va = getValue(a);
+  const vb = getValue(b);
+  if (va === vb) return 0;
+  if (va === undefined) return 1;
+  if (vb === undefined) return -1;
+  return getOrder() * (va - vb);
 }
 
 export function getBestResult(
   procs: AutoProcInformation[],
+  rankShell: ResultRankShell,
+  rankParam: ResultRankParam,
   successOnly: boolean = true
 ): AutoProcIntegration | undefined {
-  const sorted = getRankedResults(procs, successOnly);
+  const sorted = getRankedResults(procs, rankShell, rankParam, successOnly);
   if (
     sorted.length > 0 &&
     (sorted[0].inner || sorted[0].outer || sorted[0].overall)
@@ -229,8 +252,10 @@ export function getBestResult(
 
 export function getRankedResults(
   procs: AutoProcInformation[],
+  rankShell: ResultRankShell,
+  rankParam: ResultRankParam,
   successOnly: boolean = false
 ): AutoProcIntegration[] {
-  const sorted = rank(parseResults(procs), successOnly);
+  const sorted = rank(parseResults(procs), rankShell, rankParam, successOnly);
   return sorted;
 }

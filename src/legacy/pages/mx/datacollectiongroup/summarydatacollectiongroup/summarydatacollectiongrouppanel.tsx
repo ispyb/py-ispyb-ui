@@ -10,18 +10,28 @@ import FirstSection from 'legacy/pages/mx/datacollectiongroup/summarydatacollect
 import ThirdSection from 'legacy/pages/mx/datacollectiongroup/summarydatacollectiongroup/thirdsection';
 import UI from 'legacy/config/ui';
 import { useAutoProc } from 'legacy/hooks/ispyb';
-import { getBestResult } from 'legacy/helpers/mx/results/resultparser';
+import {
+  getBestResult,
+  ResultRankParam,
+  ResultRankShell,
+} from 'legacy/helpers/mx/results/resultparser';
 
 export interface Props {
   proposalName: string;
   dataCollectionGroup: DataCollectionGroup;
   compact: boolean;
+  selectedPipelines: string[];
+  resultRankShell: ResultRankShell;
+  resultRankParam: ResultRankParam;
 }
 
 export default function SummaryDataCollectionGroupPanel({
   proposalName,
   dataCollectionGroup,
   compact,
+  selectedPipelines,
+  resultRankShell,
+  resultRankParam,
 }: Props) {
   const { data } = useAutoProc({
     proposalName,
@@ -30,7 +40,11 @@ export default function SummaryDataCollectionGroupPanel({
   });
   if (!data || !data.length) return null;
 
-  const bestResult = getBestResult(data.flatMap((d) => d));
+  const bestResult = getBestResult(
+    data.flatMap((d) => d),
+    resultRankShell,
+    resultRankParam
+  );
 
   return (
     <>

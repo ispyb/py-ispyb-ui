@@ -6,7 +6,11 @@ import {
   faQuestionCircle,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { getRankedResults } from 'legacy/helpers/mx/results/resultparser';
+import {
+  getRankedResults,
+  ResultRankParam,
+  ResultRankShell,
+} from 'legacy/helpers/mx/results/resultparser';
 import { useAutoProc } from 'legacy/hooks/ispyb';
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
 import {
@@ -22,12 +26,16 @@ export interface Props {
   proposalName: string;
   dataCollectionGroup: DataCollectionGroup;
   selectedPipelines: string[];
+  resultRankShell: ResultRankShell;
+  resultRankParam: ResultRankParam;
 }
 
 export default function ProcessingSummary({
   proposalName,
   dataCollectionGroup,
   selectedPipelines,
+  resultRankShell,
+  resultRankParam,
 }: Props) {
   const { data } = useAutoProc({
     proposalName,
@@ -36,7 +44,11 @@ export default function ProcessingSummary({
   });
   if (!data || data.flatMap((d) => d).length === 0) return null;
 
-  const results = getRankedResults(data.flatMap((d) => d)).filter(
+  const results = getRankedResults(
+    data.flatMap((d) => d),
+    resultRankShell,
+    resultRankParam
+  ).filter(
     (v) =>
       selectedPipelines.includes(v.program) || selectedPipelines.length === 0
   );
