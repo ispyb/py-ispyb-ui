@@ -5,6 +5,6 @@ import {
 import { withErrors } from 'models/Errors';
 
 export const ErrorsResource = createAuthenticatedSingletonResource({
-  path: '/stats/erorrs/:dummy',
+  path: '/stats/errors/:dummy',
   schema: withErrors(SingletonEntity),
 });
