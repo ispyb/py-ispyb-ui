@@ -9,9 +9,7 @@ import ZoomImage from 'legacy/components/image/zoomimage';
 import FirstSection from 'legacy/pages/mx/datacollectiongroup/summarydatacollectiongroup/firstsection';
 import ThirdSection from 'legacy/pages/mx/datacollectiongroup/summarydatacollectiongroup/thirdsection';
 import UI from 'legacy/config/ui';
-import { useAutoProc } from 'legacy/hooks/ispyb';
 import {
-  getBestResult,
   ResultRankParam,
   ResultRankShell,
 } from 'legacy/helpers/mx/results/resultparser';
