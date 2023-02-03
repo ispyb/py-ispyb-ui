@@ -47,10 +47,8 @@ export default function ProcessingSummary({
   const results = getRankedResults(
     data.flatMap((d) => d),
     resultRankShell,
-    resultRankParam
-  ).filter(
-    (v) =>
-      selectedPipelines.includes(v.program) || selectedPipelines.length === 0
+    resultRankParam,
+    selectedPipelines
   );
 
   return (

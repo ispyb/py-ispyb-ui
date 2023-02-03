@@ -33,19 +33,6 @@ export default function SummaryDataCollectionGroupPanel({
   resultRankShell,
   resultRankParam,
 }: Props) {
-  const { data } = useAutoProc({
-    proposalName,
-    dataCollectionId:
-      dataCollectionGroup.DataCollection_dataCollectionId.toString(),
-  });
-  if (!data || !data.length) return null;
-
-  const bestResult = getBestResult(
-    data.flatMap((d) => d),
-    resultRankShell,
-    resultRankParam
-  );
-
   return (
     <>
       <Row>
@@ -59,7 +46,10 @@ export default function SummaryDataCollectionGroupPanel({
           <ThirdSection
             compact={compact}
             dataCollectionGroup={dataCollectionGroup}
-            bestResult={bestResult}
+            selectedPipelines={selectedPipelines}
+            resultRankShell={resultRankShell}
+            resultRankParam={resultRankParam}
+            proposalName={proposalName}
           ></ThirdSection>
         </Col>
         {!compact && (

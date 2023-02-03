@@ -238,9 +238,16 @@ export function getBestResult(
   procs: AutoProcInformation[],
   rankShell: ResultRankShell,
   rankParam: ResultRankParam,
+  pipelines: string[],
   successOnly: boolean = true
 ): AutoProcIntegration | undefined {
-  const sorted = getRankedResults(procs, rankShell, rankParam, successOnly);
+  const sorted = getRankedResults(
+    procs,
+    rankShell,
+    rankParam,
+    pipelines,
+    successOnly
+  );
   if (
     sorted.length > 0 &&
     (sorted[0].inner || sorted[0].outer || sorted[0].overall)
@@ -254,8 +261,12 @@ export function getRankedResults(
   procs: AutoProcInformation[],
   rankShell: ResultRankShell,
   rankParam: ResultRankParam,
+  pipelines: string[],
   successOnly: boolean = false
 ): AutoProcIntegration[] {
   const sorted = rank(parseResults(procs), rankShell, rankParam, successOnly);
-  return sorted;
+  const filtered = sorted.filter(
+    (v) => pipelines.includes(v.program) || pipelines.length === 0
+  );
+  return filtered;
 }

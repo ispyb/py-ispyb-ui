@@ -38,10 +38,8 @@ export default function ResultsDataCollectionGroupPanel({
     data.flatMap((d) => d),
     resultRankShell,
     resultRankParam,
+    selectedPipelines,
     true
-  ).filter(
-    (v) =>
-      selectedPipelines.includes(v.program) || selectedPipelines.length === 0
   );
 
   return (
