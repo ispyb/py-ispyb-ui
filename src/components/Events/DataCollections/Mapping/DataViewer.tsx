@@ -164,7 +164,7 @@ export function DataViewerMain(props: IDataViewer) {
         >
           {Object.entries(seriesTypes).map(
             ([seriesType, series]: [string, Series[]]) => (
-              <option value={seriesType}>
+              <option key={seriesType} value={seriesType}>
                 {series.map((serie) => serie.name).join(',')}
               </option>
             )
