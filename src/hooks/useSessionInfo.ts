@@ -7,8 +7,5 @@ import { Session } from 'models/Session';
  * Get the selected session info
  */
 export function useSessionInfo(sessionId?: string): Session | undefined {
-  return useSuspense(
-    SessionResource.get,
-    sessionId ? { sessionId } : null
-  );
+  return useSuspense(SessionResource.get, sessionId ? { sessionId } : null);
 }

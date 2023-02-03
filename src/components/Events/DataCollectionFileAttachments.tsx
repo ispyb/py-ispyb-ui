@@ -41,12 +41,15 @@ export function DataCollectionFileAttachments({
   dataCollectionId?: number;
   dataCollectionGroupId?: number;
 }) {
-  const attachments = useSuspense(DataCollectionFileAttachmentResource.getList, {
-    skip: 0,
-    limit: 10,
-    ...(dataCollectionId ? { dataCollectionId } : null),
-    ...(dataCollectionGroupId ? { dataCollectionGroupId } : null),
-  });
+  const attachments = useSuspense(
+    DataCollectionFileAttachmentResource.getList,
+    {
+      skip: 0,
+      limit: 10,
+      ...(dataCollectionId ? { dataCollectionId } : null),
+      ...(dataCollectionGroupId ? { dataCollectionGroupId } : null),
+    }
+  );
 
   return (
     <Table

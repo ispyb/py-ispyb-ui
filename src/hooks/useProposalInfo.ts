@@ -11,6 +11,6 @@ export function useProposalInfo(): Proposal | undefined {
   const { proposalName } = useProposal();
   return useSuspense(
     ProposalResource.get,
-    proposalName ? { proposal: proposalName } : null,
+    proposalName ? { proposal: proposalName } : null
   );
 }

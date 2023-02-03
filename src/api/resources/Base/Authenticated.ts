@@ -16,7 +16,6 @@ export class AuthenticatedEndpoint<
   }
 }
 
-
 export function createAuthenticatedResource<
   U extends string,
   S extends Schema
