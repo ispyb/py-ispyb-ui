@@ -29,6 +29,7 @@ import {
   getAutoProc,
   getAutoProcXScale,
   getAttachmentList,
+  getPhasingList,
 } from 'legacy/api/ispyb';
 import {
   EnergyScan,
@@ -38,6 +39,7 @@ import {
   DataCollectionGroup,
   AutoProcInformation,
   AutoProcAttachment,
+  PhasingInfo,
 } from 'legacy/pages/mx/model';
 import {
   Container,
@@ -406,6 +408,25 @@ export function useAttachmentList(
     getAttachmentList({
       proposalName,
       autoprocprogramid,
+    }).url,
+    options
+  );
+}
+
+export function usePhasingList(
+  {
+    proposalName,
+    dataCollectionGroupId,
+  }: {
+    proposalName: string;
+    dataCollectionGroupId: string;
+  },
+  options?: GetHookOption
+) {
+  return useGet<PhasingInfo[][]>(
+    getPhasingList({
+      proposalName,
+      dataCollectionGroupId,
     }).url,
     options
   );

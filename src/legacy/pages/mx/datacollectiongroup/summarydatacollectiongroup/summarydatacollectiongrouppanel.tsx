@@ -13,6 +13,7 @@ import {
   ResultRankParam,
   ResultRankShell,
 } from 'legacy/helpers/mx/results/resultparser';
+import { MRSummary } from '../mr/mrsummary';
 
 export interface Props {
   proposalName: string;
@@ -34,13 +35,13 @@ export default function SummaryDataCollectionGroupPanel({
   return (
     <>
       <Row>
-        <Col sm={12} md={6} lg={3}>
+        <Col xs={12} md={6} xl={4} xxl={3}>
           <FirstSection
             compact={compact}
             dataCollectionGroup={dataCollectionGroup}
           ></FirstSection>
         </Col>
-        <Col md={12} lg={6} xl={compact ? 6 : 3}>
+        <Col sm={12} md={6} xl={compact ? 4 : 4} xxl={compact ? 4 : 3}>
           <ThirdSection
             compact={compact}
             dataCollectionGroup={dataCollectionGroup}
@@ -50,6 +51,15 @@ export default function SummaryDataCollectionGroupPanel({
             proposalName={proposalName}
           ></ThirdSection>
         </Col>
+        {dataCollectionGroup.hasMR ? (
+          <Col sm={12} md={6} xl={compact ? 4 : 4} xxl={compact ? 4 : 3}>
+            <MRSummary
+              compact={compact}
+              dataCollectionGroup={dataCollectionGroup}
+              proposalName={proposalName}
+            ></MRSummary>
+          </Col>
+        ) : null}
         {!compact && (
           <Col xs={12} sm={6} md={true}>
             <ZoomImage

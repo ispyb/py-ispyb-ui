@@ -36,6 +36,7 @@ import {
   ResultRankParam,
   ResultRankShell,
 } from 'legacy/helpers/mx/results/resultparser';
+import MRTab from './mr/mrTab';
 
 type Props = {
   sessionId: string;
@@ -163,6 +164,20 @@ export default function DataCollectionGroupPanel({
                         />
                       </Nav.Link>
                     </Nav.Item>
+                    {dataCollectionGroup.hasMR ||
+                    dataCollectionGroup.hasPhasing ? (
+                      <Nav.Item>
+                        <Nav.Link eventKey="Phasing">
+                          Phasing
+                          <NbBadge
+                            value={
+                              Number(dataCollectionGroup.hasMR || '0') +
+                              Number(dataCollectionGroup.hasPhasing || '0')
+                            }
+                          />
+                        </Nav.Link>
+                      </Nav.Item>
+                    ) : null}
                   </Nav>
                 </Col>
               </Row>
@@ -270,6 +285,16 @@ export default function DataCollectionGroupPanel({
                         proposalName={proposalName}
                         dataCollectionGroup={dataCollectionGroup}
                       ></WorkflowDataCollectionGroupPanel>
+                    </LazyWrapper>
+                  </Tab.Pane>
+                  <Tab.Pane eventKey="Phasing" title="Phasing">
+                    <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+                      <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+                        <MRTab
+                          proposalName={proposalName}
+                          dataCollectionGroup={dataCollectionGroup}
+                        ></MRTab>
+                      </Suspense>
                     </LazyWrapper>
                   </Tab.Pane>
                 </Tab.Content>

@@ -714,3 +714,39 @@ export function getAttachmentsDownloadUrl({
     url: `/proposal/${proposalName}/mx/autoprocintegration/attachment/autoprocprogramid/${autoprocprogramid}/download`,
   };
 }
+
+export function getPhasingList({
+  proposalName,
+  dataCollectionGroupId,
+}: {
+  proposalName: string;
+  dataCollectionGroupId: string;
+}) {
+  return {
+    url: `/proposal/${proposalName}/mx/phasing/datacollectiongroupid/${dataCollectionGroupId}/list`,
+  };
+}
+
+export function getPhasingDownloadUrl({
+  proposalName,
+  phasingstepid,
+}: {
+  proposalName: string;
+  phasingstepid: string;
+}) {
+  return {
+    url: `/proposal/${proposalName}/mx/phasing/phasingstepid/${phasingstepid}/download`,
+  };
+}
+
+export function getPhasingAttachmentDownloadUrl({
+  proposalName,
+  phasingprogramattachmentid,
+}: {
+  proposalName: string;
+  phasingprogramattachmentid: string;
+}) {
+  return {
+    url: `/proposal/${proposalName}/mx/phasing/phasingprogramattachmentid/${phasingprogramattachmentid}/download`,
+  };
+}
