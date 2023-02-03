@@ -1,31 +1,27 @@
-import PaginatedResource from 'api/resources/Base/Paginated';
-import { withSession } from 'models/Session.d';
-import { withSessionResponse } from 'models/SessionResponse.d';
+import { Entity } from '@rest-hooks/rest';
+import createPaginatedResource from './Base/Paginated';
+import { withSession } from 'models/Session';
+import { withSessionResponse } from 'models/SessionResponse';
 
-export class _SessionResource extends PaginatedResource {
+export class SessionEntity extends Entity {
   readonly sessionId: number;
 
   pk() {
     return this.sessionId?.toString();
   }
-  static urlRoot = 'sessions';
 }
 
-export const SessionResource = withSession(_SessionResource);
+export const SessionResource = createPaginatedResource({
+  path: '/sessions/:sessionId',
+  schema: withSession(SessionEntity),
+});
 
-export class _SessionGroupResource extends _SessionResource {
-  static urlRoot = 'sessions/group';
-}
+export const SessionGroupResource = createPaginatedResource({
+  path: '/sessions/group/:sessionId',
+  schema: withSession(SessionEntity),
+});
 
-export const SessionGroupResource = withSession(_SessionGroupResource);
-
-export class _Session2Resource extends PaginatedResource {
-  readonly sessionId: number;
-
-  pk() {
-    return this.sessionId?.toString();
-  }
-  static urlRoot = 'session';
-}
-
-export const Session2Resource = withSessionResponse(_Session2Resource);
+export const Session2Resource = createPaginatedResource({
+  path: '/session/:sessionId',
+  schema: withSessionResponse(SessionEntity),
+});

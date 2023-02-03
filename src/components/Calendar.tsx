@@ -10,7 +10,7 @@ import classNames from 'classnames';
 import { useSuspense } from 'rest-hooks';
 import { SessionResource } from 'api/resources/Session';
 import { Button, ButtonGroup, Col, Row } from 'react-bootstrap';
-import { Session } from 'models/Session.d';
+import { Session } from 'models/Session';
 import { usePath } from 'hooks/usePath';
 import { range } from 'lodash';
 
@@ -120,7 +120,7 @@ function SessionList({
 
 function CalendarDays({ year, month }: { year: number; month: number }) {
   const proposal = usePath('proposal');
-  const sessions = useSuspense(SessionResource.list(), {
+  const sessions = useSuspense(SessionResource.getList, {
     year,
     month,
     limit: 9999,

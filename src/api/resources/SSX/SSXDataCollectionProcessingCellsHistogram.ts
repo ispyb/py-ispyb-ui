@@ -1,23 +1,19 @@
-import { withSSXDataCollectionProcessingCellsHistogram } from 'models/SSXDataCollectionProcessingCellsHistogram.d';
-import { AuthenticatedSingletonResource } from '../Base/Singleton';
+import { Entity } from '@rest-hooks/endpoint';
+import { createAuthenticatedSingletonResource } from '../Base/Singleton';
+import { withSSXDataCollectionProcessingCellsHistogram } from 'models/SSXDataCollectionProcessingCellsHistogram';
 
-class _SSXDataCollectionProcessingCellsHistogram extends AuthenticatedSingletonResource {
+class SSXDataCollectionProcessingCellsHistogramEntity extends Entity {
   readonly dataCollectionIds: number[];
   pk() {
     return this.dataCollectionIds.sort().join(',');
   }
-
-  static getEndpointExtra() {
-    return {
-      ...super.getEndpointExtra(),
-      pollFrequency: 5000,
-    };
-  }
-
-  static urlRoot = 'ssx/datacollection/processing/cells/histogram';
 }
 
 export const SSXDataCollectionProcessingCellsHistogramResource =
-  withSSXDataCollectionProcessingCellsHistogram(
-    _SSXDataCollectionProcessingCellsHistogram
-  );
+  createAuthenticatedSingletonResource({
+    path: '/ssx/datacollection/processing/cells/histogram/:dummy',
+    schema: withSSXDataCollectionProcessingCellsHistogram(
+      SSXDataCollectionProcessingCellsHistogramEntity
+    ),
+    endpointOptions: { pollFrequency: 5000 },
+  });

@@ -33,11 +33,11 @@ function ImageViewWrapped(props: IImageViewWrapped) {
 
 // http://localhost:3001/proposals/MX2112/sessions/63593/images/2314164
 function ImageViewerMain() {
-  const dataCollectionId = usePath('dataCollectionId');
+  const dataCollectionId = usePath('dataCollectionId') || '0';
 
   const [imageNumber, setImageNumber] = useState<number>(1);
 
-  const dataCollections = useSuspense(EventResource.list(), {
+  const dataCollections = useSuspense(EventResource.getList, {
     dataCollectionId,
   });
   const dataCollection =

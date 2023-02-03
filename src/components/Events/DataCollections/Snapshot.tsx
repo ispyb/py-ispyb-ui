@@ -1,6 +1,6 @@
 import { LazyImage } from 'api/resources/XHRFile';
 import LightBox from 'components/LightBox';
-import { DataCollection as DataCollectionType, Event } from 'models/Event.d';
+import { DataCollection as DataCollectionType, Event } from 'models/Event';
 import { Link } from 'react-router-dom';
 
 export default function Snapshot({ item }: { item: DataCollectionType }) {

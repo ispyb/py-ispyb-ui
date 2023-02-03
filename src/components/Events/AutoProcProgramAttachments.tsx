@@ -3,7 +3,7 @@ import { useSuspense } from 'rest-hooks';
 import { Modal } from 'react-bootstrap';
 import { Download } from 'react-bootstrap-icons';
 
-import { AutoProcProgramAttachment } from 'models/AutoProcProgramAttachment.d';
+import { AutoProcProgramAttachment } from 'models/AutoProcProgramAttachment';
 import { AutoProcProgramAttachmentResource } from 'api/resources/Processing/AutoProcProgramAttachment';
 import Table from 'components/Layout/Table';
 import Loading from 'components/Loading';
@@ -40,7 +40,7 @@ export function AutoProcProgramAttachments({
 }: {
   autoProcProgramId: number;
 }) {
-  const attachments = useSuspense(AutoProcProgramAttachmentResource.list(), {
+  const attachments = useSuspense(AutoProcProgramAttachmentResource.getList, {
     skip: 0,
     limit: 10,
     autoProcProgramId,

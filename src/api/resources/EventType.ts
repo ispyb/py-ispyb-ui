@@ -1,13 +1,16 @@
-import PaginatedResource from 'api/resources/Base/Paginated';
-import { withEventType } from 'models/EventType.d';
+import { Entity } from '@rest-hooks/rest';
+import createPaginatedResource from './Base/Paginated';
+import { withEventType } from 'models/EventType';
 
-export class _EventTypeResource extends PaginatedResource {
+export class EventTypeEntity extends Entity {
   readonly eventType: string;
 
   pk() {
     return this.eventType;
   }
-  static urlRoot = 'events/types';
 }
 
-export const EventTypeResource = withEventType(_EventTypeResource);
+export const EventTypeResource = createPaginatedResource({
+  path: '/events/types/:eventType',
+  schema: withEventType(EventTypeEntity),
+});

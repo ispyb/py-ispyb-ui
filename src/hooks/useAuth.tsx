@@ -1,6 +1,6 @@
 import React from 'react';
-import { AuthenticatedResource } from 'api/resources/Base/Authenticated';
-import { SiteResource } from 'api/resources/Base/Site';
+import { AuthenticatedEndpoint } from 'api/resources/Base/Authenticated';
+import { SiteEndpoint } from 'api/resources/Base/Site';
 import { SiteConfig } from 'config/definitions/sites';
 import { SITES } from 'config/config';
 import { createContext, useContext } from 'react';
@@ -84,7 +84,7 @@ export function AuthProvider({ children }: { children?: React.ReactNode }) {
 
   const setToken = (token: string) => {
     window.localStorage.setItem('token', token);
-    AuthenticatedResource.accessToken = token;
+    AuthenticatedEndpoint.accessToken = token;
     resetEntireStore();
     setTokenState(token);
     setIsAuthenticated(token.length > 0);
@@ -92,7 +92,7 @@ export function AuthProvider({ children }: { children?: React.ReactNode }) {
   };
 
   const restoreToken = () => {
-    AuthenticatedResource.accessToken = tokenState;
+    AuthenticatedEndpoint.accessToken = tokenState;
   };
 
   const clearToken = () => {
@@ -101,7 +101,7 @@ export function AuthProvider({ children }: { children?: React.ReactNode }) {
 
   const setSite = (newSite: SiteConfig) => {
     window.localStorage.setItem('site', newSite.name);
-    SiteResource.baseUrl = `${newSite.host}${newSite.apiPrefix}`;
+    SiteEndpoint.baseUrl = `${newSite.host}${newSite.apiPrefix}`;
     resetEntireStore();
     setSiteState(newSite);
     setSiteInitialized(true);

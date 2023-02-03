@@ -1,9 +1,13 @@
-import { SiteResource } from './Base/Site';
+import { createSingletonResource, SingletonEntity } from './Base/Singleton';
 
-export class LoginResource extends SiteResource {
-  pk() {
-    return '1';
-  }
-
-  static urlRoot = `auth/login`;
+class LoginEntity extends SingletonEntity {
+  plugin: string
+  login: string
+  password: string
+  token: string
 }
+
+export const LoginResource = createSingletonResource({
+  path: '/auth/login/:dummy',
+  schema: LoginEntity,
+});

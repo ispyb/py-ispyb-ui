@@ -10,8 +10,8 @@ import {
 import {
   ProcessingStatuses as ProcessingStatusesType,
   ProcessingStatus as ProcessingStatusType,
-} from 'models/ProcessingStatusesList.d';
-import { AutoProcProgram as AutoProcProgramType } from 'models/AutoProcProgram.d';
+} from 'models/ProcessingStatusesList';
+import { AutoProcProgram as AutoProcProgramType } from 'models/AutoProcProgram';
 
 import { AutoProcProgramAttachmentsModal } from './AutoProcProgramAttachments';
 import Loading from 'components/Loading';

@@ -26,13 +26,13 @@ export function useImageData(props: IImageData) {
       : null
   );
 
-  const imageHeader = useSuspense(ImageHeaderResource.list(), {
-    dataCollectionId,
+  const imageHeader = useSuspense(ImageHeaderResource.getList, {
+    ...(dataCollectionId ? { dataCollectionId } : null),
     imageNumber,
   });
 
-  const imageHistogram = useSuspense(ImageHistogramResource.list(), {
-    dataCollectionId,
+  const imageHistogram = useSuspense(ImageHistogramResource.getList, {
+    ...(dataCollectionId ? { dataCollectionId } : null),
     imageNumber,
   });
 

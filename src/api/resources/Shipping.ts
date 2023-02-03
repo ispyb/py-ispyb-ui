@@ -1,13 +1,16 @@
-import PaginatedResource from 'api/resources/Base/Paginated';
-import { withShipping } from 'models/Shipping.d';
+import { Entity } from '@rest-hooks/rest';
+import createPaginatedResource from './Base/Paginated';
+import { withShipping } from 'models/Shipping';
 
-export class _ShippingResource extends PaginatedResource {
+export class ShippingEntity extends Entity {
   readonly shippingId: number | undefined = undefined;
 
   pk() {
     return this.shippingId?.toString();
   }
-  static urlRoot = 'shippings';
 }
 
-export const ShippingResource = withShipping(_ShippingResource);
+export const ShippingResource = createPaginatedResource({
+  path: '/shippings/:shippingId',
+  schema: withShipping(ShippingEntity),
+});

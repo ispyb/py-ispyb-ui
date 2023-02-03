@@ -17,7 +17,7 @@ import { PluginConfig } from 'models/AuthConfig';
 import Keycloak from 'keycloak-js';
 
 export default function LoginPy() {
-  const authConfig = useSuspense(AuthConfigResource.detail(), {});
+  const authConfig = useSuspense(AuthConfigResource.getList);
 
   const [error, setError] = useState<string>('');
   const [pending, setPending] = useState<boolean>(false);
@@ -60,8 +60,7 @@ export default function LoginPy() {
 
       setError('');
       fetch(
-        LoginResource.create(),
-        {},
+        LoginResource.create,
         {
           plugin:
             passwordPlugins.length === 1
@@ -213,8 +212,7 @@ export function SSOLoginPy({ plugin }: { plugin: PluginConfig }) {
 
   keycloak.onAuthSuccess = () => {
     fetch(
-      LoginResource.create(),
-      {},
+      LoginResource.create,
       {
         plugin: plugin.name,
         token: keycloak.token,

@@ -7,7 +7,9 @@ import { series } from './TimesPie';
 
 export default function TimesBar() {
   const sessionId = usePath('sessionId');
-  const times = useSuspense(TimesResource.list(), { sessionId });
+  const times = useSuspense(TimesResource.getList, {
+    ...(sessionId ? { sessionId } : null),
+  });
   const { duration, ...plottableTimes } = times.average;
   return (
     <div style={{ height: '25px' }} className="text-right">

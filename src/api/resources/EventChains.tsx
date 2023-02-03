@@ -1,15 +1,17 @@
-import { withEventChainResponse } from 'models/EventChainResponse.d';
-import { AuthenticatedResource } from './Base/Authenticated';
+import { Entity } from '@rest-hooks/rest';
+import { withEventChainResponse } from 'models/EventChainResponse';
+import { createAuthenticatedResource } from './Base/Authenticated';
 
-class _EventChain extends AuthenticatedResource {
+export class EventChainEntity extends Entity {
   readonly dataCollectionId: number;
   readonly eventChainId: number;
 
   pk() {
     return `${this.dataCollectionId}-${this.eventChainId}`;
   }
-
-  static urlRoot = 'eventchain';
 }
 
-export const EventChainResource = withEventChainResponse(_EventChain);
+export const EventChainResource = createAuthenticatedResource({
+  path: '/eventchain/:eventChainId',
+  schema: withEventChainResponse(EventChainEntity),
+});

@@ -1,15 +1,16 @@
-import PaginatedResource from '../Base/Paginated';
-import { withAutoProcProgramAttachment } from 'models/AutoProcProgramAttachment.d';
+import { Entity } from '@rest-hooks/rest';
+import createPaginatedResource from '../Base/Paginated';
+import { withAutoProcProgramAttachment } from 'models/AutoProcProgramAttachment';
 
-export class _AutoProcProgramAttachmentResource extends PaginatedResource {
+export class AutoProcProgramAttachmentEntity extends Entity {
   readonly autoProcProgramAttachmentId: number;
 
   pk() {
-    return this.autoProcProgramAttachmentId.toString();
+    return this.autoProcProgramAttachmentId?.toString();
   }
-  static urlRoot = 'processings/attachments';
 }
 
-export const AutoProcProgramAttachmentResource = withAutoProcProgramAttachment(
-  _AutoProcProgramAttachmentResource
-);
+export const AutoProcProgramAttachmentResource = createPaginatedResource({
+  path: '/processings/attachments/:autoProcProgramAttachmentId',
+  schema: withAutoProcProgramAttachment(AutoProcProgramAttachmentEntity),
+});

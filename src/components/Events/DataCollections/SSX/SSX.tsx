@@ -39,7 +39,7 @@ function LoadingSSXDataCollectionGroup() {
 export function SSXDataCollectionGroup(props: IDataCollection) {
   const { item, parent } = props;
   const dataCollectionGroupId = item.DataCollectionGroup.dataCollectionGroupId;
-  const dcs = useSuspense(EventResource.list(), {
+  const dcs = useSuspense(EventResource.getList, {
     dataCollectionGroupId,
     skip: 0,
     limit: 100,
@@ -47,9 +47,14 @@ export function SSXDataCollectionGroup(props: IDataCollection) {
 
   const [tabKey, setTabKey] = useState<string | null>('Summary');
 
-  const sample = useSuspense(SampleResource.detail(), {
-    blSampleId: item.DataCollectionGroup.blSampleId,
-  });
+  const sample = useSuspense(
+    SampleResource.get,
+    item.DataCollectionGroup.blSampleId
+      ? {
+          blSampleId: item.DataCollectionGroup.blSampleId,
+        }
+      : null
+  );
 
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -92,19 +97,23 @@ export function SSXDataCollectionGroup(props: IDataCollection) {
             },
           ]}
         >
-          {deployed ? (
-            <DeployedSSXContent
-              dcg={parent}
-              dcgItem={item}
-              dcs={dcs.results}
-              sample={sample}
-            />
-          ) : (
-            <CompactSSXContent
-              dcgItem={item}
-              dcs={dcs.results}
-              sample={sample}
-            />
+          {sample && (
+            <>
+              {deployed ? (
+                <DeployedSSXContent
+                  dcg={parent}
+                  dcgItem={item}
+                  dcs={dcs.results}
+                  sample={sample}
+                />
+              ) : (
+                <CompactSSXContent
+                  dcgItem={item}
+                  dcs={dcs.results}
+                  sample={sample}
+                />
+              )}
+            </>
           )}
         </DataCollectionBox>
       </Tab.Container>

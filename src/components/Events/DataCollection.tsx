@@ -3,9 +3,9 @@ import { Container } from 'react-bootstrap';
 import { FileEarmark, Link45deg } from 'react-bootstrap-icons';
 import { useNavigate } from 'react-router-dom';
 
-import { DataCollection as DataCollectionType, Event } from 'models/Event.d';
-import { ProcessingStatuses as ProcessingStatusesType } from 'models/ProcessingStatusesList.d';
-import { AutoProcProgramMessageStatus as AutoProcProgramMessageStatusType } from 'models/AutoProcProgramMessageStatuses.d';
+import { DataCollection as DataCollectionType, Event } from 'models/Event';
+import { ProcessingStatuses as ProcessingStatusesType } from 'models/ProcessingStatusesList';
+import { AutoProcProgramMessageStatus as AutoProcProgramMessageStatusType } from 'models/AutoProcProgramMessageStatuses';
 import { EventHeader, IButtonProps } from './Events';
 import { DataCollectionFileAttachmentsModal } from './DataCollectionFileAttachments';
 import { ProcessingStatuses } from './Processing';

@@ -33,7 +33,7 @@ function ViewSampleMain() {
   // const proposal = useProposalInfo();
   // const controller = useController();
 
-  // const sample = useSuspense(SampleResource.detail(), {
+  // const sample = useSuspense(SampleResource.get, {
   //   blSampleId,
   // });
 
@@ -65,7 +65,7 @@ function ViewSampleMain() {
   //   const obj = {};
   //   set(obj, field, value);
   //   return controller.fetch(
-  //     SampleResource.partialUpdate(),
+  //     SampleResource.partialUpdate,
   //     { blSampleId },
   //     obj
   //   );

@@ -14,7 +14,7 @@ export function useSign() {
    * @returns {string} - the onetime token
    */
   async function sign({ url }: { url: string }) {
-    const resource = await fetch(SignResource.create(), {}, { validity: url });
+    const resource = await fetch(SignResource.create, { validity: url });
     return resource.token;
   }
 

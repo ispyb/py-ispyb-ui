@@ -1,8 +1,10 @@
-import { AuthenticatedSingletonResource } from '../Base/Singleton';
-import { withBreakdown } from 'models/Breakdown.d';
+import {
+  createAuthenticatedSingletonResource,
+  SingletonEntity,
+} from 'api/resources/Base/Singleton';
+import { withBreakdown } from 'models/Breakdown';
 
-class _BreakdownResource extends AuthenticatedSingletonResource {
-  static urlRoot = 'stats/breakdown';
-}
-
-export const BreakdownResource = withBreakdown(_BreakdownResource);
+export const BreakdownResource = createAuthenticatedSingletonResource({
+  path: '/stats/breakdown/:dummy',
+  schema: withBreakdown(SingletonEntity),
+});

@@ -5,14 +5,14 @@ import { Button } from 'react-bootstrap';
 
 import Table from 'components/Layout/Table';
 import { ShippingResource } from 'api/resources/Shipping';
-import { Shipping } from 'models/Shipping.d';
+import { Shipping } from 'models/Shipping';
 import { Truck } from 'react-bootstrap-icons';
 import { usePath } from 'hooks/usePath';
 
 export default function ShippingList() {
   const navigate = useNavigate();
   const proposal = usePath('proposal');
-  const shippings = useSuspense(ShippingResource.list(), {
+  const shippings = useSuspense(ShippingResource.getList, {
     ...(proposal ? { proposal } : {}),
   });
 

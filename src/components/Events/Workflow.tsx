@@ -4,7 +4,7 @@ import { Card, CardGroup } from 'react-bootstrap';
 
 import { WorkflowStepResource } from 'api/resources/WorkflowStep';
 import { LazyImage } from 'api/resources/XHRFile';
-import { Workflow } from 'models/Event.d';
+import { Workflow } from 'models/Event';
 import Loading from 'components/Loading';
 
 interface IWorkflowSteps {
@@ -12,7 +12,7 @@ interface IWorkflowSteps {
 }
 
 function WorkflowStepsMain({ workflowId }: IWorkflowSteps) {
-  const steps = useSuspense(WorkflowStepResource.list(), {
+  const steps = useSuspense(WorkflowStepResource.getList, {
     workflowId,
   });
   return (
