@@ -6,8 +6,11 @@ import {
   Button,
   ButtonGroup,
   Card,
+  Col,
+  Container,
   Dropdown,
   OverlayTrigger,
+  Popover,
   ToggleButton,
   Tooltip,
 } from 'react-bootstrap';
@@ -30,7 +33,10 @@ import {
   parseResults,
   ResultRankParam,
   ResultRankShell,
+  RESULT_RANK_PARAM,
+  RESULT_RANK_SHELLS,
 } from 'legacy/helpers/mx/results/resultparser';
+import ReactSelect from 'react-select';
 
 type Param = {
   sessionId: string;
@@ -53,8 +59,10 @@ export default function MXDataCollectionGroupPage() {
   const [filterSAD, setFilterSAD] = useState(false);
   const [filterScaling, setFilterScaling] = useState(false);
 
-  const resultRankShell: ResultRankShell = 'Inner';
-  const resultRankParam: ResultRankParam = 'Rmerge';
+  const [resultRankShell, setResultRankShell] =
+    useState<ResultRankShell>('Inner');
+  const [resultRankParam, setResultRankParam] =
+    useState<ResultRankParam>('Rmerge');
 
   if (dataCollectionGroups && dataCollectionGroups.length) {
     const containerIds = _(dataCollectionGroups)
@@ -91,8 +99,58 @@ export default function MXDataCollectionGroupPage() {
               alignSelf: 'flex-end',
             }}
           >
-            <ButtonGroup style={{ marginRight: 50 }}></ButtonGroup>
             <ButtonGroup style={{ marginRight: 50 }}>
+              <OverlayTrigger
+                trigger={['click']}
+                placement={'bottom'}
+                rootClose
+                overlay={
+                  <Popover>
+                    <Container style={{ padding: 20 }}>
+                      <Col>
+                        <strong>
+                          Autoprocessing results will be ranked based on the
+                          value of:
+                        </strong>
+                        <br></br>
+                        <label>Bin</label>
+                        <ReactSelect
+                          options={RESULT_RANK_SHELLS.map((v) => ({
+                            value: v,
+                            label: v,
+                          }))}
+                          value={{
+                            value: resultRankShell,
+                            label: resultRankShell,
+                          }}
+                          onChange={(v) => v && setResultRankShell(v.value)}
+                        ></ReactSelect>
+                        <label>Parameter</label>
+                        <ReactSelect
+                          options={RESULT_RANK_PARAM.map((v) => ({
+                            value: v,
+                            label: v,
+                          }))}
+                          value={{
+                            value: resultRankParam,
+                            label: resultRankParam,
+                          }}
+                          onChange={(v) => v && setResultRankParam(v.value)}
+                        ></ReactSelect>
+                      </Col>
+                    </Container>
+                  </Popover>
+                }
+              >
+                <Dropdown.Toggle
+                  size="sm"
+                  variant="primary"
+                  style={{ marginRight: 2, marginLeft: 2 }}
+                >
+                  Ranking
+                </Dropdown.Toggle>
+              </OverlayTrigger>
+
               <Suspense fallback={<SelectPipelinesFallback />}>
                 <SelectPipelines
                   dataCollectionGroups={filteredDataCollectionGroups}
@@ -303,7 +361,7 @@ function SelectPipelines({
         variant="primary"
         style={{ marginRight: 2, marginLeft: 2 }}
       >
-        Select pipelines
+        Filter pipelines
       </Dropdown.Toggle>
       <Dropdown.Menu>
         <Dropdown.Item

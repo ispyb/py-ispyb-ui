@@ -144,7 +144,7 @@ export default function BestResultSection({
             trigger={['focus', 'hover']}
             overlay={
               <Tooltip>
-                You can adjust criteria for best result selection in the session
+                You can adjust criteria for best result selection in the ranking
                 menu at the top of the page.
               </Tooltip>
             }
