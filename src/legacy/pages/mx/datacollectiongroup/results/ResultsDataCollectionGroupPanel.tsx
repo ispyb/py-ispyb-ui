@@ -5,7 +5,7 @@ import {
 } from 'legacy/helpers/mx/results/resultparser';
 import { useAutoProc } from 'legacy/hooks/ispyb';
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
-import { Button, Col, Row } from 'react-bootstrap';
+import { Col } from 'react-bootstrap';
 import { useState } from 'react';
 import { ResultTable } from './resultTable';
 import { ResultGraph } from './resultGraph';
@@ -25,7 +25,7 @@ export default function ResultsDataCollectionGroupPanel({
   resultRankShell,
   resultRankParam,
 }: Props) {
-  const [view, setView] = useState(0);
+  const [view] = useState(0);
 
   const { data } = useAutoProc({
     proposalName,
@@ -44,7 +44,7 @@ export default function ResultsDataCollectionGroupPanel({
 
   return (
     <Col>
-      <Row>
+      {/* <Row>
         <Col xs={'auto'}>
           <Button
             variant={view === 0 ? 'primary' : 'outline-primary'}
@@ -71,8 +71,10 @@ export default function ResultsDataCollectionGroupPanel({
           marginTop: 10,
           marginBottom: 10,
         }}
-      />
-      {view === 0 && <ResultTable results={results} />}
+      /> */}
+      {view === 0 && (
+        <ResultTable results={results} proposalName={proposalName} />
+      )}
       {view === 1 && <ResultGraph results={results} />}
     </Col>
   );

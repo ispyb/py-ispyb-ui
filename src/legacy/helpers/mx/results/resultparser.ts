@@ -5,6 +5,7 @@ import { getSpaceGroup } from 'helpers/spacegroups';
 
 export interface AutoProcIntegration {
   id: number;
+  programId: number;
   status: string;
   program: string;
   anomalous: boolean;
@@ -105,6 +106,7 @@ export function parseResults(
     )
       return {
         id: p.AutoProcIntegration_autoProcIntegrationId,
+        programId: p.v_datacollection_summary_phasing_autoProcProgramId,
         status: 'NO_RESULTS',
         program: p.v_datacollection_processingPrograms,
         anomalous: p.v_datacollection_summary_phasing_anomalous,
@@ -121,6 +123,7 @@ export function parseResults(
       };
     return {
       id: p.AutoProcIntegration_autoProcIntegrationId,
+      programId: p.v_datacollection_summary_phasing_autoProcProgramId,
       status: p.v_datacollection_processingStatus,
       program: p.v_datacollection_processingPrograms,
       anomalous: p.v_datacollection_summary_phasing_anomalous,

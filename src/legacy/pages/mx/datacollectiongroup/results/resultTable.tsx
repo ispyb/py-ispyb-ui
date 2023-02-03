@@ -1,13 +1,23 @@
+import { faFileDownload } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { getSpaceGroup } from 'helpers/spacegroups';
 import { AutoProcIntegration } from 'legacy/helpers/mx/results/resultparser';
 import { Table, Col, Row, Badge } from 'react-bootstrap';
+import { DownloadResultRow } from './download';
 
-export function ResultTable({ results }: { results: AutoProcIntegration[] }) {
+export function ResultTable({
+  results,
+  proposalName,
+}: {
+  results: AutoProcIntegration[];
+  proposalName: string;
+}) {
   return (
     <div>
       <Table striped bordered hover size="sm">
         <thead>
           <tr>
+            <th className="text-center"></th>
             <th className="text-center">
               <small>Pipeline</small>
             </th>
@@ -60,7 +70,11 @@ export function ResultTable({ results }: { results: AutoProcIntegration[] }) {
         </thead>
         <tbody>
           {results.map((r) => (
-            <ResultLine result={r} key={r.id}></ResultLine>
+            <ResultLine
+              result={r}
+              key={r.id}
+              proposalName={proposalName}
+            ></ResultLine>
           ))}
         </tbody>
       </Table>
@@ -68,20 +82,24 @@ export function ResultTable({ results }: { results: AutoProcIntegration[] }) {
   );
 }
 
-function ResultLine({ result }: { result: AutoProcIntegration }) {
+function ResultLine({
+  result,
+  proposalName,
+}: {
+  result: AutoProcIntegration;
+  proposalName: string;
+}) {
   if (result.inner || result.outer || result.overall)
     return (
-      <tr>
+      <DownloadResultRow result={result} proposalName={proposalName}>
+        <td className="align-middle" style={{ width: 0, padding: 10 }}>
+          <FontAwesomeIcon icon={faFileDownload} />
+        </td>
         <ResultCol
           values={[result.program]}
           tags={result.anomalous ? ['ANOM'] : []}
         />
-        <ResultCol
-          values={[
-            getSpaceGroup(result.spaceGroup)?.name,
-            getSpaceGroup(result.spaceGroup)?.symopsExcludingCentering,
-          ]}
-        />
+        <ResultCol values={[getSpaceGroup(result.spaceGroup)?.name]} />
         <ResultCol
           values={[
             result.cell_a.toFixed(1),
@@ -193,7 +211,7 @@ function ResultLine({ result }: { result: AutoProcIntegration }) {
             result.overall?.completenessAnomalous?.toFixed(1),
           ]}
         />
-      </tr>
+      </DownloadResultRow>
     );
   else
     return (
@@ -224,7 +242,7 @@ function ResultCol({
     ? ['purple', 'green', 'blue']
     : [undefined, undefined, undefined];
   return (
-    <td colSpan={colSpan}>
+    <td className="align-middle" colSpan={colSpan}>
       <Col>
         {values.map((v, i) => {
           if (thresholds && v !== undefined) {
