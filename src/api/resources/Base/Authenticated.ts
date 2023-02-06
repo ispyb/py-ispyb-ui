@@ -33,6 +33,6 @@ export function createAuthenticatedResource<
     path,
     schema,
     Endpoint: AuthenticatedEndpoint,
-    ...endpointOptions
+    ...endpointOptions,
   });
 }

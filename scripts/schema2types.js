@@ -36,14 +36,12 @@ const req = http.get(url, (res) => {
               const name = lines[0].replace(' {', '');
               // This is a nested class, skip it to avoid syntax errors
               if (lines[1].startsWith('  [k: string]:')) {
-                console.log("skipping nested class", name);
+                console.log('skipping nested class', name);
                 classes[idx] = '';
                 return;
               }
               classes[idx] = `
-export abstract class ${name}Base extends Entity {\n${lines
-                .slice(1)
-                .join('\n')}
+export abstract class ${name}Base extends Entity {\n${lines.slice(1).join('\n')}
 export abstract class ${name}SingletonBase extends SingletonEntity {\n${lines
                 .slice(1)
                 .join('\n')}`;
@@ -51,7 +49,11 @@ export abstract class ${name}SingletonBase extends SingletonEntity {\n${lines
 
             fs.writeFileSync(
               `src/models/new/${schemaName}.ts`,
-              'import { Entity } from \'@rest-hooks/rest\';\nimport { SingletonEntity } from \'api/resources/Base/Singleton\';\n\n' + ts + '\n' + classes.join('') + '\n'
+              "import { Entity } from '@rest-hooks/rest';\nimport { SingletonEntity } from 'api/resources/Base/Singleton';\n\n" +
+                ts +
+                '\n' +
+                classes.join('') +
+                '\n'
             );
           })
           .catch((e) => {
