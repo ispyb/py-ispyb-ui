@@ -13,5 +13,5 @@ export class EventEntity extends EventBase {
 export const EventResource = createPaginatedResource({
   path: '/events/:id',
   schema: EventEntity,
-  endpointOptions: { pollFrequency: 1000 },
+  endpointOptions: { pollFrequency: 10000 },
 });
