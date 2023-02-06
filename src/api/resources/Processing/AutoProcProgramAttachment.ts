@@ -1,8 +1,7 @@
-import { Entity } from '@rest-hooks/rest';
 import createPaginatedResource from '../Base/Paginated';
-import { withAutoProcProgramAttachment } from 'models/AutoProcProgramAttachment';
+import { AutoProcProgramAttachmentBase } from 'models/AutoProcProgramAttachment';
 
-export class AutoProcProgramAttachmentEntity extends Entity {
+export class AutoProcProgramAttachmentEntity extends AutoProcProgramAttachmentBase {
   readonly autoProcProgramAttachmentId: number;
 
   pk() {
@@ -12,5 +11,5 @@ export class AutoProcProgramAttachmentEntity extends Entity {
 
 export const AutoProcProgramAttachmentResource = createPaginatedResource({
   path: '/processings/attachments/:autoProcProgramAttachmentId',
-  schema: withAutoProcProgramAttachment(AutoProcProgramAttachmentEntity),
+  schema: AutoProcProgramAttachmentEntity,
 });

@@ -2,6 +2,7 @@ import type { Schema } from '@rest-hooks/rest';
 import { createResource } from '@rest-hooks/rest';
 import type { RestGenerics } from '@rest-hooks/rest';
 import { SiteEndpoint } from './Site';
+import { EndpointExtraOptions } from 'rest-hooks';
 
 export class AuthenticatedEndpoint<
   O extends RestGenerics = any
@@ -26,12 +27,12 @@ export function createAuthenticatedResource<
 }: {
   readonly path: U;
   readonly schema: S;
-  readonly endpointOptions?: any;
+  readonly endpointOptions?: EndpointExtraOptions;
 }) {
   return createResource({
     path,
     schema,
     Endpoint: AuthenticatedEndpoint,
-    // ...endpointOptions
+    ...endpointOptions
   });
 }

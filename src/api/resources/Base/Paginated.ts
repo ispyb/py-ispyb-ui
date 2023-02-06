@@ -1,5 +1,6 @@
 import type { Schema } from '@rest-hooks/rest';
 import { createResource } from '@rest-hooks/rest';
+import { EndpointExtraOptions } from 'rest-hooks';
 
 import { AuthenticatedEndpoint } from './Authenticated';
 
@@ -13,12 +14,13 @@ export default function createPaginatedResource<
 }: {
   readonly path: U;
   readonly schema: S;
-  readonly endpointOptions?: any;
+  readonly endpointOptions?: EndpointExtraOptions;
 }) {
   const BaseResource = createResource({
     path,
     schema,
     Endpoint: AuthenticatedEndpoint,
+    ...endpointOptions,
   });
 
   return {
@@ -26,6 +28,5 @@ export default function createPaginatedResource<
     getList: BaseResource.getList.extend({
       schema: { results: [schema], total: 0, skip: 0, limit: 0 },
     }),
-    // ...endpointOptions
   };
 }

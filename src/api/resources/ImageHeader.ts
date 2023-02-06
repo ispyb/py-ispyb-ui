@@ -3,7 +3,7 @@ import {
   SingletonEntity,
 } from 'api/resources/Base/Singleton';
 import { BraggyHeader } from 'components/Events/DataCollections/Braggy/models';
-import { withImageHistogram } from 'models/ImageHistogram';
+import { ImageHistogramSingletonBase } from 'models/ImageHistogram';
 
 class ImageHeaderEntity extends SingletonEntity {
   readonly braggy_hdr: BraggyHeader;
@@ -17,5 +17,5 @@ export const ImageHeaderResource = createSingletonResource({
 
 export const ImageHistogramResource = createSingletonResource({
   path: '/data/images/histogram/:dummy',
-  schema: withImageHistogram(SingletonEntity),
+  schema: ImageHistogramSingletonBase,
 });

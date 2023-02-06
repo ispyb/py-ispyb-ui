@@ -1,8 +1,7 @@
-import { Entity } from '@rest-hooks/rest';
-import { withEventChainResponse } from 'models/EventChainResponse';
+import { EventChainResponseBase } from 'models/EventChainResponse';
 import { createAuthenticatedResource } from './Base/Authenticated';
 
-export class EventChainEntity extends Entity {
+export class EventChainEntity extends EventChainResponseBase {
   readonly dataCollectionId: number;
   readonly eventChainId: number;
 
@@ -13,5 +12,5 @@ export class EventChainEntity extends Entity {
 
 export const EventChainResource = createAuthenticatedResource({
   path: '/eventchain/:eventChainId',
-  schema: withEventChainResponse(EventChainEntity),
+  schema: EventChainEntity,
 });

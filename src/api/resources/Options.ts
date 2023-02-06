@@ -1,10 +1,7 @@
-import {
-  createAuthenticatedSingletonResource,
-  SingletonEntity,
-} from 'api/resources/Base/Singleton';
-import { withOptions } from 'models/Options';
+import { createAuthenticatedSingletonResource } from 'api/resources/Base/Singleton';
+import { OptionsSingletonBase } from 'models/Options';
 
 export const OptionsResource = createAuthenticatedSingletonResource({
   path: '/options/:dummy',
-  schema: withOptions(SingletonEntity),
+  schema: OptionsSingletonBase,
 });

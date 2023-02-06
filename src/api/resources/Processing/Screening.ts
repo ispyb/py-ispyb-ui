@@ -1,8 +1,7 @@
-import { Entity } from '@rest-hooks/rest';
 import createPaginatedResource from '../Base/Paginated';
-import { withScreening } from 'models/Screening';
+import { ScreeningBase } from 'models/Screening';
 
-export class ScreeningEntity extends Entity {
+export class ScreeningEntity extends ScreeningBase {
   readonly screeningId: number;
 
   pk() {
@@ -12,5 +11,5 @@ export class ScreeningEntity extends Entity {
 
 export const ScreeningResource = createPaginatedResource({
   path: '/processings/screenings/:screeningId',
-  schema: withScreening(ScreeningEntity),
+  schema: ScreeningEntity,
 });

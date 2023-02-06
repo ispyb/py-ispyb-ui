@@ -1,8 +1,7 @@
-import { Entity } from '@rest-hooks/rest';
 import createPaginatedResource from '../Base/Paginated';
-import { withAutoProcProgram } from 'models/AutoProcProgram';
+import { AutoProcProgramBase } from 'models/AutoProcProgram';
 
-export class AutoProcProgramEntity extends Entity {
+export class AutoProcProgramEntity extends AutoProcProgramBase {
   readonly autoProcProgramId: number;
 
   pk() {
@@ -12,5 +11,5 @@ export class AutoProcProgramEntity extends Entity {
 
 export const AutoProcProgramResource = createPaginatedResource({
   path: '/processings/:autoProcProgramId',
-  schema: withAutoProcProgram(AutoProcProgramEntity),
+  schema: AutoProcProgramEntity,
 });

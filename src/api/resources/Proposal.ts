@@ -1,8 +1,7 @@
-import { Entity } from '@rest-hooks/rest';
 import createPaginatedResource from './Base/Paginated';
-import { withProposal } from 'models/Proposal';
+import { ProposalBase } from 'models/Proposal';
 
-export class ProposalEntity extends Entity {
+export class ProposalEntity extends ProposalBase {
   readonly proposal: string;
 
   pk() {
@@ -12,5 +11,5 @@ export class ProposalEntity extends Entity {
 
 export const ProposalResource = createPaginatedResource({
   path: '/proposals/:proposal',
-  schema: withProposal(ProposalEntity),
+  schema: ProposalEntity,
 });

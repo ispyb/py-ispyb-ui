@@ -1,8 +1,7 @@
-import { Entity } from '@rest-hooks/rest';
 import createPaginatedResource from './Base/Paginated';
-import { withDataCollectionFileAttachment } from 'models/DataCollectionFileAttachment';
+import { DataCollectionFileAttachmentBase } from 'models/DataCollectionFileAttachment';
 
-export class DataCollectionFileAttachmentEntity extends Entity {
+export class DataCollectionFileAttachmentEntity extends DataCollectionFileAttachmentBase {
   readonly dataCollectionFileAttachmentId: number;
 
   pk() {
@@ -12,5 +11,5 @@ export class DataCollectionFileAttachmentEntity extends Entity {
 
 export const DataCollectionFileAttachmentResource = createPaginatedResource({
   path: '/datacollections/attachments/:dataCollectionFileAttachmentId',
-  schema: withDataCollectionFileAttachment(DataCollectionFileAttachmentEntity),
+  schema: DataCollectionFileAttachmentEntity,
 });

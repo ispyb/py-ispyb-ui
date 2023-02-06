@@ -1,8 +1,7 @@
-import { Entity } from '@rest-hooks/rest';
 import createPaginatedResource from './Base/Paginated';
-import { withProtein } from 'models/Protein';
+import { ProteinBase } from 'models/Protein';
 
-export class ProteinEntity extends Entity {
+export class ProteinEntity extends ProteinBase {
   readonly proteinId: number;
 
   pk() {
@@ -12,5 +11,5 @@ export class ProteinEntity extends Entity {
 
 export const ProteinResource = createPaginatedResource({
   path: '/proteins/:proteinId',
-  schema: withProtein(ProteinEntity),
+  schema: ProteinEntity,
 });

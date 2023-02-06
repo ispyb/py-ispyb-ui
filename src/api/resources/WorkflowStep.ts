@@ -1,8 +1,7 @@
-import { Entity } from '@rest-hooks/rest';
 import createPaginatedResource from './Base/Paginated';
-import { withWorkflowStep } from 'models/WorkflowStep';
+import { WorkflowStepBase } from 'models/WorkflowStep';
 
-export class WorkflowStepEntity extends Entity {
+export class WorkflowStepEntity extends WorkflowStepBase {
   readonly workflowStepId: number;
 
   pk() {
@@ -12,5 +11,5 @@ export class WorkflowStepEntity extends Entity {
 
 export const WorkflowStepResource = createPaginatedResource({
   path: '/datacollections/workflows/steps/:workflowStepId',
-  schema: withWorkflowStep(WorkflowStepEntity),
+  schema: WorkflowStepEntity,
 });

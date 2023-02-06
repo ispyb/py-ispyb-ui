@@ -1,10 +1,7 @@
-import {
-  createSingletonResource,
-  SingletonEntity,
-} from 'api/resources/Base/Singleton';
-import { withAuthConfig } from 'models/AuthConfig';
+import { createSingletonResource } from 'api/resources/Base/Singleton';
+import { AuthConfigSingletonBase } from 'models/AuthConfig';
 
 export const AuthConfigResource = createSingletonResource({
   path: '/auth/config/:dummy',
-  schema: withAuthConfig(SingletonEntity),
+  schema: AuthConfigSingletonBase,
 });

@@ -1,8 +1,7 @@
-import { Entity } from '@rest-hooks/rest';
 import createPaginatedResource from './Base/Paginated';
-import { withEvent } from 'models/Event';
+import { EventBase } from 'models/Event';
 
-export class EventEntity extends Entity {
+export class EventEntity extends EventBase {
   readonly id: number;
   readonly type: string;
 
@@ -13,6 +12,6 @@ export class EventEntity extends Entity {
 
 export const EventResource = createPaginatedResource({
   path: '/events/:id',
-  schema: withEvent(EventEntity),
+  schema: EventEntity,
   endpointOptions: { pollFrequency: 1000 },
 });

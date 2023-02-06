@@ -1,8 +1,7 @@
-import { Entity } from '@rest-hooks/rest';
 import createPaginatedResource from './Base/Paginated';
-import { withEventType } from 'models/EventType';
+import { EventTypeBase } from 'models/EventType';
 
-export class EventTypeEntity extends Entity {
+export class EventTypeEntity extends EventTypeBase {
   readonly eventType: string;
 
   pk() {
@@ -12,5 +11,5 @@ export class EventTypeEntity extends Entity {
 
 export const EventTypeResource = createPaginatedResource({
   path: '/events/types/:eventType',
-  schema: withEventType(EventTypeEntity),
+  schema: EventTypeEntity,
 });

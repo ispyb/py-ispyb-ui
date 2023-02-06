@@ -1,8 +1,7 @@
-import { Entity } from '@rest-hooks/rest';
 import createPaginatedResource from './Base/Paginated';
-import { withSample } from 'models/Sample';
+import { SampleBase } from 'models/Sample';
 
-export class SampleEntity extends Entity {
+export class SampleEntity extends SampleBase {
   readonly blSampleId: number;
 
   pk() {
@@ -12,5 +11,5 @@ export class SampleEntity extends Entity {
 
 export const SampleResource = createPaginatedResource({
   path: '/samples/:blSampleId',
-  schema: withSample(SampleEntity),
+  schema: SampleEntity,
 });

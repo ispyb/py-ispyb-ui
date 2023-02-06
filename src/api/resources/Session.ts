@@ -1,9 +1,8 @@
-import { Entity } from '@rest-hooks/rest';
 import createPaginatedResource from './Base/Paginated';
-import { withSession } from 'models/Session';
-import { withSessionResponse } from 'models/SessionResponse';
+import { SessionBase } from 'models/Session';
+import { SessionResponseBase } from 'models/SessionResponse';
 
-export class SessionEntity extends Entity {
+export class SessionEntity extends SessionBase {
   readonly sessionId: number;
 
   pk() {
@@ -13,15 +12,23 @@ export class SessionEntity extends Entity {
 
 export const SessionResource = createPaginatedResource({
   path: '/sessions/:sessionId',
-  schema: withSession(SessionEntity),
+  schema: SessionEntity,
 });
 
 export const SessionGroupResource = createPaginatedResource({
   path: '/sessions/group/:sessionId',
-  schema: withSession(SessionEntity),
+  schema: SessionEntity,
 });
+
+export class SessionResponseEntity extends SessionResponseBase {
+  readonly sessionId: number;
+
+  pk() {
+    return this.sessionId?.toString();
+  }
+}
 
 export const Session2Resource = createPaginatedResource({
   path: '/session/:sessionId',
-  schema: withSessionResponse(SessionEntity),
+  schema: SessionResponseEntity,
 });

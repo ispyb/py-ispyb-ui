@@ -1,8 +1,7 @@
-import { Entity } from '@rest-hooks/rest';
 import createPaginatedResource from './Base/Paginated';
-import { withPerImageAnalysis } from 'models/PerImageAnalysis';
+import { PerImageAnalysisBase } from 'models/PerImageAnalysis';
 
-class PerImageAnalysisEntity extends Entity {
+class PerImageAnalysisEntity extends PerImageAnalysisBase {
   readonly dataCollectionId: number;
 
   pk() {
@@ -12,6 +11,6 @@ class PerImageAnalysisEntity extends Entity {
 
 export const PerImageAnalysisResource = createPaginatedResource({
   path: '/datacollections/quality/:dataCollectionId',
-  schema: withPerImageAnalysis(PerImageAnalysisEntity),
+  schema: PerImageAnalysisEntity,
   endpointOptions: { pollFrequency: 5000 },
 });

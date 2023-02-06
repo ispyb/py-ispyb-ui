@@ -1,5 +1,6 @@
 import { Entity, Schema } from '@rest-hooks/rest';
 import { createResource } from '@rest-hooks/rest';
+import { EndpointExtraOptions } from 'rest-hooks';
 
 import { AuthenticatedEndpoint } from './Authenticated';
 import { SiteEndpoint } from './Site';
@@ -35,13 +36,13 @@ export function createAuthenticatedSingletonResource<
 }: {
   readonly path: U;
   readonly schema: S;
-  readonly endpointOptions?: any;
+  readonly endpointOptions?: EndpointExtraOptions;
 }) {
   const BaseResource = createResource({
     path,
     schema,
     Endpoint: AuthenticatedEndpoint,
-    // ...endpointOptions,
+    ...endpointOptions,
   });
 
   return {

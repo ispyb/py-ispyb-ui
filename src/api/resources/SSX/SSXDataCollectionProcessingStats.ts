@@ -1,9 +1,7 @@
-import { Entity } from '@rest-hooks/endpoint';
-
 import { createAuthenticatedResource } from '../Base/Authenticated';
-import { withSSXDataCollectionProcessingStats } from 'models/SSXDataCollectionProcessingStats';
+import { SSXDataCollectionProcessingStatsBase } from 'models/SSXDataCollectionProcessingStats';
 
-class SSXDataCollectionProcessingStatsEntity extends Entity {
+class SSXDataCollectionProcessingStatsEntity extends SSXDataCollectionProcessingStatsBase {
   readonly dataCollectionId: number;
 
   pk() {
@@ -14,8 +12,6 @@ class SSXDataCollectionProcessingStatsEntity extends Entity {
 export const SSXDataCollectionProcessingStatsResource =
   createAuthenticatedResource({
     path: '/ssx/datacollection/processing/stats/:dataCollectionId',
-    schema: withSSXDataCollectionProcessingStats(
-      SSXDataCollectionProcessingStatsEntity
-    ),
+    schema: SSXDataCollectionProcessingStatsEntity,
     endpointOptions: { pollFrequency: 5000 },
   });

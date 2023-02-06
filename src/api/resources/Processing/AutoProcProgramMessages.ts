@@ -1,8 +1,7 @@
-import { Entity } from '@rest-hooks/rest';
 import createPaginatedResource from '../Base/Paginated';
-import { withAutoProcProgramMessage } from 'models/AutoProcProgramMessage';
+import { AutoProcProgramMessageBase } from 'models/AutoProcProgramMessage';
 
-export class AutoProcProgramMessageEntity extends Entity {
+export class AutoProcProgramMessageEntity extends AutoProcProgramMessageBase {
   readonly autoProcProgramId: number;
 
   pk() {
@@ -12,5 +11,5 @@ export class AutoProcProgramMessageEntity extends Entity {
 
 export const AutoProcProgramMessageResource = createPaginatedResource({
   path: '/processings/messages/:autoProcProgramMessageId',
-  schema: withAutoProcProgramMessage(AutoProcProgramMessageEntity),
+  schema: AutoProcProgramMessageEntity,
 });
