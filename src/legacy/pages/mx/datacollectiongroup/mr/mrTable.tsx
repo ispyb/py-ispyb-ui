@@ -1,11 +1,10 @@
 import { useAuth } from 'hooks/useAuth';
 import { getPhasingAttachmentDownloadUrl } from 'legacy/api/ispyb';
 import _ from 'lodash';
-import { Alert, Card, Col, Table } from 'react-bootstrap';
+import { Alert, Col, Table } from 'react-bootstrap';
 import { PhasingInfo } from '../../model';
-import { openInNewTab } from 'legacy/helpers/opentab';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEye } from '@fortawesome/free-solid-svg-icons';
+
+import { MolData, UglyMolPreview } from 'components/Molecules/UglymolViewer';
 
 export function MRTable({
   proposalName,
@@ -128,45 +127,20 @@ function UglyMolLinks({
 
   return (
     <>
-      <td key={'density'} style={{ width: 0 }}>
+      <td key={'density'} style={{ maxWidth: 200 }}>
         {uglymols.density && (
-          <UglyMolPreview title="Density" src={uglymols.density} />
+          <UglyMolPreview title="Density" mol={uglymols.density} />
         )}
       </td>
-      <td key={'mr'} style={{ width: 0 }}>
-        {uglymols.mr && <UglyMolPreview title="MR" src={uglymols.mr} />}
+      <td key={'mr'} style={{ maxWidth: 200 }}>
+        {uglymols.mr && <UglyMolPreview title="MR" mol={uglymols.mr} />}
       </td>
-      <td key={'refined'} style={{ width: 0 }}>
+      <td key={'refined'} style={{ maxWidth: 200 }}>
         {uglymols.refined && (
-          <UglyMolPreview title="Refined" src={uglymols.refined} />
+          <UglyMolPreview title="Refined" mol={uglymols.refined} />
         )}
       </td>
     </>
-  );
-}
-
-export function UglyMolPreview({ title, src }: { title: string; src: string }) {
-  return (
-    <Card style={{ width: 400, height: 250 }}>
-      <Card.Body>
-        <iframe
-          style={{
-            width: '100%',
-            height: '100%',
-          }}
-          onClick={(e) => e.preventDefault()}
-          src={src}
-          title={title}
-        ></iframe>
-      </Card.Body>
-      <Card.Footer
-        style={{ cursor: 'pointer' }}
-        onClick={() => openInNewTab(src || '')}
-        className="text-center text-primary"
-      >
-        <FontAwesomeIcon icon={faEye}></FontAwesomeIcon> {title}
-      </Card.Footer>
-    </Card>
   );
 }
 
@@ -175,7 +149,7 @@ export function parseUglymols(
   proposalName: string,
   urlPrefix: string
 ) {
-  let res: { density?: string; mr?: string; refined?: string } = {
+  let res: { density?: MolData; mr?: MolData; refined?: MolData } = {
     density: undefined,
     mr: undefined,
     refined: undefined,
@@ -269,11 +243,13 @@ function buildUglymolUrl(
         phasingprogramattachmentid: peaks,
       }).url
     : undefined;
-  return (
-    `https://exi.esrf.fr/viewer/uglymol/index.html?pdb=${pdbUrl}${mapFiles
-      .map((f, i) => `&map${i + 1}=${f}`)
-      .join('')}` + (peaksUrl ? `&peaks=${peaksUrl}` : '')
-  );
+
+  return { pdb: pdbUrl, map1: mapFiles[0], map2: mapFiles[1], peaks: peaksUrl };
+  // return (
+  //   `https://exi.esrf.fr/viewer/uglymol/index.html?pdb=${pdbUrl}${mapFiles
+  //     .map((f, i) => `&map${i + 1}=${f}`)
+  //     .join('')}` + (peaksUrl ? `&peaks=${peaksUrl}` : '')
+  // );
 }
 
 function parseAttachments(

@@ -1,9 +1,10 @@
+import { UglyMolPreview } from 'components/Molecules/UglymolViewer';
 import { useAuth } from 'hooks/useAuth';
 import { usePhasingList } from 'legacy/hooks/ispyb';
 import _ from 'lodash';
 import { Card, Col } from 'react-bootstrap';
 import { DataCollectionGroup } from '../../model';
-import { parseUglymols, UglyMolPreview } from './mrTable';
+import { parseUglymols } from './mrTable';
 
 export function MRSummary({
   proposalName,
@@ -59,9 +60,9 @@ export function MRSummary({
             }}
           />
         </Col>
-        {refined || density || mr ? (
-          <UglyMolPreview src={refined || density || mr || ''} title="Open" />
-        ) : null}
+        {refined ? <UglyMolPreview mol={refined} title="Refined" /> : null}
+        {density ? <UglyMolPreview mol={density} title="Density" /> : null}
+        {mr ? <UglyMolPreview mol={mr} title="MR" /> : null}
       </Card.Body>
     </Card>
   );
