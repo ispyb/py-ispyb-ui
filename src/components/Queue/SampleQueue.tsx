@@ -155,6 +155,7 @@ function SampleQueueMain() {
             className: 'text-end',
           },
         ]}
+        emptyText="No samples queued yet"
       />
 
       <h2>Completed</h2>
@@ -219,6 +220,7 @@ function SampleQueueMain() {
             ),
           },
         ]}
+        emptyText="No samples completed yet"
       />
     </>
   );
