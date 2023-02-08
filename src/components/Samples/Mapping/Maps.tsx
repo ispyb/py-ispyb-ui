@@ -61,6 +61,10 @@ export default function Maps({
         preMaps[`${map.xrfFluorescenceMappingId}`] = await awaitImage(
           imageData
         );
+        if (loadedCount % 5 === 0) {
+          setPreMaps(preMaps);
+          setMapsLoaded(true);
+        }
       }
       setPreMaps(preMaps);
       setMapsLoaded(true);
