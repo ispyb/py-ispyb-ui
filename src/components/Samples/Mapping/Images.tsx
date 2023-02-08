@@ -39,7 +39,9 @@ export default function Images({
   const { site } = useAuth();
   const { fetch } = useController();
   const [imagesLoaded, setImagesLoaded] = useState<boolean>(false);
-  const [preImages, setPreImages] = useState<Record<string, any>>({});
+  const [preImages, setPreImages] = useState<Record<string, HTMLImageElement>>(
+    {}
+  );
 
   // useEffect(() => {
   //   setImagesLoaded(false);
@@ -48,7 +50,7 @@ export default function Images({
 
   useEffect(() => {
     setImagesLoaded(false);
-    setPreImages([]);
+    setPreImages({});
 
     async function getImages() {
       const preImages: Record<string, HTMLImageElement> = {};
@@ -61,6 +63,10 @@ export default function Images({
         setLoadingMessage(`Loaded ${loadedCount}/${images.length} images`);
         // console.log('loaded image', imageData);
         preImages[`${image.blSampleImageId}`] = await awaitImage(imageData);
+        if (loadedCount % 5 === 0) {
+          setPreImages(preImages);
+          setImagesLoaded(true);
+        }
       }
       setPreImages(preImages);
       setImagesLoaded(true);
