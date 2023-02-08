@@ -12,8 +12,7 @@ import { useSuspense } from 'rest-hooks';
 export function HitsStatisticsCumulative({ dcs }: { dcs: Event[] }) {
   const dcIds = dcs.map((v) => v.id);
   const data = useSuspense(SSXDataCollectionProcessingStatsResource.getList, {
-    // TODO: potentially breaking?
-    dataCollectionIds: JSON.stringify(dcIds),
+    dataCollectionIds: dcIds.join(','),
   });
 
   const nbImages = dcs
@@ -93,8 +92,7 @@ function getStats(stats: SSXDataCollectionProcessingStats[], id: number) {
 export function DataCollectionGroupHitGraph({ dcs }: { dcs: Event[] }) {
   const dcIds = dcs.map((v) => v.id);
   const data = useSuspense(SSXDataCollectionProcessingStatsResource.getList, {
-    // TODO: potentially breaking?
-    dataCollectionIds: JSON.stringify(dcIds),
+    dataCollectionIds: dcIds.join(','),
   });
 
   if (data === undefined || !data.length) {

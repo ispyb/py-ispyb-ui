@@ -52,8 +52,7 @@ export function CompactSSXContent({
 export function CompactSSXStats({ dcs }: { dcs: Event[] }) {
   const dcIds = dcs.map((v) => v.id);
   const data = useSuspense(SSXDataCollectionProcessingStatsResource.getList, {
-    // TODO: potentially breaking?
-    dataCollectionIds: JSON.stringify(dcIds),
+    dataCollectionIds: dcIds.join(','),
   });
   const nbImages = dcs
     .map((dc) => {

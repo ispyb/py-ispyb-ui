@@ -1,7 +1,7 @@
 import { createAuthenticatedResource } from '../Base/Authenticated';
 import { SSXDataCollectionProcessingCellsSingletonBase } from 'models/SSXDataCollectionProcessingCells';
 
-export const SSXDataCollectionProcessingStatsResource =
+export const SSXDataCollectionProcessingCellsResource =
   createAuthenticatedResource({
     path: '/ssx/datacollection/processing/cells/:dummy',
     schema: SSXDataCollectionProcessingCellsSingletonBase,

@@ -11,8 +11,7 @@ export function UnitCellStatistics({ dcs }: { dcs: Event[] }) {
   const data = useSuspense(
     SSXDataCollectionProcessingCellsHistogramResource.getList,
     {
-      // TODO: potentially breaking?
-      dataCollectionIds: JSON.stringify(dcIds),
+      dataCollectionIds: dcIds.join(','),
     }
   );
   if (data === undefined) {

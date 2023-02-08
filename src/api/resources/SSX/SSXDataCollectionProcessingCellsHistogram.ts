@@ -2,9 +2,10 @@ import { createAuthenticatedSingletonResource } from '../Base/Singleton';
 import { SSXDataCollectionProcessingCellsHistogramBase } from 'models/SSXDataCollectionProcessingCellsHistogram';
 
 class SSXDataCollectionProcessingCellsHistogramEntity extends SSXDataCollectionProcessingCellsHistogramBase {
-  readonly dataCollectionIds: number[];
   pk() {
-    return this.dataCollectionIds.sort().join(',');
+    if (this.dataCollectionIds.sort)
+      return this.dataCollectionIds.sort().join(',');
+    return undefined;
   }
 }
 
