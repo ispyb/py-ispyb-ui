@@ -1,7 +1,7 @@
 import _ from 'lodash';
-import { useEffect, useState } from 'react';
-import { Button, Col, Row } from 'react-bootstrap';
-import LazyLoad from 'react-lazyload';
+import { Suspense, useEffect, useState } from 'react';
+import { Button, Col, Row, Spinner } from 'react-bootstrap';
+import { useInView } from 'react-intersection-observer';
 import { Viewer } from './uglymol';
 
 export type MolData = {
@@ -18,10 +18,59 @@ export function UglyMolPreview({
   mol: MolData;
   title: string;
 }) {
+  const { ref, inView } = useInView({ rootMargin: '1000px 0px' });
+
+  const fallback = <LoadingUglyMolViewer title={title} height={250} />;
+
+  if (inView) {
+    return (
+      <div ref={ref}>
+        <Suspense fallback={fallback}>
+          <UglyMolViewer mol={mol} title={title} height={250} />
+        </Suspense>
+      </div>
+    );
+  } else {
+    return <div ref={ref}>{fallback}</div>;
+  }
+}
+
+export function LoadingUglyMolViewer({
+  title,
+  height,
+  width = '100%',
+}: {
+  title: string;
+  height: number;
+  width?: number | string;
+}) {
   return (
-    <LazyLoad unmountIfInvisible={true} offset={1000} placeholder="...">
-      <UglyMolViewer mol={mol} title={title} height={250} />
-    </LazyLoad>
+    <Col>
+      <div
+        className="text-center"
+        style={{
+          height: height,
+          width: width,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: 'black',
+        }}
+      >
+        <Spinner animation="border" role="status" style={{ color: 'white' }}>
+          <span className="visually-hidden"></span>
+        </Spinner>
+      </div>
+      <Row>
+        <Col></Col>
+        <Col xs={'auto'}>
+          <Button variant="link" size="sm" disabled>
+            {title} - Loading
+          </Button>
+        </Col>
+        <Col></Col>
+      </Row>
+    </Col>
   );
 }
 
@@ -70,6 +119,11 @@ export function UglyMolViewer({
       helpElem?.childNodes.forEach((child) => {
         helpElem.removeChild(child);
       });
+      //Force disposal of the webGL context
+      viewer.renderer
+        ?.getContext()
+        ?.getExtension('WEBGL_lose_context')
+        ?.loseContext();
     };
   }, [mol, idViewer, idhud, idhelp]);
 
@@ -118,7 +172,7 @@ export function UglyMolViewer({
       </div>
       <Row>
         <Col></Col>
-        <Col>
+        <Col xs={'auto'}>
           <Button
             variant="link"
             size="sm"
