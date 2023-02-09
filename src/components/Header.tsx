@@ -184,6 +184,7 @@ function PyHeader() {
                 </NavDropdown.Item>
                 <NavDropdown.Item
                   as={NavLink}
+                  end
                   to={`/proposals/${proposalName}/samples`}
                 >
                   Samples
