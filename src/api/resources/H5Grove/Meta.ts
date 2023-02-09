@@ -1,16 +1,5 @@
 import { AuthenticatedEndpoint } from 'api/resources/Base/Authenticated';
-import { Entity, createResource, RestGenerics } from '@rest-hooks/rest';
-
-class MetaEndPoint<
-  O extends RestGenerics = any
-> extends AuthenticatedEndpoint<O> {
-  // @ts-expect-error
-  process(value, params) {
-    value.dataCollectionId = params.dataCollectionId;
-    value.path = params.path;
-    return value;
-  }
-}
+import { Entity } from '@rest-hooks/rest';
 
 class H5MetaEntity extends Entity {
   readonly dataCollectionId: number;
@@ -22,16 +11,16 @@ class H5MetaEntity extends Entity {
   }
 }
 
-const H5MetaResourceBase = createResource({
-  path: '/data/h5grove/meta/:dummy',
+export const H5MetaEndpoint = new AuthenticatedEndpoint({
+  path: '/data/h5grove/meta/',
   schema: H5MetaEntity,
-  // @ts-expect-error
-  Endpoint: MetaEndPoint,
+  process(value, params) {
+    value.dataCollectionId = params.dataCollectionId;
+    value.path = params.path;
+    return value;
+  },
+  searchParams: {} as {
+    dataCollectionId: number;
+    path: string;
+  },
 });
-
-export const H5MetaResource = {
-  ...H5MetaResourceBase,
-  getList: H5MetaResourceBase.getList.extend({
-    schema: H5MetaEntity,
-  }),
-};

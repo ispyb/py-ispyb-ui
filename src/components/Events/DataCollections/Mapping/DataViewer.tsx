@@ -5,8 +5,8 @@ import { useSuspense } from 'rest-hooks';
 import { HeatmapVis, Domain, LineVis, getDomain } from '@h5web/lib';
 import ndarray from 'ndarray';
 
-import { H5DataResource } from 'api/resources/H5Grove/Data';
-import { H5MetaResource } from 'api/resources/H5Grove/Meta';
+import { H5DataEndpoint } from 'api/resources/H5Grove/Data';
+import { H5MetaEndpoint } from 'api/resources/H5Grove/Meta';
 import NetworkErrorPage from 'components/NetworkErrorPage';
 import { DataCollection as DataCollectionType } from 'models/Event';
 
@@ -17,7 +17,7 @@ function useDataSeries({
   dataCollectionId: number;
   path: string;
 }): Record<string, Series[]> {
-  const meta = useSuspense(H5MetaResource.getList, {
+  const meta = useSuspense(H5MetaEndpoint, {
     dataCollectionId,
     path: path,
   });
@@ -47,7 +47,7 @@ function useDataPoint({
   fetch: boolean;
 }) {
   const data = useSuspense(
-    H5DataResource.getList,
+    H5DataEndpoint,
     fetch
       ? {
           dataCollectionId,

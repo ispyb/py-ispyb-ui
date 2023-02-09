@@ -1,19 +1,5 @@
 import { AuthenticatedEndpoint } from 'api/resources/Base/Authenticated';
-import { Entity, createResource, RestGenerics } from '@rest-hooks/rest';
-
-class DataEndPoint<
-  O extends RestGenerics = any
-> extends AuthenticatedEndpoint<O> {
-  // @ts-expect-error
-  process(value, params) {
-    return {
-      data: value,
-      dataCollectionId: params.dataCollectionId,
-      selection: params.selection,
-      path: params.path,
-    };
-  }
-}
+import { Entity } from '@rest-hooks/rest';
 
 class H5DataEntity extends Entity {
   readonly dataCollectionId: number;
@@ -26,16 +12,21 @@ class H5DataEntity extends Entity {
   }
 }
 
-const H5DataResourceBase = createResource({
-  path: '/data/h5grove/data/:dummy',
+export const H5DataEndpoint = new AuthenticatedEndpoint({
+  path: '/data/h5grove/data/',
   schema: H5DataEntity,
-  // @ts-expect-error
-  Endpoint: DataEndPoint,
+  process(value, params) {
+    return {
+      data: value,
+      dataCollectionId: params.dataCollectionId,
+      selection: params.selection,
+      path: params.path,
+    };
+  },
+  searchParams: {} as {
+    dataCollectionId: number;
+    path: string;
+    selection?: number;
+    flatten?: boolean;
+  },
 });
-
-export const H5DataResource = {
-  ...H5DataResourceBase,
-  getList: H5DataResourceBase.getList.extend({
-    schema: H5DataEntity,
-  }),
-};
