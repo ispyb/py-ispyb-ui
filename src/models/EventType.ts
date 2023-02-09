@@ -1,4 +1,5 @@
 import { Entity } from '@rest-hooks/rest';
+import { SingletonEntity } from 'api/resources/Base/Singleton';
 
 /* tslint:disable */
 /**
@@ -15,7 +16,14 @@ export interface EventType {
   eventType: Eventtype;
 }
 
+
 export abstract class EventTypeBase extends Entity {
   eventTypeName: Eventtypename;
   eventType: Eventtype;
 }
+
+export abstract class EventTypeSingletonBase extends SingletonEntity {
+  eventTypeName: Eventtypename;
+  eventType: Eventtype;
+}
+

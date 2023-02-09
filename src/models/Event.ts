@@ -47,6 +47,7 @@ export type DataFileTemplate = string;
  */
 export type ImageSubPath = string;
 export type NumberOfImagesPoints = number;
+export type NumberOfPassesRepeats = number;
 export type Wavelength = number;
 export type ExposureTime = number;
 export type Flux = number;
@@ -168,6 +169,7 @@ export interface DataCollection {
   fileTemplate?: DataFileTemplate;
   imageContainerSubPath?: ImageSubPath;
   numberOfImages?: NumberOfImagesPoints;
+  numberOfPasses?: NumberOfPassesRepeats;
   wavelength?: Wavelength;
   exposureTime?: ExposureTime;
   flux?: Flux;
@@ -335,6 +337,7 @@ export abstract class DataCollectionBase extends Entity {
   fileTemplate?: DataFileTemplate;
   imageContainerSubPath?: ImageSubPath;
   numberOfImages?: NumberOfImagesPoints;
+  numberOfPasses?: NumberOfPassesRepeats;
   wavelength?: Wavelength;
   exposureTime?: ExposureTime;
   flux?: Flux;
@@ -383,6 +386,7 @@ export abstract class DataCollectionSingletonBase extends SingletonEntity {
   fileTemplate?: DataFileTemplate;
   imageContainerSubPath?: ImageSubPath;
   numberOfImages?: NumberOfImagesPoints;
+  numberOfPasses?: NumberOfPassesRepeats;
   wavelength?: Wavelength;
   exposureTime?: ExposureTime;
   flux?: Flux;

@@ -105,8 +105,8 @@ export interface ProcessingJob {
   ProcessingJobParameters?: Processingjobparameters;
 }
 export interface ProcessingJobParameter {
-  parameterKey: Parameterkey;
-  parameterValue: Parametervalue;
+  parameterKey?: Parameterkey;
+  parameterValue?: Parametervalue;
 }
 export interface AutoProcProgramMetadata {
   attachments?: Attachments;
@@ -221,13 +221,13 @@ export abstract class ProcessingJobSingletonBase extends SingletonEntity {
 }
 
 export abstract class ProcessingJobParameterBase extends Entity {
-  parameterKey: Parameterkey;
-  parameterValue: Parametervalue;
+  parameterKey?: Parameterkey;
+  parameterValue?: Parametervalue;
 }
 
 export abstract class ProcessingJobParameterSingletonBase extends SingletonEntity {
-  parameterKey: Parameterkey;
-  parameterValue: Parametervalue;
+  parameterKey?: Parameterkey;
+  parameterValue?: Parametervalue;
 }
 
 export abstract class AutoProcProgramMetadataBase extends Entity {

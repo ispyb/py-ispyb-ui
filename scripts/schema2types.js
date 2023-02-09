@@ -48,7 +48,7 @@ export abstract class ${name}SingletonBase extends SingletonEntity {\n${lines
             });
 
             fs.writeFileSync(
-              `src/models/new/${schemaName}.ts`,
+              `src/models/${schemaName}.ts`,
               "import { Entity } from '@rest-hooks/rest';\nimport { SingletonEntity } from 'api/resources/Base/Singleton';\n\n" +
                 ts +
                 '\n' +
