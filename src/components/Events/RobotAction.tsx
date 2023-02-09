@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import { EventHeader } from './Events';
 import Metadata from './Metadata';
-import { RobotAction as RobotActionType, Event } from 'models/Event.d';
+import { RobotAction as RobotActionType, Event } from 'models/Event';
 
 export default function RobotAction(props: {
   item: RobotActionType;

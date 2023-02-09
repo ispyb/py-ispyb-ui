@@ -1,14 +1,15 @@
-import PaginatedResource from './Base/Paginated';
-import { withDataCollectionFileAttachment } from 'models/DataCollectionFileAttachment.d';
+import createPaginatedResource from './Base/Paginated';
+import { DataCollectionFileAttachmentBase } from 'models/DataCollectionFileAttachment';
 
-export class _DataCollectionFileAttachmentResource extends PaginatedResource {
+export class DataCollectionFileAttachmentEntity extends DataCollectionFileAttachmentBase {
   readonly dataCollectionFileAttachmentId: number;
 
   pk() {
     return this.dataCollectionFileAttachmentId.toString();
   }
-  static urlRoot = 'datacollections/attachments';
 }
 
-export const DataCollectionFileAttachmentResource =
-  withDataCollectionFileAttachment(_DataCollectionFileAttachmentResource);
+export const DataCollectionFileAttachmentResource = createPaginatedResource({
+  path: '/datacollections/attachments/:dataCollectionFileAttachmentId',
+  schema: DataCollectionFileAttachmentEntity,
+});

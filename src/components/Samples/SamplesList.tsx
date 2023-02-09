@@ -38,7 +38,7 @@ export default function SamplesList({ proteinId, focusSearch }: ISamplesList) {
   const navigate = useNavigate();
   const proposal = usePath('proposal');
   const status = searchParams.get('status');
-  const samples = useSuspense(SampleResource.list(), {
+  const samples = useSuspense(SampleResource.getList, {
     skip,
     limit,
     ...(proposal ? { proposal } : {}),

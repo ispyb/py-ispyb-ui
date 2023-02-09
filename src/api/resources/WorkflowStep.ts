@@ -1,13 +1,15 @@
-import PaginatedResource from './Base/Paginated';
-import { withWorkflowStep } from 'models/WorkflowStep.d';
+import createPaginatedResource from './Base/Paginated';
+import { WorkflowStepBase } from 'models/WorkflowStep';
 
-export class _WorkflowStepResource extends PaginatedResource {
+export class WorkflowStepEntity extends WorkflowStepBase {
   readonly workflowStepId: number;
 
   pk() {
     return this.workflowStepId.toString();
   }
-  static urlRoot = 'datacollections/workflows/steps';
 }
 
-export const WorkflowStepResource = withWorkflowStep(_WorkflowStepResource);
+export const WorkflowStepResource = createPaginatedResource({
+  path: '/datacollections/workflows/steps/:workflowStepId',
+  schema: WorkflowStepEntity,
+});

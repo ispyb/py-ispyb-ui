@@ -8,7 +8,9 @@ import { getColors } from '../../utils/colours';
 
 export default function HistoryBreakdown() {
   const sessionId = usePath('sessionId');
-  const breakdown = useSuspense(BreakdownResource.list(), { sessionId });
+  const breakdown = useSuspense(BreakdownResource.getList, {
+    ...(sessionId ? { sessionId } : null),
+  });
   // const types = Array.from(
   //   new Set(breakdown.history.map((obj) => obj.eventType))
   // );

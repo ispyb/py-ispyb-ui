@@ -8,10 +8,10 @@ import { LabContactResource } from 'api/resources/LabContact';
 import InlineEditable from 'components/RJSF/InlineEditable';
 
 function ViewLabContactMain() {
-  const { labContactId } = useParams();
+  const { labContactId = '0' } = useParams();
   const controller = useController();
 
-  const contact = useSuspense(LabContactResource.detail(), {
+  const contact = useSuspense(LabContactResource.get, {
     labContactId,
   });
 
@@ -40,7 +40,7 @@ function ViewLabContactMain() {
     const obj = {};
     set(obj, field, value);
     return controller.fetch(
-      LabContactResource.partialUpdate(),
+      LabContactResource.partialUpdate,
       { labContactId },
       obj
     );

@@ -1,13 +1,15 @@
-import PaginatedResource from 'api/resources/Base/Paginated';
-import { withProtein } from 'models/Protein.d';
+import createPaginatedResource from './Base/Paginated';
+import { ProteinBase } from 'models/Protein';
 
-export class _ProteinResource extends PaginatedResource {
+export class ProteinEntity extends ProteinBase {
   readonly proteinId: number;
 
   pk() {
     return this.proteinId?.toString();
   }
-  static urlRoot = 'proteins';
 }
 
-export const ProteinResource = withProtein(_ProteinResource);
+export const ProteinResource = createPaginatedResource({
+  path: '/proteins/:proteinId',
+  schema: ProteinEntity,
+});

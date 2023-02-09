@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import Table from 'components/Layout/Table';
 import Search from 'components/Layout/Search';
 import { ProteinResource } from 'api/resources/Protein';
-import { Protein } from 'models/Protein.d';
+import { Protein } from 'models/Protein';
 import { usePath } from 'hooks/usePath';
 import { usePaging } from 'hooks/usePaging';
 import { useSearch } from 'hooks/useSearch';
@@ -17,7 +17,7 @@ export default function ProteinsList() {
   const navigate = useNavigate();
   const proposal = usePath('proposal');
   const status = searchParams.get('status');
-  const proteins = useSuspense(ProteinResource.list(), {
+  const proteins = useSuspense(ProteinResource.getList, {
     skip,
     limit,
     ...(proposal ? { proposal } : {}),

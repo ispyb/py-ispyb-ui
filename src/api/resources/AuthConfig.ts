@@ -1,8 +1,7 @@
-import { SingletonResource } from 'api/resources/Base/Singleton';
-import { withAuthConfig } from 'models/AuthConfig.d';
+import { createSingletonResource } from 'api/resources/Base/Singleton';
+import { AuthConfigSingletonBase } from 'models/AuthConfig';
 
-class _AuthConfigResource extends SingletonResource {
-  static urlRoot = 'auth/config';
-}
-
-export const AuthConfigResource = withAuthConfig(_AuthConfigResource);
+export const AuthConfigResource = createSingletonResource({
+  path: '/auth/config/:dummy',
+  schema: AuthConfigSingletonBase,
+});

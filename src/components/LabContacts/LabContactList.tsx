@@ -16,7 +16,7 @@ function personFormatter(row: LabContact) {
 export default function LabContactList() {
   const navigate = useNavigate();
   const proposal = usePath('proposal');
-  const contacts = useSuspense(LabContactResource.list(), {
+  const contacts = useSuspense(LabContactResource.getList, {
     ...(proposal ? { proposal } : {}),
   });
 

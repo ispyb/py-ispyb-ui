@@ -5,7 +5,7 @@ import Table, { IColumn } from 'components/Layout/Table';
 import {
   AutoProcProgramIntegration as AutoProcProgramIntegrationType,
   AutoProcScalingStatistics as AutoProcScalingStatisticsType,
-} from 'models/AutoProcProgramIntegration.d';
+} from 'models/AutoProcProgramIntegration';
 import { messageStatusIcons } from '../AutoProcProgramMessages';
 import { AutoProcProgramIntegrationResource } from 'api/resources/Processing/AutoProcProgramIntegration';
 import { ActionsCell } from './ProcessingResult';
@@ -37,7 +37,7 @@ export default function AutoIntegrationResult({
 }: {
   dataCollectionId: number;
 }) {
-  const processings = useSuspense(AutoProcProgramIntegrationResource.list(), {
+  const processings = useSuspense(AutoProcProgramIntegrationResource.getList, {
     dataCollectionId,
     limit: 50,
   });

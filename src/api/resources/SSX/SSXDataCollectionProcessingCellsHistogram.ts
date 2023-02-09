@@ -1,23 +1,17 @@
-import { withSSXDataCollectionProcessingCellsHistogram } from 'models/SSXDataCollectionProcessingCellsHistogram.d';
-import { AuthenticatedSingletonResource } from '../Base/Singleton';
+import { createAuthenticatedSingletonResource } from '../Base/Singleton';
+import { SSXDataCollectionProcessingCellsHistogramBase } from 'models/SSXDataCollectionProcessingCellsHistogram';
 
-class _SSXDataCollectionProcessingCellsHistogram extends AuthenticatedSingletonResource {
-  readonly dataCollectionIds: number[];
+class SSXDataCollectionProcessingCellsHistogramEntity extends SSXDataCollectionProcessingCellsHistogramBase {
   pk() {
-    return this.dataCollectionIds.sort().join(',');
+    if (this.dataCollectionIds.sort)
+      return this.dataCollectionIds.sort().join(',');
+    return undefined;
   }
-
-  static getEndpointExtra() {
-    return {
-      ...super.getEndpointExtra(),
-      pollFrequency: 5000,
-    };
-  }
-
-  static urlRoot = 'ssx/datacollection/processing/cells/histogram';
 }
 
 export const SSXDataCollectionProcessingCellsHistogramResource =
-  withSSXDataCollectionProcessingCellsHistogram(
-    _SSXDataCollectionProcessingCellsHistogram
-  );
+  createAuthenticatedSingletonResource({
+    path: '/ssx/datacollection/processing/cells/histogram/:dummy',
+    schema: SSXDataCollectionProcessingCellsHistogramEntity,
+    endpointOptions: { pollFrequency: 5000 },
+  });

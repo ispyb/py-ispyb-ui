@@ -1,8 +1,7 @@
-import { AuthenticatedSingletonResource } from './Base/Singleton';
-import { withOneTimeToken } from 'models/OneTimeToken.d';
+import { createAuthenticatedSingletonResource } from 'api/resources/Base/Singleton';
+import { OneTimeTokenSingletonBase } from 'models/OneTimeToken';
 
-class _SignResource extends AuthenticatedSingletonResource {
-  static urlRoot = 'user/sign';
-}
-
-export const SignResource = withOneTimeToken(_SignResource);
+export const SignResource = createAuthenticatedSingletonResource({
+  path: '/user/sign/:dummy',
+  schema: OneTimeTokenSingletonBase,
+});

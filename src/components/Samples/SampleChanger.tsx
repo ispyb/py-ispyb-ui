@@ -20,12 +20,16 @@ export default function SampleChanger(props: ISampleChanger) {
   const sessionInfo = useSessionInfo(sessionId);
   const [selectedAcronym, setSelectedAcronym] = useState<string>('');
 
-  const samples = useSuspense(SampleResource.list(), {
+  const samples = useSuspense(SampleResource.getList, {
     skip: 0,
     limit: 9999,
     assigned: true,
-    beamLineName: sessionId ? sessionInfo.beamLineName : props.beamLineName,
-    ...(sessionId ? { proposal: sessionInfo.proposal } : null),
+    ...(sessionInfo
+      ? { beamLineName: sessionInfo.beamLineName }
+      : props.beamLineName
+      ? { beamLineName: props.beamLineName }
+      : null),
+    ...(sessionInfo ? { proposal: sessionInfo.proposal } : null),
   });
 
   const changerPositions = Array(15).fill(0);
@@ -139,7 +143,7 @@ export default function SampleChanger(props: ISampleChanger) {
     <section>
       <h1>Sample Changer</h1>
 
-      {sessionId && (
+      {sessionInfo && (
         <ul>
           <li>Start Date: {sessionInfo.startDate}</li>
           <li>Session: {sessionInfo.session}</li>

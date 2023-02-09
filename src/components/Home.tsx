@@ -20,7 +20,7 @@ function SessionRow(props: ISessionRow) {
   const { upcoming, previous, commissioning, beamLineGroup } = props;
 
   const resource = beamLineGroup ? SessionGroupResource : SessionResource;
-  const sessions = useSuspense(resource.list(), {
+  const sessions = useSuspense(resource.getList, {
     ...(upcoming ? { upcoming: true } : {}),
     ...(previous ? { previous: true } : {}),
     ...(commissioning ? { sessionType: 'commissioning' } : {}),

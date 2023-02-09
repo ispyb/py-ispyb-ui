@@ -106,8 +106,8 @@ function DataCollectionGroupSummary({ dcs }: { dcs: Event[] }) {
 
 function DataCollectionGroupRunSummary({ dcs }: { dcs: Event[] }) {
   const dcIds = dcs.map((v) => v.id);
-  const stats = useSuspense(SSXDataCollectionProcessingStatsResource.list(), {
-    dataCollectionIds: dcIds,
+  const stats = useSuspense(SSXDataCollectionProcessingStatsResource.getList, {
+    dataCollectionIds: dcIds.join(','),
   });
 
   const [selected, setSelected] = useState(0);

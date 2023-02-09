@@ -6,7 +6,7 @@ import { OpenAPIResource } from 'api/resources/Base/OpenAPI';
  * @returns - the OpenAPI resource
  */
 export function useSpec() {
-  return useSuspense(OpenAPIResource.detail(), { id: '' });
+  return useSuspense(OpenAPIResource.getList);
 }
 
 /**

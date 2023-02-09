@@ -13,7 +13,7 @@ export default function ProposalsList({ sortBy }: { sortBy?: string }) {
   const { skip, limit } = usePaging(10);
   const search = useSearch();
   const navigate = useNavigate();
-  const proposals = useSuspense(ProposalResource.list(), {
+  const proposals = useSuspense(ProposalResource.getList, {
     skip,
     limit,
     ...(search ? { search } : null),

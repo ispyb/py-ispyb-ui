@@ -1,16 +1,21 @@
-import { AuthenticatedSingletonResource } from 'api/resources/Base/Singleton';
+import {
+  createSingletonResource,
+  SingletonEntity,
+} from 'api/resources/Base/Singleton';
 import { BraggyHeader } from 'components/Events/DataCollections/Braggy/models';
-import { withImageHistogram } from 'models/ImageHistogram.d';
+import { ImageHistogramSingletonBase } from 'models/ImageHistogram';
 
-export class ImageHeaderResource extends AuthenticatedSingletonResource {
+class ImageHeaderEntity extends SingletonEntity {
   readonly braggy_hdr: BraggyHeader;
   static urlRoot = 'data/images/header';
 }
 
-class _ImageHistogramResource extends AuthenticatedSingletonResource {
-  static urlRoot = 'data/images/histogram';
-}
+export const ImageHeaderResource = createSingletonResource({
+  path: '/data/images/header/:dummy',
+  schema: ImageHeaderEntity,
+});
 
-export const ImageHistogramResource = withImageHistogram(
-  _ImageHistogramResource
-);
+export const ImageHistogramResource = createSingletonResource({
+  path: '/data/images/histogram/:dummy',
+  schema: ImageHistogramSingletonBase,
+});

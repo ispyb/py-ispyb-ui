@@ -4,7 +4,7 @@ import { DateTime } from 'luxon';
 import { useInView } from 'react-intersection-observer';
 
 import { PerImageAnalysisResource } from 'api/resources/PerImageAnalysis';
-import { PerImageAnalysis as PerImageAnalysisType } from 'models/PerImageAnalysis.d';
+import { PerImageAnalysis as PerImageAnalysisType } from 'models/PerImageAnalysis';
 import PlotEnhancer from 'components/Stats/PlotEnhancer';
 import Loading from '../Loading';
 
@@ -26,8 +26,8 @@ function PerImageAnalysisMain({
   const age =
     endTime && DateTime.now().diff(DateTime.fromISO(endTime), ['minutes']);
   const doRefresh = age && age.minutes < 15 && refresh;
-  const perImageAnalysis = useSuspense(PerImageAnalysisResource.list(), opts);
-  useSubscription(PerImageAnalysisResource.list(), doRefresh ? opts : null);
+  const perImageAnalysis = useSuspense(PerImageAnalysisResource.getList, opts);
+  useSubscription(PerImageAnalysisResource.getList, doRefresh ? opts : null);
   const analysis = perImageAnalysis.results[0];
 
   const seriesNames: Record<string, string> = {

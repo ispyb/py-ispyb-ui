@@ -1,20 +1,9 @@
-import { withSSXDataCollectionProcessingCells } from 'models/SSXDataCollectionProcessingCells.d';
-import { AuthenticatedResource } from '../Base/Authenticated';
+import { createAuthenticatedResource } from '../Base/Authenticated';
+import { SSXDataCollectionProcessingCellsSingletonBase } from 'models/SSXDataCollectionProcessingCells';
 
-class _SSXDataCollectionProcessingCells extends AuthenticatedResource {
-  pk() {
-    return '1';
-  }
-
-  static getEndpointExtra() {
-    return {
-      ...super.getEndpointExtra(),
-      pollFrequency: 5000,
-    };
-  }
-
-  static urlRoot = 'ssx/datacollection/processing/cells';
-}
-
-export const SSXDataCollectionProcessingStatsResource =
-  withSSXDataCollectionProcessingCells(_SSXDataCollectionProcessingCells);
+export const SSXDataCollectionProcessingCellsResource =
+  createAuthenticatedResource({
+    path: '/ssx/datacollection/processing/cells/:dummy',
+    schema: SSXDataCollectionProcessingCellsSingletonBase,
+    endpointOptions: { pollFrequency: 5000 },
+  });

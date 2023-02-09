@@ -10,7 +10,7 @@ import ParsedError from 'components/ParsedError';
 
 export default function Options() {
   const optionsSchema = useSchema('Options', 'Admin Options');
-  const options = useSuspense(OptionsResource.detail(), {});
+  const options = useSuspense(OptionsResource.getList);
   const uiSchema = {};
   const alertRef = useRef<HTMLDivElement | undefined>();
   const successRef = useRef<HTMLDivElement | null>(null);

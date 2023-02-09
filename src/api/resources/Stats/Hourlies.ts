@@ -1,8 +1,7 @@
-import { AuthenticatedSingletonResource } from '../Base/Singleton';
-import { withHourlies } from 'models/Hourlies.d';
+import { createAuthenticatedSingletonResource } from 'api/resources/Base/Singleton';
+import { HourliesSingletonBase } from 'models/Hourlies';
 
-class _HourliesResource extends AuthenticatedSingletonResource {
-  static urlRoot = 'stats/hourlies';
-}
-
-export const HourliesResource = withHourlies(_HourliesResource);
+export const HourliesResource = createAuthenticatedSingletonResource({
+  path: '/stats/hourlies/:dummy',
+  schema: HourliesSingletonBase,
+});

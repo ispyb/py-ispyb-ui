@@ -1,8 +1,7 @@
-import { AuthenticatedSingletonResource } from 'api/resources/Base/Singleton';
-import { withOptions } from 'models/Options.d';
+import { createAuthenticatedSingletonResource } from 'api/resources/Base/Singleton';
+import { OptionsSingletonBase } from 'models/Options';
 
-class _OptionsResource extends AuthenticatedSingletonResource {
-  static urlRoot = 'options';
-}
-
-export const OptionsResource = withOptions(_OptionsResource);
+export const OptionsResource = createAuthenticatedSingletonResource({
+  path: '/options/:dummy',
+  schema: OptionsSingletonBase,
+});
