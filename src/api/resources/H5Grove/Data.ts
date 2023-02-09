@@ -12,7 +12,6 @@ class DataEndPoint<
       selection: params.selection,
       path: params.path,
     };
-    
   }
 }
 

@@ -13,7 +13,7 @@ export default function RobotAction(props: {
   return (
     <>
       <EventHeader event={parent} title={item.actionType} />
-      <Container>
+      <Container fluid className="g-0">
         <Row>
           <Col>
             <Metadata

@@ -109,7 +109,7 @@ function SampleQueueMain() {
   const { skip, limit } = usePaging(10);
 
   const queuedArgs = {
-    ...(proposal ? { proposal} : null),
+    ...(proposal ? { proposal } : null),
     status: 'Queued',
     order: 'asc',
     skip,
@@ -119,7 +119,7 @@ function SampleQueueMain() {
   useSubscription(ContainerQueueSampleResource.getList, queuedArgs);
 
   const completedArgs = {
-    ...(proposal ? { proposal} : null),
+    ...(proposal ? { proposal } : null),
     status: status === 'failed' ? 'Failed' : 'Completed',
     limit: 10,
   };

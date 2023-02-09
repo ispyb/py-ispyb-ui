@@ -20,11 +20,14 @@ function DataCollectionAttachmentPlotMain({
   yAxisTitle,
 }: IDataCollectionAttachmentPlot) {
   const { site } = useAuth();
-  const attachments = useSuspense(DataCollectionFileAttachmentResource.getList, {
-    skip: 0,
-    limit: 10,
-    dataCollectionId,
-  });
+  const attachments = useSuspense(
+    DataCollectionFileAttachmentResource.getList,
+    {
+      skip: 0,
+      limit: 10,
+      dataCollectionId,
+    }
+  );
 
   const plots = useMemo(
     () =>
