@@ -1,8 +1,18 @@
-import { AuthenticatedResource } from 'api/resources/Base/Authenticated';
-import { SiteResource } from 'api/resources/Base/Site';
-import { Resource } from '@rest-hooks/rest';
+import { AuthenticatedEndpoint } from 'api/resources/Base/Authenticated';
+import { Entity, createResource, RestGenerics } from '@rest-hooks/rest';
 
-export class H5MetaResource extends AuthenticatedResource {
+class MetaEndPoint<
+  O extends RestGenerics = any
+> extends AuthenticatedEndpoint<O> {
+  // @ts-expect-error
+  process(value, params) {
+    value.dataCollectionId = params.dataCollectionId;
+    value.path = params.path;
+    return value;
+  }
+}
+
+class H5MetaEntity extends Entity {
   readonly dataCollectionId: number;
   readonly path: string;
   readonly children: Record<string, any>[];
@@ -10,22 +20,18 @@ export class H5MetaResource extends AuthenticatedResource {
   pk() {
     return `${this.dataCollectionId}/${this.path}`;
   }
-
-  static list<T extends typeof Resource>(this: T) {
-    return super.list().extend({
-      schema: this,
-      fetch: async (params: any) => {
-        const response = await super.list().fetch(params);
-        response.dataCollectionId = params.dataCollectionId;
-        response.path = params.path;
-        return response;
-      },
-    });
-  }
-
-  static url<T extends typeof Resource>(this: T): string {
-    return `${SiteResource.baseUrl}/${this.urlRoot}`;
-  }
-
-  static urlRoot = 'data/h5grove/meta/';
 }
+
+const H5MetaResourceBase = createResource({
+  path: '/data/h5grove/meta/:dummy',
+  schema: H5MetaEntity,
+  // @ts-expect-error
+  Endpoint: MetaEndPoint,
+});
+
+export const H5MetaResource = {
+  ...H5MetaResourceBase,
+  getList: H5MetaResourceBase.getList.extend({
+    schema: H5MetaEntity,
+  }),
+};

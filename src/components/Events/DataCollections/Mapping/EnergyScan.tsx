@@ -1,12 +1,12 @@
 import { Col, Row } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-import { DataCollection as DataCollectionType, Event } from 'models/Event.d';
+import { DataCollection as DataCollectionType, Event } from 'models/Event';
 import Metadata from 'components/Events/Metadata';
 import PerImageAnalysis from 'components/Events/PerImageAnalysis';
 import Snapshot from 'components/Events/DataCollections/Snapshot';
-import { ProcessingStatuses } from 'models/ProcessingStatusesList.d';
-import { AutoProcProgramMessageStatus } from 'models/AutoProcProgramMessageStatuses.d';
+import { ProcessingStatuses } from 'models/ProcessingStatusesList';
+import { AutoProcProgramMessageStatus } from 'models/AutoProcProgramMessageStatuses';
 import { DataCollectionBox } from 'components/Events/DataCollection';
 import DataCollectionAttachmentPlot from '../DataCollectionAttachmentPlot';
 import { toEnergy } from 'utils/numbers';

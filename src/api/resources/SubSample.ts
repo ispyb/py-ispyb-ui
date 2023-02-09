@@ -1,14 +1,15 @@
-import PaginatedResource from 'api/resources/Base/Paginated';
-import { withSubSample } from 'models/SubSample.d';
+import createPaginatedResource from './Base/Paginated';
+import { SubSampleBase } from 'models/SubSample';
 
-export class _SubSampleResource extends PaginatedResource {
+export class SubSampleEntity extends SubSampleBase {
   readonly blSubSampleId: number;
 
   pk() {
     return this.blSubSampleId?.toString();
   }
-
-  static urlRoot = 'samples/sub';
 }
 
-export const SubSampleResource = withSubSample(_SubSampleResource);
+export const SubSampleResource = createPaginatedResource({
+  path: '/samples/sub/:blSubSampleId',
+  schema: SubSampleEntity,
+});

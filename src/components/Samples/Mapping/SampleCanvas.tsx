@@ -285,15 +285,15 @@ export default function SampleCanvas({
   selectSample: JSX.Element;
   selectedSubSample: number | undefined;
 }) {
-  const subsamples = useSuspense(SubSampleResource.list(), {
+  const subsamples = useSuspense(SubSampleResource.getList, {
     blSampleId,
     limit: 9999,
   });
-  const images = useSuspense(SampleImageResource.list(), {
+  const images = useSuspense(SampleImageResource.getList, {
     blSampleId,
     limit: 9999,
   });
-  const maps = useSuspense(MapResource.list(), { blSampleId, limit: 9999 });
+  const maps = useSuspense(MapResource.getList, { blSampleId, limit: 9999 });
 
   const mapROIs = useMemo(
     () =>

@@ -8,7 +8,7 @@ import ndarray from 'ndarray';
 import { H5DataResource } from 'api/resources/H5Grove/Data';
 import { H5MetaResource } from 'api/resources/H5Grove/Meta';
 import NetworkErrorPage from 'components/NetworkErrorPage';
-import { DataCollection as DataCollectionType } from 'models/Event.d';
+import { DataCollection as DataCollectionType } from 'models/Event';
 
 function useDataSeries({
   dataCollectionId,
@@ -17,7 +17,7 @@ function useDataSeries({
   dataCollectionId: number;
   path: string;
 }): Record<string, Series[]> {
-  const meta = useSuspense(H5MetaResource.list(), {
+  const meta = useSuspense(H5MetaResource.getList, {
     dataCollectionId,
     path: path,
   });
@@ -47,13 +47,13 @@ function useDataPoint({
   fetch: boolean;
 }) {
   const data = useSuspense(
-    H5DataResource.list(),
+    H5DataResource.getList,
     fetch
       ? {
           dataCollectionId,
           path: path,
           // Selection in h5grove is zero-offset
-          selection: [selectedPoint - 1],
+          selection: selectedPoint - 1,
           flatten,
         }
       : null
@@ -130,6 +130,7 @@ function DataPlot(props: IDataPlot) {
     fetch: series && series.length > 0,
   });
 
+  if (!data) return <p>No Data</p>;
   if (!(series && series.length > 0)) return <p>No Data</p>;
   return series[0].shape.length === 2 ? (
     <Plot1d data={data} series={series} />

@@ -1,14 +1,16 @@
-import PaginatedResource from 'api/resources/Base/Paginated';
-import { withSampleImage } from 'models/SampleImage.d';
+import createPaginatedResource from './Base/Paginated';
 
-export class _SampleImageResource extends PaginatedResource {
+import { SampleImageBase } from 'models/SampleImage';
+
+export class SampleImageEntity extends SampleImageBase {
   readonly blSampleImageId: number;
 
   pk() {
     return this.blSampleImageId?.toString();
   }
-
-  static urlRoot = 'samples/images';
 }
 
-export const SampleImageResource = withSampleImage(_SampleImageResource);
+export const SampleImageResource = createPaginatedResource({
+  path: '/samples/images/:blSampleImageId',
+  schema: SampleImageEntity,
+});

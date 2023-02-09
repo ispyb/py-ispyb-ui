@@ -17,7 +17,7 @@ export default function SubSampleList({
   selectSubSample: (blubSampleId: number) => void;
 }) {
   const { skip, limit } = usePaging(10);
-  const subsamples = useSuspense(SubSampleResource.list(), {
+  const subsamples = useSuspense(SubSampleResource.getList, {
     blSampleId,
     skip,
     limit,

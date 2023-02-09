@@ -17,7 +17,7 @@ import { getXHRBlob } from 'api/resources/XHRFile';
 import { useAuth } from 'hooks/useAuth';
 import { awaitImage } from 'components/Samples/Mapping/Images';
 import { getROIName } from 'components/Samples/Mapping/Maps';
-import { GridInfo } from 'models/Event.d';
+import { GridInfo } from 'models/Event';
 
 interface GridPlotProps {
   gridInfo: GridInfo;
@@ -48,7 +48,7 @@ function GridPlotMain({
   const [parentSize, setParentSize] = useState<number[]>([150, 150]);
   const [sampleSnapshot, setSampleSnapshot] = useState<HTMLImageElement>();
 
-  const maps = useSuspense(MapResource.list(), {
+  const maps = useSuspense(MapResource.getList, {
     ...(dataCollectionGroupId
       ? { dataCollectionGroupId }
       : { dataCollectionId }),

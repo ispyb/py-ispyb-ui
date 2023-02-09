@@ -6,6 +6,7 @@ import { parse } from 'papaparse';
 import { DataCollectionFileAttachmentResource } from 'api/resources/DataCollectionFileAttachment';
 import { ErrorBoundary, getXHRArrayBuffer } from 'api/resources/XHRFile';
 import PlotEnhancer from 'components/Stats/PlotEnhancer';
+import { useAuth } from 'hooks/useAuth';
 
 interface IDataCollectionAttachmentPlot {
   dataCollectionId: number;
@@ -18,7 +19,8 @@ function DataCollectionAttachmentPlotMain({
   xAxisTitle,
   yAxisTitle,
 }: IDataCollectionAttachmentPlot) {
-  const attachments = useSuspense(DataCollectionFileAttachmentResource.list(), {
+  const { site } = useAuth();
+  const attachments = useSuspense(DataCollectionFileAttachmentResource.getList, {
     skip: 0,
     limit: 10,
     dataCollectionId,
@@ -34,7 +36,7 @@ function DataCollectionAttachmentPlotMain({
     getXHRArrayBuffer,
     plot
       ? {
-          src: plot.url,
+          src: site.host + plot._metadata.url,
         }
       : null
   );

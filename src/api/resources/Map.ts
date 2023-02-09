@@ -1,14 +1,15 @@
-import PaginatedResource from 'api/resources/Base/Paginated';
-import { withMap } from 'models/Map.d';
+import createPaginatedResource from './Base/Paginated';
+import { MapBase } from 'models/Map';
 
-export class _MapResource extends PaginatedResource {
+export class MapEntity extends MapBase {
   readonly xrfFluorescenceMappingId: number;
 
   pk() {
     return this.xrfFluorescenceMappingId?.toString();
   }
-
-  static urlRoot = 'mapping';
 }
 
-export const MapResource = withMap(_MapResource);
+export const MapResource = createPaginatedResource({
+  path: '/mapping/:xrfFluorescenceMappingId',
+  schema: MapEntity,
+});

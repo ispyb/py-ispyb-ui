@@ -53,8 +53,8 @@ function SampleReviewMain() {
 
   const [canvasMounted, setCanvasMount] = useState<boolean>(true);
   const proposal = usePath('proposal');
-  const samples = useSuspense(SampleResource.list(), {
-    proposal,
+  const samples = useSuspense(SampleResource.getList, {
+    ...(proposal ? {proposal} : null),
     order: 'asc',
     order_by: 'name',
     ...(searchParamsObj.sample ? { search: searchParamsObj.sample } : null),

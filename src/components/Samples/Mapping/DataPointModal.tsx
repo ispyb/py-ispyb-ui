@@ -4,7 +4,7 @@ import { useSuspense } from 'rest-hooks';
 import { Modal } from 'react-bootstrap';
 import DataViewer from 'components/Events/DataCollections/Mapping/DataViewer';
 import { EventResource } from 'api/resources/Event';
-import type { DataCollection } from 'models/Event.d';
+import type { DataCollection } from 'models/Event';
 import Metadata from 'components/Events/Metadata';
 
 interface IDataPointModal {
@@ -20,7 +20,7 @@ function DataPointModalMain({
   show,
   onHide,
 }: IDataPointModal) {
-  const events = useSuspense(EventResource.list(), {
+  const events = useSuspense(EventResource.getList, {
     dataCollectionId: dataCollectionId,
   });
   const dataCollection = events.results[0].Item as DataCollection;

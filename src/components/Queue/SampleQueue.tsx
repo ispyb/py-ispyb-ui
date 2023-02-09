@@ -5,7 +5,7 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { useSubscription, useSuspense } from 'rest-hooks';
 
 import { ContainerQueueSampleResource } from 'api/resources/Queue/ContainerQueueSample';
-import { ContainerQueueSample } from 'models/ContainerQueueSample.d';
+import { ContainerQueueSample } from 'models/ContainerQueueSample';
 import NestedObjectTable from 'components/Layout/NestedObjectTable';
 import Table from 'components/Layout/Table';
 import { DCTypes } from 'components/Samples/SampleStatus';
@@ -109,25 +109,25 @@ function SampleQueueMain() {
   const { skip, limit } = usePaging(10);
 
   const queuedArgs = {
-    proposal,
+    ...(proposal ? { proposal} : null),
     status: 'Queued',
     order: 'asc',
     skip,
     limit,
   };
-  const queued = useSuspense(ContainerQueueSampleResource.list(), queuedArgs);
-  useSubscription(ContainerQueueSampleResource.list(), queuedArgs);
+  const queued = useSuspense(ContainerQueueSampleResource.getList, queuedArgs);
+  useSubscription(ContainerQueueSampleResource.getList, queuedArgs);
 
   const completedArgs = {
-    proposal,
+    ...(proposal ? { proposal} : null),
     status: status === 'failed' ? 'Failed' : 'Completed',
     limit: 10,
   };
   const completed = useSuspense(
-    ContainerQueueSampleResource.list(),
+    ContainerQueueSampleResource.getList,
     completedArgs
   );
-  useSubscription(ContainerQueueSampleResource.list(), completedArgs);
+  useSubscription(ContainerQueueSampleResource.getList, completedArgs);
 
   return (
     <>

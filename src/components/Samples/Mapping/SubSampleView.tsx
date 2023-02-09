@@ -55,8 +55,8 @@ export default function SubSampleView({
 }: {
   blSubSampleId: number;
 }) {
-  const datacollections = useSuspense(EventResource.list(), { blSubSampleId });
-  const maps = useSuspense(MapResource.list(), { blSubSampleId });
+  const datacollections = useSuspense(EventResource.getList, { blSubSampleId });
+  const maps = useSuspense(MapResource.getList, { blSubSampleId });
 
   return (
     <>
