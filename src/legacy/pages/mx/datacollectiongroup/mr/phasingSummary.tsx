@@ -4,9 +4,9 @@ import { usePhasingList } from 'legacy/hooks/ispyb';
 import _ from 'lodash';
 import { Card, Col } from 'react-bootstrap';
 import { DataCollectionGroup } from '../../model';
-import { parseUglymols } from './mrTable';
+import { parseUglymols } from './phasingList';
 
-export function MRSummary({
+export function PhasingSummary({
   proposalName,
   dataCollectionGroup,
   compact,

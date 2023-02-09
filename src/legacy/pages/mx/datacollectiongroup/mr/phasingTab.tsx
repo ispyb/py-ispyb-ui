@@ -1,13 +1,16 @@
 import { usePhasingList } from 'legacy/hooks/ispyb';
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
-import { MRTable } from './mrTable';
+import { PhasingList } from './phasingList';
 
 export interface Props {
   proposalName: string;
   dataCollectionGroup: DataCollectionGroup;
 }
 
-export default function MRTab({ proposalName, dataCollectionGroup }: Props) {
+export default function PhasingTab({
+  proposalName,
+  dataCollectionGroup,
+}: Props) {
   const { data } = usePhasingList({
     proposalName,
     dataCollectionGroupId:
@@ -18,5 +21,5 @@ export default function MRTab({ proposalName, dataCollectionGroup }: Props) {
 
   const results = data.flatMap((r) => r);
 
-  return <MRTable results={results} proposalName={proposalName} />;
+  return <PhasingList results={results} proposalName={proposalName} />;
 }

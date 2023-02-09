@@ -13,7 +13,7 @@ import {
   ResultRankParam,
   ResultRankShell,
 } from 'legacy/helpers/mx/results/resultparser';
-import { MRSummary } from '../mr/mrsummary';
+import { PhasingSummary } from '../mr/phasingSummary';
 
 export interface Props {
   proposalName: string;
@@ -53,11 +53,11 @@ export default function SummaryDataCollectionGroupPanel({
         </Col>
         {dataCollectionGroup.hasMR ? (
           <Col sm={12} md={6} xl={compact ? 4 : 4} xxl={compact ? 4 : 3}>
-            <MRSummary
+            <PhasingSummary
               compact={compact}
               dataCollectionGroup={dataCollectionGroup}
               proposalName={proposalName}
-            ></MRSummary>
+            ></PhasingSummary>
           </Col>
         ) : null}
         {!compact && (
