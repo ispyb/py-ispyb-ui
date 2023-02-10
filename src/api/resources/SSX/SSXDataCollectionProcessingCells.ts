@@ -1,9 +1,9 @@
-import { createAuthenticatedResource } from '../Base/Authenticated';
+import { AuthenticatedEndpoint } from 'api/resources/Base/Authenticated';
 import { SSXDataCollectionProcessingCellsSingletonBase } from 'models/SSXDataCollectionProcessingCells';
 
-export const SSXDataCollectionProcessingCellsResource =
-  createAuthenticatedResource({
-    path: '/ssx/datacollection/processing/cells/:dummy',
+export const SSXDataCollectionProcessingCellsEndpoint =
+  new AuthenticatedEndpoint({
+    path: '/ssx/datacollection/processing/cells',
     schema: SSXDataCollectionProcessingCellsSingletonBase,
-    endpointOptions: { pollFrequency: 5000 },
+    pollFrequency: 5000,
   });

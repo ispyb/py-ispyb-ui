@@ -1,4 +1,4 @@
-import { createAuthenticatedSingletonResource } from '../Base/Singleton';
+import { AuthenticatedEndpoint } from 'api/resources/Base/Authenticated';
 import { SSXDataCollectionProcessingCellsHistogramBase } from 'models/SSXDataCollectionProcessingCellsHistogram';
 
 class SSXDataCollectionProcessingCellsHistogramEntity extends SSXDataCollectionProcessingCellsHistogramBase {
@@ -9,9 +9,12 @@ class SSXDataCollectionProcessingCellsHistogramEntity extends SSXDataCollectionP
   }
 }
 
-export const SSXDataCollectionProcessingCellsHistogramResource =
-  createAuthenticatedSingletonResource({
-    path: '/ssx/datacollection/processing/cells/histogram/:dummy',
+export const SSXDataCollectionProcessingCellsHistogramEndpoint =
+  new AuthenticatedEndpoint({
+    path: '/ssx/datacollection/processing/cells/histogram',
     schema: SSXDataCollectionProcessingCellsHistogramEntity,
-    endpointOptions: { pollFrequency: 5000 },
+    searchParams: {} as {
+      dataCollectionIds: string;
+    },
+    pollFrequency: 5000,
   });

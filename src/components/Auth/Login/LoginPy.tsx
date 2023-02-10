@@ -10,14 +10,14 @@ import {
   Spinner,
 } from 'react-bootstrap';
 
-import { LoginResource } from 'api/resources/Login';
+import { LoginEndpoint } from 'api/resources/Login';
 import { useAuth } from 'hooks/useAuth';
-import { AuthConfigResource } from 'api/resources/AuthConfig';
+import { AuthConfigEndpoint } from 'api/resources/AuthConfig';
 import { PluginConfig } from 'models/AuthConfig';
 import Keycloak from 'keycloak-js';
 
 export default function LoginPy() {
-  const authConfig = useSuspense(AuthConfigResource.getList);
+  const authConfig = useSuspense(AuthConfigEndpoint);
 
   const [error, setError] = useState<string>('');
   const [pending, setPending] = useState<boolean>(false);
@@ -59,7 +59,7 @@ export default function LoginPy() {
       setValidated(true);
 
       setError('');
-      fetch(LoginResource.create, {
+      fetch(LoginEndpoint, {
         plugin:
           passwordPlugins.length === 1
             ? passwordPlugins[0].name
@@ -208,7 +208,7 @@ export function SSOLoginPy({ plugin }: { plugin: PluginConfig }) {
   keycloak.init({});
 
   keycloak.onAuthSuccess = () => {
-    fetch(LoginResource.create, {
+    fetch(LoginEndpoint, {
       plugin: plugin.name,
       token: keycloak.token,
     }).then((response) => {

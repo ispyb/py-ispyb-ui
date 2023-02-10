@@ -1,4 +1,4 @@
-import { SSXDataCollectionProcessingCellsHistogramResource } from 'api/resources/SSX/SSXDataCollectionProcessingCellsHistogram';
+import { SSXDataCollectionProcessingCellsHistogramEndpoint } from 'api/resources/SSX/SSXDataCollectionProcessingCellsHistogram';
 import PlotWidget from 'components/Plotting/plotwidget';
 import { Event } from 'models/Event';
 import { Histogram } from 'models/Histogram';
@@ -9,7 +9,7 @@ import { useSuspense } from 'rest-hooks';
 export function UnitCellStatistics({ dcs }: { dcs: Event[] }) {
   const dcIds = dcs.map((v) => v.id);
   const data = useSuspense(
-    SSXDataCollectionProcessingCellsHistogramResource.getList,
+    SSXDataCollectionProcessingCellsHistogramEndpoint,
     {
       dataCollectionIds: dcIds.join(','),
     }
