@@ -1,7 +1,7 @@
-import { createAuthenticatedSingletonResource } from 'api/resources/Base/Singleton';
+import { AuthenticatedEndpoint } from 'api/resources/Base/Authenticated';
 import { UIOptionsSingletonBase } from 'models/UIOptions';
 
-export const UIOptionsResource = createAuthenticatedSingletonResource({
-  path: '/options/ui/:dummy',
+export const UIOptionsEndpoint = new AuthenticatedEndpoint({
+  path: '/options/ui',
   schema: UIOptionsSingletonBase,
 });

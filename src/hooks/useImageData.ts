@@ -1,8 +1,8 @@
 import { useSuspense } from 'rest-hooks';
 import { getXHRArrayBuffer } from 'api/resources/XHRFile';
 import {
-  ImageHeaderResource,
-  ImageHistogramResource,
+  ImageHeaderEndpoint,
+  ImageHistogramEndpoint,
 } from 'api/resources/ImageHeader';
 import { useAuth } from './useAuth';
 
@@ -26,12 +26,12 @@ export function useImageData(props: IImageData) {
       : null
   );
 
-  const imageHeader = useSuspense(ImageHeaderResource.getList, {
+  const imageHeader = useSuspense(ImageHeaderEndpoint, {
     ...(dataCollectionId ? { dataCollectionId } : null),
     imageNumber,
   });
 
-  const imageHistogram = useSuspense(ImageHistogramResource.getList, {
+  const imageHistogram = useSuspense(ImageHistogramEndpoint, {
     ...(dataCollectionId ? { dataCollectionId } : null),
     imageNumber,
   });

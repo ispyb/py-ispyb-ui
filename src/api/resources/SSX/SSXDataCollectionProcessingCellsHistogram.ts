@@ -1,17 +1,27 @@
-import { createAuthenticatedSingletonResource } from '../Base/Singleton';
+import { AuthenticatedEndpoint } from 'api/resources/Base/Authenticated';
 import { SSXDataCollectionProcessingCellsHistogramBase } from 'models/SSXDataCollectionProcessingCellsHistogram';
 
 class SSXDataCollectionProcessingCellsHistogramEntity extends SSXDataCollectionProcessingCellsHistogramBase {
+  readonly key: string;
+
   pk() {
-    if (this.dataCollectionIds.sort)
-      return this.dataCollectionIds.sort().join(',');
-    return undefined;
+    return this.key;
   }
 }
 
-export const SSXDataCollectionProcessingCellsHistogramResource =
-  createAuthenticatedSingletonResource({
-    path: '/ssx/datacollection/processing/cells/histogram/:dummy',
+export const SSXDataCollectionProcessingCellsHistogramEndpoint =
+  new AuthenticatedEndpoint({
+    path: '/ssx/datacollection/processing/cells/histogram',
     schema: SSXDataCollectionProcessingCellsHistogramEntity,
-    endpointOptions: { pollFrequency: 5000 },
+    process(value, params) {
+      value.key = `dataCollectionIds:${params.dataCollectionIds
+        .split(',')
+        .sort()
+        .join(',')}`;
+      return value;
+    },
+    searchParams: {} as {
+      dataCollectionIds: string;
+    },
+    pollFrequency: 5000,
   });

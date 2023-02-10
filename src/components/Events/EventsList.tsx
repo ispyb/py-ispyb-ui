@@ -6,8 +6,8 @@ import { Gear, PieChartFill } from 'react-bootstrap-icons';
 
 import { EventResource } from 'api/resources/Event';
 import { EventTypeResource } from 'api/resources/EventType';
-import { ProcessingStatus } from 'api/resources/Processing/ProcessingStatus';
-import { ProcessingMessageStatus } from 'api/resources/Processing/ProcessingMessageStatus';
+import { ProcessingStatusEndpoint } from 'api/resources/Processing/ProcessingStatus';
+import { ProcessingMessageStatusEndpoint } from 'api/resources/Processing/ProcessingMessageStatus';
 import { usePath } from 'hooks/usePath';
 import { usePaging } from 'hooks/usePaging';
 import NetworkErrorPage from 'components/NetworkErrorPage';
@@ -183,27 +183,27 @@ function EventListMain({
     .map((event) => event.id);
 
   const processingStatuses = useSuspense(
-    ProcessingStatus.getList,
+    ProcessingStatusEndpoint,
     dataCollectionIds.length > 0
       ? { dataCollectionIds: JSON.stringify(dataCollectionIds) }
       : null
   );
   useSubscription(
-    ProcessingStatus.getList,
+    ProcessingStatusEndpoint,
     refresh && dataCollectionIds.length > 0 && refresh
       ? { dataCollectionIds: JSON.stringify(dataCollectionIds) }
       : null
   );
 
   const messageStatuses = useSuspense(
-    ProcessingMessageStatus.getList,
+    ProcessingMessageStatusEndpoint,
     dataCollectionIds.length > 0
       ? { dataCollectionIds: JSON.stringify(dataCollectionIds) }
       : null
   );
 
   useSubscription(
-    ProcessingMessageStatus.getList,
+    ProcessingMessageStatusEndpoint,
     dataCollectionIds.length > 0 && refresh
       ? { dataCollectionIds: JSON.stringify(dataCollectionIds) }
       : null
