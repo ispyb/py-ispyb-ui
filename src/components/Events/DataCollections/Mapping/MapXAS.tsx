@@ -92,7 +92,7 @@ export default function MapXAS(props: IDataCollection) {
           ]}
         />
       </Col>
-      <Col xs="12" md="3" className="bg-light">
+      <Col xs="12" md={parent.count > 1 ? 3 : 4} className="bg-light">
         {selectedPoint !== undefined && (
           <DataViewer selectedPoint={selectedPoint} dataCollection={item} />
         )}
@@ -100,7 +100,7 @@ export default function MapXAS(props: IDataCollection) {
           <p>Select a point to view the related data</p>
         )}
       </Col>
-      <Col xs="12" md="3">
+      <Col xs="12" md={parent.count > 1 ? 3 : 4}>
         {item.GridInfo && item.GridInfo.length > 0 && (
           <GridPlot
             gridInfo={item.GridInfo[0]}
@@ -116,14 +116,16 @@ export default function MapXAS(props: IDataCollection) {
           />
         )}
       </Col>
-      <Col className="text-center bg-light" xs="12" md="2">
-        <PerImageAnalysis
-          dataCollectionId={item.dataCollectionId}
-          endTime={parent.endTime}
-          xAxisTitle="Sum XANES"
-          yAxisTitle="Counts"
-        />
-      </Col>
+      {parent.count > 1 && (
+        <Col className="text-center bg-light" xs="12" md="2">
+          <PerImageAnalysis
+            dataCollectionId={item.dataCollectionId}
+            endTime={parent.endTime}
+            xAxisTitle="Sum XANES"
+            yAxisTitle="Counts"
+          />
+        </Col>
+      )}
     </Row>
   );
 
