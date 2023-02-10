@@ -9,7 +9,7 @@ export default function ScreeningResult({
 }: {
   dataCollectionId: number;
 }) {
-  const screenings = useSuspense(ScreeningResource.list(), {
+  const screenings = useSuspense(ScreeningResource.getList, {
     dataCollectionId,
   });
 

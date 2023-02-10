@@ -1,21 +1,15 @@
-import { Resource } from '@rest-hooks/rest';
-import PaginatedResource from 'api/resources/Base/Paginated';
-import { withSample } from 'models/Sample.d';
+import createPaginatedResource from './Base/Paginated';
+import { SampleBase } from 'models/Sample';
 
-export class _SampleResource extends PaginatedResource {
+export class SampleEntity extends SampleBase {
   readonly blSampleId: number;
 
   pk() {
     return this.blSampleId?.toString();
   }
-
-  static create<T extends typeof Resource>(this: T) {
-    return super.create().extend({
-      schema: { samples: [this] },
-    });
-  }
-
-  static urlRoot = 'samples';
 }
 
-export const SampleResource = withSample(_SampleResource);
+export const SampleResource = createPaginatedResource({
+  path: '/samples/:blSampleId',
+  schema: SampleEntity,
+});

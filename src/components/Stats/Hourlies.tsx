@@ -6,7 +6,9 @@ import PlotEnhancer from './PlotEnhancer';
 
 export default function Hourlies() {
   const sessionId = usePath('sessionId');
-  const hourlies = useSuspense(HourliesResource.list(), { sessionId });
+  const hourlies = useSuspense(HourliesResource.getList, {
+    ...(sessionId ? { sessionId } : null),
+  });
   return (
     <>
       <PlotEnhancer

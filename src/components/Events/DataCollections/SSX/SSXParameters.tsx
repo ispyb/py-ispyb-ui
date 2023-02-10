@@ -18,7 +18,7 @@ export default function SSXDataCollectionGroupParameters({
   dcg: Event;
   sample: Sample;
 }) {
-  const session = useSuspense(Session2Resource.detail(), {
+  const session = useSuspense(Session2Resource.get, {
     sessionId: dcg.sessionId,
   });
 

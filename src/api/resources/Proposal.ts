@@ -1,13 +1,15 @@
-import PaginatedResource from 'api/resources/Base/Paginated';
-import { withProposal } from 'models/Proposal.d';
+import createPaginatedResource from './Base/Paginated';
+import { ProposalBase } from 'models/Proposal';
 
-export class _ProposalResource extends PaginatedResource {
+export class ProposalEntity extends ProposalBase {
   readonly proposal: string;
 
   pk() {
     return this.proposal;
   }
-  static urlRoot = 'proposals';
 }
 
-export const ProposalResource = withProposal(_ProposalResource);
+export const ProposalResource = createPaginatedResource({
+  path: '/proposals/:proposal',
+  schema: ProposalEntity,
+});

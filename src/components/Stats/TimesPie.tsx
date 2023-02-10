@@ -25,7 +25,9 @@ export const series: Record<string, SeriesType> = {
 
 export default function TimesPie() {
   const sessionId = usePath('sessionId');
-  const times = useSuspense(TimesResource.list(), { sessionId });
+  const times = useSuspense(TimesResource.getList, {
+    ...(sessionId ? { sessionId } : null),
+  });
   const { duration, ...plottableTimes } = times.average;
   return (
     <>

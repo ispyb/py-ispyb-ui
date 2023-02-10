@@ -1,4 +1,4 @@
-import { Sample } from 'models/Sample.d';
+import { Sample } from 'models/Sample';
 import { getColors } from 'utils/colours';
 import { Badge } from 'react-bootstrap';
 

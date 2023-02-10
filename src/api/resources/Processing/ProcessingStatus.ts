@@ -1,15 +1,8 @@
-import { AuthenticatedSingletonResource } from '../Base/Singleton';
-import { withProcessingStatusesList } from 'models/ProcessingStatusesList.d';
+import { createAuthenticatedSingletonResource } from 'api/resources/Base/Singleton';
+import { ProcessingStatusesListSingletonBase } from 'models/ProcessingStatusesList';
 
-class _ProcessingStatus extends AuthenticatedSingletonResource {
-  static getEndpointExtra() {
-    return {
-      ...super.getEndpointExtra(),
-      pollFrequency: 10000,
-    };
-  }
-
-  static urlRoot = 'processings/status';
-}
-
-export const ProcessingStatus = withProcessingStatusesList(_ProcessingStatus);
+export const ProcessingStatus = createAuthenticatedSingletonResource({
+  path: '/processings/status/:dummy',
+  schema: ProcessingStatusesListSingletonBase,
+  endpointOptions: { pollFrequency: 10000 },
+});

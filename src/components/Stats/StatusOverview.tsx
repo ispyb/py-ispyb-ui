@@ -25,7 +25,9 @@ function MessageTable(row: ExperimentTypeGroup) {
 
 export default function StatusOverview() {
   const sessionId = usePath('sessionId');
-  const errors = useSuspense(ErrorsResource.list(), { sessionId });
+  const errors = useSuspense(ErrorsResource.getList, {
+    ...(sessionId ? { sessionId } : null),
+  });
 
   return (
     <>

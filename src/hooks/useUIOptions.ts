@@ -6,5 +6,5 @@ import { UIOptionsResource } from 'api/resources/UIOptions';
  * @returns
  */
 export function useUIOptions() {
-  return useSuspense(UIOptionsResource.detail(), {});
+  return useSuspense(UIOptionsResource.getList);
 }

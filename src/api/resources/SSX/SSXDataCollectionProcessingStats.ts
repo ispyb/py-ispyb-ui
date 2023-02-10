@@ -1,22 +1,17 @@
-import { withSSXDataCollectionProcessingStats } from 'models/SSXDataCollectionProcessingStats.d';
-import { AuthenticatedResource } from '../Base/Authenticated';
+import { createAuthenticatedResource } from '../Base/Authenticated';
+import { SSXDataCollectionProcessingStatsBase } from 'models/SSXDataCollectionProcessingStats';
 
-class _SSXDataCollectionProcessingStats extends AuthenticatedResource {
+class SSXDataCollectionProcessingStatsEntity extends SSXDataCollectionProcessingStatsBase {
   readonly dataCollectionId: number;
 
   pk() {
     return this.dataCollectionId.toString();
   }
-
-  static getEndpointExtra() {
-    return {
-      ...super.getEndpointExtra(),
-      pollFrequency: 5000,
-    };
-  }
-
-  static urlRoot = 'ssx/datacollection/processing/stats';
 }
 
 export const SSXDataCollectionProcessingStatsResource =
-  withSSXDataCollectionProcessingStats(_SSXDataCollectionProcessingStats);
+  createAuthenticatedResource({
+    path: '/ssx/datacollection/processing/stats/:dataCollectionId',
+    schema: SSXDataCollectionProcessingStatsEntity,
+    endpointOptions: { pollFrequency: 5000 },
+  });

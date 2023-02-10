@@ -5,9 +5,9 @@ import { usePath } from 'hooks/usePath';
 import { SessionResource } from 'api/resources/Session';
 
 export default function SessionOverview() {
-  const sessionId = usePath('sessionId');
-  const breakdown = useSuspense(BreakdownResource.list(), { sessionId });
-  const session = useSuspense(SessionResource.detail(), { sessionId });
+  const sessionId = usePath('sessionId') || '0';
+  const breakdown = useSuspense(BreakdownResource.getList, { sessionId });
+  const session = useSuspense(SessionResource.get, { sessionId });
 
   const { overview } = breakdown;
   return (

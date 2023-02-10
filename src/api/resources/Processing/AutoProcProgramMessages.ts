@@ -1,15 +1,15 @@
-import PaginatedResource from '../Base/Paginated';
-import { withAutoProcProgramMessage } from 'models/AutoProcProgramMessage.d';
+import createPaginatedResource from '../Base/Paginated';
+import { AutoProcProgramMessageBase } from 'models/AutoProcProgramMessage';
 
-export class _AutoProcProgramMessageResource extends PaginatedResource {
-  readonly autoProcProgramMessageId: number;
+export class AutoProcProgramMessageEntity extends AutoProcProgramMessageBase {
+  readonly autoProcProgramId: number;
 
   pk() {
-    return this.autoProcProgramMessageId.toString();
+    return this.autoProcProgramId?.toString();
   }
-  static urlRoot = 'processings/attachments';
 }
 
-export const AutoProcProgramMessageResource = withAutoProcProgramMessage(
-  _AutoProcProgramMessageResource
-);
+export const AutoProcProgramMessageResource = createPaginatedResource({
+  path: '/processings/messages/:autoProcProgramMessageId',
+  schema: AutoProcProgramMessageEntity,
+});

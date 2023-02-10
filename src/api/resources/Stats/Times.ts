@@ -1,8 +1,7 @@
-import { AuthenticatedSingletonResource } from '../Base/Singleton';
-import { withTimes } from 'models/Times.d';
+import { createAuthenticatedSingletonResource } from 'api/resources/Base/Singleton';
+import { TimesSingletonBase } from 'models/Times';
 
-class _TimesResource extends AuthenticatedSingletonResource {
-  static urlRoot = 'stats/times';
-}
-
-export const TimesResource = withTimes(_TimesResource);
+export const TimesResource = createAuthenticatedSingletonResource({
+  path: '/stats/times/:dummy',
+  schema: TimesSingletonBase,
+});

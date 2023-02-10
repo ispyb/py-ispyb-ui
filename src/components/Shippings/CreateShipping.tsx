@@ -15,11 +15,11 @@ export default function CreateShipping() {
   const alertRef = useRef<any>();
   const { onSubmit, pending, error, lastFormData } = useInformativeSubmit({
     resource: ShippingResource,
-    redirect: `/proposals/${proposal.proposal}/shipments`,
+    redirect: proposal && `/proposals/${proposal.proposal}/shipments`,
     redirectKey: 'shippingId',
     alertRef,
     initialFormData: {
-      proposalId: proposal.proposalId,
+      proposalId: proposal && proposal.proposalId,
     },
   });
 
@@ -30,7 +30,7 @@ export default function CreateShipping() {
       'ui:options': {
         resource: LabContactResource,
         params: {
-          proposalId: proposal.proposalId,
+          proposalId: proposal && proposal.proposalId,
         },
         key: 'cardName',
         value: 'labContactId',
@@ -41,7 +41,7 @@ export default function CreateShipping() {
       'ui:options': {
         resource: LabContactResource,
         params: {
-          proposalId: proposal.proposalId,
+          proposalId: proposal && proposal.proposalId,
         },
         key: 'cardName',
         value: 'labContactId',

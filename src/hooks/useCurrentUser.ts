@@ -6,5 +6,5 @@ import { CurrentUserResource } from 'api/resources/CurrentUser';
  * @returns
  */
 export function useCurrentUser() {
-  return useSuspense(CurrentUserResource.detail(), {});
+  return useSuspense(CurrentUserResource.getList);
 }

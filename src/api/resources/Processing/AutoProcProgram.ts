@@ -1,15 +1,15 @@
-import PaginatedResource from 'api/resources/Base/Paginated';
-import { withAutoProcProgram } from 'models/AutoProcProgram.d';
+import createPaginatedResource from '../Base/Paginated';
+import { AutoProcProgramBase } from 'models/AutoProcProgram';
 
-export class _AutoProcProgramResource extends PaginatedResource {
+export class AutoProcProgramEntity extends AutoProcProgramBase {
   readonly autoProcProgramId: number;
 
   pk() {
     return this.autoProcProgramId?.toString();
   }
-  static urlRoot = 'processings';
 }
 
-export const AutoProcProgramResource = withAutoProcProgram(
-  _AutoProcProgramResource
-);
+export const AutoProcProgramResource = createPaginatedResource({
+  path: '/processings/:autoProcProgramId',
+  schema: AutoProcProgramEntity,
+});

@@ -1,29 +1,60 @@
-import { Resource } from '@rest-hooks/rest';
-import { AuthenticatedResource } from './Authenticated';
-import { SiteResource } from './Site';
+import { Entity, Schema } from '@rest-hooks/rest';
+import { createResource } from '@rest-hooks/rest';
+import { EndpointExtraOptions } from 'rest-hooks';
 
-export class SingletonResource extends SiteResource {
-  pk() {
-    return '1';
-  }
+import { AuthenticatedEndpoint } from './Authenticated';
+import { SiteEndpoint } from './Site';
 
-  static url<T extends typeof Resource>(this: T): string {
-    return `${SiteResource.baseUrl}/${this.urlRoot}`;
-  }
+export function createSingletonResource<U extends string, S extends Schema>({
+  path,
+  schema,
+}: {
+  readonly path: U;
+  readonly schema: S;
+}) {
+  const BaseResource = createResource({
+    path,
+    schema,
+    Endpoint: SiteEndpoint,
+  });
+
+  return {
+    ...BaseResource,
+    getList: BaseResource.getList.extend({
+      schema,
+    }),
+  };
 }
 
-export class AuthenticatedSingletonResource extends AuthenticatedResource {
+export function createAuthenticatedSingletonResource<
+  U extends string,
+  S extends Schema
+>({
+  path,
+  schema,
+  endpointOptions,
+}: {
+  readonly path: U;
+  readonly schema: S;
+  readonly endpointOptions?: EndpointExtraOptions;
+}) {
+  const BaseResource = createResource({
+    path,
+    schema,
+    Endpoint: AuthenticatedEndpoint,
+    ...endpointOptions,
+  });
+
+  return {
+    ...BaseResource,
+    getList: BaseResource.getList.extend({
+      schema,
+    }),
+  };
+}
+
+export class SingletonEntity extends Entity {
   pk() {
     return '1';
-  }
-
-  static list<T extends typeof Resource>(this: T) {
-    return super.list().extend({
-      schema: this,
-    });
-  }
-
-  static url<T extends typeof Resource>(this: T): string {
-    return `${SiteResource.baseUrl}/${this.urlRoot}`;
   }
 }

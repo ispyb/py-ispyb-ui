@@ -14,11 +14,11 @@ export default function CreateLabContact() {
   const alertRef = useRef<any>();
   const { onSubmit, pending, error, lastFormData } = useInformativeSubmit({
     resource: LabContactResource,
-    redirect: `/proposals/${proposal.proposal}/contacts`,
+    redirect: proposal && `/proposals/${proposal.proposal}/contacts`,
     redirectKey: 'labContactId',
     alertRef,
     initialFormData: {
-      proposalId: proposal.proposalId,
+      proposalId: proposal && proposal.proposalId,
     },
   });
 

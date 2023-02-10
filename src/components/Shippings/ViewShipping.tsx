@@ -10,11 +10,11 @@ import { LabContactResource } from 'api/resources/LabContact';
 import InlineEditable from 'components/RJSF/InlineEditable';
 
 function ViewShippingMain() {
-  const { shippingId } = useParams();
+  const { shippingId = '0' } = useParams();
   const proposal = useProposalInfo();
   const controller = useController();
 
-  const contact = useSuspense(ShippingResource.detail(), {
+  const contact = useSuspense(ShippingResource.get, {
     shippingId,
   });
 
@@ -26,7 +26,7 @@ function ViewShippingMain() {
       'ui:options': {
         resource: LabContactResource,
         params: {
-          proposalId: proposal.proposalId,
+          proposalId: proposal && proposal.proposalId,
         },
         key: 'cardName',
         value: 'labContactId',
@@ -37,7 +37,7 @@ function ViewShippingMain() {
       'ui:options': {
         resource: LabContactResource,
         params: {
-          proposalId: proposal.proposalId,
+          proposalId: proposal && proposal.proposalId,
         },
         key: 'cardName',
         value: 'labContactId',
@@ -57,7 +57,7 @@ function ViewShippingMain() {
     const obj = {};
     set(obj, field, value);
     return controller.fetch(
-      ShippingResource.partialUpdate(),
+      ShippingResource.partialUpdate,
       { shippingId },
       obj
     );

@@ -1,14 +1,8 @@
-import { EndpointExtraOptions } from '@rest-hooks/rest';
+import { createAuthenticatedSingletonResource } from './Base/Singleton';
+import { CurrentUserSingletonBase } from 'models/CurrentUser';
 
-import { AuthenticatedSingletonResource } from './Base/Singleton';
-import { withCurrentUser } from 'models/CurrentUser.d';
-
-class _CurrentUserResource extends AuthenticatedSingletonResource {
-  static getEndpointExtra(): EndpointExtraOptions {
-    return { dataExpiryLength: 1000 };
-  }
-
-  static urlRoot = 'user/current';
-}
-
-export const CurrentUserResource = withCurrentUser(_CurrentUserResource);
+export const CurrentUserResource = createAuthenticatedSingletonResource({
+  path: '/user/current/:dummy',
+  schema: CurrentUserSingletonBase,
+  endpointOptions: { dataExpiryLength: 1000 },
+});

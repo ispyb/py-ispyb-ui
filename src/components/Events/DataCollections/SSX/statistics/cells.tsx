@@ -9,9 +9,9 @@ import { useSuspense } from 'rest-hooks';
 export function UnitCellStatistics({ dcs }: { dcs: Event[] }) {
   const dcIds = dcs.map((v) => v.id);
   const data = useSuspense(
-    SSXDataCollectionProcessingCellsHistogramResource.list(),
+    SSXDataCollectionProcessingCellsHistogramResource.getList,
     {
-      dataCollectionIds: dcIds,
+      dataCollectionIds: dcIds.join(','),
     }
   );
   if (data === undefined) {
