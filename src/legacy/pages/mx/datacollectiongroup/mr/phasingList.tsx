@@ -1,6 +1,13 @@
 import { useAuth } from 'hooks/useAuth';
 import { getPhasingAttachmentDownloadUrl } from 'legacy/api/ispyb';
-import { Alert, Badge, Col, Row } from 'react-bootstrap';
+import {
+  Alert,
+  Badge,
+  Col,
+  OverlayTrigger,
+  Popover,
+  Row,
+} from 'react-bootstrap';
 import { PhasingInfo } from '../../model';
 
 import { MolData, UglyMolPreview } from 'components/Molecules/UglymolViewer';
@@ -243,70 +250,101 @@ function PhasingStepNode({
 
   const mol = parseUglymols([node], proposalName, urlPrefix);
   const hasMol = hasAnyMol(mol);
-  return (
-    <div
-      style={{
-        border: hasMol ? '1px solid blue' : '1px solid gray',
-        borderRadius: 5,
-        width: 'auto',
-        padding: 5,
-        display: 'inline-block',
-        backgroundColor: selected ? 'lightblue' : 'white',
-        cursor: hasMol ? 'pointer' : 'default',
-      }}
-      onClick={() => hasMol && onSelect(node)}
-    >
-      <Col>
-        <Row>
-          <small>
-            <strong>{node.PhasingStep_phasingStepType}</strong>
-          </small>
-        </Row>
-        <Row>
-          <small>
-            <i>{node.PhasingProgramRun_phasingPrograms}</i>
-          </small>
-        </Row>
-        <Row>
-          <small>
-            <i>
+
+  const overlay = (
+    <Popover id="popover-basic">
+      <Popover.Header as="h3">
+        {node.PhasingStep_phasingStepType}
+      </Popover.Header>
+      <Popover.Body>
+        <Col>
+          <Row>
+            <small>
+              <i>{node.PhasingProgramRun_phasingPrograms}</i>
+            </small>
+          </Row>
+          <Row>
+            <small>
               {node.PhasingStep_highRes}Å - {node.PhasingStep_lowRes}Å
-            </i>
-          </small>
-        </Row>
-        {node.PhasingProgramRun_phasingStartTime &&
-          node.PhasingProgramRun_phasingEndTime && (
-            <Row>
-              <small>
-                <i>
-                  {formatDateToDayAndTime(
-                    node.PhasingProgramRun_phasingStartTime
-                  )}
-                  {' - '}
-                  {formatDateToDayAndTime(
-                    node.PhasingProgramRun_phasingEndTime
-                  )}
-                </i>
-              </small>
+            </small>
+          </Row>
+          <Row>
+            <small>{node.PhasingStep_enantiomorph}</small>
+          </Row>
+          <Row>
+            <small>{node.PhasingStep_solventContent}</small>
+          </Row>
+        </Col>
+      </Popover.Body>
+    </Popover>
+  );
+
+  return (
+    <OverlayTrigger trigger="hover" placement="bottom" overlay={overlay}>
+      <div
+        style={{
+          border: hasMol ? '1px solid blue' : '1px solid gray',
+          borderRadius: 5,
+          width: 'auto',
+          padding: 5,
+          display: 'inline-block',
+          backgroundColor: selected ? 'lightblue' : 'white',
+          cursor: hasMol ? 'pointer' : 'default',
+        }}
+        onClick={() => hasMol && onSelect(node)}
+      >
+        <Col>
+          <Row>
+            <small>
+              <strong>{node.PhasingStep_phasingStepType}</strong>
+            </small>
+          </Row>
+          <Row>
+            <small>
+              <i>{node.PhasingProgramRun_phasingPrograms}</i>
+            </small>
+          </Row>
+          <Row>
+            <small>
+              <i>
+                {node.PhasingStep_highRes}Å - {node.PhasingStep_lowRes}Å
+              </i>
+            </small>
+          </Row>
+          {node.PhasingProgramRun_phasingStartTime &&
+            node.PhasingProgramRun_phasingEndTime && (
+              <Row>
+                <small>
+                  <i>
+                    {formatDateToDayAndTime(
+                      node.PhasingProgramRun_phasingStartTime
+                    )}
+                    {' - '}
+                    {formatDateToDayAndTime(
+                      node.PhasingProgramRun_phasingEndTime
+                    )}
+                  </i>
+                </small>
+              </Row>
+            )}
+          {mol.density && (
+            <Row style={{ margin: 0 }}>
+              <Badge style={{ margin: 0, marginTop: 5 }}>Density</Badge>
             </Row>
           )}
-        {mol.density && (
-          <Row style={{ margin: 0 }}>
-            <Badge style={{ margin: 0, marginTop: 5 }}>Density</Badge>
-          </Row>
-        )}
-        {mol.mr && (
-          <Row style={{ margin: 0 }}>
-            <Badge style={{ margin: 0, marginTop: 5 }}>MR</Badge>
-          </Row>
-        )}
-        {mol.refined && (
-          <Row style={{ margin: 0 }}>
-            <Badge style={{ margin: 0, marginTop: 5 }}>Refined</Badge>
-          </Row>
-        )}
-      </Col>
-    </div>
+          {mol.mr && (
+            <Row style={{ margin: 0 }}>
+              <Badge style={{ margin: 0, marginTop: 5 }}>MR</Badge>
+            </Row>
+          )}
+          {mol.refined && (
+            <Row style={{ margin: 0 }}>
+              <Badge style={{ margin: 0, marginTop: 5 }}>Refined</Badge>
+            </Row>
+          )}
+        </Col>
+      </div>
+    </OverlayTrigger>
   );
 }
 
