@@ -71,7 +71,7 @@ export function useInformativeSubmit({
     setError(undefined);
     setLastFormData(formData);
 
-    fetch(resource[method](), {}, formData)
+    fetch(resource[method], formData)
       .then((response: any) => {
         setTimeout(() => setPending(false), 500);
         if (redirect && redirectKey)
