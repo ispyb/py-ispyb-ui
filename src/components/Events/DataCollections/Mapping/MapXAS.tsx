@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import Metadata from 'components/Events/Metadata';
 import { DataCollectionBox } from 'components/Events/DataCollection';
 import { IDataCollection } from 'components/Events/DataCollections/Default';
+import PerImageAnalysis from 'components/Events/PerImageAnalysis';
 
 import GridPlot from './GridPlot';
 import DataViewer from './DataViewer';
@@ -91,7 +92,7 @@ export default function MapXAS(props: IDataCollection) {
           ]}
         />
       </Col>
-      <Col xs="12" md="4" className="bg-light">
+      <Col xs="12" md="3" className="bg-light">
         {selectedPoint !== undefined && (
           <DataViewer selectedPoint={selectedPoint} dataCollection={item} />
         )}
@@ -99,7 +100,7 @@ export default function MapXAS(props: IDataCollection) {
           <p>Select a point to view the related data</p>
         )}
       </Col>
-      <Col xs="12" md="4">
+      <Col xs="12" md="3">
         {item.GridInfo && item.GridInfo.length > 0 && (
           <GridPlot
             gridInfo={item.GridInfo[0]}
@@ -114,6 +115,14 @@ export default function MapXAS(props: IDataCollection) {
             scrollMaps={parent.count > 1}
           />
         )}
+      </Col>
+      <Col className="text-center bg-light" xs="12" md="2">
+        <PerImageAnalysis
+          dataCollectionId={item.dataCollectionId}
+          endTime={parent.endTime}
+          xAxisTitle="Sum XANES"
+          yAxisTitle="Counts"
+        />
       </Col>
     </Row>
   );
