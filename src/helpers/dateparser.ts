@@ -9,6 +9,10 @@ export function formatDateToDay(dateTime: string | undefined): string {
 export function formatDateToDayAndTime(dateTime: string | undefined): string {
   return formatDateTo(dateTime, 'dd/MM/yyyy HH:mm:ss');
 }
+
+export function formatDateToTime(dateTime: string | undefined): string {
+  return formatDateTo(dateTime, 'HH:mm:ss');
+}
 export function formatDateToDayAndPreciseTime(
   dateTime: string | undefined
 ): string {

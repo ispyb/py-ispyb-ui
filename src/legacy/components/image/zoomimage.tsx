@@ -61,7 +61,7 @@ export default function ZoomImage({
 
   const placeholder = (
     <>
-      <div className="zoom-image-placeholder">
+      <div className="zoom-image-placeholder" style={style}>
         <Spinner animation="border" role="status" variant="dark"></Spinner>
       </div>
       {legend && <span>{legend}</span>}

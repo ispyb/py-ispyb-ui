@@ -1,8 +1,12 @@
 import { useAuth } from 'hooks/useAuth';
-import { getPhasingAttachmentDownloadUrl } from 'legacy/api/ispyb';
+import {
+  getPhasingAttachmentDownloadUrl,
+  getPhasingAttachmentImageUrl,
+} from 'legacy/api/ispyb';
 import {
   Alert,
   Badge,
+  Button,
   Col,
   OverlayTrigger,
   Popover,
@@ -12,8 +16,10 @@ import { PhasingInfo } from '../../model';
 
 import { MolData, UglyMolPreview } from 'components/Molecules/UglymolViewer';
 import { Tree, TreeNode } from 'react-organizational-chart';
-import { formatDateToDayAndTime } from 'helpers/dateparser';
+import { formatDateToDay, formatDateToTime } from 'helpers/dateparser';
 import { useState } from 'react';
+import _ from 'lodash';
+import ZoomImage from 'legacy/components/image/zoomimage';
 
 export function PhasingList({
   proposalName,
@@ -88,19 +94,64 @@ function Chart({
   infos: PhasingInfo[];
   proposalName: string;
 }) {
+  const [selectedGroup, setSelectedGroup] = useState('All');
   const roots = infos.filter(
     (i) => i.PhasingStep_previousPhasingStepId === null
   );
+  const spaceGroups = _.uniq(roots.map((r) => r.SpaceGroup_spaceGroupName));
   return (
     <>
-      {roots.map((r) => (
-        <ChartLine
-          key={r.PhasingStep_phasingStepId}
-          infos={infos}
-          root={r}
-          proposalName={proposalName}
-        />
-      ))}
+      <Row style={{ marginBottom: 10 }}>
+        <Col xs={'auto'}>
+          <Button
+            variant={selectedGroup === 'All' ? 'primary' : 'outline-primary'}
+            onClick={() => setSelectedGroup('All')}
+            size="sm"
+          >
+            All
+          </Button>
+        </Col>
+        {spaceGroups.map((group) => {
+          if (!group) return null;
+          return (
+            <Col xs={'auto'} key={group}>
+              <Button
+                variant={
+                  selectedGroup === group ? 'primary' : 'outline-primary'
+                }
+                onClick={() => setSelectedGroup(group)}
+                size="sm"
+              >
+                {group}
+              </Button>
+            </Col>
+          );
+        })}
+      </Row>
+      <Row>
+        <div
+          style={{
+            maxHeight: _([window.innerHeight * 0.5, 500]).max(),
+            overflowY: 'auto',
+            borderBottom: '1px solid black',
+          }}
+        >
+          {roots
+            .filter(
+              (r) =>
+                selectedGroup === 'All' ||
+                r.SpaceGroup_spaceGroupName === selectedGroup
+            )
+            .map((r) => (
+              <ChartLine
+                key={r.PhasingStep_phasingStepId}
+                infos={infos}
+                root={r}
+                proposalName={proposalName}
+              />
+            ))}
+        </div>
+      </Row>
     </>
   );
 }
@@ -135,7 +186,7 @@ function ChartLine({
           <Badge>{root.SpaceGroup_spaceGroupName}</Badge>
         </Col>
       </Row>
-      <div style={{ overflowX: 'auto' }}>
+      <div style={{ overflowX: 'auto', padding: 1 }}>
         <Tree
           label={
             <PhasingStepNode
@@ -213,6 +264,7 @@ function ChartChildren({
               <PhasingStepNode
                 proposalName={proposalName}
                 node={r}
+                parent={node}
                 selected={selected === r}
                 onSelect={onSelect}
               />
@@ -234,13 +286,198 @@ function ChartChildren({
   );
 }
 
+function PhasingStepNodeInfo({
+  node,
+  parent,
+}: {
+  node: PhasingInfo;
+  parent?: PhasingInfo;
+}) {
+  const getToDisplay = (
+    node: PhasingInfo
+  ): {
+    label: React.ReactNode;
+    value: React.ReactNode;
+    key: string;
+  }[] => {
+    const getTimeValue = () => {
+      if (
+        node.PhasingProgramRun_phasingStartTime &&
+        node.PhasingProgramRun_phasingEndTime
+      ) {
+        const startDay = formatDateToDay(
+          node.PhasingProgramRun_phasingStartTime
+        );
+        const startTime = formatDateToTime(
+          node.PhasingProgramRun_phasingStartTime
+        );
+        const endDay = formatDateToDay(node.PhasingProgramRun_phasingEndTime);
+        const endTime = formatDateToTime(node.PhasingProgramRun_phasingEndTime);
+        if (startDay !== endDay)
+          return (
+            <Row>
+              <small>
+                <i>
+                  {startDay} {startTime}
+                  {' - '}
+                  {endDay} {endTime}
+                </i>
+              </small>
+            </Row>
+          );
+        return (
+          <Row>
+            <small>
+              <i>
+                {startDay} {startTime}
+                {' - '}
+                {endTime}
+              </i>
+            </small>
+          </Row>
+        );
+      }
+      return null;
+    };
+    return [
+      {
+        label: 'Program',
+        value: node.PhasingProgramRun_phasingPrograms,
+        key: 'program',
+      },
+      {
+        label: 'Time',
+        value: getTimeValue(),
+        key: 'time',
+      },
+      {
+        label: 'Resolution',
+        value: `${node.PhasingStep_highRes}Å - ${node.PhasingStep_lowRes}Å`,
+        key: 'resolution',
+      },
+      {
+        label: 'Enantiomorph',
+        value: node.PhasingStep_enantiomorph,
+        key: 'enantiomorph',
+      },
+      {
+        label: 'Solvent',
+        value: node.PhasingStep_solventContent,
+        key: 'solvent',
+      },
+      ...(node.statisticsValue && node.metric
+        ? _(node.metric.split(', '))
+            .zip(node.statisticsValue.split(', '))
+            .map(([metric, value]) => {
+              if (
+                Number.isNaN(Number(value)) ||
+                Number.isInteger(Number(value))
+              ) {
+                return {
+                  label: metric,
+                  value: value,
+                  key: metric || 'undefined',
+                };
+              }
+              return {
+                label: metric,
+                value: Number(value).toFixed(2),
+                key: metric || 'undefined',
+              };
+            })
+            .value()
+        : []),
+    ];
+  };
+  let info = getToDisplay(node).filter((i) => i.value);
+
+  if (parent) {
+    const infoParent = getToDisplay(parent);
+    info = info.filter((i) => {
+      const parentInfo = infoParent.find((p) => p.key === i.key);
+      return !parentInfo || parentInfo.value !== i.value;
+    });
+  }
+  if (info.length === 0) return null;
+
+  return (
+    <Col>
+      {info.map((i) => (
+        <Row key={i.key}>
+          {' '}
+          <small>
+            <strong>{i.label}:</strong> {i.value}
+          </small>
+        </Row>
+      ))}
+    </Col>
+  );
+}
+
+function PhasingStepImages({
+  ids,
+  names,
+  proposalName,
+}: {
+  ids?: string;
+  names?: string;
+  proposalName: string;
+}) {
+  if (!names || !ids) return null;
+  const images = _(names.split(','))
+    .zip(ids.split(','))
+    .map(([name, id]) => ({ name, id }))
+    .value();
+
+  return (
+    <Row>
+      {images.map(
+        (i) =>
+          i.id &&
+          i.name && (
+            <Col key={i.id} xs={images.length === 1 ? 12 : 6}>
+              <Row>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <ZoomImage
+                    src={
+                      getPhasingAttachmentImageUrl({
+                        proposalName,
+                        phasingprogramattachmentid: i.id,
+                      }).url
+                    }
+                    style={{ width: 100 }}
+                  />
+                </div>
+              </Row>
+              {i.name.split('_').map((n) => (
+                <Row key={n}>
+                  <small>
+                    <i>{n.toLowerCase()}</i>
+                  </small>
+                </Row>
+              ))}
+            </Col>
+          )
+      )}
+    </Row>
+  );
+}
+
 function PhasingStepNode({
   node,
+  parent,
   proposalName,
   selected,
   onSelect,
 }: {
   node: PhasingInfo;
+  parent?: PhasingInfo;
   proposalName: string;
   selected: boolean;
   onSelect: (p: PhasingInfo) => void;
@@ -251,37 +488,42 @@ function PhasingStepNode({
   const mol = parseUglymols([node], proposalName, urlPrefix);
   const hasMol = hasAnyMol(mol);
 
+  const mapName = (name?: string) => {
+    if (name === 'SUBSTRUCTUREDETERMINATION') {
+      return 'SUBSTRUCTURE DETERMINATION';
+    }
+    if (name === 'MODELBUILDING') {
+      return 'MODEL BUILDING';
+    }
+    return name;
+  };
+  const capitalizeName = (name?: string) => {
+    if (!name) return name;
+    return name
+      .split(' ')
+      .map((n) => n.charAt(0).toUpperCase() + n.slice(1).toLowerCase())
+      .join(' ');
+  };
+
   const overlay = (
     <Popover id="popover-basic">
       <Popover.Header as="h3">
         {node.PhasingStep_phasingStepType}
       </Popover.Header>
       <Popover.Body>
-        <Col>
-          <Row>
-            <small>
-              <i>{node.PhasingProgramRun_phasingPrograms}</i>
-            </small>
-          </Row>
-          <Row>
-            <small>
-              Resolution: {node.PhasingStep_highRes}Å -{' '}
-              {node.PhasingStep_lowRes}Å
-            </small>
-          </Row>
-          <Row>
-            <small>Enantiomorph: {node.PhasingStep_enantiomorph}</small>
-          </Row>
-          <Row>
-            <small>Solvent: {node.PhasingStep_solventContent}</small>
-          </Row>
-        </Col>
+        <PhasingStepNodeInfo node={node} />
       </Popover.Body>
     </Popover>
   );
 
+  const infos = <PhasingStepNodeInfo node={node} parent={parent} />;
+
   return (
-    <OverlayTrigger trigger="hover" placement="bottom" overlay={overlay}>
+    <OverlayTrigger
+      trigger={['hover', 'focus']}
+      placement="bottom"
+      overlay={overlay}
+    >
       <div
         style={{
           border: hasMol ? '1px solid blue' : '1px solid gray',
@@ -297,37 +539,28 @@ function PhasingStepNode({
         <Col>
           <Row>
             <small>
-              <strong>{node.PhasingStep_phasingStepType}</strong>
+              <strong>
+                {capitalizeName(mapName(node.PhasingStep_phasingStepType))}
+              </strong>
             </small>
           </Row>
-          <Row>
-            <small>
-              <i>{node.PhasingProgramRun_phasingPrograms}</i>
-            </small>
-          </Row>
-          <Row>
-            <small>
-              <i>
-                {node.PhasingStep_highRes}Å - {node.PhasingStep_lowRes}Å
-              </i>
-            </small>
-          </Row>
-          {node.PhasingProgramRun_phasingStartTime &&
-            node.PhasingProgramRun_phasingEndTime && (
-              <Row>
-                <small>
-                  <i>
-                    {formatDateToDayAndTime(
-                      node.PhasingProgramRun_phasingStartTime
-                    )}
-                    {' - '}
-                    {formatDateToDayAndTime(
-                      node.PhasingProgramRun_phasingEndTime
-                    )}
-                  </i>
-                </small>
-              </Row>
-            )}
+          {infos && (
+            <Row
+              style={{
+                marginRight: 0,
+                marginLeft: 0,
+                marginBottom: 5,
+                marginTop: 5,
+              }}
+            >
+              <div
+                style={{
+                  borderTop: '1px solid gray',
+                }}
+              />
+            </Row>
+          )}
+          {infos}
           {mol.density && (
             <Row style={{ margin: 0 }}>
               <Badge style={{ margin: 0, marginTop: 5 }}>Density</Badge>
@@ -343,6 +576,11 @@ function PhasingStepNode({
               <Badge style={{ margin: 0, marginTop: 5 }}>Refined</Badge>
             </Row>
           )}
+          <PhasingStepImages
+            proposalName={proposalName}
+            ids={node.png}
+            names={node.fileType}
+          />
         </Col>
       </div>
     </OverlayTrigger>

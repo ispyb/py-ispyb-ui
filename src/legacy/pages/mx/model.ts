@@ -456,12 +456,12 @@ export interface PhasingInfo {
   PhasingProgramRun_phasingStartTime?: string;
   PhasingProgramRun_phasingStatus?: string;
   PhasingProgramRun_recordTimeStamp?: string;
-  PhasingStatistics_metric?: null;
+  PhasingStatistics_metric?: string;
   PhasingStatistics_phasingStatisticsId?: null;
   PhasingStatistics_phasingStatisticsIds?: null;
-  PhasingStatistics_statisticsValue?: null;
+  PhasingStatistics_statisticsValue?: string;
   PhasingStep_autoProcScalingId?: number;
-  PhasingStep_enantiomorph?: null;
+  PhasingStep_enantiomorph?: boolean;
   PhasingStep_highRes?: string;
   PhasingStep_lowRes?: string;
   PhasingStep_method?: string;
@@ -471,7 +471,7 @@ export interface PhasingInfo {
   PhasingStep_previousPhasingStepId?: number;
   PhasingStep_programRunId?: number;
   PhasingStep_recordTimeStamp?: string;
-  PhasingStep_solventContent?: null;
+  PhasingStep_solventContent?: number;
   PhasingStep_spaceGroupId?: number;
   Protein_proteinId?: number;
   SpaceGroup_MX_used?: true;
@@ -485,13 +485,13 @@ export interface PhasingInfo {
   SpaceGroup_spaceGroupShortName?: string;
   csv?: string;
   csvFileName?: string;
-  fileType?: null;
+  fileType?: string;
   map?: string;
   mapFileName?: string;
-  metric?: null;
+  metric?: string;
   pdb?: string;
   pdbFileName?: string;
   phasingProgramAttachmentId?: null;
-  png?: null;
-  statisticsValue?: null;
+  png?: string;
+  statisticsValue?: string;
 }

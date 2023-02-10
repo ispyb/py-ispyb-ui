@@ -750,3 +750,15 @@ export function getPhasingAttachmentDownloadUrl({
     url: `/proposal/${proposalName}/mx/phasing/phasingprogramattachmentid/${phasingprogramattachmentid}/download`,
   };
 }
+
+export function getPhasingAttachmentImageUrl({
+  proposalName,
+  phasingprogramattachmentid,
+}: {
+  proposalName: string;
+  phasingprogramattachmentid: string;
+}) {
+  return {
+    url: `/proposal/${proposalName}/mx/phasing/phasingprogramattachmentid/${phasingprogramattachmentid}/image`,
+  };
+}
