@@ -15,14 +15,17 @@ type Param = {
 export default function SessionClassificationPage() {
   const { sessionId, proposalName = '' } = useParams<Param>();
 
-  const [cutoff, setCutoff] = useState<number>(0);
-
   const proposal: string = proposalName ? proposalName : '';
   const { data, isError: sessionError } = useEMClassification({
     sessionId,
     proposalName: proposal,
   });
   if (sessionError) throw Error(sessionError);
+  const resolutions = data.map((d: Classification) => d.estimatedResolution);
+  const maxCutoff = Math.max(...resolutions);
+  const minCutoff = Math.min(...resolutions);
+
+  const [cutoff, setCutoff] = useState<number>(maxCutoff);
 
   const classificationGroupsId = new Set(
     data.map((d: Classification) => d.particleClassificationGroupId)
@@ -40,23 +43,22 @@ export default function SessionClassificationPage() {
         data.filter(
           (d: Classification) =>
             d.particleClassificationGroupId === id &&
-            d.estimatedResolution > cutoff
+            d.estimatedResolution <= cutoff
         )
       );
     }
   });
 
-  const resolutions = data.map((d: Classification) => d.estimatedResolution);
-  const maxCutoff = Math.max(...resolutions);
-  const minCutoff = Math.min(...resolutions);
-
   return (
     <EMPage sessionId={sessionId} proposalName={proposalName}>
       <Menu>
         <div>
-          <Form.Label>{`Cutoff resolution > ${cutoff}`}</Form.Label>
+          <Form.Label>{`Cutoff resolution ${String.fromCharCode(
+            8804
+          )} ${cutoff}`}</Form.Label>{' '}
           <Form.Range
             onChange={(e) => setCutoff(e.target.valueAsNumber)}
+            step={0.5}
             value={cutoff}
             min={minCutoff}
             max={maxCutoff}
