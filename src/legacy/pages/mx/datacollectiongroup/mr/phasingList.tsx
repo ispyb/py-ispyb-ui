@@ -265,14 +265,15 @@ function PhasingStepNode({
           </Row>
           <Row>
             <small>
-              {node.PhasingStep_highRes}Å - {node.PhasingStep_lowRes}Å
+              Resolution: {node.PhasingStep_highRes}Å -{' '}
+              {node.PhasingStep_lowRes}Å
             </small>
           </Row>
           <Row>
-            <small>{node.PhasingStep_enantiomorph}</small>
+            <small>Enantiomorph: {node.PhasingStep_enantiomorph}</small>
           </Row>
           <Row>
-            <small>{node.PhasingStep_solventContent}</small>
+            <small>Solvent: {node.PhasingStep_solventContent}</small>
           </Row>
         </Col>
       </Popover.Body>
