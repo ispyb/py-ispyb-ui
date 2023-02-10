@@ -1,4 +1,4 @@
-import { SSXDataCollectionProcessingStatsResource } from 'api/resources/SSX/SSXDataCollectionProcessingStats';
+import { SSXDataCollectionProcessingStatsEndpoint } from 'api/resources/SSX/SSXDataCollectionProcessingStats';
 import PlotWidget from 'components/Plotting/plotwidget';
 import {
   getColorFromHitPercent,
@@ -11,7 +11,7 @@ import { useSuspense } from 'rest-hooks';
 
 export function HitsStatisticsCumulative({ dcs }: { dcs: Event[] }) {
   const dcIds = dcs.map((v) => v.id);
-  const data = useSuspense(SSXDataCollectionProcessingStatsResource.getList, {
+  const data = useSuspense(SSXDataCollectionProcessingStatsEndpoint, {
     dataCollectionIds: dcIds.join(','),
   });
 
@@ -91,7 +91,7 @@ function getStats(stats: SSXDataCollectionProcessingStats[], id: number) {
 
 export function DataCollectionGroupHitGraph({ dcs }: { dcs: Event[] }) {
   const dcIds = dcs.map((v) => v.id);
-  const data = useSuspense(SSXDataCollectionProcessingStatsResource.getList, {
+  const data = useSuspense(SSXDataCollectionProcessingStatsEndpoint, {
     dataCollectionIds: dcIds.join(','),
   });
 
