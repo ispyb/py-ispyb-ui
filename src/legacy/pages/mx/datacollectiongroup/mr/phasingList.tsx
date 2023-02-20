@@ -551,7 +551,7 @@ function PhasingStepNode({
   return (
     <OverlayTrigger
       trigger={['hover', 'focus']}
-      placement="bottom"
+      placement="auto"
       overlay={overlay}
     >
       <div

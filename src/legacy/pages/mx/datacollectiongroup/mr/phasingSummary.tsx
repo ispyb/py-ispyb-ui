@@ -47,6 +47,14 @@ export function PhasingSummary({
     .filter((u) => u !== undefined)
     .get(0);
 
+  const lig = uglymols
+    .map((u) => u.lig)
+    .filter((u) => u !== undefined)
+    .get(0);
+  const newlig = uglymols
+    .map((u) => u.newlig)
+    .filter((u) => u !== undefined)
+    .get(0);
   return (
     <Card style={{ padding: 20 }}>
       <Card.Body>
@@ -63,6 +71,8 @@ export function PhasingSummary({
         {refined ? <UglyMolPreview mol={refined} title="Refined" /> : null}
         {density ? <UglyMolPreview mol={density} title="Density" /> : null}
         {mr ? <UglyMolPreview mol={mr} title="MR" /> : null}
+        {lig ? <UglyMolPreview mol={lig} title="Ligand" /> : null}
+        {newlig ? <UglyMolPreview mol={newlig} title="New ligand" /> : null}
       </Card.Body>
     </Card>
   );
