@@ -212,17 +212,29 @@ function ChartLine({
           <Row>
             {mol.density && (
               <Col>
-                <UglyMolPreview mol={mol.density} title="Density" />
+                <UglyMolPreview
+                  mol={mol.density}
+                  title="Density"
+                  key={selected?.PhasingStep_phasingStepId + 'density'}
+                />
               </Col>
             )}
             {mol.mr && (
               <Col>
-                <UglyMolPreview mol={mol.mr} title="MR" />
+                <UglyMolPreview
+                  mol={mol.mr}
+                  title="MR"
+                  key={selected?.PhasingStep_phasingStepId + 'mr'}
+                />
               </Col>
             )}
             {mol.refined && (
               <Col>
-                <UglyMolPreview mol={mol.refined} title="Refined" />
+                <UglyMolPreview
+                  mol={mol.refined}
+                  title="Refined"
+                  key={selected?.PhasingStep_phasingStepId + 'refined'}
+                />
               </Col>
             )}
           </Row>

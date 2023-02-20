@@ -19,10 +19,18 @@ export function UglyMolPreview({
   title: string;
 }) {
   const { ref, inView } = useInView({ rootMargin: '1000px 0px' });
+  const [show, setShow] = useState(false);
 
-  const fallback = <LoadingUglyMolViewer title={title} height={250} />;
+  const fallback = (
+    <LoadingUglyMolViewer
+      title={title}
+      height={250}
+      setShow={setShow}
+      show={show}
+    />
+  );
 
-  if (inView) {
+  if (inView && show) {
     return (
       <div ref={ref}>
         <Suspense fallback={fallback}>
@@ -39,10 +47,14 @@ export function LoadingUglyMolViewer({
   title,
   height,
   width = '100%',
+  setShow,
+  show,
 }: {
   title: string;
   height: number;
   width?: number | string;
+  setShow: (show: boolean) => void;
+  show: boolean;
 }) {
   return (
     <Col>
@@ -57,15 +69,21 @@ export function LoadingUglyMolViewer({
           backgroundColor: 'black',
         }}
       >
-        <Spinner animation="border" role="status" style={{ color: 'white' }}>
-          <span className="visually-hidden"></span>
-        </Spinner>
+        {show ? (
+          <Spinner animation="border" role="status" style={{ color: 'white' }}>
+            <span className="visually-hidden"></span>
+          </Spinner>
+        ) : (
+          <Button variant="outline-secondary" onClick={() => setShow(true)}>
+            Load molecule preview
+          </Button>
+        )}
       </div>
       <Row>
         <Col></Col>
         <Col xs={'auto'}>
           <Button variant="link" size="sm" disabled>
-            {title} - Loading
+            {show ? `${title} - loading` : title}
           </Button>
         </Col>
         <Col></Col>
