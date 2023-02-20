@@ -1,4 +1,4 @@
-import { SSXDataCollectionProcessingStatsResource } from 'api/resources/SSX/SSXDataCollectionProcessingStats';
+import { SSXDataCollectionProcessingStatsEndpoint } from 'api/resources/SSX/SSXDataCollectionProcessingStats';
 import { LazyImage } from 'api/resources/XHRFile';
 import LightBox from 'components/LightBox';
 import Loading from 'components/Loading';
@@ -106,7 +106,7 @@ function DataCollectionGroupSummary({ dcs }: { dcs: Event[] }) {
 
 function DataCollectionGroupRunSummary({ dcs }: { dcs: Event[] }) {
   const dcIds = dcs.map((v) => v.id);
-  const stats = useSuspense(SSXDataCollectionProcessingStatsResource.getList, {
+  const stats = useSuspense(SSXDataCollectionProcessingStatsEndpoint, {
     dataCollectionIds: dcIds.join(','),
   });
 

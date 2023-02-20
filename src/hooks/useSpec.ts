@@ -1,12 +1,12 @@
 import { useSuspense } from 'rest-hooks';
-import { OpenAPIResource } from 'api/resources/Base/OpenAPI';
+import { OpenAPIEndpoint } from 'api/resources/Base/OpenAPI';
 
 /**
  * Get the OpenAPI spec from the server
  * @returns - the OpenAPI resource
  */
 export function useSpec() {
-  return useSuspense(OpenAPIResource.getList);
+  return useSuspense(OpenAPIEndpoint);
 }
 
 /**

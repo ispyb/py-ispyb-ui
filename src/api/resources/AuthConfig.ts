@@ -1,7 +1,7 @@
-import { createSingletonResource } from 'api/resources/Base/Singleton';
+import { SiteEndpoint } from './Base/Site';
 import { AuthConfigSingletonBase } from 'models/AuthConfig';
 
-export const AuthConfigResource = createSingletonResource({
-  path: '/auth/config/:dummy',
+export const AuthConfigEndpoint = new SiteEndpoint({
+  path: '/auth/config',
   schema: AuthConfigSingletonBase,
 });

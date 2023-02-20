@@ -1,5 +1,5 @@
-import { SSXDataCollectionProcessingStatsResource } from 'api/resources/SSX/SSXDataCollectionProcessingStats';
-import { IMetadataItemProps, MetadataRow } from 'components/Events/Metadata';
+import { SSXDataCollectionProcessingStatsEndpoint } from 'api/resources/SSX/SSXDataCollectionProcessingStats';
+import { IMetadataItemProps, MetadataItem } from 'components/Events/Metadata';
 import {
   getColorFromHitPercent,
   getColorFromIndexedPercent,
@@ -45,7 +45,7 @@ export function CompactSSXContent({
 
 export function CompactSSXStats({ dcs }: { dcs: Event[] }) {
   const dcIds = dcs.map((v) => v.id);
-  const data = useSuspense(SSXDataCollectionProcessingStatsResource.getList, {
+  const data = useSuspense(SSXDataCollectionProcessingStatsEndpoint, {
     dataCollectionIds: dcIds.join(','),
   });
   const nbImages = dcs

@@ -1,8 +1,15 @@
-import { createAuthenticatedSingletonResource } from './Base/Singleton';
-import { CurrentUserSingletonBase } from 'models/CurrentUser';
+import { AuthenticatedEndpoint } from 'api/resources/Base/Authenticated';
+import { CurrentUserBase } from 'models/CurrentUser';
 
-export const CurrentUserResource = createAuthenticatedSingletonResource({
-  path: '/user/current/:dummy',
-  schema: CurrentUserSingletonBase,
-  endpointOptions: { dataExpiryLength: 1000 },
+class CurrentUserEntity extends CurrentUserBase {
+  readonly login: string;
+
+  pk() {
+    return this.login;
+  }
+}
+
+export const CurrentUserEndpoint = new AuthenticatedEndpoint({
+  path: '/user/current',
+  schema: CurrentUserEntity,
 });

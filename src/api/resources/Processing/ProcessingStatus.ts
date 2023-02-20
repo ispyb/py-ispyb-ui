@@ -1,8 +1,25 @@
-import { createAuthenticatedSingletonResource } from 'api/resources/Base/Singleton';
-import { ProcessingStatusesListSingletonBase } from 'models/ProcessingStatusesList';
+import { AuthenticatedEndpoint } from 'api/resources/Base/Authenticated';
+import { ProcessingStatusesListBase } from 'models/ProcessingStatusesList';
 
-export const ProcessingStatus = createAuthenticatedSingletonResource({
-  path: '/processings/status/:dummy',
-  schema: ProcessingStatusesListSingletonBase,
-  endpointOptions: { pollFrequency: 10000 },
+class ProcessingStatusEntity extends ProcessingStatusesListBase {
+  readonly key: string;
+
+  pk() {
+    return this.key;
+  }
+}
+
+export const ProcessingStatusEndpoint = new AuthenticatedEndpoint({
+  path: '/processings/status',
+  schema: ProcessingStatusEntity,
+  process(value, params) {
+    value.key = `dataCollectionIds:${JSON.parse(params.dataCollectionIds)
+      .sort()
+      .join(',')}`;
+    return value;
+  },
+  searchParams: {} as {
+    dataCollectionIds: string;
+  },
+  pollFrequency: 10000,
 });
