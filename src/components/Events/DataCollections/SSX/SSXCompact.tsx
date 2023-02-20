@@ -1,5 +1,5 @@
 import { SSXDataCollectionProcessingStatsEndpoint } from 'api/resources/SSX/SSXDataCollectionProcessingStats';
-import { IMetadataItemProps, MetadataItem } from 'components/Events/Metadata';
+import { IMetadataItemProps, MetadataRow } from 'components/Events/Metadata';
 import {
   getColorFromHitPercent,
   getColorFromIndexedPercent,
