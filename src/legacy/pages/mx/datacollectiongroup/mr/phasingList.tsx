@@ -48,8 +48,8 @@ export function PhasingList({
           </i>
           J Appl Crystallogr. 2013 Jun 1;46(Pt 3):804-810.
           <br />
-          <a href="https://www.ncbi.nlm.nih.gov/pubmed/?term=monaco+ESRF ">
-            https://www.ncbi.nlm.nih.gov/pubmed/?term=monaco+ESRF
+          <a href="https://pubmed.ncbi.nlm.nih.gov/23682196">
+            https://pubmed.ncbi.nlm.nih.gov/23682196
           </a>
         </small>
       </div>
@@ -68,8 +68,8 @@ export function PhasingList({
           Acta Crystallogr D Biol Crystallogr. 2010 Apr;66(Pt 4):479-85. doi:
           10.1107/S0907444909038360.
           <br />
-          <a href="https://www.ncbi.nlm.nih.gov/pubmed/20383001">
-            https://www.ncbi.nlm.nih.gov/pubmed/20383001
+          <a href="https://pubmed.ncbi.nlm.nih.gov/20383001">
+            https://pubmed.ncbi.nlm.nih.gov/20383001
           </a>
         </small>
       </div>
