@@ -237,6 +237,24 @@ function ChartLine({
                 />
               </Col>
             )}
+            {mol.lig && (
+              <Col>
+                <UglyMolPreview
+                  mol={mol.lig}
+                  title="Ligand"
+                  key={selected?.PhasingStep_phasingStepId + 'lig'}
+                />
+              </Col>
+            )}
+            {mol.newlig && (
+              <Col>
+                <UglyMolPreview
+                  mol={mol.newlig}
+                  title="New ligand"
+                  key={selected?.PhasingStep_phasingStepId + 'lig'}
+                />
+              </Col>
+            )}
           </Row>
         </>
       )}
@@ -588,6 +606,16 @@ function PhasingStepNode({
               <Badge style={{ margin: 0, marginTop: 5 }}>Refined</Badge>
             </Row>
           )}
+          {mol.lig && (
+            <Row style={{ margin: 0 }}>
+              <Badge style={{ margin: 0, marginTop: 5 }}>Ligand</Badge>
+            </Row>
+          )}
+          {mol.newlig && (
+            <Row style={{ margin: 0 }}>
+              <Badge style={{ margin: 0, marginTop: 5 }}>New ligand</Badge>
+            </Row>
+          )}
           <PhasingStepImages
             proposalName={proposalName}
             ids={node.png}
@@ -599,10 +627,22 @@ function PhasingStepNode({
   );
 }
 
-export type UglyMol = { density?: MolData; mr?: MolData; refined?: MolData };
+export type UglyMol = {
+  density?: MolData;
+  mr?: MolData;
+  refined?: MolData;
+  lig?: MolData;
+  newlig?: MolData;
+};
 
 function hasAnyMol(uglymols?: UglyMol) {
-  return !!uglymols?.density || !!uglymols?.mr || !!uglymols?.refined;
+  return (
+    !!uglymols?.density ||
+    !!uglymols?.mr ||
+    !!uglymols?.refined ||
+    !!uglymols?.lig ||
+    !!uglymols?.newlig
+  );
 }
 
 export function parseUglymols(
@@ -642,6 +682,32 @@ export function parseUglymols(
         const maps = parseAttachments(step.mapFileName, step.map);
         const csvs = parseAttachments(step.csvFileName, step.csv);
         const pdbs = parseAttachments(step.pdbFileName, step.pdb);
+        if (
+          'lig.pdb' in pdbs &&
+          'lig_2mFo-DFc.map' in maps &&
+          'lig_mFo-DFc.map' in maps
+        ) {
+          res.lig = buildUglymolUrl(
+            pdbs['lig.pdb'],
+            [maps['lig_2mFo-DFc.map'], maps['lig_mFo-DFc.map']],
+            undefined,
+            urlPrefix,
+            proposalName
+          );
+        }
+        if (
+          'new_ligand.pdb' in pdbs &&
+          'lig_2mFo-DFc.map' in maps &&
+          'lig_mFo-DFc.map' in maps
+        ) {
+          res.newlig = buildUglymolUrl(
+            pdbs['new_ligand.pdb'],
+            [maps['lig_2mFo-DFc.map'], maps['lig_mFo-DFc.map']],
+            undefined,
+            urlPrefix,
+            proposalName
+          );
+        }
         if (
           'MR.pdb' in pdbs &&
           '2FOFC_MR.map' in maps &&
