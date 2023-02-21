@@ -323,7 +323,7 @@ function UglyMolLoadingOverlay({
           marginLeft: 10,
         }}
       >
-        {message}
+        Uglymol is {message.toLowerCase()}
       </strong>
       <small
         style={{
