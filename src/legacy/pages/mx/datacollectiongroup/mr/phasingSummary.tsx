@@ -1,10 +1,9 @@
 import { UglyMolPreview } from 'components/Molecules/UglymolViewer';
 import { useAuth } from 'hooks/useAuth';
+import { getBestMol, parseMols } from 'legacy/helpers/mx/results/phasingparser';
 import { usePhasingList } from 'legacy/hooks/ispyb';
-import _ from 'lodash';
 import { Card, Col } from 'react-bootstrap';
 import { DataCollectionGroup } from '../../model';
-import { parseUglymols } from './phasingList';
 
 export function PhasingSummary({
   proposalName,
@@ -30,31 +29,10 @@ export function PhasingSummary({
 
   const urlPrefix = `${site.host}${site.apiPrefix}/${token}`;
 
-  const uglymols = _(results)
-    .groupBy((r) => r.SpaceGroup_spaceGroupName)
-    .map((group) => parseUglymols(group, proposalName, urlPrefix));
-  const refined = uglymols
-    .map((u) => u.refined)
-    .filter((u) => u !== undefined)
-    .get(0);
-  const mr = uglymols
-    .map((u) => u.mr)
-    .filter((u) => u !== undefined)
-    .get(0);
-
-  const density = uglymols
-    .map((u) => u.density)
-    .filter((u) => u !== undefined)
-    .get(0);
-
-  const lig = uglymols
-    .map((u) => u.lig)
-    .filter((u) => u !== undefined)
-    .get(0);
-  const newlig = uglymols
-    .map((u) => u.newlig)
-    .filter((u) => u !== undefined)
-    .get(0);
+  const molecules = results.flatMap((r) =>
+    parseMols(r, proposalName, urlPrefix)
+  );
+  const bestMolecule = getBestMol(molecules);
   return (
     <Card style={{ padding: 20 }}>
       <Card.Body>
@@ -68,11 +46,7 @@ export function PhasingSummary({
             }}
           />
         </Col>
-        {refined ? <UglyMolPreview mol={refined} title="Refined" /> : null}
-        {density ? <UglyMolPreview mol={density} title="Density" /> : null}
-        {mr ? <UglyMolPreview mol={mr} title="MR" /> : null}
-        {lig ? <UglyMolPreview mol={lig} title="Ligand" /> : null}
-        {newlig ? <UglyMolPreview mol={newlig} title="New ligand" /> : null}
+        {bestMolecule ? <UglyMolPreview mol={bestMolecule} /> : null}
       </Card.Body>
     </Card>
   );

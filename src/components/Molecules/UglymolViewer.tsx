@@ -1,27 +1,24 @@
+import {
+  getMolDisplayName,
+  MolData,
+} from 'legacy/helpers/mx/results/phasingparser';
 import _ from 'lodash';
 import { Suspense, useEffect, useState } from 'react';
 import { Button, Col, Row, Spinner } from 'react-bootstrap';
 import { useInView } from 'react-intersection-observer';
 import { Viewer } from './uglymol';
 
-export type MolData = {
-  pdb: string;
-  map1: string;
-  map2: string;
-  peaks?: string;
-};
-
 export function UglyMolPreview({
   mol,
-  title,
   defaultShow = false,
 }: {
   mol: MolData;
-  title: string;
   defaultShow?: boolean;
 }) {
   const { ref, inView } = useInView({ rootMargin: '1000px 0px' });
   const [show, setShow] = useState(defaultShow);
+
+  const title = getMolDisplayName(mol);
 
   useEffect(() => {
     if (!inView && show !== defaultShow) setShow(defaultShow);
