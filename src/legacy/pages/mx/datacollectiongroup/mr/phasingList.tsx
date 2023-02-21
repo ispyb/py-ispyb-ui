@@ -604,7 +604,7 @@ function PhasingStepNode({
     >
       <div
         style={{
-          border: hasMol ? '1px solid blue' : '1px solid gray',
+          border: hasMol ? '2px solid blue' : '1px solid gray',
           borderRadius: 5,
           width: 'auto',
           padding: 5,
