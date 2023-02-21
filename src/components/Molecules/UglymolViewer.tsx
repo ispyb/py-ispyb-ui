@@ -25,7 +25,7 @@ export function UglyMolPreview({
   }, [inView, show, defaultShow]);
 
   const fallback = (
-    <LoadingUglyMolViewer
+    <UnloadedUglyMolViewer
       title={title}
       height={250}
       setShow={setShow}
@@ -37,7 +37,12 @@ export function UglyMolPreview({
     return (
       <div ref={ref}>
         <Suspense fallback={fallback}>
-          <UglyMolViewer mol={mol} title={title} height={250} />
+          <UglyMolViewer
+            mol={mol}
+            title={title}
+            height={250}
+            unload={() => setShow(false)}
+          />
         </Suspense>
       </div>
     );
@@ -46,7 +51,7 @@ export function UglyMolPreview({
   }
 }
 
-export function LoadingUglyMolViewer({
+export function UnloadedUglyMolViewer({
   title,
   height,
   width = '100%',
@@ -88,15 +93,26 @@ export function LoadingUglyMolViewer({
           </>
         )}
       </div>
-      <Row>
-        <Col></Col>
-        <Col xs={'auto'}>
-          <Button variant="link" size="sm" disabled>
-            {show ? `${title} - loading` : title}
-          </Button>
-        </Col>
-        <Col></Col>
-      </Row>
+      <div style={{ backgroundColor: 'black', color: 'white', paddingLeft: 5 }}>
+        <Row>
+          <Col xs={'auto'} style={{ display: 'flex' }}>
+            <strong style={{ display: 'flex', alignItems: 'center' }}>
+              <small>PBD: {title}</small>
+            </strong>
+          </Col>
+          <Col xs={'auto'} style={{ display: 'flex' }}>
+            <Button
+              variant="link"
+              size="sm"
+              style={{ padding: 0, color: 'white' }}
+              onClick={() => setShow(true)}
+            >
+              <i>load</i>
+            </Button>
+          </Col>
+          <Col></Col>
+        </Row>
+      </div>
     </Col>
   );
 }
@@ -106,11 +122,13 @@ export function UglyMolViewer({
   title,
   height,
   width = '100%',
+  unload,
 }: {
   mol: MolData;
   title: string;
   height: number;
   width?: number | string;
+  unload?: () => void;
 }) {
   const [idViewer] = useState(_.uniqueId('view-'));
   const [idhud] = useState(_.uniqueId('hud-'));
@@ -161,19 +179,19 @@ export function UglyMolViewer({
     };
   }, [mol, idViewer, idhud, idhelp]);
 
-  const getLoadingText = () => {
-    if (!pdbLoaded) return 'Loading PDB...';
-    if (!mapsLoaded) return 'Loading maps...';
-    if (!peaksLoaded) return 'Loading peaks...';
-    return 'Loading';
-  };
+  const isLoading = !pdbLoaded || !mapsLoaded || !peaksLoaded;
+
+  const loadingText = !pdbLoaded
+    ? 'Loading PDB...'
+    : !mapsLoaded
+    ? 'Loading maps...'
+    : !peaksLoaded
+    ? 'Loading peaks...'
+    : 'Loading';
 
   return (
     <>
-      <UglyMolLoadingOverlay
-        show={!pdbLoaded || !mapsLoaded || !peaksLoaded}
-        message={getLoadingText()}
-      />
+      <UglyMolLoadingOverlay show={isLoading} message={loadingText} />
       <Col>
         <div
           id={idViewer}
@@ -216,21 +234,52 @@ export function UglyMolViewer({
             }}
           ></small>
         </div>
-        <Row>
-          <Col></Col>
-          <Col xs={'auto'}>
-            <Button
-              variant="link"
-              size="sm"
-              onClick={() => {
-                viewerObject?.toggle_full_screen();
-              }}
-            >
-              {title} - Fullscreen
-            </Button>
-          </Col>
-          <Col></Col>
-        </Row>
+        <div
+          style={{ backgroundColor: 'black', color: 'white', paddingLeft: 5 }}
+        >
+          <Row>
+            <Col xs={'auto'} style={{ display: 'flex' }}>
+              <strong style={{ display: 'flex', alignItems: 'center' }}>
+                <small>PBD: {title}</small>
+              </strong>
+            </Col>
+            <Col xs={'auto'} style={{ display: 'flex' }}>
+              <Button
+                variant="link"
+                size="sm"
+                style={{ padding: 0, color: 'white' }}
+                onClick={() => {
+                  viewerObject?.toggle_full_screen();
+                }}
+              >
+                <i>fullscreen</i>
+              </Button>
+            </Col>
+            <Col xs={'auto'} style={{ display: 'flex' }}>
+              <Button
+                variant="link"
+                size="sm"
+                style={{ padding: 0, color: 'white' }}
+                onClick={unload}
+              >
+                <i>unload</i>
+              </Button>
+            </Col>
+            <Col></Col>
+            {isLoading && (
+              <Col xs={'auto'}>
+                <Spinner
+                  animation="border"
+                  role="status"
+                  style={{ color: 'white', height: 20, width: 20 }}
+                >
+                  <span className="visually-hidden"></span>
+                </Spinner>
+                {loadingText}
+              </Col>
+            )}
+          </Row>
+        </div>
       </Col>
     </>
   );

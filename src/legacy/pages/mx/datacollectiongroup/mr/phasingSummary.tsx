@@ -2,7 +2,7 @@ import { UglyMolPreview } from 'components/Molecules/UglymolViewer';
 import { useAuth } from 'hooks/useAuth';
 import { getBestMol, parseMols } from 'legacy/helpers/mx/results/phasingparser';
 import { usePhasingList } from 'legacy/hooks/ispyb';
-import { Card, Col } from 'react-bootstrap';
+import { Badge, Card, Col, Row } from 'react-bootstrap';
 import { DataCollectionGroup } from '../../model';
 
 export function PhasingSummary({
@@ -33,11 +33,30 @@ export function PhasingSummary({
     parseMols(r, proposalName, urlPrefix)
   );
   const bestMolecule = getBestMol(molecules);
+  if (!bestMolecule) return null;
   return (
     <Card style={{ padding: 20 }}>
       <Card.Body>
         <Col>
           <h5 className="text-center">Phasing</h5>
+
+          <Row style={{ justifyContent: 'center' }}>
+            <Col xs={'auto'}>
+              <Badge style={{ margin: 0 }}>
+                {bestMolecule.phasing.PhasingStep_method}
+              </Badge>
+            </Col>
+            <Col xs={'auto'}>
+              <Badge style={{ margin: 0 }}>
+                {bestMolecule.phasing.PhasingProgramRun_phasingPrograms}
+              </Badge>
+            </Col>
+            <Col xs={'auto'}>
+              <Badge style={{ margin: 0 }}>
+                {bestMolecule.phasing.SpaceGroup_spaceGroupName}
+              </Badge>
+            </Col>
+          </Row>
           <div
             style={{
               marginTop: 10,
@@ -46,7 +65,7 @@ export function PhasingSummary({
             }}
           />
         </Col>
-        {bestMolecule ? <UglyMolPreview mol={bestMolecule} /> : null}
+        <UglyMolPreview mol={bestMolecule} />
       </Card.Body>
     </Card>
   );
