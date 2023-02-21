@@ -54,104 +54,94 @@ export function parseMols(
   let res: Molecules = [];
 
   if (
-    phasing.PhasingStep_phasingStepType &&
-    ['MODELBUILDING', 'REFINEMENT', 'LIGAND_FIT'].includes(
-      phasing.PhasingStep_phasingStepType
-    )
+    phasing.PhasingStep_phasingStepType === 'MODELBUILDING' &&
+    phasing.map &&
+    phasing.pdb
   ) {
+    res.push(
+      buildMolData(
+        phasing.pdb,
+        phasing.map.split(','),
+        undefined,
+        urlPrefix,
+        proposalName,
+        'density',
+        phasing
+      )
+    );
+  } else {
+    const maps = parseAttachments(phasing.mapFileName, phasing.map);
+    const csvs = parseAttachments(phasing.csvFileName, phasing.csv);
+    const pdbs = parseAttachments(phasing.pdbFileName, phasing.pdb);
     if (
-      phasing.PhasingStep_phasingStepType === 'MODELBUILDING' &&
-      phasing.map &&
-      phasing.pdb
+      'lig.pdb' in pdbs &&
+      'lig_2mFo-DFc.map' in maps &&
+      'lig_mFo-DFc.map' in maps
     ) {
       res.push(
         buildMolData(
-          phasing.pdb,
-          phasing.map.split(','),
+          pdbs['lig.pdb'],
+          [maps['lig_2mFo-DFc.map'], maps['lig_mFo-DFc.map']],
           undefined,
           urlPrefix,
           proposalName,
-          'density',
+          'lig',
           phasing
         )
       );
-    } else if (
-      phasing.PhasingStep_phasingStepType === 'REFINEMENT' ||
-      phasing.PhasingStep_phasingStepType === 'LIGAND_FIT'
+    }
+    if (
+      'new_ligand.pdb' in pdbs &&
+      'lig_2mFo-DFc.map' in maps &&
+      'lig_mFo-DFc.map' in maps
     ) {
-      const maps = parseAttachments(phasing.mapFileName, phasing.map);
-      const csvs = parseAttachments(phasing.csvFileName, phasing.csv);
-      const pdbs = parseAttachments(phasing.pdbFileName, phasing.pdb);
-      if (
-        'lig.pdb' in pdbs &&
-        'lig_2mFo-DFc.map' in maps &&
-        'lig_mFo-DFc.map' in maps
-      ) {
-        res.push(
-          buildMolData(
-            pdbs['lig.pdb'],
-            [maps['lig_2mFo-DFc.map'], maps['lig_mFo-DFc.map']],
-            undefined,
-            urlPrefix,
-            proposalName,
-            'lig',
-            phasing
-          )
-        );
-      }
-      if (
-        'new_ligand.pdb' in pdbs &&
-        'lig_2mFo-DFc.map' in maps &&
-        'lig_mFo-DFc.map' in maps
-      ) {
-        res.push(
-          buildMolData(
-            pdbs['new_ligand.pdb'],
-            [maps['lig_2mFo-DFc.map'], maps['lig_mFo-DFc.map']],
-            undefined,
-            urlPrefix,
-            proposalName,
-            'new_ligand',
-            phasing
-          )
-        );
-      }
-      if (
-        'MR.pdb' in pdbs &&
-        '2FOFC_MR.map' in maps &&
-        'FOFC_MR.map' in maps &&
-        'peaks.csv' in csvs
-      ) {
-        res.push(
-          buildMolData(
-            pdbs['MR.pdb'],
-            [maps['2FOFC_MR.map'], maps['FOFC_MR.map']],
-            csvs['peaks.csv'],
-            urlPrefix,
-            proposalName,
-            'MR',
-            phasing
-          )
-        );
-      }
-      if (
-        'refined.pdb' in pdbs &&
-        '2FOFC_REFINE.map' in maps &&
-        'FOFC_REFINE.map' in maps &&
-        'peaks.csv' in csvs
-      ) {
-        res.push(
-          buildMolData(
-            pdbs['refined.pdb'],
-            [maps['2FOFC_REFINE.map'], maps['FOFC_REFINE.map']],
-            csvs['peaks.csv'],
-            urlPrefix,
-            proposalName,
-            'refined',
-            phasing
-          )
-        );
-      }
+      res.push(
+        buildMolData(
+          pdbs['new_ligand.pdb'],
+          [maps['lig_2mFo-DFc.map'], maps['lig_mFo-DFc.map']],
+          undefined,
+          urlPrefix,
+          proposalName,
+          'new_ligand',
+          phasing
+        )
+      );
+    }
+    if (
+      'MR.pdb' in pdbs &&
+      '2FOFC_MR.map' in maps &&
+      'FOFC_MR.map' in maps &&
+      'peaks.csv' in csvs
+    ) {
+      res.push(
+        buildMolData(
+          pdbs['MR.pdb'],
+          [maps['2FOFC_MR.map'], maps['FOFC_MR.map']],
+          csvs['peaks.csv'],
+          urlPrefix,
+          proposalName,
+          'MR',
+          phasing
+        )
+      );
+    }
+    if (
+      'refined.pdb' in pdbs &&
+      '2FOFC_REFINE.map' in maps &&
+      'FOFC_REFINE.map' in maps &&
+      'peaks.csv' in csvs
+    ) {
+      res.push(
+        buildMolData(
+          pdbs['refined.pdb'],
+          [maps['2FOFC_REFINE.map'], maps['FOFC_REFINE.map']],
+          csvs['peaks.csv'],
+          urlPrefix,
+          proposalName,
+          'refined',
+          phasing
+        )
+      );
     }
   }
   return res;

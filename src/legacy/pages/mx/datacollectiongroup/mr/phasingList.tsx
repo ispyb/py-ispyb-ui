@@ -30,12 +30,21 @@ export function PhasingList({
   results: PhasingInfo[];
   proposalName: string;
 }) {
+  const [selected, setSelected] = useState<PhasingInfo | undefined>(undefined);
+
   return (
     <Col>
       <Chart
         infos={results.filter((r) => r.PhasingStep_phasingStepId)}
         proposalName={proposalName}
+        selected={selected}
+        setSelected={setSelected}
       ></Chart>
+      <SelectedStepInfo
+        proposalName={proposalName}
+        selected={selected}
+        setSelected={setSelected}
+      ></SelectedStepInfo>
       <div style={{ padding: 10, lineHeight: '1rem' }}>
         <small>
           <strong>
@@ -89,12 +98,102 @@ export function PhasingList({
   );
 }
 
+function SelectedStepInfo({
+  proposalName,
+  selected,
+  setSelected,
+}: {
+  proposalName: string;
+  selected: PhasingInfo | undefined;
+  setSelected: (s: PhasingInfo | undefined) => void;
+}) {
+  const { site, token } = useAuth();
+  const urlPrefix = `${site.host}${site.apiPrefix}/${token}`;
+  const molecules = selected
+    ? parseMols(selected, proposalName, urlPrefix)
+    : [];
+  const hasMol = hasAnyMol(molecules);
+
+  if (!selected)
+    return (
+      <Alert variant="dark" style={{ marginTop: 10, backgroundColor: 'black' }}>
+        Select a step above to see details.
+      </Alert>
+    );
+
+  return (
+    <Alert variant="dark" style={{ marginTop: 10, backgroundColor: 'black' }}>
+      <Row>
+        <Col md={12} xl={4} xxl={2}>
+          <Row>
+            <Col xs={'auto'}>
+              <Badge bg="light" style={{ margin: 0 }}>
+                {selected.PhasingStep_method}
+              </Badge>
+            </Col>
+            <Col xs={'auto'}>
+              <Badge bg="light" style={{ margin: 0 }}>
+                {selected.SpaceGroup_spaceGroupName}
+              </Badge>
+            </Col>
+          </Row>
+          <div
+            style={{
+              border: '1px solid white',
+              marginTop: 10,
+              marginBottom: 10,
+            }}
+          />
+          <Row>
+            <PhasingStepNodeInfo node={selected}></PhasingStepNodeInfo>
+          </Row>
+        </Col>
+
+        {hasMol ? (
+          molecules.map((mol, index) => (
+            <Col
+              key={mol.pdb}
+              md={12}
+              xl={index === 0 ? 8 : 12}
+              xxl={molecules.length === 1 ? 10 : 5}
+            >
+              <div style={{ border: '1px solid white', margin: 5 }}>
+                <UglyMolPreview mol={mol} key={mol.pdb} />
+              </div>
+            </Col>
+          ))
+        ) : (
+          <Col>
+            <Alert
+              style={{
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+              variant="dark"
+            >
+              {selected.pdb
+                ? `${selected.pdbFileName} could not be interpreted by ISPyB.`
+                : 'This step did not produce any PDB file'}
+            </Alert>
+          </Col>
+        )}
+      </Row>
+    </Alert>
+  );
+}
+
 function Chart({
   infos,
   proposalName,
+  selected,
+  setSelected,
 }: {
   infos: PhasingInfo[];
   proposalName: string;
+  selected: PhasingInfo | undefined;
+  setSelected: (s: PhasingInfo | undefined) => void;
 }) {
   const [selectedGroup, setSelectedGroup] = useState('All');
   const roots = infos.filter(
@@ -150,6 +249,8 @@ function Chart({
                 infos={infos}
                 root={r}
                 proposalName={proposalName}
+                selected={selected}
+                setSelected={setSelected}
               />
             ))}
         </div>
@@ -162,18 +263,15 @@ function ChartLine({
   infos,
   root,
   proposalName,
+  selected,
+  setSelected,
 }: {
   infos: PhasingInfo[];
   root: PhasingInfo;
   proposalName: string;
+  selected: PhasingInfo | undefined;
+  setSelected: (s: PhasingInfo | undefined) => void;
 }) {
-  const [selected, setSelected] = useState<PhasingInfo | undefined>(undefined);
-
-  const { site, token } = useAuth();
-  const urlPrefix = `${site.host}${site.apiPrefix}/${token}`;
-  const molecules = selected
-    ? parseMols(selected, proposalName, urlPrefix)
-    : [];
   return (
     <Alert
       key={root.PhasingStep_phasingStepId}
@@ -208,18 +306,6 @@ function ChartLine({
           />
         </Tree>
       </div>
-      {hasAnyMol(molecules) && (
-        <>
-          <div style={{ borderTop: '1px solid gray', height: 0, margin: 20 }} />
-          <Row>
-            {molecules.map((mol) => (
-              <Col key={mol.pdb}>
-                <UglyMolPreview mol={mol} key={mol.pdb} />
-              </Col>
-            ))}
-          </Row>
-        </>
-      )}
     </Alert>
   );
 }
@@ -393,7 +479,7 @@ function PhasingStepNodeInfo({
   if (info.length === 0) return null;
 
   return (
-    <Col>
+    <Col xs={'auto'}>
       {info.map((i) => (
         <Row key={i.key}>
           {' '}
@@ -524,9 +610,9 @@ function PhasingStepNode({
           padding: 5,
           display: 'inline-block',
           backgroundColor: selected ? 'lightblue' : 'white',
-          cursor: hasMol ? 'pointer' : 'default',
+          cursor: 'pointer',
         }}
-        onClick={() => hasMol && onSelect(node)}
+        onClick={() => onSelect(node)}
       >
         <Col>
           <Row>
