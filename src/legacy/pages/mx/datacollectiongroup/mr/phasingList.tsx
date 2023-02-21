@@ -157,7 +157,7 @@ function SelectedStepInfo({
               xl={index === 0 ? 8 : 12}
               xxl={molecules.length === 1 ? 10 : 5}
             >
-              <div style={{ border: '1px solid white', margin: 5 }}>
+              <div style={{ border: '1px solid white', margin: 5, padding: 1 }}>
                 <UglyMolPreview mol={mol} key={mol.pdb} />
               </div>
             </Col>
