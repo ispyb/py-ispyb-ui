@@ -1,6 +1,6 @@
 import { UglyMolPreview } from 'components/Molecules/UglymolViewer';
 import { useAuth } from 'hooks/useAuth';
-import { getBestMol, parseMols } from 'legacy/helpers/mx/results/phasingparser';
+import { parsePhasingStepsForSummary } from 'legacy/helpers/mx/results/phasingparser';
 import { usePhasingList } from 'legacy/hooks/ispyb';
 import { Badge, Card, Col, Row } from 'react-bootstrap';
 import { DataCollectionGroup } from '../../model';
@@ -29,44 +29,62 @@ export function PhasingSummary({
 
   const urlPrefix = `${site.host}${site.apiPrefix}/${token}`;
 
-  const molecules = results.flatMap((r) =>
-    parseMols(r, proposalName, urlPrefix)
+  const summaryPhasings = parsePhasingStepsForSummary(
+    results,
+    proposalName,
+    urlPrefix
   );
-  const bestMolecule = getBestMol(molecules);
-  if (!bestMolecule) return null;
-  return (
-    <Card style={{ padding: 20 }}>
-      <Card.Body>
-        <Col>
-          <h5 className="text-center">Phasing</h5>
 
-          <Row style={{ justifyContent: 'center' }}>
-            <Col xs={'auto'}>
-              <Badge style={{ margin: 0 }}>
-                {bestMolecule.phasing.PhasingStep_method}
-              </Badge>
-            </Col>
-            <Col xs={'auto'}>
-              <Badge style={{ margin: 0 }}>
-                {bestMolecule.phasing.PhasingProgramRun_phasingPrograms}
-              </Badge>
-            </Col>
-            <Col xs={'auto'}>
-              <Badge style={{ margin: 0 }}>
-                {bestMolecule.phasing.SpaceGroup_spaceGroupName}
-              </Badge>
-            </Col>
-          </Row>
-          <div
-            style={{
-              marginTop: 10,
-              marginBottom: 10,
-              borderTop: '1px solid lightgray',
-            }}
-          />
+  if (!summaryPhasings || !summaryPhasings.length) return null;
+  return (
+    <>
+      {summaryPhasings.map((p) => (
+        <Col
+          sm={12}
+          md={6}
+          xl={compact ? 4 : 4}
+          xxl={compact ? 4 : 3}
+          key={p.phasing.PhasingStep_phasingStepId}
+        >
+          <Card
+            key={p.phasing.PhasingStep_phasingStepId}
+            style={{ padding: 20 }}
+          >
+            <Card.Body>
+              <Col>
+                <h5 className="text-center">
+                  {p.phasing.PhasingStep_method} phasing
+                </h5>
+                <Row style={{ justifyContent: 'center' }}>
+                  <Col xs={'auto'}>
+                    <Badge style={{ margin: 0 }}>
+                      {p.phasing.PhasingStep_method}
+                    </Badge>
+                  </Col>
+                  <Col xs={'auto'}>
+                    <Badge style={{ margin: 0 }}>
+                      {p.phasing.PhasingProgramRun_phasingPrograms}
+                    </Badge>
+                  </Col>
+                  <Col xs={'auto'}>
+                    <Badge style={{ margin: 0 }}>
+                      {p.phasing.SpaceGroup_spaceGroupName}
+                    </Badge>
+                  </Col>
+                </Row>
+                <div
+                  style={{
+                    marginTop: 10,
+                    marginBottom: 10,
+                    borderTop: '1px solid lightgray',
+                  }}
+                />
+              </Col>
+              <UglyMolPreview mol={p.molecules[0]} />
+            </Card.Body>
+          </Card>
         </Col>
-        <UglyMolPreview mol={bestMolecule} />
-      </Card.Body>
-    </Card>
+      ))}
+    </>
   );
 }

@@ -1,7 +1,4 @@
-import {
-  getMolDisplayName,
-  MolData,
-} from 'legacy/helpers/mx/results/phasingparser';
+import { MolData } from 'legacy/helpers/mx/results/phasingparser';
 import _ from 'lodash';
 import { Suspense, useEffect, useState } from 'react';
 import { Button, Col, Row, Spinner } from 'react-bootstrap';
@@ -18,7 +15,7 @@ export function UglyMolPreview({
   const { ref, inView } = useInView({ rootMargin: '1000px 0px' });
   const [show, setShow] = useState(defaultShow);
 
-  const title = getMolDisplayName(mol);
+  const title = mol.displayPdb;
 
   useEffect(() => {
     if (!inView && show !== defaultShow) setShow(defaultShow);

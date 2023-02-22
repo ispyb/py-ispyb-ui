@@ -51,15 +51,11 @@ export default function SummaryDataCollectionGroupPanel({
             proposalName={proposalName}
           ></ThirdSection>
         </Col>
-        {dataCollectionGroup.hasMR ? (
-          <Col sm={12} md={6} xl={compact ? 4 : 4} xxl={compact ? 4 : 3}>
-            <PhasingSummary
-              compact={compact}
-              dataCollectionGroup={dataCollectionGroup}
-              proposalName={proposalName}
-            ></PhasingSummary>
-          </Col>
-        ) : null}
+        <PhasingSummary
+          compact={compact}
+          dataCollectionGroup={dataCollectionGroup}
+          proposalName={proposalName}
+        ></PhasingSummary>
         {!compact && (
           <Col xs={12} sm={6} md={true}>
             <ZoomImage

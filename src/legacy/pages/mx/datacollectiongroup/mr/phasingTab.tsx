@@ -1,3 +1,5 @@
+import { useAuth } from 'hooks/useAuth';
+import { parsePhasingSteps } from 'legacy/helpers/mx/results/phasingparser';
 import { usePhasingList } from 'legacy/hooks/ispyb';
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
 import { PhasingList } from './phasingList';
@@ -11,6 +13,8 @@ export default function PhasingTab({
   proposalName,
   dataCollectionGroup,
 }: Props) {
+  const { site, token } = useAuth();
+
   const { data } = usePhasingList({
     proposalName,
     dataCollectionGroupId:
@@ -20,6 +24,8 @@ export default function PhasingTab({
   if (!data || !data.length) return null;
 
   const results = data.flatMap((r) => r);
+  const urlPrefix = `${site.host}${site.apiPrefix}/${token}`;
+  const parsedResults = parsePhasingSteps(results, proposalName, urlPrefix);
 
-  return <PhasingList results={results} proposalName={proposalName} />;
+  return <PhasingList results={parsedResults} proposalName={proposalName} />;
 }

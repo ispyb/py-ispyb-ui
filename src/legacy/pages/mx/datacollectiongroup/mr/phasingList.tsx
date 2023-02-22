@@ -1,4 +1,3 @@
-import { useAuth } from 'hooks/useAuth';
 import { getPhasingAttachmentImageUrl } from 'legacy/api/ispyb';
 import {
   Alert,
@@ -9,7 +8,6 @@ import {
   Popover,
   Row,
 } from 'react-bootstrap';
-import { PhasingInfo } from '../../model';
 
 import { UglyMolPreview } from 'components/Molecules/UglymolViewer';
 import { Tree, TreeNode } from 'react-organizational-chart';
@@ -18,24 +16,28 @@ import { useState } from 'react';
 import _ from 'lodash';
 import ZoomImage from 'legacy/components/image/zoomimage';
 import {
-  getMolDisplayName,
-  hasAnyMol,
-  parseMols,
+  PhasingStep,
+  PhasingTree,
+  PhasingTreeNode,
+  stepsToTrees,
 } from 'legacy/helpers/mx/results/phasingparser';
 
 export function PhasingList({
   proposalName,
   results,
 }: {
-  results: PhasingInfo[];
+  results: PhasingStep[];
   proposalName: string;
 }) {
-  const [selected, setSelected] = useState<PhasingInfo | undefined>(undefined);
+  const phasingTrees = stepsToTrees(results);
+  const [selected, setSelected] = useState<PhasingTreeNode | undefined>(
+    undefined
+  );
 
   return (
     <Col>
       <Chart
-        infos={results.filter((r) => r.PhasingStep_phasingStepId)}
+        data={phasingTrees}
         proposalName={proposalName}
         selected={selected}
         setSelected={setSelected}
@@ -99,21 +101,13 @@ export function PhasingList({
 }
 
 function SelectedStepInfo({
-  proposalName,
   selected,
   setSelected,
 }: {
   proposalName: string;
-  selected: PhasingInfo | undefined;
-  setSelected: (s: PhasingInfo | undefined) => void;
+  selected: PhasingTreeNode | undefined;
+  setSelected: (s: PhasingTreeNode | undefined) => void;
 }) {
-  const { site, token } = useAuth();
-  const urlPrefix = `${site.host}${site.apiPrefix}/${token}`;
-  const molecules = selected
-    ? parseMols(selected, proposalName, urlPrefix)
-    : [];
-  const hasMol = hasAnyMol(molecules);
-
   if (!selected)
     return (
       <Alert variant="dark" style={{ marginTop: 10, backgroundColor: 'black' }}>
@@ -128,12 +122,12 @@ function SelectedStepInfo({
           <Row>
             <Col xs={'auto'}>
               <Badge bg="light" style={{ margin: 0 }}>
-                {selected.PhasingStep_method}
+                {selected.step.phasing.PhasingStep_method}
               </Badge>
             </Col>
             <Col xs={'auto'}>
               <Badge bg="light" style={{ margin: 0 }}>
-                {selected.SpaceGroup_spaceGroupName}
+                {selected.step.phasing.SpaceGroup_spaceGroupName}
               </Badge>
             </Col>
           </Row>
@@ -149,13 +143,13 @@ function SelectedStepInfo({
           </Row>
         </Col>
 
-        {hasMol ? (
-          molecules.map((mol, index) => (
+        {selected.step.molecules.length ? (
+          selected.step.molecules.map((mol, index) => (
             <Col
               key={mol.pdb}
               md={12}
               xl={index === 0 ? 8 : 12}
-              xxl={molecules.length === 1 ? 10 : 5}
+              xxl={selected.step.molecules.length === 1 ? 10 : 5}
             >
               <div style={{ border: '1px solid white', margin: 5, padding: 1 }}>
                 <UglyMolPreview mol={mol} key={mol.pdb} />
@@ -173,8 +167,8 @@ function SelectedStepInfo({
               }}
               variant="dark"
             >
-              {selected.pdb
-                ? `${selected.pdbFileName} could not be interpreted by ISPyB.`
+              {selected.step.phasing.pdb
+                ? `${selected.step.phasing.pdbFileName} could not be interpreted by ISPyB.`
                 : 'This step did not produce any PDB file'}
             </Alert>
           </Col>
@@ -185,21 +179,34 @@ function SelectedStepInfo({
 }
 
 function Chart({
-  infos,
+  data,
   proposalName,
   selected,
   setSelected,
 }: {
-  infos: PhasingInfo[];
+  data: PhasingTree[];
   proposalName: string;
-  selected: PhasingInfo | undefined;
-  setSelected: (s: PhasingInfo | undefined) => void;
+  selected: PhasingTreeNode | undefined;
+  setSelected: (s: PhasingTreeNode | undefined) => void;
 }) {
+  const countUnsuccessful = data.filter((d) => !d.root.success).length;
+  const countSuccessful = data.filter((d) => d.root.success).length;
   const [selectedGroup, setSelectedGroup] = useState('All');
-  const roots = infos.filter(
-    (i) => i.PhasingStep_previousPhasingStepId === null
+  const [successFilter, setSuccessFilter] = useState<
+    'all' | 'success' | 'failed'
+  >(countSuccessful ? 'success' : 'all');
+
+  const spaceGroups = _.uniq(
+    data.map((d) => d.root.step.phasing.SpaceGroup_spaceGroupName)
   );
-  const spaceGroups = _.uniq(roots.map((r) => r.SpaceGroup_spaceGroupName));
+
+  const filteredData = data.filter((d) => {
+    if (successFilter === 'success' && !d.root.success) return false;
+    if (successFilter === 'failed' && d.root.success) return false;
+    if (selectedGroup === 'All') return true;
+    return d.root.step.phasing.SpaceGroup_spaceGroupName === selectedGroup;
+  });
+
   return (
     <>
       <Row style={{ marginBottom: 10 }}>
@@ -229,6 +236,37 @@ function Chart({
           );
         })}
       </Row>
+      <Row style={{ marginBottom: 10 }}>
+        <Col xs={'auto'}>
+          <Button
+            variant={successFilter === 'all' ? 'primary' : 'outline-primary'}
+            onClick={() => setSuccessFilter('all')}
+            size="sm"
+          >
+            Show all ({data.length})
+          </Button>
+        </Col>
+        <Col xs={'auto'}>
+          <Button
+            variant={
+              successFilter === 'success' ? 'primary' : 'outline-primary'
+            }
+            onClick={() => setSuccessFilter('success')}
+            size="sm"
+          >
+            Show successful ({countSuccessful})
+          </Button>
+        </Col>
+        <Col xs={'auto'}>
+          <Button
+            variant={successFilter === 'failed' ? 'primary' : 'outline-primary'}
+            onClick={() => setSuccessFilter('failed')}
+            size="sm"
+          >
+            Show unsuccessful ({countUnsuccessful})
+          </Button>
+        </Col>
+      </Row>
       <Row>
         <div
           style={{
@@ -237,22 +275,15 @@ function Chart({
             borderBottom: '1px solid black',
           }}
         >
-          {roots
-            .filter(
-              (r) =>
-                selectedGroup === 'All' ||
-                r.SpaceGroup_spaceGroupName === selectedGroup
-            )
-            .map((r) => (
-              <ChartLine
-                key={r.PhasingStep_phasingStepId}
-                infos={infos}
-                root={r}
-                proposalName={proposalName}
-                selected={selected}
-                setSelected={setSelected}
-              />
-            ))}
+          {filteredData.map((r) => (
+            <ChartLine
+              key={r.root.step.phasing.PhasingStep_phasingStepId}
+              data={r}
+              proposalName={proposalName}
+              selected={selected}
+              setSelected={setSelected}
+            />
+          ))}
         </div>
       </Row>
     </>
@@ -260,30 +291,28 @@ function Chart({
 }
 
 function ChartLine({
-  infos,
-  root,
+  data,
   proposalName,
   selected,
   setSelected,
 }: {
-  infos: PhasingInfo[];
-  root: PhasingInfo;
+  data: PhasingTree;
   proposalName: string;
-  selected: PhasingInfo | undefined;
-  setSelected: (s: PhasingInfo | undefined) => void;
+  selected: PhasingTreeNode | undefined;
+  setSelected: (s: PhasingTreeNode | undefined) => void;
 }) {
   return (
     <Alert
-      key={root.PhasingStep_phasingStepId}
+      key={data.root.step.phasing.PhasingStep_phasingStepId}
       variant="light"
       style={{ padding: 10, lineHeight: '1rem' }}
     >
       <Row>
         <Col xs={'auto'}>
-          <Badge>{root.PhasingStep_method} </Badge>
+          <Badge>{data.root.step.phasing.PhasingStep_method} </Badge>
         </Col>
         <Col xs={'auto'}>
-          <Badge>{root.SpaceGroup_spaceGroupName}</Badge>
+          <Badge>{data.root.step.phasing.SpaceGroup_spaceGroupName}</Badge>
         </Col>
       </Row>
       <div style={{ overflowX: 'auto', padding: 1 }}>
@@ -291,15 +320,14 @@ function ChartLine({
           label={
             <PhasingStepNode
               proposalName={proposalName}
-              node={root}
-              selected={selected === root}
+              node={data.root}
+              selected={selected === data.root}
               onSelect={setSelected}
             />
           }
         >
           <ChartChildren
-            node={root}
-            infos={infos}
+            node={data.root}
             selected={selected}
             onSelect={setSelected}
             proposalName={proposalName}
@@ -311,47 +339,36 @@ function ChartLine({
 }
 
 function ChartChildren({
-  infos,
   node,
   proposalName,
   selected,
   onSelect,
 }: {
-  infos: PhasingInfo[];
-  node: PhasingInfo;
+  node: PhasingTreeNode;
   proposalName: string;
-  selected?: PhasingInfo;
-  onSelect: (p: PhasingInfo) => void;
+  selected?: PhasingTreeNode;
+  onSelect: (p: PhasingTreeNode) => void;
 }) {
-  const children = infos.filter(
-    (i) =>
-      i.PhasingStep_previousPhasingStepId === node.PhasingStep_phasingStepId
-  );
-  if (!children.length) return null;
+  if (!node.children.length) return null;
   return (
     <>
-      {children.map((r) => {
-        const subChildren = infos.filter(
-          (i) =>
-            i.PhasingStep_previousPhasingStepId === r.PhasingStep_phasingStepId
-        );
+      {node.children.map((c) => {
         return (
           <TreeNode
-            key={r.PhasingStep_phasingStepId}
+            key={c.step.phasing.PhasingStep_phasingStepId}
             label={
               <PhasingStepNode
                 proposalName={proposalName}
-                node={r}
+                node={c}
                 parent={node}
-                selected={selected === r}
+                selected={selected === c}
                 onSelect={onSelect}
               />
             }
           >
-            {subChildren.length ? (
+            {c.children.length ? (
               <ChartChildren
-                node={r}
-                infos={infos}
+                node={c}
                 proposalName={proposalName}
                 selected={selected}
                 onSelect={onSelect}
@@ -368,11 +385,11 @@ function PhasingStepNodeInfo({
   node,
   parent,
 }: {
-  node: PhasingInfo;
-  parent?: PhasingInfo;
+  node: PhasingTreeNode;
+  parent?: PhasingTreeNode;
 }) {
   const getToDisplay = (
-    node: PhasingInfo
+    node: PhasingTreeNode
   ): {
     label: React.ReactNode;
     value: React.ReactNode;
@@ -380,17 +397,21 @@ function PhasingStepNodeInfo({
   }[] => {
     const getTimeValue = () => {
       if (
-        node.PhasingProgramRun_phasingStartTime &&
-        node.PhasingProgramRun_phasingEndTime
+        node.step.phasing.PhasingProgramRun_phasingStartTime &&
+        node.step.phasing.PhasingProgramRun_phasingEndTime
       ) {
         const startDay = formatDateToDay(
-          node.PhasingProgramRun_phasingStartTime
+          node.step.phasing.PhasingProgramRun_phasingStartTime
         );
         const startTime = formatDateToTime(
-          node.PhasingProgramRun_phasingStartTime
+          node.step.phasing.PhasingProgramRun_phasingStartTime
         );
-        const endDay = formatDateToDay(node.PhasingProgramRun_phasingEndTime);
-        const endTime = formatDateToTime(node.PhasingProgramRun_phasingEndTime);
+        const endDay = formatDateToDay(
+          node.step.phasing.PhasingProgramRun_phasingEndTime
+        );
+        const endTime = formatDateToTime(
+          node.step.phasing.PhasingProgramRun_phasingEndTime
+        );
         if (startDay !== endDay)
           return (
             <Row>
@@ -420,7 +441,7 @@ function PhasingStepNodeInfo({
     return [
       {
         label: 'Program',
-        value: node.PhasingProgramRun_phasingPrograms,
+        value: node.step.phasing.PhasingProgramRun_phasingPrograms,
         key: 'program',
       },
       {
@@ -430,22 +451,22 @@ function PhasingStepNodeInfo({
       },
       {
         label: 'Resolution',
-        value: `${node.PhasingStep_highRes}Å - ${node.PhasingStep_lowRes}Å`,
+        value: `${node.step.phasing.PhasingStep_highRes}Å - ${node.step.phasing.PhasingStep_lowRes}Å`,
         key: 'resolution',
       },
       {
         label: 'Enantiomorph',
-        value: node.PhasingStep_enantiomorph,
+        value: node.step.phasing.PhasingStep_enantiomorph,
         key: 'enantiomorph',
       },
       {
         label: 'Solvent',
-        value: node.PhasingStep_solventContent,
+        value: node.step.phasing.PhasingStep_solventContent,
         key: 'solvent',
       },
-      ...(node.statisticsValue && node.metric
-        ? _(node.metric.split(', '))
-            .zip(node.statisticsValue.split(', '))
+      ...(node.step.phasing.statisticsValue && node.step.phasing.metric
+        ? _(node.step.phasing.metric.split(', '))
+            .zip(node.step.phasing.statisticsValue.split(', '))
             .map(([metric, value]) => {
               if (
                 Number.isNaN(Number(value)) ||
@@ -554,18 +575,12 @@ function PhasingStepNode({
   selected,
   onSelect,
 }: {
-  node: PhasingInfo;
-  parent?: PhasingInfo;
+  node: PhasingTreeNode;
+  parent?: PhasingTreeNode;
   proposalName: string;
   selected: boolean;
-  onSelect: (p: PhasingInfo) => void;
+  onSelect: (p: PhasingTreeNode) => void;
 }) {
-  const { site, token } = useAuth();
-  const urlPrefix = `${site.host}${site.apiPrefix}/${token}`;
-
-  const molecules = parseMols(node, proposalName, urlPrefix);
-  const hasMol = hasAnyMol(molecules);
-
   const mapName = (name?: string) => {
     if (name === 'SUBSTRUCTUREDETERMINATION') {
       return 'SUBSTRUCTURE DETERMINATION';
@@ -586,7 +601,7 @@ function PhasingStepNode({
   const overlay = (
     <Popover id="popover-basic">
       <Popover.Header as="h3">
-        {node.PhasingStep_phasingStepType}
+        {node.step.phasing.PhasingStep_phasingStepType}
       </Popover.Header>
       <Popover.Body>
         <PhasingStepNodeInfo node={node} />
@@ -604,7 +619,11 @@ function PhasingStepNode({
     >
       <div
         style={{
-          border: hasMol ? '2px solid blue' : '1px solid gray',
+          border: !node.success
+            ? '2px solid red'
+            : node.step.molecules.length
+            ? '2px solid green'
+            : '1px solid blue',
           borderRadius: 5,
           width: 'auto',
           padding: 5,
@@ -618,7 +637,9 @@ function PhasingStepNode({
           <Row>
             <small>
               <strong>
-                {capitalizeName(mapName(node.PhasingStep_phasingStepType))}
+                {capitalizeName(
+                  mapName(node.step.phasing.PhasingStep_phasingStepType)
+                )}
               </strong>
             </small>
           </Row>
@@ -639,17 +660,15 @@ function PhasingStepNode({
             </Row>
           )}
           {infos}
-          {molecules.map((m) => (
+          {node.step.molecules.map((m) => (
             <Row style={{ margin: 0 }} key={m.pdb}>
-              <Badge style={{ margin: 0, marginTop: 5 }}>
-                {getMolDisplayName(m)}
-              </Badge>
+              <Badge style={{ margin: 0, marginTop: 5 }}>{m.displayType}</Badge>
             </Row>
           ))}
           <PhasingStepImages
             proposalName={proposalName}
-            ids={node.png}
-            names={node.fileType}
+            ids={node.step.phasing.png}
+            names={node.step.phasing.fileType}
           />
         </Col>
       </div>

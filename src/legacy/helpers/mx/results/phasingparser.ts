@@ -1,9 +1,23 @@
 import { getPhasingAttachmentDownloadUrl } from 'legacy/api/ispyb';
 import { PhasingInfo } from 'legacy/pages/mx/model';
+import _ from 'lodash';
 
-const MOL_TYPES = ['density', 'refined', 'MR', 'lig'] as const;
+const MOL_TYPES = ['SAD', 'refined', 'MR', 'lig'] as const;
 
 type MolType = typeof MOL_TYPES[number];
+
+export type PhasingStep = {
+  phasing: PhasingInfo;
+  molecules: Molecules;
+  sucess: boolean;
+};
+
+export type RankedPhasingSteps = {
+  method: string;
+  phasings: PhasingStep[];
+}[];
+
+export type Molecules = MolData[];
 
 export type MolData = {
   pdb: string;
@@ -11,37 +25,82 @@ export type MolData = {
   map2: string;
   peaks?: string;
   type: MolType;
-  phasing: PhasingInfo;
+  displayType: string;
+  displayPdb: string;
 };
 
-export type Molecules = MolData[];
+export function parsePhasingStep(
+  phasing: PhasingInfo,
+  proposalName: string,
+  urlPrefix: string
+): PhasingStep | undefined {
+  if (!phasing.PhasingStep_phasingStepId) return undefined;
+  const molecules = parseMols(phasing, proposalName, urlPrefix);
+  return {
+    phasing,
+    molecules,
+    sucess: hasAnyMol(molecules),
+  };
+}
+
+export function parsePhasingSteps(
+  phasings: PhasingInfo[],
+  proposalName: string,
+  urlPrefix: string
+): PhasingStep[] {
+  const parsed: PhasingStep[] = [];
+  phasings.forEach((p) => {
+    const parsedPhasing = parsePhasingStep(p, proposalName, urlPrefix);
+    if (parsedPhasing) {
+      parsed.push(parsedPhasing);
+    }
+  });
+  return parsed;
+}
+
+export function parseAndRankPhasingSteps(
+  phasings: PhasingInfo[],
+  proposalName: string,
+  urlPrefix: string
+): RankedPhasingSteps {
+  const parsed = parsePhasingSteps(phasings, proposalName, urlPrefix);
+  return rankPhasings(parsed);
+}
+
+export function parsePhasingStepsForSummary(
+  phasings: PhasingInfo[],
+  proposalName: string,
+  urlPrefix: string
+): PhasingStep[] {
+  const ranked = parseAndRankPhasingSteps(phasings, proposalName, urlPrefix);
+  const res: PhasingStep[] = [];
+  ranked.forEach((r) => {
+    const withMol = r.phasings.filter((p) => hasAnyMol(p.molecules));
+    if (withMol.length > 0) {
+      res.push(withMol[0]);
+    }
+  });
+  return res;
+}
+
+export function rankPhasings(phasings: PhasingStep[]): RankedPhasingSteps {
+  return _(phasings)
+    .groupBy((p) => p.phasing.PhasingStep_method)
+    .map((phasings, method) => {
+      return {
+        method,
+        phasings: _.sortBy(
+          phasings,
+          (p) => p.phasing.PhasingStep_phasingStepId
+        ),
+      };
+    })
+    .value();
+}
 
 export function hasAnyMol(molecules?: Molecules) {
   if (!molecules) return false;
   return molecules.length > 0;
-}
-
-export function getBestMol(molecules?: Molecules) {
-  if (!molecules || molecules.length === 0) return undefined;
-  return molecules.sort((a, b) => {
-    const aIndex = MOL_TYPES.indexOf(a.type);
-    const bIndex = MOL_TYPES.indexOf(b.type);
-    return aIndex - bIndex;
-  })[0];
-}
-
-export function getMolDisplayName(mol: MolData) {
-  switch (mol.type) {
-    case 'lig':
-      return 'Ligand';
-    case 'MR':
-      return 'MR';
-    case 'refined':
-      return 'Refined';
-    case 'density':
-      return 'Density';
-  }
-  return mol.type;
 }
 
 export function parseMols(
@@ -54,7 +113,8 @@ export function parseMols(
   if (
     phasing.PhasingStep_phasingStepType === 'MODELBUILDING' &&
     phasing.map &&
-    phasing.pdb
+    phasing.pdb &&
+    phasing.pdbFileName
   ) {
     res.push(
       buildMolData(
@@ -63,8 +123,9 @@ export function parseMols(
         undefined,
         urlPrefix,
         proposalName,
-        'density',
-        phasing
+        'SAD',
+        phasing,
+        phasing.pdbFileName
       )
     );
   } else {
@@ -84,7 +145,8 @@ export function parseMols(
           urlPrefix,
           proposalName,
           'lig',
-          phasing
+          phasing,
+          'lig.pdb'
         )
       );
     }
@@ -102,7 +164,8 @@ export function parseMols(
           urlPrefix,
           proposalName,
           'MR',
-          phasing
+          phasing,
+          'MR.pdb'
         )
       );
     }
@@ -120,12 +183,27 @@ export function parseMols(
           urlPrefix,
           proposalName,
           'refined',
-          phasing
+          phasing,
+          'refined.pdb'
         )
       );
     }
   }
   return res;
+}
+
+function getMolDisplayName(type: MolType) {
+  switch (type) {
+    case 'lig':
+      return 'Ligand';
+    case 'MR':
+      return 'MR';
+    case 'refined':
+      return 'Refined';
+    case 'SAD':
+      return 'SAD';
+  }
+  return type;
 }
 
 function buildMolData(
@@ -135,7 +213,8 @@ function buildMolData(
   urlPrefix: string,
   proposalName: string,
   type: MolType,
-  phasing: PhasingInfo
+  phasing: PhasingInfo,
+  fileName: string
 ): MolData {
   const pdbUrl =
     urlPrefix +
@@ -165,7 +244,8 @@ function buildMolData(
     map2: mapFiles[1],
     peaks: peaksUrl,
     type,
-    phasing,
+    displayType: getMolDisplayName(type),
+    displayPdb: fileName,
   };
 }
 
@@ -185,4 +265,46 @@ function parseAttachments(
   });
 
   return res;
+}
+
+export type PhasingTree = {
+  method: string;
+  root: PhasingTreeNode;
+};
+
+export type PhasingTreeNode = {
+  step: PhasingStep;
+  children: PhasingTreeNode[];
+  success: boolean;
+};
+
+export function stepsToTrees(steps: PhasingStep[]): PhasingTree[] {
+  const roots = steps.filter(
+    (s) => s.phasing.PhasingStep_previousPhasingStepId === null
+  );
+  return roots.map((r) => {
+    const tree = buildNode(r, steps);
+    return {
+      method: r.phasing.PhasingStep_method || 'unknown',
+      root: tree,
+    };
+  });
+}
+
+export function buildNode(
+  step: PhasingStep,
+  steps: PhasingStep[]
+): PhasingTreeNode {
+  const children = steps.filter(
+    (s) =>
+      s.phasing.PhasingStep_previousPhasingStepId ===
+      step.phasing.PhasingStep_phasingStepId
+  );
+  const childrenNodes = children.map((c) => buildNode(c, steps));
+  const childrenSuccess = childrenNodes.some((c) => c.success);
+  return {
+    step: step,
+    children: childrenNodes,
+    success: step.sucess || childrenSuccess,
+  };
 }
