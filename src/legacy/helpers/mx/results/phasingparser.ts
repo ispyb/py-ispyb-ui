@@ -87,7 +87,7 @@ export const PHASING_RANKING_METHOD_DESCRIPTION = [
   '',
   'Ranking is based on the following criteria:',
   '- MR: lowest FreeR value',
-  '- SAD: highest partial CC value with an average fragment size of >10',
+  '- SAD: highest partial CC value with an average fragment size >10',
 ];
 
 export function rankPhasings(phasings: PhasingStep[]): RankedPhasingSteps {
