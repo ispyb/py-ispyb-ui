@@ -368,7 +368,7 @@ function ChartLine({
             <PhasingStepNode
               proposalName={proposalName}
               node={data.root}
-              selected={selected === data.root}
+              selected={selected}
               onSelect={setSelected}
             />
           }
@@ -408,7 +408,7 @@ function ChartChildren({
                 proposalName={proposalName}
                 node={c}
                 parent={node}
-                selected={selected === c}
+                selected={selected}
                 onSelect={onSelect}
               />
             }
@@ -625,7 +625,7 @@ function PhasingStepNode({
   node: PhasingTreeNode;
   parent?: PhasingTreeNode;
   proposalName: string;
-  selected: boolean;
+  selected: PhasingTreeNode | undefined;
   onSelect: (p: PhasingTreeNode) => void;
 }) {
   const mapName = (name?: string) => {
@@ -675,7 +675,11 @@ function PhasingStepNode({
           width: 'auto',
           padding: 5,
           display: 'inline-block',
-          backgroundColor: selected ? 'lightblue' : 'white',
+          backgroundColor:
+            selected?.step.phasing.PhasingStep_phasingStepId ===
+            node.step.phasing.PhasingStep_phasingStepId
+              ? 'lightblue'
+              : 'white',
           cursor: 'pointer',
         }}
         onClick={() => onSelect(node)}
