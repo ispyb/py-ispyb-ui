@@ -1,6 +1,10 @@
+import { HelpIcon } from 'components/Common/HelpIcon';
 import { UglyMolPreview } from 'components/Molecules/UglymolViewer';
 import { useAuth } from 'hooks/useAuth';
-import { parsePhasingStepsForSummary } from 'legacy/helpers/mx/results/phasingparser';
+import {
+  parsePhasingStepsForSummary,
+  PHASING_RANKING_METHOD_DESCRIPTION,
+} from 'legacy/helpers/mx/results/phasingparser';
 import { usePhasingList } from 'legacy/hooks/ispyb';
 import { Badge, Card, Col, Row } from 'react-bootstrap';
 import { DataCollectionGroup } from '../../model';
@@ -53,7 +57,13 @@ export function PhasingSummary({
             <Card.Body>
               <Col>
                 <h5 className="text-center">
-                  {p.phasing.PhasingStep_method} phasing
+                  {p.phasing.PhasingStep_method} phasing{' '}
+                  <HelpIcon
+                    message={[
+                      `This is the best ${p.phasing.PhasingStep_method} result for this data collection group. Click on the phasing tab to see more.`,
+                      ...PHASING_RANKING_METHOD_DESCRIPTION,
+                    ]}
+                  ></HelpIcon>
                 </h5>
                 <Row style={{ justifyContent: 'center' }}>
                   <Col xs={'auto'}>

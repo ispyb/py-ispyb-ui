@@ -1,16 +1,7 @@
-import {
-  Card,
-  Col,
-  OverlayTrigger,
-  ProgressBar,
-  Row,
-  Table,
-  Tooltip,
-} from 'react-bootstrap';
+import { Card, Col, ProgressBar, Row, Table } from 'react-bootstrap';
 import UnitCellSection from './unitcellsection';
 import { AutoProcIntegration } from 'legacy/helpers/mx/results/resultparser';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
+import { HelpIcon } from 'components/Common/HelpIcon';
 
 function getColorProgressBarByCompleness(completeness: number) {
   if (completeness > 90) {
@@ -140,24 +131,13 @@ export default function BestResultSection({
     <Card style={{ padding: 20 }}>
       <Card.Body>
         <Col>
-          <OverlayTrigger
-            trigger={['focus', 'hover']}
-            overlay={
-              <Tooltip>
-                You can adjust criteria for best result selection in the ranking
-                menu at the top of the page.
-              </Tooltip>
-            }
-          >
-            <h5 className={'text-center m-0'}>
-              Best result{' '}
-              <FontAwesomeIcon
-                size={'xs'}
-                color="lightgray"
-                icon={faQuestionCircle}
-              />
-            </h5>
-          </OverlayTrigger>
+          <h5 className={'text-center m-0'}>
+            Best result{' '}
+            <HelpIcon
+              message={`You can adjust criteria for best result selection in the ranking
+                menu at the top of the page.`}
+            ></HelpIcon>
+          </h5>
           <div className={'text-center'} style={{ textDecoration: 'italic' }}>
             <small>
               <i>from {bestResult.program}</i>

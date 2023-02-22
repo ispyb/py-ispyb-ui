@@ -19,8 +19,10 @@ import {
   PhasingStep,
   PhasingTree,
   PhasingTreeNode,
+  PHASING_RANKING_METHOD_DESCRIPTION,
   stepsToTrees,
 } from 'legacy/helpers/mx/results/phasingparser';
+import { HelpIconCol } from 'components/Common/HelpIcon';
 
 export function PhasingList({
   proposalName,
@@ -284,6 +286,11 @@ function Chart({
             Unsuccessful ({countUnsuccessful})
           </Button>
         </Col>
+
+        <HelpIconCol
+          size={'lg'}
+          message="Phasing pipelines are considered successful when they end up generating at least one PDB file."
+        />
       </Row>
       <Row style={{ marginBottom: 10 }}>
         <Col xs={'auto'}>
@@ -697,10 +704,18 @@ function PhasingStepNode({
             </small>
           </Row>
           {node.isBest && (
-            <Row style={{ margin: 0 }}>
-              <Badge bg={'success'} style={{ margin: 0, marginTop: 5 }}>
-                BEST
-              </Badge>
+            <Row style={{ margin: 0, marginTop: 2 }}>
+              <Col style={{ padding: 0 }}>
+                <Badge bg={'success'} style={{ margin: 0 }}>
+                  BEST
+                </Badge>
+              </Col>
+              <HelpIconCol
+                message={[
+                  `This is the best ${node.step.phasing.PhasingStep_method} phasing for this data collection group.`,
+                  ...PHASING_RANKING_METHOD_DESCRIPTION,
+                ]}
+              />
             </Row>
           )}
           {infos && (
