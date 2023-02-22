@@ -192,19 +192,37 @@ function Chart({
   const countUnsuccessful = data.filter((d) => !d.root.success).length;
   const countSuccessful = data.filter((d) => d.root.success).length;
   const [selectedGroup, setSelectedGroup] = useState('All');
+  const [selectedMethod, setSelectedMethod] = useState('All');
+
   const [successFilter, setSuccessFilter] = useState<
     'all' | 'success' | 'failed'
   >(countSuccessful ? 'success' : 'all');
 
-  const spaceGroups = _.uniq(
-    data.map((d) => d.root.step.phasing.SpaceGroup_spaceGroupName)
-  );
+  const spaceGroups = _(data)
+    .groupBy((d) => d.root.step.phasing.SpaceGroup_spaceGroupName)
+    .map((d, group) => ({
+      group,
+      count: d.length,
+    }))
+    .value();
+  const methods = _(data)
+    .groupBy((d) => d.method)
+    .map((d, method) => ({
+      method,
+      count: d.length,
+    }))
+    .value();
 
   const filteredData = data.filter((d) => {
     if (successFilter === 'success' && !d.root.success) return false;
     if (successFilter === 'failed' && d.root.success) return false;
-    if (selectedGroup === 'All') return true;
-    return d.root.step.phasing.SpaceGroup_spaceGroupName === selectedGroup;
+    if (selectedGroup !== 'All') {
+      return d.root.step.phasing.SpaceGroup_spaceGroupName === selectedGroup;
+    }
+    if (selectedMethod !== 'All') {
+      return d.method === selectedMethod;
+    }
+    return true;
   });
 
   return (
@@ -216,21 +234,21 @@ function Chart({
             onClick={() => setSelectedGroup('All')}
             size="sm"
           >
-            All
+            All ({data.length})
           </Button>
         </Col>
         {spaceGroups.map((group) => {
           if (!group) return null;
           return (
-            <Col xs={'auto'} key={group}>
+            <Col xs={'auto'} key={group.group}>
               <Button
                 variant={
-                  selectedGroup === group ? 'primary' : 'outline-primary'
+                  selectedGroup === group.group ? 'primary' : 'outline-primary'
                 }
-                onClick={() => setSelectedGroup(group)}
+                onClick={() => setSelectedGroup(group.group)}
                 size="sm"
               >
-                {group}
+                {group.group} ({group.count})
               </Button>
             </Col>
           );
@@ -243,7 +261,7 @@ function Chart({
             onClick={() => setSuccessFilter('all')}
             size="sm"
           >
-            Show all ({data.length})
+            All ({data.length})
           </Button>
         </Col>
         <Col xs={'auto'}>
@@ -254,7 +272,7 @@ function Chart({
             onClick={() => setSuccessFilter('success')}
             size="sm"
           >
-            Show successful ({countSuccessful})
+            Successful ({countSuccessful})
           </Button>
         </Col>
         <Col xs={'auto'}>
@@ -263,9 +281,38 @@ function Chart({
             onClick={() => setSuccessFilter('failed')}
             size="sm"
           >
-            Show unsuccessful ({countUnsuccessful})
+            Unsuccessful ({countUnsuccessful})
           </Button>
         </Col>
+      </Row>
+      <Row style={{ marginBottom: 10 }}>
+        <Col xs={'auto'}>
+          <Button
+            variant={selectedMethod === 'All' ? 'primary' : 'outline-primary'}
+            onClick={() => setSelectedMethod('All')}
+            size="sm"
+          >
+            All ({data.length})
+          </Button>
+        </Col>
+        {methods.map((method) => {
+          if (!method) return null;
+          return (
+            <Col xs={'auto'} key={method.method}>
+              <Button
+                variant={
+                  selectedMethod === method.method
+                    ? 'primary'
+                    : 'outline-primary'
+                }
+                onClick={() => setSelectedMethod(method.method)}
+                size="sm"
+              >
+                {method.method} ({method.count})
+              </Button>
+            </Col>
+          );
+        })}
       </Row>
       <Row>
         <div
