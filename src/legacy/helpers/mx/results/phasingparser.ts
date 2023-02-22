@@ -1,7 +1,7 @@
 import { getPhasingAttachmentDownloadUrl } from 'legacy/api/ispyb';
 import { PhasingInfo } from 'legacy/pages/mx/model';
 
-const MOL_TYPES = ['density', 'refined', 'MR', 'lig', 'new_ligand'] as const;
+const MOL_TYPES = ['density', 'refined', 'MR', 'lig'] as const;
 
 type MolType = typeof MOL_TYPES[number];
 
@@ -34,8 +34,6 @@ export function getMolDisplayName(mol: MolData) {
   switch (mol.type) {
     case 'lig':
       return 'Ligand';
-    case 'new_ligand':
-      return 'New Ligand';
     case 'MR':
       return 'MR';
     case 'refined':
@@ -86,23 +84,6 @@ export function parseMols(
           urlPrefix,
           proposalName,
           'lig',
-          phasing
-        )
-      );
-    }
-    if (
-      'new_ligand.pdb' in pdbs &&
-      'lig_2mFo-DFc.map' in maps &&
-      'lig_mFo-DFc.map' in maps
-    ) {
-      res.push(
-        buildMolData(
-          pdbs['new_ligand.pdb'],
-          [maps['lig_2mFo-DFc.map'], maps['lig_mFo-DFc.map']],
-          undefined,
-          urlPrefix,
-          proposalName,
-          'new_ligand',
           phasing
         )
       );
