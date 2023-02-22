@@ -234,7 +234,7 @@ function Chart({
             onClick={() => setSelectedGroup('All')}
             size="sm"
           >
-            All ({data.length})
+            Any space group ({data.length})
           </Button>
         </Col>
         {spaceGroups.map((group) => {
@@ -261,7 +261,7 @@ function Chart({
             onClick={() => setSuccessFilter('all')}
             size="sm"
           >
-            All ({data.length})
+            Any status ({data.length})
           </Button>
         </Col>
         <Col xs={'auto'}>
@@ -292,7 +292,7 @@ function Chart({
             onClick={() => setSelectedMethod('All')}
             size="sm"
           >
-            All ({data.length})
+            Any method ({data.length})
           </Button>
         </Col>
         {methods.map((method) => {
