@@ -679,6 +679,8 @@ function PhasingStepNode({
             selected?.step.phasing.PhasingStep_phasingStepId ===
             node.step.phasing.PhasingStep_phasingStepId
               ? 'lightblue'
+              : node.isBest
+              ? 'lightgreen'
               : 'white',
           cursor: 'pointer',
         }}
@@ -694,6 +696,13 @@ function PhasingStepNode({
               </strong>
             </small>
           </Row>
+          {node.isBest && (
+            <Row style={{ margin: 0 }}>
+              <Badge bg={'success'} style={{ margin: 0, marginTop: 5 }}>
+                BEST
+              </Badge>
+            </Row>
+          )}
           {infos && (
             <Row
               style={{

@@ -84,15 +84,57 @@ export function parsePhasingStepsForSummary(
 }
 
 export function rankPhasings(phasings: PhasingStep[]): RankedPhasingSteps {
+  const parseSadMetrics = (p: PhasingStep) => {
+    const res: { [key: string]: number } = {};
+    if (!p.phasing.metric) return res;
+    if (!p.phasing.statisticsValue) return res;
+    _(p.phasing.metric.split(', '))
+      .zip(p.phasing.statisticsValue.split(', '))
+      .forEach(([metric, value]) => {
+        if (metric && !Number.isNaN(Number(value))) {
+          res[metric] = Number(value);
+        }
+      });
+    return res;
+  };
+
   return _(phasings)
     .groupBy((p) => p.phasing.PhasingStep_method)
     .map((phasings, method) => {
+      const successful = phasings.filter((p) => p.sucess);
+      const unsuccessful = phasings.filter((p) => !p.sucess);
+      if (method === 'MR') {
+        return {
+          method,
+          phasings: [
+            ...successful.sort((a, b) => {
+              return (
+                Number(a.phasing.PhasingStep_lowRes) -
+                Number(b.phasing.PhasingStep_lowRes)
+              );
+            }),
+            ...unsuccessful,
+          ],
+        };
+      }
+      if (method === 'SAD') {
+        const fragmentAbove10 = _(successful)
+          .filter((p) => parseSadMetrics(p)['Average Fragment Length'] > 10)
+          .orderBy((p) => parseSadMetrics(p)['CC of partial model'], 'desc')
+          .value();
+        const fragmentUnder10 = _(successful)
+          .filter((p) => parseSadMetrics(p)['Average Fragment Length'] <= 10)
+          .orderBy((p) => parseSadMetrics(p)['CC of partial model'], 'desc')
+          .value();
+
+        return {
+          method,
+          phasings: [...fragmentAbove10, ...fragmentUnder10, ...unsuccessful],
+        };
+      }
       return {
         method,
-        phasings: _.sortBy(
-          phasings,
-          (p) => p.phasing.PhasingStep_phasingStepId
-        ),
+        phasings: phasings,
       };
     })
     .value();
@@ -276,35 +318,51 @@ export type PhasingTreeNode = {
   step: PhasingStep;
   children: PhasingTreeNode[];
   success: boolean;
+  isBest: boolean;
 };
 
 export function stepsToTrees(steps: PhasingStep[]): PhasingTree[] {
   const roots = steps.filter(
     (s) => s.phasing.PhasingStep_previousPhasingStepId === null
   );
+  const rankedNodes = rankPhasings(steps);
+
   return roots.map((r) => {
-    const tree = buildNode(r, steps);
+    const rootNode = buildNode(r, steps, rankedNodes);
+
     return {
       method: r.phasing.PhasingStep_method || 'unknown',
-      root: tree,
+      root: rootNode,
     };
   });
 }
 
 export function buildNode(
   step: PhasingStep,
-  steps: PhasingStep[]
+  steps: PhasingStep[],
+  rankedNodes: RankedPhasingSteps
 ): PhasingTreeNode {
   const children = steps.filter(
     (s) =>
       s.phasing.PhasingStep_previousPhasingStepId ===
       step.phasing.PhasingStep_phasingStepId
   );
-  const childrenNodes = children.map((c) => buildNode(c, steps));
+  const childrenNodes = children.map((c) => buildNode(c, steps, rankedNodes));
   const childrenSuccess = childrenNodes.some((c) => c.success);
+  const isSuccess = step.sucess || childrenSuccess;
+  const isBest =
+    isSuccess &&
+    rankedNodes
+      .map((r) => r.phasings[0])
+      .some(
+        (r) =>
+          r?.phasing.PhasingStep_phasingStepId ===
+          step.phasing.PhasingStep_phasingStepId
+      );
   return {
     step: step,
     children: childrenNodes,
-    success: step.sucess || childrenSuccess,
+    success: isSuccess,
+    isBest,
   };
 }
