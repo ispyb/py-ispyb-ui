@@ -18,14 +18,14 @@ export default function SessionTabMenu({
     proposalName,
     sessionId,
   });
-  const { data: spectras } = useMXFluorescenceSpectras({
-    proposalName,
-    sessionId,
-  });
-  const { data: energyScans } = useMXEnergyScans({
-    proposalName,
-    sessionId,
-  });
+  // const { data: spectras } = useMXFluorescenceSpectras({
+  //   proposalName,
+  //   sessionId,
+  // });
+  // const { data: energyScans } = useMXEnergyScans({
+  //   proposalName,
+  //   sessionId,
+  // });
 
   return (
     <Nav variant="tabs">
@@ -42,7 +42,7 @@ export default function SessionTabMenu({
           as={NavLink}
           to={`/legacy/proposals/${proposalName}/MX/${sessionId}/energy`}
         >
-          Energy Scans <NbBadge value={energyScans?.length} />
+          {/* Energy Scans <NbBadge value={energyScans?.length} /> */}
         </Nav.Link>
       </Nav.Item>
       <Nav.Item>
@@ -50,7 +50,7 @@ export default function SessionTabMenu({
           as={NavLink}
           to={`/legacy/proposals/${proposalName}/MX/${sessionId}/xrf`}
         >
-          Fluorescence Spectra <NbBadge value={spectras?.length} />
+          {/* Fluorescence Spectra <NbBadge value={spectras?.length} /> */}
         </Nav.Link>
       </Nav.Item>
     </Nav>

@@ -1,4 +1,7 @@
-import { DataCollectionGroup } from 'legacy/pages/mx/model';
+import {
+  AutoProcInformation,
+  DataCollectionGroup,
+} from 'legacy/pages/mx/model';
 import ScreeningSection from './screeningsection';
 import BestResultSection from './autoprocintegrationsection';
 import {
@@ -8,6 +11,8 @@ import {
 } from 'legacy/helpers/mx/results/resultparser';
 import { useAutoProc } from 'legacy/hooks/ispyb';
 import { Alert } from 'react-bootstrap';
+import { Dataset, getNotes } from 'legacy/hooks/icatmodel';
+import { useSubDatasets } from 'legacy/hooks/icat';
 
 export default function ThirdSection({
   proposalName,
@@ -19,28 +24,28 @@ export default function ThirdSection({
 }: {
   proposalName: string;
 
-  dataCollectionGroup: DataCollectionGroup;
+  dataCollectionGroup: Dataset;
   compact: boolean;
   selectedPipelines: string[];
   resultRankShell: ResultRankShell;
   resultRankParam: ResultRankParam;
 }) {
-  const { data } = useAutoProc({
-    proposalName,
-    dataCollectionId:
-      dataCollectionGroup.DataCollection_dataCollectionId.toString(),
+  const { data: autoprocintegrations } = useSubDatasets({
+    dataset: dataCollectionGroup,
+    type: 'autoprocintegration',
   });
+  const data = autoprocintegrations.map(getNotes<AutoProcInformation>);
   if (!data || !data.length) return null;
 
   const bestResultWithPipelineFilter = getBestResult(
-    data.flatMap((d) => d),
+    data,
     resultRankShell,
     resultRankParam,
     selectedPipelines
   );
 
   const bestResultNoPipelineFilter = getBestResult(
-    data.flatMap((d) => d),
+    data,
     resultRankShell,
     resultRankParam,
     []
@@ -68,7 +73,7 @@ export default function ThirdSection({
   return (
     <ScreeningSection
       compact={compact}
-      dataCollectionGroup={dataCollectionGroup}
+      dataCollectionGroup={getNotes<DataCollectionGroup>(dataCollectionGroup)}
     ></ScreeningSection>
   );
 }

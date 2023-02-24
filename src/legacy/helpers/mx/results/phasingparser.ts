@@ -1,4 +1,6 @@
 import { getPhasingAttachmentDownloadUrl } from 'legacy/api/ispyb';
+import { getIcatGalleryDownloadUrl } from 'legacy/hooks/icat';
+import { Dataset, getDatasetParam, getNotes } from 'legacy/hooks/icatmodel';
 import { PhasingInfo } from 'legacy/pages/mx/model';
 import _ from 'lodash';
 
@@ -30,21 +32,22 @@ export type MolData = {
 };
 
 export function parsePhasingStep(
-  phasing: PhasingInfo,
+  phasing: Dataset,
   proposalName: string,
   urlPrefix: string
 ): PhasingStep | undefined {
-  if (!phasing.PhasingStep_phasingStepId) return undefined;
+  const p = getNotes<PhasingInfo>(phasing);
+  if (!p.PhasingStep_phasingStepId) return undefined;
   const molecules = parseMols(phasing, proposalName, urlPrefix);
   return {
-    phasing,
+    phasing: p,
     molecules,
     sucess: hasAnyMol(molecules),
   };
 }
 
 export function parsePhasingSteps(
-  phasings: PhasingInfo[],
+  phasings: Dataset[],
   proposalName: string,
   urlPrefix: string
 ): PhasingStep[] {
@@ -59,7 +62,7 @@ export function parsePhasingSteps(
 }
 
 export function parseAndRankPhasingSteps(
-  phasings: PhasingInfo[],
+  phasings: Dataset[],
   proposalName: string,
   urlPrefix: string
 ): RankedPhasingSteps {
@@ -68,7 +71,7 @@ export function parseAndRankPhasingSteps(
 }
 
 export function parsePhasingStepsForSummary(
-  phasings: PhasingInfo[],
+  phasings: Dataset[],
   proposalName: string,
   urlPrefix: string
 ): PhasingStep[] {
@@ -152,35 +155,80 @@ export function hasAnyMol(molecules?: Molecules) {
   return molecules.length > 0;
 }
 
+export function parseGallery(ds: Dataset): {
+  pdb?: string;
+  map?: string;
+  csv?: string;
+  pdbFileName?: string;
+  mapFileName?: string;
+  csvFileName?: string;
+} {
+  const files = getDatasetParam(ds, 'ResourcesGalleryFilePaths');
+  if (!files) return {};
+  const ids = getDatasetParam(ds, 'ResourcesGallery');
+  if (!ids) return {};
+  const zips = _(files.split(',').map((f) => f.split('/').slice(-1)[0])).zip(
+    ids.split(' ')
+  );
+  const pdbs = zips
+    .filter(([f, id]) => {
+      return Boolean(f && id && f.endsWith('.pdb'));
+    })
+    .value();
+  const maps = zips
+    .filter(([f, id]) => {
+      return Boolean(f && id && f.endsWith('.map'));
+    })
+    .value();
+
+  const csvs = zips
+    .filter(([f, id]) => {
+      return Boolean(f && id && f.endsWith('.csv'));
+    })
+    .value();
+
+  return {
+    pdb: pdbs.length ? pdbs.map(([f, id]) => id).join(',') : undefined,
+    map: maps.length ? maps.map(([f, id]) => id).join(',') : undefined,
+    csv: csvs.length ? csvs.map(([f, id]) => id).join(',') : undefined,
+    pdbFileName: pdbs.length ? pdbs.map(([f, id]) => f).join(',') : undefined,
+    mapFileName: maps.length ? maps.map(([f, id]) => f).join(',') : undefined,
+    csvFileName: csvs.length ? csvs.map(([f, id]) => f).join(',') : undefined,
+  };
+}
+
 export function parseMols(
-  phasing: PhasingInfo,
+  ds: Dataset,
   proposalName: string,
   urlPrefix: string
 ) {
   let res: Molecules = [];
+  const phasing = getNotes<PhasingInfo>(ds);
+
+  const gallery = parseGallery(ds);
 
   if (
     phasing.PhasingStep_phasingStepType === 'MODELBUILDING' &&
-    phasing.map &&
-    phasing.pdb &&
-    phasing.pdbFileName
+    gallery.map &&
+    gallery.pdb &&
+    gallery.pdbFileName
   ) {
     res.push(
       buildMolData(
-        phasing.pdb,
-        phasing.map.split(','),
+        gallery.pdb,
+        gallery.map.split(','),
         undefined,
         urlPrefix,
         proposalName,
         'SAD',
         phasing,
-        phasing.pdbFileName
+        gallery.pdbFileName
       )
     );
   } else {
-    const maps = parseAttachments(phasing.mapFileName, phasing.map);
-    const csvs = parseAttachments(phasing.csvFileName, phasing.csv);
-    const pdbs = parseAttachments(phasing.pdbFileName, phasing.pdb);
+    const maps = parseAttachments(gallery.mapFileName, gallery.map);
+    const csvs = parseAttachments(gallery.csvFileName, gallery.csv);
+    const pdbs = parseAttachments(gallery.pdbFileName, gallery.pdb);
     if (
       'lig.pdb' in pdbs &&
       'lig_2mFo-DFc.map' in maps &&
@@ -265,26 +313,12 @@ function buildMolData(
   phasing: PhasingInfo,
   fileName: string
 ): MolData {
-  const pdbUrl =
-    urlPrefix +
-    getPhasingAttachmentDownloadUrl({
-      proposalName,
-      phasingprogramattachmentid: pdb,
-    }).url;
+  const pdbUrl = urlPrefix + getIcatGalleryDownloadUrl(pdb).url;
   const mapFiles = maps.map(
-    (m) =>
-      urlPrefix +
-      getPhasingAttachmentDownloadUrl({
-        proposalName,
-        phasingprogramattachmentid: m,
-      }).url
+    (m) => urlPrefix + getIcatGalleryDownloadUrl(m).url
   );
   const peaksUrl = peaks
-    ? urlPrefix +
-      getPhasingAttachmentDownloadUrl({
-        proposalName,
-        phasingprogramattachmentid: peaks,
-      }).url
+    ? urlPrefix + getIcatGalleryDownloadUrl(peaks).url
     : undefined;
 
   return {

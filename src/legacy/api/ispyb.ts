@@ -7,11 +7,11 @@ import {
 } from 'legacy/pages/shipping/model';
 
 export function getLogin(site: SiteConfig) {
-  return `/authenticate?site=${site.javaName}`;
+  return `/session`;
 }
 
 export function getSessions() {
-  return { url: `/session/list` };
+  return { url: `/investigation`, prefix: 'catalogue' };
 }
 
 export function getSessionsManagerDates(startDate: string, endDate: string) {
@@ -58,7 +58,8 @@ export function getMXDataCollectionsBy({
   sessionId?: string;
 }) {
   return {
-    url: `/proposal/${proposalName}/mx/datacollection/session/${sessionId}/list`,
+    url: `/dataset?sortby=startTime&sortOrder=-1&datasetType=acquisition&investigationId=${sessionId}`,
+    prefix: 'catalogue',
   };
 }
 
@@ -747,7 +748,7 @@ export function getPhasingAttachmentDownloadUrl({
   phasingprogramattachmentid: string;
 }) {
   return {
-    url: `/proposal/${proposalName}/mx/phasing/phasingprogramattachmentid/${phasingprogramattachmentid}/download`,
+    url: `/file/download?resourceId=${phasingprogramattachmentid}`,
   };
 }
 

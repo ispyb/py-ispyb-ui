@@ -8,11 +8,11 @@ export const ESRF: SiteConfig[] = [
     apiPrefix: '/ispyb/api/v1',
   },
   {
-    name: 'ESRF-java',
+    name: 'ESRF-Icat',
     description: 'For MX/EM',
     javaName: 'ESRF',
-    host: 'https://ispyb.esrf.fr',
-    apiPrefix: '/ispyb/ispyb-ws/rest',
+    host: 'http://localhost:8000',
+    apiPrefix: '',
     javaMode: true,
     javaConfig: {
       techniques: {

@@ -60,6 +60,7 @@ import { dateToTimestamp } from 'legacy/helpers/dateparser';
 import { parse } from 'date-fns';
 import { useAuth } from 'hooks/useAuth';
 import { GraphParamType } from 'legacy/helpers/mx/results/resultgraph';
+import { Dataset } from './icatmodel';
 
 interface GetHookOption {
   autoRefresh: boolean;
@@ -73,7 +74,8 @@ function useGet<T = any>(
   url: string,
   options: GetHookOption = defaultOptions,
   editData: (data: T) => T = (d) => d,
-  suspense = true
+  suspense = true,
+  prefix?: string
 ) {
   const { site, token, clearToken } = useAuth();
   const fetcher = (url: string) =>
@@ -84,16 +86,16 @@ function useGet<T = any>(
       })
       .then((res) => res?.data);
 
-  const { data, error, mutate } = useSWR<T>(
-    `${site.host}${site.apiPrefix}/${token}${url}`,
-    fetcher,
-    {
-      suspense: suspense,
-      revalidateIfStale: options.autoRefresh,
-      revalidateOnFocus: options.autoRefresh,
-      revalidateOnReconnect: options.autoRefresh,
-    }
-  );
+  const fullUrl = prefix
+    ? `${site.host}${site.apiPrefix}/${prefix}/${token}${url}`
+    : `${site.host}${site.apiPrefix}/${token}${url}`;
+
+  const { data, error, mutate } = useSWR<T>(fullUrl, fetcher, {
+    suspense: suspense,
+    revalidateIfStale: options.autoRefresh,
+    revalidateOnFocus: options.autoRefresh,
+    revalidateOnReconnect: options.autoRefresh,
+  });
   return {
     data: data === undefined ? undefined : editData(data),
     isLoading: !error && !data,
@@ -140,6 +142,7 @@ export function useSessions(
 ) {
   const { startDate, endDate, isManager, proposalName } = props;
   let url: string = '';
+  let prefix = '';
   let sessionTransform: (sessions: any[]) => Session[] = (sessions) => sessions;
   if (proposalName) {
     if (startDate && endDate) {
@@ -193,10 +196,8 @@ export function useMXDataCollectionsBy(
   { proposalName, sessionId }: ProposalSessionId,
   options?: GetHookOption
 ) {
-  return useGet<DataCollectionGroup[]>(
-    getMXDataCollectionsBy({ proposalName, sessionId }).url,
-    options
-  );
+  const req = getMXDataCollectionsBy({ proposalName, sessionId });
+  return useGet<Dataset[]>(req.url, options, undefined, undefined, req.prefix);
 }
 export function useMxDataCollectionsByGroupId(
   {

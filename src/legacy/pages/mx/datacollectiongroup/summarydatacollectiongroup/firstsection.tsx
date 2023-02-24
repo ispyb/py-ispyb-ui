@@ -1,13 +1,16 @@
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
 import SimpleParameterTable from 'legacy/components/table/simpleparametertable';
+import { getDatasetParam, Dataset, getNotes } from 'legacy/hooks/icatmodel';
 
 export default function FirstSection({
   dataCollectionGroup,
   compact = false,
 }: {
-  dataCollectionGroup: DataCollectionGroup;
+  dataCollectionGroup: Dataset;
   compact?: boolean;
 }) {
+  const notes: DataCollectionGroup = getNotes(dataCollectionGroup);
+  if (!notes) return null;
   const {
     Workflow_workflowType,
     Protein_acronym,
@@ -17,7 +20,7 @@ export default function FirstSection({
     totalNumberOfImages,
     transmission,
     DataCollection_numberOfPasses,
-  } = dataCollectionGroup;
+  } = notes;
   const parameters = compact
     ? [
         { key: 'Protein', value: Protein_acronym },

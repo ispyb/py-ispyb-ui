@@ -4,8 +4,10 @@ import { useParams } from 'react-router-dom';
 import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
 import BootstrapTable, { ColumnDescription } from 'react-bootstrap-table-next';
 import { convertToFixed } from 'legacy/helpers/numerictransformation';
-import ZoomImage from 'legacy/components/image/zoomimage';
+import ZoomImage, { ZoomImageIcat } from 'legacy/components/image/zoomimage';
 import { getDozorPlot } from 'legacy/api/ispyb';
+import { useSubDatasets } from 'legacy/hooks/icat';
+import { Dataset, getNotes } from 'legacy/hooks/icatmodel';
 
 type Param = {
   proposalName: string;
@@ -60,15 +62,12 @@ function getColumns(proposalName: string): ColumnDescription<DataCollection>[] {
       text: 'Indicators',
       dataField: 'Indicators',
       formatter: function (cell, row) {
+        const dataset = (row as any)['dataset'] as Dataset;
         return (
-          <ZoomImage
+          <ZoomImageIcat
             style={{ maxWidth: 110 }}
-            src={
-              getDozorPlot({
-                dataCollectionId: row.dataCollectionId,
-                proposalName,
-              }).url
-            }
+            dataset={dataset}
+            index={0}
           />
         );
       },
@@ -94,23 +93,16 @@ function getColumns(proposalName: string): ColumnDescription<DataCollection>[] {
 export default function CollectionsDataCollectionGroupPanel({
   dataCollectionGroup,
 }: {
-  dataCollectionGroup: DataCollectionGroup;
+  dataCollectionGroup: Dataset;
 }) {
   const { proposalName = '' } = useParams<Param>();
-  const {
-    data: dataCollections,
-    isError,
-    isLoading,
-  }: {
-    data: DataCollection[];
-    isError: string;
-    isLoading: boolean;
-  } = useMxDataCollectionsByGroupId({
-    proposalName,
-    dataCollectionGroupId: `${dataCollectionGroup.DataCollection_dataCollectionGroupId}`,
+
+  const { data } = useSubDatasets({
+    dataset: dataCollectionGroup,
+    type: 'datacollection',
   });
-  if (isLoading) return <></>;
-  if (isError) throw Error(isError);
+  const dataCollections = data.map((d) => getNotes<DataCollection>(d));
+
   return (
     <BootstrapTable
       bootstrap4

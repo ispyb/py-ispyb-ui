@@ -5,7 +5,7 @@ import {
   getCrystalImage,
   getDozorPlot,
 } from 'legacy/api/ispyb';
-import ZoomImage from 'legacy/components/image/zoomimage';
+import ZoomImage, { ZoomImageIcat } from 'legacy/components/image/zoomimage';
 import FirstSection from 'legacy/pages/mx/datacollectiongroup/summarydatacollectiongroup/firstsection';
 import ThirdSection from 'legacy/pages/mx/datacollectiongroup/summarydatacollectiongroup/thirdsection';
 import UI from 'legacy/config/ui';
@@ -14,10 +14,12 @@ import {
   ResultRankShell,
 } from 'legacy/helpers/mx/results/resultparser';
 import { PhasingSummary } from '../mr/phasingSummary';
+import { Dataset, getNotes } from 'legacy/hooks/icatmodel';
+import { useSubDatasets } from 'legacy/hooks/icat';
 
 export interface Props {
   proposalName: string;
-  dataCollectionGroup: DataCollectionGroup;
+  dataCollectionGroup: Dataset;
   compact: boolean;
   selectedPipelines: string[];
   resultRankShell: ResultRankShell;
@@ -32,6 +34,8 @@ export default function SummaryDataCollectionGroupPanel({
   resultRankShell,
   resultRankParam,
 }: Props) {
+  const dcg = getNotes<DataCollectionGroup>(dataCollectionGroup);
+
   return (
     <>
       <Row>
@@ -58,66 +62,51 @@ export default function SummaryDataCollectionGroupPanel({
         ></PhasingSummary>
         {!compact && (
           <Col xs={12} sm={6} md={true}>
-            <ZoomImage
+            <ZoomImageIcat
               style={{ maxWidth: 300 }}
               alt="Diffraction"
-              src={
-                getDiffrationThumbnail({
-                  proposalName,
-                  imageId: dataCollectionGroup.firstImageId,
-                }).url
-              }
-            ></ZoomImage>
+              dataset={dataCollectionGroup}
+              index={0}
+            ></ZoomImageIcat>
           </Col>
         )}
         {!compact && (
           <Col xs={12} sm={6} md={true}>
-            <ZoomImage
+            <ZoomImageIcat
               style={{ maxWidth: 300 }}
-              alt="Crystal"
-              src={
-                getCrystalImage({
-                  proposalName,
-                  dataCollectionId:
-                    dataCollectionGroup.DataCollection_dataCollectionId,
-                  imageIndex: 1,
-                }).url
-              }
-            ></ZoomImage>
+              alt="Diffraction"
+              dataset={dataCollectionGroup}
+              index={1}
+            ></ZoomImageIcat>
           </Col>
         )}
         {UI.MX.showQualityIndicatorPlot && (
           <Col xs={12} sm={6} md={true}>
-            <ZoomImage
-              style={compact ? { maxWidth: 150 } : { maxWidth: 300 }}
-              alt="Dozor"
-              src={
-                getDozorPlot({
-                  proposalName,
-                  dataCollectionId:
-                    dataCollectionGroup.DataCollection_dataCollectionId,
-                }).url
-              }
-            ></ZoomImage>
+            <ZoomImageIcat
+              style={{ maxWidth: 300 }}
+              alt="Diffraction"
+              dataset={dataCollectionGroup}
+              index={2}
+            ></ZoomImageIcat>
           </Col>
         )}
       </Row>
-      {dataCollectionGroup.SpaceGroupModelResolvedByMr && (
+      {dcg.SpaceGroupModelResolvedByMr && (
         <Alert variant="success" className={'mt-3'}>
           Automatic MR appears to have worked with the space group{' '}
-          {dataCollectionGroup.SpaceGroupModelResolvedByMr}
+          {dcg.SpaceGroupModelResolvedByMr}
         </Alert>
       )}
-      {dataCollectionGroup.SpaceGroupModelResolvedByPhasing && (
+      {dcg.SpaceGroupModelResolvedByPhasing && (
         <Alert variant="success" className={'mt-3'}>
           Automatic SAD appears to have worked with the space group{' '}
-          {dataCollectionGroup.SpaceGroupModelResolvedByPhasing}
+          {dcg.SpaceGroupModelResolvedByPhasing}
         </Alert>
       )}
       {!compact && (
         <Row>
           <h6>Comments</h6>
-          <p>{dataCollectionGroup.DataCollectionGroup_comments}</p>
+          <p>{dcg.DataCollectionGroup_comments}</p>
         </Row>
       )}
     </>

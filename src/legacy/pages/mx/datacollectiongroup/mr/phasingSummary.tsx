@@ -5,9 +5,11 @@ import {
   parsePhasingStepsForSummary,
   PHASING_RANKING_METHOD_DESCRIPTION,
 } from 'legacy/helpers/mx/results/phasingparser';
+import { useSubDatasets } from 'legacy/hooks/icat';
+import { Dataset, getNotes } from 'legacy/hooks/icatmodel';
 import { usePhasingList } from 'legacy/hooks/ispyb';
 import { Badge, Card, Col, Row } from 'react-bootstrap';
-import { DataCollectionGroup } from '../../model';
+import { DataCollectionGroup, PhasingInfo } from '../../model';
 
 export function PhasingSummary({
   proposalName,
@@ -15,26 +17,22 @@ export function PhasingSummary({
   compact,
 }: {
   proposalName: string;
-  dataCollectionGroup: DataCollectionGroup;
+  dataCollectionGroup: Dataset;
   compact: boolean;
 }) {
-  const { data } = usePhasingList({
-    proposalName,
-    dataCollectionGroupId:
-      dataCollectionGroup.DataCollectionGroup_dataCollectionGroupId?.toString() ||
-      '-1',
+  const { data: phasings } = useSubDatasets({
+    dataset: dataCollectionGroup,
+    type: 'phasing',
   });
 
   const { site, token } = useAuth();
 
-  if (!data || !data.length) return null;
+  if (!phasings || !phasings.length) return null;
 
-  const results = data.flatMap((r) => r);
-
-  const urlPrefix = `${site.host}${site.apiPrefix}/${token}`;
+  const urlPrefix = `${site.host}${site.apiPrefix}/resource/${token}`;
 
   const summaryPhasings = parsePhasingStepsForSummary(
-    results,
+    phasings,
     proposalName,
     urlPrefix
   );

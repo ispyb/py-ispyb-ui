@@ -50,18 +50,19 @@ export default function LoginJava() {
         .post(
           `${site.host}${site.apiPrefix}${getLogin(site)}`,
           qs.stringify({
-            login: userRef.current?.value,
+            plugin: 'db',
+            username: userRef.current?.value,
             password: passRef.current?.value,
           })
           // config:{ 'content-type': 'application/json' }
         )
         .then((response) => {
           /** ISPYB  does not respond with an error code when authentication is failed this is why it is checked if token and roles and retrieved **/
-          const { token, roles } = response.data;
-          if (token && roles) {
+          const { sessionId, username } = response.data;
+          if (sessionId && username) {
             resetPending();
-            setToken(token);
-            setJavaPerson({ roles, username: userRef.current?.value });
+            setToken(sessionId);
+            setJavaPerson({ roles: [], username: username });
           } else {
             resetPending();
             setError('Authentication failed');
@@ -96,7 +97,7 @@ export default function LoginJava() {
               </Row>
             )}
             <Form.Group as={Row} className="mb-2">
-              <Form.Label column>Username JAVA</Form.Label>
+              <Form.Label column>Username Icat</Form.Label>
               <Col md={12} lg={8}>
                 <Form.Control
                   type="text"

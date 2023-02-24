@@ -12,7 +12,10 @@ import {
   Button,
 } from 'react-bootstrap';
 
-import { DataCollectionGroup } from 'legacy/pages/mx/model';
+import {
+  AutoProcInformation,
+  DataCollectionGroup,
+} from 'legacy/pages/mx/model';
 import SummaryDataCollectionGroupPanel from 'legacy/pages/mx/datacollectiongroup/summarydatacollectiongroup/summarydatacollectiongrouppanel';
 import BeamlineDataCollectionGroupPanel from 'legacy/pages/mx/datacollectiongroup/beamline/beamlinedatacollectiongrouppanel';
 import './datacollectiongrouppanel.scss';
@@ -37,11 +40,13 @@ import {
   ResultRankShell,
 } from 'legacy/helpers/mx/results/resultparser';
 import MRTab from './mr/phasingTab';
+import { Dataset, getNotes } from 'legacy/hooks/icatmodel';
+import { useSubDatasets } from 'legacy/hooks/icat';
 
 type Props = {
   sessionId: string;
   proposalName: string;
-  dataCollectionGroup: DataCollectionGroup;
+  dataCollectionGroup: Dataset;
   defaultCompact: boolean;
   compactToggle: Subject<boolean>;
   selectedPipelines: string[];
@@ -73,23 +78,40 @@ export default function DataCollectionGroupPanel({
     },
   });
 
-  const { data: procs } = useAutoProc({
-    proposalName,
-    dataCollectionId:
-      dataCollectionGroup.DataCollection_dataCollectionId?.toString() || '-1',
+  const { data: autoprocintegrations } = useSubDatasets({
+    dataset: dataCollectionGroup,
+    type: 'autoprocintegration',
   });
 
-  if (dataCollectionGroup.DataCollection_dataCollectionId === undefined)
-    return null;
+  const { data: phasings } = useSubDatasets({
+    dataset: dataCollectionGroup,
+    type: 'phasing',
+  });
 
-  const pipelines = parseResults(procs?.flatMap((v) => v) || []).filter(
+  const { data: datacollections } = useSubDatasets({
+    dataset: dataCollectionGroup,
+    type: 'datacollection',
+  });
+
+  const dcg = getNotes<DataCollectionGroup>(dataCollectionGroup);
+
+  // const { data: procs } = []
+  // useAutoProc({
+  //   proposalName,
+  //   dataCollectionId:
+  //     dataCollectionGroup.DataCollection_dataCollectionId?.toString() || '-1',
+  // });
+
+  // if (dataCollectionGroup.DataCollection_dataCollectionId === undefined)
+  //   return null;
+
+  const autoProcInfo = autoprocintegrations.map(getNotes<AutoProcInformation>);
+
+  const pipelines = parseResults(autoProcInfo).filter(
     (v) =>
       selectedPipelines.includes(v.program) || selectedPipelines.length === 0
   );
 
-  if (pipelines.filter((p) => p.status === 'SUCCESS').length === 7) {
-    console.log(pipelines);
-  }
   return (
     <Tab.Container
       activeKey={compact ? 'Summary' : undefined}
@@ -105,11 +127,11 @@ export default function DataCollectionGroupPanel({
                 <Col md="auto">
                   <h5 style={compact ? { fontSize: 15, margin: 5 } : undefined}>
                     {moment(
-                      dataCollectionGroup.DataCollectionGroup_startTime,
+                      dcg.DataCollectionGroup_startTime,
                       'MMMM Do YYYY, h:mm:ss A'
                     ).format('DD/MM/YYYY HH:mm:ss')}
                     <Badge bg="info">
-                      {dataCollectionGroup.DataCollectionGroup_experimentType}
+                      {dcg.DataCollectionGroup_experimentType}
                     </Badge>
                   </h5>
                 </Col>
@@ -132,11 +154,7 @@ export default function DataCollectionGroupPanel({
                       <Nav.Item>
                         <Nav.Link eventKey="Data">
                           Data Collections
-                          <NbBadge
-                            value={
-                              dataCollectionGroup.totalNumberOfDataCollections
-                            }
-                          />
+                          <NbBadge value={datacollections.length} />
                         </Nav.Link>
                       </Nav.Item>
                     )}
@@ -159,20 +177,19 @@ export default function DataCollectionGroupPanel({
                         Workflow
                         <NbBadge
                           value={getUniqueCount(
-                            dataCollectionGroup.WorkflowStep_workflowStepId
+                            dcg.WorkflowStep_workflowStepId
                           )}
                         />
                       </Nav.Link>
                     </Nav.Item>
-                    {dataCollectionGroup.hasMR ||
-                    dataCollectionGroup.hasPhasing ? (
+                    {dcg.hasMR || dcg.hasPhasing ? (
                       <Nav.Item>
                         <Nav.Link eventKey="Phasing">
                           Phasing
                           <NbBadge
                             value={
-                              Number(dataCollectionGroup.hasMR || '0') +
-                              Number(dataCollectionGroup.hasPhasing || '0')
+                              Number(dcg.hasMR || '0') +
+                              Number(dcg.hasPhasing || '0')
                             }
                           />
                         </Nav.Link>

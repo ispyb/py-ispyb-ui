@@ -8,6 +8,7 @@ import SimpleParameterTable from 'legacy/components/table/simpleparametertable';
 import { MXContainer } from 'legacy/pages/mx/container/mxcontainer';
 import LoadingPanel from 'legacy/components/loading/loadingpanel';
 import { Suspense } from 'react';
+import { Dataset, getNotes } from 'legacy/hooks/icatmodel';
 
 type Param = {
   proposalName: string;
@@ -17,7 +18,7 @@ type Param = {
 export default function SampleDataCollectionGroupPanel({
   dataCollectionGroup,
 }: {
-  dataCollectionGroup: DataCollectionGroup;
+  dataCollectionGroup: Dataset;
 }) {
   const { proposalName = '', sessionId = '' } = useParams<Param>();
 
@@ -30,7 +31,7 @@ export default function SampleDataCollectionGroupPanel({
     BLSample_location,
     Container_beamlineLocation,
     Container_sampleChangerLocation,
-  } = dataCollectionGroup;
+  } = getNotes<DataCollectionGroup>(dataCollectionGroup);
 
   return (
     <Row>
@@ -53,7 +54,7 @@ export default function SampleDataCollectionGroupPanel({
           ]}
         ></SimpleParameterTable>
       </Col>
-      <Col xs={12} sm={6} md={true}>
+      {/* <Col xs={12} sm={6} md={true}>
         {UI.MX.showCrystalSnapshot1 && (
           <ZoomImage
             alt="Crystal 1"
@@ -67,8 +68,8 @@ export default function SampleDataCollectionGroupPanel({
             }
           />
         )}
-      </Col>
-      <Col xs={12} sm={6} md={true}>
+      </Col> */}
+      {/* <Col xs={12} sm={6} md={true}>
         {UI.MX.showCrystalSnapshot2 && (
           <ZoomImage
             alt="Crystal 2"
@@ -82,8 +83,8 @@ export default function SampleDataCollectionGroupPanel({
             }
           />
         )}
-      </Col>
-      <Col xs={12} sm={6} md={true}>
+      </Col> */}
+      {/* <Col xs={12} sm={6} md={true}>
         {UI.MX.showCrystalSnapshot3 && (
           <ZoomImage
             alt="Crystal 3"
@@ -97,8 +98,8 @@ export default function SampleDataCollectionGroupPanel({
             }
           />
         )}
-      </Col>
-      <Col xs={12} sm={6} md={true}>
+      </Col> */}
+      {/* <Col xs={12} sm={6} md={true}>
         {UI.MX.showCrystalSnapshot4 && (
           <ZoomImage
             alt="Crystal 4"
@@ -112,8 +113,8 @@ export default function SampleDataCollectionGroupPanel({
             }
           />
         )}
-      </Col>
-      <Col xs={12} sm={6} md={true}>
+      </Col> */}
+      {/* <Col xs={12} sm={6} md={true}>
         {dataCollectionGroup.Container_containerId && (
           <Suspense fallback={<LoadingPanel></LoadingPanel>}>
             <MXContainer
@@ -126,7 +127,7 @@ export default function SampleDataCollectionGroupPanel({
             ></MXContainer>{' '}
           </Suspense>
         )}
-      </Col>
+      </Col> */}
     </Row>
   );
 }

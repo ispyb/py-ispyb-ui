@@ -64,50 +64,69 @@ function toNumber(value: any) {
 export function parseResults(
   procs: AutoProcInformation[]
 ): AutoProcIntegration[] {
-  return procs.map((p) => {
-    const shells = prepareArray(p.scalingStatisticsType);
-    const resolutionLimitHigh = prepareArray(p.resolutionLimitHigh);
-    const resolutionLimitLow = prepareArray(p.resolutionLimitLow);
-    const multiplicity = prepareArray(p.multiplicity);
-    const completeness = prepareArray(p.completeness);
-    const multiplicityAnomalous = prepareArray(p.anomalousMultiplicity);
-    const completenessAnomalous = prepareArray(p.anomalousCompleteness);
-    const meanIOverSigI = prepareArray(p.meanIOverSigI);
-    const rMeas = prepareArray(p.rMeasAllIPlusIMinus);
-    const rMerge = prepareArray(p.rMerge);
-    const rPim = prepareArray(p.rPimWithinIPlusIMinus);
-    const ccHalf = prepareArray(p.ccHalf);
-    const ccAno = prepareArray(p.ccAno);
-    const stats: Dictionary<AutoProcStatistics> = {};
-    shells.forEach((s, i) => {
-      stats[s] = {
-        type: s,
-        resolutionLimitHigh: toNumber(resolutionLimitHigh[i]),
-        resolutionLimitLow: toNumber(resolutionLimitLow[i]),
-        multiplicity: toNumber(multiplicity[i]),
-        completeness: toNumber(completeness[i]),
-        multiplicityAnomalous: toNumber(multiplicityAnomalous[i]),
-        completenessAnomalous: toNumber(completenessAnomalous[i]),
-        meanIOverSigI: toNumber(meanIOverSigI[i]),
-        rMeas: toNumber(rMeas[i]),
-        rMerge: toNumber(rMerge[i]),
-        rPim: toNumber(rPim[i]),
-        ccHalf: toNumber(ccHalf[i]),
-        ccAno: toNumber(ccAno[i]),
-      };
-    });
-    const inner = 'innerShell' in stats ? stats['innerShell'] : undefined;
-    const outer = 'outerShell' in stats ? stats['outerShell'] : undefined;
-    const overall = 'overall' in stats ? stats['overall'] : undefined;
+  return _(procs)
+    .uniqBy((p) => p.AutoProcIntegration_autoProcIntegrationId)
+    .map((p) => {
+      const shells = prepareArray(p.scalingStatisticsType);
+      const resolutionLimitHigh = prepareArray(p.resolutionLimitHigh);
+      const resolutionLimitLow = prepareArray(p.resolutionLimitLow);
+      const multiplicity = prepareArray(p.multiplicity);
+      const completeness = prepareArray(p.completeness);
+      const multiplicityAnomalous = prepareArray(p.anomalousMultiplicity);
+      const completenessAnomalous = prepareArray(p.anomalousCompleteness);
+      const meanIOverSigI = prepareArray(p.meanIOverSigI);
+      const rMeas = prepareArray(p.rMeasAllIPlusIMinus);
+      const rMerge = prepareArray(p.rMerge);
+      const rPim = prepareArray(p.rPimWithinIPlusIMinus);
+      const ccHalf = prepareArray(p.ccHalf);
+      const ccAno = prepareArray(p.ccAno);
+      const stats: Dictionary<AutoProcStatistics> = {};
+      shells.forEach((s, i) => {
+        stats[s] = {
+          type: s,
+          resolutionLimitHigh: toNumber(resolutionLimitHigh[i]),
+          resolutionLimitLow: toNumber(resolutionLimitLow[i]),
+          multiplicity: toNumber(multiplicity[i]),
+          completeness: toNumber(completeness[i]),
+          multiplicityAnomalous: toNumber(multiplicityAnomalous[i]),
+          completenessAnomalous: toNumber(completenessAnomalous[i]),
+          meanIOverSigI: toNumber(meanIOverSigI[i]),
+          rMeas: toNumber(rMeas[i]),
+          rMerge: toNumber(rMerge[i]),
+          rPim: toNumber(rPim[i]),
+          ccHalf: toNumber(ccHalf[i]),
+          ccAno: toNumber(ccAno[i]),
+        };
+      });
+      const inner = 'innerShell' in stats ? stats['innerShell'] : undefined;
+      const outer = 'outerShell' in stats ? stats['outerShell'] : undefined;
+      const overall = 'overall' in stats ? stats['overall'] : undefined;
 
-    if (
-      p.v_datacollection_processingStatus === 'SUCCESS' &&
-      [inner, outer, overall].every((v) => v === undefined)
-    )
+      if (
+        p.v_datacollection_processingStatus === 'SUCCESS' &&
+        [inner, outer, overall].every((v) => v === undefined)
+      )
+        return {
+          id: p.AutoProcIntegration_autoProcIntegrationId,
+          programId: p.v_datacollection_summary_phasing_autoProcProgramId,
+          status: 'NO_RESULTS',
+          program: p.v_datacollection_processingPrograms,
+          anomalous: p.v_datacollection_summary_phasing_anomalous,
+          cell_a: p.v_datacollection_summary_phasing_cell_a,
+          cell_b: p.v_datacollection_summary_phasing_cell_b,
+          cell_c: p.v_datacollection_summary_phasing_cell_c,
+          cell_alpha: p.v_datacollection_summary_phasing_cell_alpha,
+          cell_beta: p.v_datacollection_summary_phasing_cell_beta,
+          cell_gamma: p.v_datacollection_summary_phasing_cell_gamma,
+          spaceGroup: p.v_datacollection_summary_phasing_autoproc_space_group,
+          inner,
+          outer,
+          overall,
+        };
       return {
         id: p.AutoProcIntegration_autoProcIntegrationId,
         programId: p.v_datacollection_summary_phasing_autoProcProgramId,
-        status: 'NO_RESULTS',
+        status: p.v_datacollection_processingStatus,
         program: p.v_datacollection_processingPrograms,
         anomalous: p.v_datacollection_summary_phasing_anomalous,
         cell_a: p.v_datacollection_summary_phasing_cell_a,
@@ -121,24 +140,8 @@ export function parseResults(
         outer,
         overall,
       };
-    return {
-      id: p.AutoProcIntegration_autoProcIntegrationId,
-      programId: p.v_datacollection_summary_phasing_autoProcProgramId,
-      status: p.v_datacollection_processingStatus,
-      program: p.v_datacollection_processingPrograms,
-      anomalous: p.v_datacollection_summary_phasing_anomalous,
-      cell_a: p.v_datacollection_summary_phasing_cell_a,
-      cell_b: p.v_datacollection_summary_phasing_cell_b,
-      cell_c: p.v_datacollection_summary_phasing_cell_c,
-      cell_alpha: p.v_datacollection_summary_phasing_cell_alpha,
-      cell_beta: p.v_datacollection_summary_phasing_cell_beta,
-      cell_gamma: p.v_datacollection_summary_phasing_cell_gamma,
-      spaceGroup: p.v_datacollection_summary_phasing_autoproc_space_group,
-      inner,
-      outer,
-      overall,
-    };
-  });
+    })
+    .value();
 }
 
 function rank(

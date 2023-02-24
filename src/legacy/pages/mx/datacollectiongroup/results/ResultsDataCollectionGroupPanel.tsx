@@ -4,15 +4,20 @@ import {
   ResultRankShell,
 } from 'legacy/helpers/mx/results/resultparser';
 import { useAutoProc } from 'legacy/hooks/ispyb';
-import { DataCollectionGroup } from 'legacy/pages/mx/model';
+import {
+  AutoProcInformation,
+  DataCollectionGroup,
+} from 'legacy/pages/mx/model';
 import { Col } from 'react-bootstrap';
 import { useState } from 'react';
 import { ResultTable } from './resultTable';
 import { ResultGraph } from './resultGraph';
+import { useSubDatasets } from 'legacy/hooks/icat';
+import { Dataset, getNotes } from 'legacy/hooks/icatmodel';
 
 export interface Props {
   proposalName: string;
-  dataCollectionGroup: DataCollectionGroup;
+  dataCollectionGroup: Dataset;
   selectedPipelines: string[];
   resultRankShell: ResultRankShell;
   resultRankParam: ResultRankParam;
@@ -27,15 +32,16 @@ export default function ResultsDataCollectionGroupPanel({
 }: Props) {
   const [view] = useState(0);
 
-  const { data } = useAutoProc({
-    proposalName,
-    dataCollectionId:
-      dataCollectionGroup.DataCollection_dataCollectionId.toString(),
+  const { data: autoprocintegrations } = useSubDatasets({
+    dataset: dataCollectionGroup,
+    type: 'autoprocintegration',
   });
+  const data = autoprocintegrations.map(getNotes<AutoProcInformation>);
+
   if (!data || !data.length) return null;
 
   const results = getRankedResults(
-    data.flatMap((d) => d),
+    data,
     resultRankShell,
     resultRankParam,
     selectedPipelines,

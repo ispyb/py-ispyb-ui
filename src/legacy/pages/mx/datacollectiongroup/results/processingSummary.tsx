@@ -11,8 +11,14 @@ import {
   ResultRankParam,
   ResultRankShell,
 } from 'legacy/helpers/mx/results/resultparser';
+import { useSubDatasets } from 'legacy/hooks/icat';
+import { Dataset, getNotes } from 'legacy/hooks/icatmodel';
 import { useAutoProc } from 'legacy/hooks/ispyb';
-import { DataCollectionGroup } from 'legacy/pages/mx/model';
+import {
+  AutoProcInformation,
+  DataCollectionGroup,
+} from 'legacy/pages/mx/model';
+import _ from 'lodash';
 import {
   Card,
   Col,
@@ -24,7 +30,7 @@ import {
 
 export interface Props {
   proposalName: string;
-  dataCollectionGroup: DataCollectionGroup;
+  dataCollectionGroup: Dataset;
   selectedPipelines: string[];
   resultRankShell: ResultRankShell;
   resultRankParam: ResultRankParam;
@@ -37,15 +43,16 @@ export default function ProcessingSummary({
   resultRankShell,
   resultRankParam,
 }: Props) {
-  const { data } = useAutoProc({
-    proposalName,
-    dataCollectionId:
-      dataCollectionGroup.DataCollection_dataCollectionId.toString(),
+  const { data: autoprocintegrations } = useSubDatasets({
+    dataset: dataCollectionGroup,
+    type: 'autoprocintegration',
   });
+  const data = autoprocintegrations.map(getNotes<AutoProcInformation>);
+
   if (!data || data.flatMap((d) => d).length === 0) return null;
 
   const results = getRankedResults(
-    data.flatMap((d) => d),
+    data,
     resultRankShell,
     resultRankParam,
     selectedPipelines

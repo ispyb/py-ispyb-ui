@@ -9,11 +9,12 @@ import {
 import { PropsWithChildren } from 'react';
 
 import MasonryLayout from 'components/Layout/Mansonry';
+import { Dataset, getDatasetParam, getNotes } from 'legacy/hooks/icatmodel';
 
 export default function MXDataCollectionGroupParameters({
   dataCollectionGroup,
 }: {
-  dataCollectionGroup: DataCollectionGroup;
+  dataCollectionGroup: Dataset;
 }) {
   const breakpointColumnsObj = {
     default: 6,
@@ -22,25 +23,27 @@ export default function MXDataCollectionGroupParameters({
     850: 1,
   };
 
+  const notes: DataCollectionGroup = getNotes(dataCollectionGroup);
+
   return (
     <MasonryLayout breakpointCols={breakpointColumnsObj} separator={true}>
       <ParamCol title="Collection">
-        <Collection dataCollectionGroup={dataCollectionGroup}></Collection>
+        <Collection dataCollectionGroup={notes}></Collection>
       </ParamCol>
       <ParamCol title="Sample">
-        <Sample dataCollectionGroup={dataCollectionGroup}></Sample>
+        <Sample dataCollectionGroup={notes}></Sample>
       </ParamCol>
       <ParamCol title="Synchrotron">
-        <Synchrotron dataCollectionGroup={dataCollectionGroup}></Synchrotron>
+        <Synchrotron dataCollectionGroup={notes}></Synchrotron>
       </ParamCol>
       <ParamCol title="Beam">
-        <Beam dataCollectionGroup={dataCollectionGroup}></Beam>
+        <Beam dataCollectionGroup={notes}></Beam>
       </ParamCol>
       <ParamCol title="Optics">
-        <Optics dataCollectionGroup={dataCollectionGroup}></Optics>
+        <Optics dataCollectionGroup={notes}></Optics>
       </ParamCol>
       <ParamCol title="Detector">
-        <Detector dataCollectionGroup={dataCollectionGroup}></Detector>
+        <Detector dataCollectionGroup={notes}></Detector>
       </ParamCol>
     </MasonryLayout>
   );

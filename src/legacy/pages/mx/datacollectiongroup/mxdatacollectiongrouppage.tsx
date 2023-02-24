@@ -16,7 +16,10 @@ import {
 } from 'react-bootstrap';
 import { useAutoProc, useMXDataCollectionsBy } from 'legacy/hooks/ispyb';
 import DataCollectionGroupPanel from 'legacy/pages/mx/datacollectiongroup/datacollectiongrouppanel';
-import { DataCollectionGroup } from 'legacy/pages/mx/model';
+import {
+  AutoProcInformation,
+  DataCollectionGroup,
+} from 'legacy/pages/mx/model';
 import LazyWrapper from 'legacy/components/loading/lazywrapper';
 import LoadingPanel from 'legacy/components/loading/loadingpanel';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -37,6 +40,8 @@ import {
   RESULT_RANK_SHELLS,
 } from 'legacy/helpers/mx/results/resultparser';
 import ReactSelect from 'react-select';
+import { Dataset, getNotes } from 'legacy/hooks/icatmodel';
+import { useDatasetsBySession, useSubDatasets } from 'legacy/hooks/icat';
 
 type Param = {
   sessionId: string;
@@ -45,8 +50,7 @@ type Param = {
 
 export default function MXDataCollectionGroupPage() {
   const { sessionId = '', proposalName = '' } = useParams<Param>();
-  const { data: dataCollectionGroups, isError } = useMXDataCollectionsBy({
-    proposalName,
+  const { data: dataCollectionGroups, isError } = useDatasetsBySession({
     sessionId,
   });
   if (isError) throw Error(isError);
@@ -65,28 +69,33 @@ export default function MXDataCollectionGroupPage() {
     useState<ResultRankParam>('Rmerge');
 
   if (dataCollectionGroups && dataCollectionGroups.length) {
-    const containerIds = _(dataCollectionGroups)
-      .map((dataCollectionGroup) => dataCollectionGroup?.Container_containerId)
-      .uniq()
-      .sort()
-      .value();
+    // const containerIds = _(dataCollectionGroups)
+    //   .map((dataCollectionGroup) => dataCollectionGroup?.Container_containerId)
+    //   .uniq()
+    //   .sort()
+    //   .value();
+    const containerIds: number[] = [];
 
-    const filteredDataCollectionGroupsByContainer = filterContainers
-      ? dataCollectionGroups.filter(
-          (g) =>
-            g.DataCollection_dataCollectionGroupId &&
-            selectedGroups.includes(g.DataCollection_dataCollectionGroupId)
-        )
-      : dataCollectionGroups;
+    const filteredDataCollectionGroupsByContainer: Dataset[] =
+      dataCollectionGroups;
+    // filterContainers
+    //   ? dataCollectionGroups.filter(
+    //       (g) =>
+    //         g.DataCollection_dataCollectionGroupId &&
+    //         selectedGroups.includes(g.DataCollection_dataCollectionGroupId)
+    //     )
+    //   : dataCollectionGroups;
 
-    const filteredDataCollectionGroups =
-      filteredDataCollectionGroupsByContainer.filter(
-        (dcg) =>
+    const filteredDataCollectionGroups: Dataset[] =
+      filteredDataCollectionGroupsByContainer.filter((dcg) => {
+        const notes = getNotes<DataCollectionGroup>(dcg);
+        return (
           !(filterMR || filterSAD || filterScaling) ||
-          (filterMR && dcg.SpaceGroupModelResolvedByMr) ||
-          (filterSAD && dcg.SpaceGroupModelResolvedByPhasing) ||
-          (filterScaling && dcg.scalingStatisticsType)
-      );
+          (filterMR && notes.SpaceGroupModelResolvedByMr) ||
+          (filterSAD && notes.SpaceGroupModelResolvedByPhasing) ||
+          (filterScaling && notes.scalingStatisticsType)
+        );
+      });
 
     return (
       <MXPage sessionId={sessionId} proposalName={proposalName}>
@@ -260,41 +269,38 @@ export default function MXDataCollectionGroupPage() {
               </OverlayTrigger>
             </ButtonGroup>
           </div>
-          {filterContainers && (
-            <ContainerFilter
-              setSelectedGroups={setSelectedGroups}
-              dataCollectionGroups={dataCollectionGroups}
-              selectedGroups={selectedGroups}
-              containerIds={containerIds}
-              sessionId={sessionId}
-              proposalName={proposalName}
-            ></ContainerFilter>
-          )}
-          {filteredDataCollectionGroups.map(
-            (dataCollectionGroup: DataCollectionGroup) => (
-              <div
-                key={
-                  dataCollectionGroup.DataCollectionGroup_dataCollectionGroupId
-                }
-                style={compact ? { margin: 1 } : { margin: 5 }}
-              >
-                <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                  <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-                    <DataCollectionGroupPanel
-                      compactToggle={compactToggle}
-                      defaultCompact={compact}
-                      dataCollectionGroup={dataCollectionGroup}
-                      proposalName={proposalName}
-                      sessionId={sessionId}
-                      selectedPipelines={selectedPipelines}
-                      resultRankParam={resultRankParam}
-                      resultRankShell={resultRankShell}
-                    ></DataCollectionGroupPanel>
-                  </Suspense>
-                </LazyWrapper>
-              </div>
-            )
-          )}
+          {
+            filterContainers && null
+            // <ContainerFilter
+            //   setSelectedGroups={setSelectedGroups}
+            //   dataCollectionGroups={dataCollectionGroups}
+            //   selectedGroups={selectedGroups}
+            //   containerIds={containerIds}
+            //   sessionId={sessionId}
+            //   proposalName={proposalName}
+            // ></ContainerFilter>
+          }
+          {filteredDataCollectionGroups.map((dataCollectionGroup: Dataset) => (
+            <div
+              key={dataCollectionGroup.id}
+              style={compact ? { margin: 1 } : { margin: 5 }}
+            >
+              <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+                <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+                  <DataCollectionGroupPanel
+                    compactToggle={compactToggle}
+                    defaultCompact={compact}
+                    dataCollectionGroup={dataCollectionGroup}
+                    proposalName={proposalName}
+                    sessionId={sessionId}
+                    selectedPipelines={selectedPipelines}
+                    resultRankParam={resultRankParam}
+                    resultRankShell={resultRankShell}
+                  ></DataCollectionGroupPanel>
+                </Suspense>
+              </LazyWrapper>
+            </div>
+          ))}
         </Card>
       </MXPage>
     );
@@ -329,19 +335,16 @@ function SelectPipelines({
   selected,
   setSelected,
 }: {
-  dataCollectionGroups: DataCollectionGroup[];
+  dataCollectionGroups: Dataset[];
   proposalName: string;
   selected: string[];
   setSelected: (_: string[]) => void;
 }) {
-  const ids = dataCollectionGroups
-    .map((d) => d.DataCollection_dataCollectionId)
-    .slice(0, 10)
-    .join(',');
-  const { data } = useAutoProc({
-    proposalName,
-    dataCollectionId: ids ? ids : '-1',
+  const { data: autoprocintegrations } = useSubDatasets({
+    dataset: dataCollectionGroups.slice(0, 10),
+    type: 'autoprocintegration',
   });
+  const data = autoprocintegrations.map(getNotes<AutoProcInformation>);
 
   if (data === undefined || !data.length) return <SelectPipelinesFallback />;
   const options = _(parseResults(data.flatMap((v) => v)))
