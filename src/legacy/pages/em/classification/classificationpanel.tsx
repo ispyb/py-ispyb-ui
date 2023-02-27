@@ -13,10 +13,6 @@ export default function ClassificationPanel({
   classification,
   proposalName,
 }: Props) {
-  if (!classification) {
-    return <></>;
-  }
-
   const {
     particleClassificationId,
     classDistribution,

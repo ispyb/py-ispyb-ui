@@ -85,10 +85,16 @@ export default function SessionClassificationPage() {
                         .sort((a: Classification, b: Classification) => {
                           return b.classDistribution - a.classDistribution;
                         })
-
-                        .concat([...Array(10)]) // Trick to make the elements of the card panel have got same size
                         .map((c, i) => (
-                          <Col key={i} style={{ margin: 2 }}>
+                          <Col
+                            key={i}
+                            style={{ margin: 2 }}
+                            xs={12}
+                            sm={6}
+                            lg={4}
+                            xl={3}
+                            xxl={2}
+                          >
                             <ClassificationPanel
                               classification={c}
                               proposalName={proposalName}
