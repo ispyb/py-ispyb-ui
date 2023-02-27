@@ -19,7 +19,6 @@ export default function ClassificationPanel({
     estimatedResolution,
     classNumber,
   } = classification;
-
   return (
     <Card>
       <Card.Header># Class {classNumber}</Card.Header>
