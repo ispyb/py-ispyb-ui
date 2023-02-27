@@ -13,12 +13,17 @@ export default function ClassificationPanel({
   classification,
   proposalName,
 }: Props) {
+  if (!classification) {
+    return <></>;
+  }
+
   const {
     particleClassificationId,
     classDistribution,
     estimatedResolution,
     classNumber,
   } = classification;
+
   return (
     <Card>
       <Card.Header># Class {classNumber}</Card.Header>
