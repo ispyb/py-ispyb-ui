@@ -86,7 +86,7 @@ export default function SessionClassificationPage() {
                           return b.classDistribution - a.classDistribution;
                         })
                         .map((c, i) => (
-                          <Col key={i} style={{ margin: 2 }}>
+                          <Col key={i} xs={12} sm={6} lg={4} xl={3} xxl={2}>
                             <ClassificationPanel
                               classification={c}
                               proposalName={proposalName}
