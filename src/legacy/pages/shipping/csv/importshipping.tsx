@@ -38,6 +38,11 @@ import { addDewarsToShipping } from 'legacy/api/ispyb';
 import axios from 'axios';
 import { useAuth } from 'hooks/useAuth';
 import { SPACE_GROUPS } from 'helpers/spacegroups';
+import { registerAllCellTypes } from 'handsontable/cellTypes';
+import { registerAllPlugins } from 'handsontable/plugins';
+
+registerAllCellTypes();
+registerAllPlugins();
 
 type Param = {
   proposalName: string;
