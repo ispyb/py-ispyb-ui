@@ -13,7 +13,7 @@ import {
   ResultRankParam,
   ResultRankShell,
 } from 'legacy/helpers/mx/results/resultparser';
-import { PhasingSummary } from '../mr/phasingSummary';
+import { PhasingSummary } from '../phasing/phasingSummary';
 
 export interface Props {
   proposalName: string;

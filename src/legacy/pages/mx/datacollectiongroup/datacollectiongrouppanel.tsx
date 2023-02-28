@@ -36,7 +36,7 @@ import {
   ResultRankParam,
   ResultRankShell,
 } from 'legacy/helpers/mx/results/resultparser';
-import MRTab from './mr/phasingTab';
+import MRTab from './phasing/phasingTab';
 
 type Props = {
   sessionId: string;
