@@ -27,6 +27,16 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons';
 import { Subject } from 'rxjs';
 import moment from 'moment';
+import NbBadge from 'legacy/components/nbBadge';
+import ResultsDataCollectionGroupPanel from './results/ResultsDataCollectionGroupPanel';
+import ProcessingSummary from './results/processingSummary';
+import { useAutoProc } from 'legacy/hooks/ispyb';
+import {
+  parseResults,
+  ResultRankParam,
+  ResultRankShell,
+} from 'legacy/helpers/mx/results/resultparser';
+import MRTab from './phasing/phasingTab';
 
 type Props = {
   sessionId: string;
@@ -34,6 +44,9 @@ type Props = {
   dataCollectionGroup: DataCollectionGroup;
   defaultCompact: boolean;
   compactToggle: Subject<boolean>;
+  selectedPipelines: string[];
+  resultRankShell: ResultRankShell;
+  resultRankParam: ResultRankParam;
 };
 
 function getUniqueCount(commaSeparatedList?: string): number {
@@ -49,6 +62,9 @@ export default function DataCollectionGroupPanel({
   dataCollectionGroup,
   defaultCompact,
   compactToggle,
+  selectedPipelines,
+  resultRankShell,
+  resultRankParam,
 }: Props) {
   const [compact, setCompact] = useState(defaultCompact);
   compactToggle.subscribe({
@@ -57,6 +73,23 @@ export default function DataCollectionGroupPanel({
     },
   });
 
+  const { data: procs } = useAutoProc({
+    proposalName,
+    dataCollectionId:
+      dataCollectionGroup.DataCollection_dataCollectionId?.toString() || '-1',
+  });
+
+  if (dataCollectionGroup.DataCollection_dataCollectionId === undefined)
+    return null;
+
+  const pipelines = parseResults(procs?.flatMap((v) => v) || []).filter(
+    (v) =>
+      selectedPipelines.includes(v.program) || selectedPipelines.length === 0
+  );
+
+  if (pipelines.filter((p) => p.status === 'SUCCESS').length === 7) {
+    console.log(pipelines);
+  }
   return (
     <Tab.Container
       activeKey={compact ? 'Summary' : undefined}
@@ -99,9 +132,11 @@ export default function DataCollectionGroupPanel({
                       <Nav.Item>
                         <Nav.Link eventKey="Data">
                           Data Collections
-                          <Badge bg="info">
-                            {dataCollectionGroup.totalNumberOfDataCollections}
-                          </Badge>
+                          <NbBadge
+                            value={
+                              dataCollectionGroup.totalNumberOfDataCollections
+                            }
+                          />
                         </Nav.Link>
                       </Nav.Item>
                     )}
@@ -111,23 +146,38 @@ export default function DataCollectionGroupPanel({
                     <Nav.Item>
                       <Nav.Link eventKey="Results">
                         Results
-                        <Badge bg="info">
-                          {getUniqueCount(
-                            dataCollectionGroup.autoProcIntegrationId
-                          )}
-                        </Badge>
+                        <NbBadge
+                          value={
+                            pipelines.filter((p) => p.status === 'SUCCESS')
+                              .length
+                          }
+                        />
                       </Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
                       <Nav.Link eventKey="Workflow">
                         Workflow
-                        <Badge bg="info">
-                          {getUniqueCount(
+                        <NbBadge
+                          value={getUniqueCount(
                             dataCollectionGroup.WorkflowStep_workflowStepId
                           )}
-                        </Badge>
+                        />
                       </Nav.Link>
                     </Nav.Item>
+                    {dataCollectionGroup.hasMR ||
+                    dataCollectionGroup.hasPhasing ? (
+                      <Nav.Item>
+                        <Nav.Link eventKey="Phasing">
+                          Phasing
+                          <NbBadge
+                            value={
+                              Number(dataCollectionGroup.hasMR || '0') +
+                              Number(dataCollectionGroup.hasPhasing || '0')
+                            }
+                          />
+                        </Nav.Link>
+                      </Nav.Item>
+                    ) : null}
                   </Nav>
                 </Col>
               </Row>
@@ -135,8 +185,8 @@ export default function DataCollectionGroupPanel({
           )}
         </Card.Header>
         <Card.Body>
-          <Row>
-            <Col style={{ display: 'flex' }} md={'auto'}>
+          <Row className="flex-nowrap">
+            <Col style={{ display: 'flex' }} xs={'auto'}>
               <OverlayTrigger
                 key={'right'}
                 placement={'right'}
@@ -164,57 +214,103 @@ export default function DataCollectionGroupPanel({
                 </Button>
               </OverlayTrigger>
             </Col>
-            <Col style={compact ? undefined : { marginTop: 20 }}>
-              <Tab.Content>
-                <Tab.Pane eventKey="Summary" title="Summary">
-                  <SummaryDataCollectionGroupPanel
-                    compact={compact}
-                    proposalName={proposalName}
-                    dataCollectionGroup={dataCollectionGroup}
-                  ></SummaryDataCollectionGroupPanel>
-                </Tab.Pane>
-                <Tab.Pane eventKey="Beamline" title="Beamline Parameters">
-                  <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                    <BeamlineDataCollectionGroupPanel
-                      dataCollectionGroup={dataCollectionGroup}
-                    ></BeamlineDataCollectionGroupPanel>
-                  </LazyWrapper>
-                </Tab.Pane>
-                {UI.MX.showCollectionTab && (
-                  <Tab.Pane eventKey="Data" title="Data Collections">
+            <Col
+              style={
+                compact
+                  ? undefined
+                  : {
+                      marginLeft: 0,
+                      marginRight: 12,
+                      marginTop: 10,
+                      padding: 10,
+                      overflowX: 'auto',
+                    }
+              }
+            >
+              <Container fluid>
+                <Tab.Content>
+                  <Tab.Pane eventKey="Summary" title="Summary">
                     <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
                       <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-                        <CollectionsDataCollectionGroupPanel
+                        <SummaryDataCollectionGroupPanel
+                          compact={compact}
+                          proposalName={proposalName}
                           dataCollectionGroup={dataCollectionGroup}
-                        ></CollectionsDataCollectionGroupPanel>
+                          selectedPipelines={selectedPipelines}
+                          resultRankParam={resultRankParam}
+                          resultRankShell={resultRankShell}
+                        ></SummaryDataCollectionGroupPanel>
                       </Suspense>
                     </LazyWrapper>
                   </Tab.Pane>
-                )}
-                <Tab.Pane eventKey="Sample" title="Sample">
-                  <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                    <SampleDataCollectionGroupPanel
-                      dataCollectionGroup={dataCollectionGroup}
-                    ></SampleDataCollectionGroupPanel>
-                  </LazyWrapper>
-                </Tab.Pane>
-                <Tab.Pane eventKey="Results" title="Results">
-                  <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                    <p>TODO</p>
-                  </LazyWrapper>
-                </Tab.Pane>
-                <Tab.Pane eventKey="Workflow" title="Workflow">
-                  <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                    <WorkflowDataCollectionGroupPanel
-                      proposalName={proposalName}
-                      dataCollectionGroup={dataCollectionGroup}
-                    ></WorkflowDataCollectionGroupPanel>
-                  </LazyWrapper>
-                </Tab.Pane>
-              </Tab.Content>
+                  <Tab.Pane eventKey="Beamline" title="Beamline Parameters">
+                    <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+                      <BeamlineDataCollectionGroupPanel
+                        dataCollectionGroup={dataCollectionGroup}
+                      ></BeamlineDataCollectionGroupPanel>
+                    </LazyWrapper>
+                  </Tab.Pane>
+                  {UI.MX.showCollectionTab && (
+                    <Tab.Pane eventKey="Data" title="Data Collections">
+                      <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+                        <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+                          <CollectionsDataCollectionGroupPanel
+                            dataCollectionGroup={dataCollectionGroup}
+                          ></CollectionsDataCollectionGroupPanel>
+                        </Suspense>
+                      </LazyWrapper>
+                    </Tab.Pane>
+                  )}
+                  <Tab.Pane eventKey="Sample" title="Sample">
+                    <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+                      <SampleDataCollectionGroupPanel
+                        dataCollectionGroup={dataCollectionGroup}
+                      ></SampleDataCollectionGroupPanel>
+                    </LazyWrapper>
+                  </Tab.Pane>
+                  <Tab.Pane eventKey="Results" title="Results">
+                    <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+                      <ResultsDataCollectionGroupPanel
+                        proposalName={proposalName}
+                        dataCollectionGroup={dataCollectionGroup}
+                        selectedPipelines={selectedPipelines}
+                        resultRankParam={resultRankParam}
+                        resultRankShell={resultRankShell}
+                      />
+                    </LazyWrapper>
+                  </Tab.Pane>
+                  <Tab.Pane eventKey="Workflow" title="Workflow">
+                    <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+                      <WorkflowDataCollectionGroupPanel
+                        proposalName={proposalName}
+                        dataCollectionGroup={dataCollectionGroup}
+                      ></WorkflowDataCollectionGroupPanel>
+                    </LazyWrapper>
+                  </Tab.Pane>
+                  <Tab.Pane eventKey="Phasing" title="Phasing">
+                    <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+                      <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+                        <MRTab
+                          proposalName={proposalName}
+                          dataCollectionGroup={dataCollectionGroup}
+                        ></MRTab>
+                      </Suspense>
+                    </LazyWrapper>
+                  </Tab.Pane>
+                </Tab.Content>
+              </Container>
             </Col>
           </Row>
         </Card.Body>
+        <Suspense>
+          <ProcessingSummary
+            proposalName={proposalName}
+            dataCollectionGroup={dataCollectionGroup}
+            selectedPipelines={selectedPipelines}
+            resultRankParam={resultRankParam}
+            resultRankShell={resultRankShell}
+          />
+        </Suspense>
       </Card>
     </Tab.Container>
   );

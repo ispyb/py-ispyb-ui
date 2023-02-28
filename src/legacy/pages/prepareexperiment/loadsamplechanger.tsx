@@ -44,7 +44,7 @@ export default function LoadSampleChanger({
             </Col>
           </Row>
         </Card.Header>
-        <Card.Body style={{ padding: 0, paddingTop: 20 }}>
+        <Card.Body style={{ padding: 0, paddingTop: 0 }}>
           <Tab.Content>
             <Tab.Pane eventKey="visual">
               <DnDLoadSampleChanger

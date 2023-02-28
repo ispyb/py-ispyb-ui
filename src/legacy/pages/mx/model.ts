@@ -62,6 +62,7 @@ export interface DataCollectionGroup {
   Detector_detectorModel?: string;
   BLSample_name?: string;
   hasMR?: number;
+  SpaceGroupModelResolvedByMr?: string;
   ScreeningStrategySubWedge_axisStart?: number;
   numberOfGridSquares?: number;
   DataCollection_imageDirectory?: string;
@@ -135,6 +136,7 @@ export interface DataCollectionGroup {
   DataCollection_xtalSnapshotFullPath3?: string;
   DataCollection_axisStart?: number;
   hasPhasing?: number;
+  SpaceGroupModelResolvedByPhasing?: string;
   DataCollection_flux_end?: number;
   BLSession_protectedData?: string;
   totalNumberOfImages?: number;
@@ -147,6 +149,7 @@ export interface DataCollectionGroup {
   ScreeningOutput_mosaicity?: number;
   Detector_detectorMode?: string;
   BeamLineSetup_polarisation?: number;
+  scalingStatisticsType?: string;
 }
 
 export interface DataCollection {
@@ -370,4 +373,125 @@ export interface FluorescenceSpectra {
   startTime: string;
   workingDirectory?: string;
   xfeFluorescenceSpectrumId: number;
+}
+
+export interface AutoProcInformation {
+  AutoProcIntegration_autoProcIntegrationId: number;
+  AutoProcIntegration_dataCollectionId: number;
+  BLSample_name: string;
+  DataCollection_dataCollectionNumber: number;
+  DataCollection_imagePrefix: string;
+  PhasingStep_phasing_phasingStepType: string;
+  Protein_acronym: string;
+  Protein_proteinId: number;
+  SpaceGroup_spaceGroupShortName: string;
+  anomalous: string;
+  anomalousCompleteness: string;
+  anomalousMultiplicity: string;
+  ccAno: string;
+  ccHalf: string;
+  completeness: string;
+  fractionalPartialBias: string;
+  isa: string;
+  meanIOverSigI: string;
+  multiplicity: string;
+  nTotalObservations: string;
+  nTotalUniqueObservations: string;
+  phasingStepType: string;
+  rMeasAllIPlusIMinus: string;
+  rMeasWithinIPlusIMinus: string;
+  rMerge: string;
+  rPimAllIPlusIMinus: string;
+  rPimWithinIPlusIMinus: string;
+  resolutionLimitHigh: string;
+  resolutionLimitLow: string;
+  scalingStatisticsType: string;
+  sigAno: string;
+  spaceGroupIds: string;
+  spaceGroupShortName: string;
+  v_datacollection_processingEndTime: string;
+  v_datacollection_processingPrograms: string;
+  v_datacollection_processingStartTime: string;
+  v_datacollection_processingStatus: string;
+  v_datacollection_summary_phasing_anomalous: boolean;
+  v_datacollection_summary_phasing_autoProcIntegrationId: number;
+  v_datacollection_summary_phasing_autoProcProgramId: number;
+  v_datacollection_summary_phasing_autoProcScalingId: number;
+  v_datacollection_summary_phasing_autoproc_autoprocId: number;
+  v_datacollection_summary_phasing_autoproc_space_group: string;
+  v_datacollection_summary_phasing_cell_a: number;
+  v_datacollection_summary_phasing_cell_alpha: number;
+  v_datacollection_summary_phasing_cell_b: number;
+  v_datacollection_summary_phasing_cell_beta: number;
+  v_datacollection_summary_phasing_cell_c: number;
+  v_datacollection_summary_phasing_cell_gamma: number;
+  v_datacollection_summary_phasing_dataCollectionId: number;
+  v_datacollection_summary_session_proposalId: number;
+  v_datacollection_summary_session_sessionId: number;
+}
+
+export interface AutoProcAttachment {
+  autoProcProgramAttachmentId: number;
+  fileName?: string;
+  filePath?: string;
+  fileType?: string;
+  recordTimeStamp?: string;
+}
+
+export interface PhasingInfo {
+  AutoProcIntegration_autoProcIntegrationId?: number;
+  AutoProcIntegration_autoProcProgramId?: number;
+  BLSample_blSampleId?: number;
+  BLSession_proposalId?: number;
+  BLSession_sessionId?: number;
+  DataCollection_dataCollectionGroupId?: number;
+  DataCollection_dataCollectionId?: number;
+  PhasingProgramRun_phasingCommandLine?: string;
+  PhasingProgramRun_phasingDirectory?: string;
+  PhasingProgramRun_phasingEndTime?: string;
+  PhasingProgramRun_phasingEnvironment?: string;
+  PhasingProgramRun_phasingMessage?: string;
+  PhasingProgramRun_phasingProgramRunId?: number;
+  PhasingProgramRun_phasingPrograms?: string;
+  PhasingProgramRun_phasingStartTime?: string;
+  PhasingProgramRun_phasingStatus?: string;
+  PhasingProgramRun_recordTimeStamp?: string;
+  PhasingStatistics_metric?: string;
+  PhasingStatistics_phasingStatisticsId?: null;
+  PhasingStatistics_phasingStatisticsIds?: null;
+  PhasingStatistics_statisticsValue?: string;
+  PhasingStep_autoProcScalingId?: number;
+  PhasingStep_enantiomorph?: boolean;
+  PhasingStep_highRes?: string;
+  PhasingStep_lowRes?: string;
+  PhasingStep_method?: string;
+  PhasingStep_phasingAnalysisId?: null;
+  PhasingStep_phasingStepId?: number;
+  PhasingStep_phasingStepType?: string;
+  PhasingStep_previousPhasingStepId?: number;
+  PhasingStep_programRunId?: number;
+  PhasingStep_recordTimeStamp?: string;
+  PhasingStep_solventContent?: number;
+  PhasingStep_spaceGroupId?: number;
+  Protein_proteinId?: number;
+  SpaceGroup_MX_used?: true;
+  SpaceGroup_bravaisLattice?: string;
+  SpaceGroup_bravaisLatticeName?: null;
+  SpaceGroup_geometryClassnameId?: number;
+  SpaceGroup_pointGroup?: null;
+  SpaceGroup_spaceGroupId?: number;
+  SpaceGroup_spaceGroupName?: string;
+  SpaceGroup_spaceGroupNumber?: number;
+  SpaceGroup_spaceGroupShortName?: string;
+  csv?: string;
+  csvFileName?: string;
+  fileType?: string;
+  map?: string;
+  mapFileName?: string;
+  metric?: string;
+  pdb?: string;
+  pdbFileName?: string;
+  phasingProgramAttachmentId?: null;
+  png?: string;
+  statisticsValue?: string;
 }

@@ -87,6 +87,7 @@ export function ImagesContent({ item }: { item: WorkflowStepItem }) {
                   style={{ maxWidth: 500 }}
                   lazy={false}
                   src={src}
+                  local={true}
                   legend={value.title}
                 ></ZoomImage>
               </td>

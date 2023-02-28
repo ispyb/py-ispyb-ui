@@ -7,6 +7,7 @@ import { KeyedMutator } from 'swr';
 import produce from 'immer';
 import axios from 'axios';
 import { updateLabContact } from 'legacy/api/ispyb';
+import { useAuth } from 'hooks/useAuth';
 
 export default function AddressModal({
   show,
@@ -130,6 +131,8 @@ export function AddressForm({
   mutate: KeyedMutator<LabContact[]>;
   proposalName: string;
 }) {
+  const { site, token } = useAuth();
+
   const initialValues: FormType = {
     cardName: address.cardName,
 
@@ -177,7 +180,9 @@ export function AddressForm({
           draft.personVO.laboratoryVO.address = values.labAddress;
         });
         const req = updateLabContact({ proposalName, data: next });
-        axios.post(req.url, req.data, { headers: req.headers }).then(
+        const fullUrl = `${site.host}${site.apiPrefix}/${token}${req.url}`;
+
+        axios.post(fullUrl, req.data, { headers: req.headers }).then(
           () => {
             mutate();
           },

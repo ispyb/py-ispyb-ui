@@ -69,3 +69,12 @@ export function getContainerBeamline(
   }
   return undefined;
 }
+
+export function getBeamline(beamlines: Beamline[], name: string) {
+  for (const beamline of beamlines) {
+    if (name === beamline.name) {
+      return beamline;
+    }
+  }
+  return undefined;
+}

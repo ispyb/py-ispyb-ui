@@ -184,5 +184,8 @@ export const SimpleSummaryDataCollectionGroupPanel = () => (
     compact={false}
     proposalName={'M0000'}
     dataCollectionGroup={dataCollectionGroup}
+    resultRankParam={'Rmerge'}
+    resultRankShell={'Inner'}
+    selectedPipelines={[]}
   ></SummaryDataCollectionGroupPanel>
 );

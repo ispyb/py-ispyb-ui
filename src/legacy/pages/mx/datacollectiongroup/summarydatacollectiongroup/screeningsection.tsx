@@ -27,6 +27,7 @@ function getUnitCellSection(datacollectiongroup: DataCollectionGroup) {
         cell_gamma={String(
           datacollectiongroup.ScreeningOutputLattice_unitCell_gamma
         )}
+        spaceGroup={datacollectiongroup.ScreeningOutputLattice_spaceGroup}
       ></UnitCellSection>
     );
   }

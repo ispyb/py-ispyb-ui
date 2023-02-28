@@ -1,5 +1,9 @@
 import SimpleParameterTable from 'legacy/components/table/simpleparametertable';
-import { getContainerType } from 'legacy/helpers/mx/samplehelper';
+import {
+  getBeamline,
+  getContainerType,
+  getSampleChanger,
+} from 'legacy/helpers/mx/samplehelper';
 import { useMXContainers } from 'legacy/hooks/ispyb';
 import _ from 'lodash';
 import { range } from 'lodash';
@@ -8,6 +12,7 @@ import { PropsWithChildren } from 'react';
 import { Badge, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Sample } from '../model';
 import './mxcontainer.scss';
+import { useBeamlinesObjects } from 'legacy/hooks/site';
 
 const containerRadius = 75;
 
@@ -42,6 +47,17 @@ export function MXContainer({
   const sampleByPosition = _(samples)
     .groupBy((s) => s.BLSample_location)
     .value();
+
+  const beamlines = useBeamlinesObjects('MX');
+  const beamline =
+    samples && samples.length
+      ? getBeamline(beamlines, samples[0].Container_beamlineLocation)
+      : undefined;
+  const changer = getSampleChanger(beamline?.sampleChangerType);
+  const pos =
+    samples && samples.length
+      ? changer?.getPosition(Number(samples[0].Container_sampleChangerLocation))
+      : undefined;
 
   const type = findContainerType(containerType, samples, sampleByPosition);
   if (type) {
@@ -134,10 +150,9 @@ export function MXContainer({
               },
               {
                 key: 'Location',
-                value:
-                  samples && samples.length
-                    ? samples[0].Container_sampleChangerLocation
-                    : 'unknown',
+                value: pos
+                  ? `cell ${pos.cell + 1} pos ${pos.position + 1}`
+                  : 'unknown',
               },
             ]}
           ></SimpleParameterTable>
