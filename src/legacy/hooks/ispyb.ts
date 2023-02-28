@@ -27,7 +27,6 @@ import {
   getShippingContainer,
   getProposalSamples,
   getAutoProc,
-  getAutoProcXScale,
   getAttachmentList,
   getPhasingList,
 } from 'legacy/api/ispyb';
@@ -59,7 +58,6 @@ import {
 import { dateToTimestamp } from 'legacy/helpers/dateparser';
 import { parse } from 'date-fns';
 import { useAuth } from 'hooks/useAuth';
-import { GraphParamType } from 'legacy/helpers/mx/results/resultgraph';
 
 interface GetHookOption {
   autoRefresh: boolean;
@@ -365,32 +363,6 @@ export function useAutoProc(
   return useGet<AutoProcInformation[][]>(
     getAutoProc({ proposalName, dataCollectionId }).url,
     options
-  );
-}
-
-export function useAutoProcXScale(
-  {
-    proposalName,
-    autoProcIntegrationId,
-    param,
-  }: {
-    proposalName: string;
-    autoProcIntegrationId: string;
-    param: GraphParamType;
-  },
-  options?: GetHookOption
-) {
-  return useGet<string | undefined>(
-    getAutoProcXScale({
-      proposalName,
-      autoProcIntegrationId,
-      param,
-    }).url,
-    options,
-    (d) => {
-      if (!d || !d.includes(',')) return undefined;
-      return d;
-    }
   );
 }
 
