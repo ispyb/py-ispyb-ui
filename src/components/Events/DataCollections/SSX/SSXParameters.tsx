@@ -173,7 +173,7 @@ export function SampleParams({
         .map((v) => (v === undefined ? 'null' : v))
         .join(', '),
     },
-    { title: 'Crystal concentration', content: sample?.Crystal.abundance },
+    // { title: 'Crystal concentration', content: sample?.Crystal.abundance },
     {
       title: 'Support',
       content: dc.DataCollectionGroup.experimentType?.split('SSX-')[1],

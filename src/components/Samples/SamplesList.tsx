@@ -1,4 +1,4 @@
-import { useSuspense } from 'rest-hooks';
+import { useController, useSuspense } from 'rest-hooks';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import Table from 'components/Layout/Table';
@@ -12,6 +12,13 @@ import { useSearch } from 'hooks/useSearch';
 import Filter from 'components/Filter';
 import { useSchema } from 'hooks/useSpec';
 import SampleStatus, { DCTypes } from './SampleStatus';
+import { Button } from 'react-bootstrap';
+import { useState } from 'react';
+import {
+  CreateSampleModal,
+  EditSampleModal,
+  RemoveSampleButton,
+} from './editor/SamplesEditor';
 
 function SampleStatusFilter({ urlKey }: { urlKey: string }) {
   const schema = useSchema('SampleStatus', 'Sample Status');
@@ -33,19 +40,25 @@ interface ISamplesList {
 
 export default function SamplesList({ proteinId, focusSearch }: ISamplesList) {
   const [searchParams] = useSearchParams();
-  const { skip, limit } = usePaging(10);
+  const { skip, limit } = usePaging(10, 0, 'samples');
   const search = useSearch();
   const navigate = useNavigate();
   const proposal = usePath('proposal');
   const status = searchParams.get('status');
-  const samples = useSuspense(SampleResource.getList, {
+  const samplesRequestParams = {
     skip,
     limit,
     ...(proposal ? { proposal } : {}),
     ...(proteinId ? { proteinId } : {}),
     ...(search ? { search } : null),
     ...(status ? { status } : null),
-  });
+  };
+  const samples = useSuspense(SampleResource.getList, samplesRequestParams);
+  const controller = useController();
+  const forceRefresh = () => {
+    controller.fetch(SampleResource.getList, samplesRequestParams);
+  };
+  const [editing, setEditing] = useState(false);
 
   const onRowClick = (row: Sample) => {
     navigate(`/proposals/${proposal}/samples/${row.blSampleId}`);
@@ -53,17 +66,31 @@ export default function SamplesList({ proteinId, focusSearch }: ISamplesList) {
 
   return (
     <section>
-      <h1>Samples</h1>
+      <h1>
+        Samples
+        <Button
+          size="sm"
+          style={{ marginLeft: 10 }}
+          onClick={() => {
+            setEditing(!editing);
+          }}
+        >
+          {editing ? 'Stop edition' : 'Edit'}
+        </Button>
+        <CreateSampleModal onDone={forceRefresh} />
+      </h1>
       <SampleStatusFilter urlKey="status" />
       <Search focus={focusSearch} />
       <Table
+        key={'samples'}
         keyId="blSampleId"
         results={samples.results}
-        onRowClick={onRowClick}
+        onRowClick={editing ? undefined : onRowClick}
         paginator={{
           total: samples.total,
           skip: samples.skip,
           limit: samples.limit,
+          suffix: 'samples',
         }}
         columns={[
           { label: 'Name', key: 'name' },
@@ -89,6 +116,26 @@ export default function SamplesList({ proteinId, focusSearch }: ISamplesList) {
             key: 'sampleStatus',
             formatter: (row) => <SampleStatus {...row} />,
           },
+          ...(editing
+            ? [
+                {
+                  label: '',
+                  key: 'edit',
+                  formatter: (row: Sample) => (
+                    <EditSampleModal sample={row} onDone={forceRefresh} />
+                  ),
+                  headerStyle: { width: 0 },
+                },
+                {
+                  label: '',
+                  key: 'remove',
+                  formatter: (row: Sample) => (
+                    <RemoveSampleButton sample={row} onDone={forceRefresh} />
+                  ),
+                  headerStyle: { width: 0 },
+                },
+              ]
+            : []),
         ]}
         emptyText="No samples yet"
       />

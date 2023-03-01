@@ -4,7 +4,7 @@ export const ESRF: SiteConfig[] = [
   {
     name: 'ESRF-py',
     description: 'For SSX',
-    host: 'http://py-ispyb-development:8888',
+    host: 'http://py-ispyb-development.esrf.fr:8888',
     apiPrefix: '/ispyb/api/v1',
   },
   {

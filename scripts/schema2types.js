@@ -3,8 +3,7 @@ const http = require('http');
 const fs = require('fs');
 
 const url =
-  process.env.OPENAPI_URL ||
-  'http://py-ispyb-development:8888/ispyb/api/v1/openapi.json';
+  process.env.OPENAPI_URL || 'http://localhost:8000/ispyb/api/v1/openapi.json';
 const req = http.get(url, (res) => {
   console.log(`statusCode: ${res.statusCode}`);
 

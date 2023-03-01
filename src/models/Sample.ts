@@ -9,37 +9,46 @@ import { SingletonEntity } from 'api/resources/Base/Singleton';
  */
 
 export type Name = string;
+export type Crystal = SampleCrystal;
+export type Proteinid = number;
+export type Proposalid = string;
+export type Name1 = string;
+export type Acronym = string;
+export type CellA = number;
+export type CellB = number;
+export type CellC = number;
+export type CellAlpha = number;
+export type CellBeta = number;
+export type CellGamma = number;
+export type SizeX = number;
+export type SizeY = number;
+export type SizeZ = number;
+export type Component = Component1 | ComponentCreate;
+export type Name2 = string;
+export type Composition1 = null | string;
+export type Name3 = string;
+export type Id = number;
+export type Componentid = number;
+export type Name4 = string;
+export type Composition2 = null | string;
+export type Componenttype = ComponentType | ComponentTypeCreate;
+export type Name5 = string;
+export type Abundance = null | number;
+export type Ratio = null | number;
+export type PH = null | number;
+export type Id1 = number;
+export type Name6 = string;
+export type Symbol = string;
+export type CrystalCompositions = Composition[];
+export type Crystalid = number;
+export type SampleCompositions = Composition[];
 export type Comments = null | string;
 /**
  * Location in container
  */
 export type Location = number;
 export type Containerid = number;
-export type Crystal = SampleCrystal;
-export type CellA = null | number;
-export type CellB = null | number;
-export type CellC = null | number;
-export type CellAlpha = null | number;
-export type CellBeta = null | number;
-export type CellGamma = null | number;
-export type Protein = SampleProtein;
-export type Proposalid = string;
-export type Name1 = string;
-export type Acronym = string;
-export type SizeX = number;
-export type SizeY = number;
-export type SizeZ = number;
-export type Abundance = number;
-export type Crystalid = number;
-export type Protein1 = number;
-export type Name2 = string;
-export type Composition1 = string;
-export type Concentration = number;
-export type Name3 = string;
-export type Abundance1 = number;
-export type Ratio = number;
-export type Ph = number;
-export type CrystalCompositions = Composition[];
+export type SampleSupport = null | string;
 export type Blsampleid = number;
 export type Container = SampleContainer;
 export type Code = string;
@@ -83,54 +92,68 @@ export type Integratedresolution = null | number;
  * The associated proposal
  */
 export type Proposal = string;
-export type SampleCompositions = Composition[];
 
 export interface Sample {
   name: Name;
+  Crystal: Crystal;
+  sample_compositions?: SampleCompositions;
   comments?: Comments;
   location?: Location;
   containerId?: Containerid;
-  Crystal: Crystal;
+  loopType?: SampleSupport;
   blSampleId: Blsampleid;
   Container?: Container;
   _metadata?: SampleMetaData;
-  sample_compositions?: SampleCompositions;
 }
 export interface SampleCrystal {
+  Protein: SampleCrystalProtein;
   cell_a?: CellA;
   cell_b?: CellB;
   cell_c?: CellC;
   cell_alpha?: CellAlpha;
   cell_beta?: CellBeta;
   cell_gamma?: CellGamma;
-  Protein: Protein;
   size_X?: SizeX;
   size_Y?: SizeY;
   size_Z?: SizeZ;
-  abundance?: Abundance;
-  crystalId: Crystalid;
-  proteinId: Protein1;
   crystal_compositions?: CrystalCompositions;
+  crystalId: Crystalid;
 }
-export interface SampleProtein {
+export interface SampleCrystalProtein {
+  proteinId: Proteinid;
   proposalId: Proposalid;
   name: Name1;
   acronym: Acronym;
 }
 export interface Composition {
   Component: Component;
-  abundance?: Abundance1;
+  abundance?: Abundance;
   ratio?: Ratio;
-  ph?: Ph;
+  ph?: PH;
+  ConcentrationType?: ConcentrationType;
 }
-export interface Component {
+export interface Component1 {
   name: Name2;
   composition?: Composition1;
-  concentration?: Concentration;
   ComponentType: ComponentType;
+  componentId: Componentid;
 }
 export interface ComponentType {
   name: Name3;
+  componentTypeId: Id;
+}
+export interface ComponentCreate {
+  name: Name4;
+  composition?: Composition2;
+  ComponentType: Componenttype;
+}
+export interface ComponentTypeCreate {
+  name: Name5;
+}
+export interface ConcentrationType {
+  concentrationTypeId: Id1;
+  name: Name6;
+  symbol: Symbol;
 }
 export interface SampleContainer {
   code: Code;
@@ -148,36 +171,72 @@ export interface SampleMetaData {
   proposal?: Proposal;
 }
 
+
 export abstract class SampleBase extends Entity {
   name: Name;
+  Crystal: Crystal;
+  sample_compositions?: SampleCompositions;
   comments?: Comments;
   location?: Location;
   containerId?: Containerid;
-  Crystal: Crystal;
+  loopType?: SampleSupport;
   blSampleId: Blsampleid;
   Container?: Container;
   _metadata?: SampleMetaData;
+}
+
+export abstract class SampleSingletonBase extends SingletonEntity {
+  name: Name;
+  Crystal: Crystal;
   sample_compositions?: SampleCompositions;
+  comments?: Comments;
+  location?: Location;
+  containerId?: Containerid;
+  loopType?: SampleSupport;
+  blSampleId: Blsampleid;
+  Container?: Container;
+  _metadata?: SampleMetaData;
 }
 
 export abstract class SampleCrystalBase extends Entity {
+  Protein: SampleCrystalProtein;
   cell_a?: CellA;
   cell_b?: CellB;
   cell_c?: CellC;
   cell_alpha?: CellAlpha;
   cell_beta?: CellBeta;
   cell_gamma?: CellGamma;
-  Protein: Protein;
   size_X?: SizeX;
   size_Y?: SizeY;
   size_Z?: SizeZ;
-  abundance?: Abundance;
-  crystalId: Crystalid;
-  proteinId: Protein1;
   crystal_compositions?: CrystalCompositions;
+  crystalId: Crystalid;
 }
 
-export abstract class SampleProteinBase extends Entity {
+export abstract class SampleCrystalSingletonBase extends SingletonEntity {
+  Protein: SampleCrystalProtein;
+  cell_a?: CellA;
+  cell_b?: CellB;
+  cell_c?: CellC;
+  cell_alpha?: CellAlpha;
+  cell_beta?: CellBeta;
+  cell_gamma?: CellGamma;
+  size_X?: SizeX;
+  size_Y?: SizeY;
+  size_Z?: SizeZ;
+  crystal_compositions?: CrystalCompositions;
+  crystalId: Crystalid;
+}
+
+export abstract class SampleCrystalProteinBase extends Entity {
+  proteinId: Proteinid;
+  proposalId: Proposalid;
+  name: Name1;
+  acronym: Acronym;
+}
+
+export abstract class SampleCrystalProteinSingletonBase extends SingletonEntity {
+  proteinId: Proteinid;
   proposalId: Proposalid;
   name: Name1;
   acronym: Acronym;
@@ -185,23 +244,83 @@ export abstract class SampleProteinBase extends Entity {
 
 export abstract class CompositionBase extends Entity {
   Component: Component;
-  abundance?: Abundance1;
+  abundance?: Abundance;
   ratio?: Ratio;
-  ph?: Ph;
+  ph?: PH;
+  ConcentrationType?: ConcentrationType;
 }
 
-export abstract class ComponentBase extends Entity {
+export abstract class CompositionSingletonBase extends SingletonEntity {
+  Component: Component;
+  abundance?: Abundance;
+  ratio?: Ratio;
+  ph?: PH;
+  ConcentrationType?: ConcentrationType;
+}
+
+export abstract class Component1Base extends Entity {
   name: Name2;
   composition?: Composition1;
-  concentration?: Concentration;
   ComponentType: ComponentType;
+  componentId: Componentid;
+}
+
+export abstract class Component1SingletonBase extends SingletonEntity {
+  name: Name2;
+  composition?: Composition1;
+  ComponentType: ComponentType;
+  componentId: Componentid;
 }
 
 export abstract class ComponentTypeBase extends Entity {
-  name: Name3;  
+  name: Name3;
+  componentTypeId: Id;
+}
+
+export abstract class ComponentTypeSingletonBase extends SingletonEntity {
+  name: Name3;
+  componentTypeId: Id;
+}
+
+export abstract class ComponentCreateBase extends Entity {
+  name: Name4;
+  composition?: Composition2;
+  ComponentType: Componenttype;
+}
+
+export abstract class ComponentCreateSingletonBase extends SingletonEntity {
+  name: Name4;
+  composition?: Composition2;
+  ComponentType: Componenttype;
+}
+
+export abstract class ComponentTypeCreateBase extends Entity {
+  name: Name5;
+}
+
+export abstract class ComponentTypeCreateSingletonBase extends SingletonEntity {
+  name: Name5;
+}
+
+export abstract class ConcentrationTypeBase extends Entity {
+  concentrationTypeId: Id1;
+  name: Name6;
+  symbol: Symbol;
+}
+
+export abstract class ConcentrationTypeSingletonBase extends SingletonEntity {
+  concentrationTypeId: Id1;
+  name: Name6;
+  symbol: Symbol;
 }
 
 export abstract class SampleContainerBase extends Entity {
+  code: Code;
+  sampleChangerLocation?: SampleChangerLocation;
+  beamlineLocation?: BeamlineLocation;
+}
+
+export abstract class SampleContainerSingletonBase extends SingletonEntity {
   code: Code;
   sampleChangerLocation?: SampleChangerLocation;
   beamlineLocation?: BeamlineLocation;
@@ -217,3 +336,15 @@ export abstract class SampleMetaDataBase extends Entity {
   integratedResolution?: Integratedresolution;
   proposal?: Proposal;
 }
+
+export abstract class SampleMetaDataSingletonBase extends SingletonEntity {
+  subsamples: Subsamples;
+  datacollections: Datacollections;
+  types?: Types;
+  queued?: Queued;
+  strategies?: Strategies;
+  autoIntegrations?: Autointegrations;
+  integratedResolution?: Integratedresolution;
+  proposal?: Proposal;
+}
+

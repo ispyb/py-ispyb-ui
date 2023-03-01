@@ -10,16 +10,19 @@ interface Props {
   total: number;
   skip: number;
   limit: number;
+  suffix?: string;
 }
 
 export default function Paginator(props: Props) {
-  const { total, skip, limit } = props;
+  const { total, skip, limit, suffix } = props;
+  const skipParam = suffix ? `skip-${suffix}` : 'skip';
+  const limitParam = suffix ? `limit-${suffix}` : 'limit';
   const limitRef = useRef<any>();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   // @ts-ignore
   const searchParamsObj = Object.fromEntries([...searchParams]);
-  const { limit: searchLimit } = searchParamsObj;
+  const searchLimit = searchParamsObj[limitParam];
 
   const nPages = Math.ceil(total / limit);
   const currentPage = skip / limit + 1;
@@ -38,38 +41,29 @@ export default function Paginator(props: Props) {
 
   const gotoPage = (page: number) => {
     const newSkip = limit * (page - 1);
-    if (page === 1) {
-      const { skip, ...excludeSkip } = searchParamsObj;
-
-      navigate({
-        pathname: '',
-        search: createSearchParams({ ...excludeSkip }).toString(),
-      });
-      return;
-    }
+    const newParams = {
+      ...searchParamsObj,
+    };
+    newParams[skipParam] = newSkip.toString();
+    newParams[limitParam] = limit.toString();
     navigate({
       pathname: '',
-      search: createSearchParams({
-        ...searchParamsObj,
-        skip: newSkip.toString(),
-        limit: limit.toString(),
-      }).toString(),
+      search: createSearchParams(newParams).toString(),
     });
   };
 
   const changeLimit = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { limit, ...excludeLimit } = searchParamsObj;
+    const newParams = {
+      ...searchParamsObj,
+    };
+    newParams[limitParam] = e.target.value;
     navigate({
       pathname: '',
-      search: createSearchParams({
-        ...excludeLimit,
-        limit: e.target.value,
-      }).toString(),
+      search: createSearchParams(newParams).toString(),
     });
   };
 
   return (
-    // <Container>
     <Row className="my-2 align-items-center" xs="auto">
       <Col className="text-nowrap">
         <div
@@ -127,7 +121,7 @@ export default function Paginator(props: Props) {
           ref={limitRef}
           as="select"
           onChange={changeLimit}
-          defaultValue={searchParamsObj.limit || limit}
+          defaultValue={searchParamsObj[limitParam] || limit}
         >
           {[5, 10, 25].map((i) => (
             <option key={`limit-${i}`} value={i}>
@@ -139,6 +133,5 @@ export default function Paginator(props: Props) {
       <Col>Total:</Col>
       <Col>{total}</Col>
     </Row>
-    // </Container>
   );
 }
