@@ -9,11 +9,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { ProteinResource } from 'api/resources/Protein';
 import {
   ComponentResource,
-  ConcentrationTypesRessource,
+  ConcentrationTypeResource,
   SampleResource,
 } from 'api/resources/Sample';
 import Loading from 'components/Loading';
 import { usePath } from 'hooks/usePath';
+import LazyWrapper from 'legacy/components/loading/lazywrapper';
 import _ from 'lodash';
 import { Sample, Composition, Crystal } from 'models/Sample';
 import { Suspense, useState } from 'react';
@@ -26,7 +27,6 @@ import {
   Form,
   Alert,
 } from 'react-bootstrap';
-import LazyLoad from 'react-lazy-load';
 import ReactSelect, { GroupBase } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { useController, useSuspense } from 'rest-hooks';
@@ -50,7 +50,7 @@ export function RemoveSampleButton({
 
   const onClick = () => {
     controller
-      .fetch(SampleResource.delete(), {
+      .fetch(SampleResource.delete, {
         blSampleId: sample.blSampleId,
       })
       .then(() => onDone());
@@ -75,8 +75,8 @@ export function CreateSampleModal({ onDone }: { onDone: () => void }) {
   const onClick = () => {
     setShow(true);
   };
-  const proposal = usePath('proposal');
-  const samples = useSuspense(SampleResource.list(), {
+  const proposal = usePath('proposal') || '';
+  const samples = useSuspense(SampleResource.getList, {
     proposal: proposal,
     limit: 1000,
     skip: 0,
@@ -108,7 +108,7 @@ export function CreateSampleModal({ onDone }: { onDone: () => void }) {
           <h5>Create sample</h5>
         </Modal.Header>
         <Modal.Body>
-          <LazyLoad>
+          <LazyWrapper>
             <Suspense fallback={<Loading></Loading>}>
               <EditSampleContent
                 onDone={() => {
@@ -118,7 +118,7 @@ export function CreateSampleModal({ onDone }: { onDone: () => void }) {
                 sample={{ Crystal: crystals[0] } as Sample}
               />
             </Suspense>
-          </LazyLoad>
+          </LazyWrapper>
         </Modal.Body>
       </Modal>
     </>
@@ -161,7 +161,7 @@ export function EditSampleModal({
               it?
             </Alert>
           ) : null}
-          <LazyLoad>
+          <LazyWrapper>
             <Suspense fallback={<Loading></Loading>}>
               <EditSampleContent
                 onDone={() => {
@@ -171,7 +171,7 @@ export function EditSampleModal({
                 sample={sample}
               />
             </Suspense>
-          </LazyLoad>
+          </LazyWrapper>
         </Modal.Body>
       </Modal>
     </>
@@ -249,14 +249,14 @@ function EditSampleContent({
     if (sampleState.blSampleId) {
       return controller
         .fetch(
-          SampleResource.partialUpdate(),
+          SampleResource.partialUpdate,
           { blSampleId: sampleState.blSampleId },
           sampleState
         )
         .then(() => onDone());
     } else {
       return controller
-        .fetch(SampleResource.create(), sampleState)
+        .fetch(SampleResource.create, sampleState)
         .then(() => onDone());
     }
   };
@@ -358,15 +358,15 @@ function CrystalEdit({
       .map((c) => (c ? c : 'null'))
       .join(', ')}]`;
   };
-  const proposal = usePath('proposal');
+  const proposal = usePath('proposal') || '';
 
-  const proteins = useSuspense(ProteinResource.list(), {
+  const proteins = useSuspense(ProteinResource.getList, {
     proposal: proposal,
     limit: 1000,
     skip: 0,
   });
 
-  const samples = useSuspense(SampleResource.list(), {
+  const samples = useSuspense(SampleResource.getList, {
     proposal: proposal,
     limit: 1000,
     skip: 0,
@@ -587,8 +587,8 @@ function CompositionsEdit({
   onChange: SubFormProps;
   errors: ErrorListType;
 }) {
-  const proposal = usePath('proposal');
-  const components = useSuspense(ComponentResource.list(), {
+  const proposal = usePath('proposal') || '';
+  const components = useSuspense(ComponentResource.getList, {
     skip: 0,
     limit: 1000,
     proposal,
@@ -636,14 +636,14 @@ function CompositionEdit({
   onChange: SubFormProps;
   errors: ErrorListType;
 }) {
-  const proposal = usePath('proposal');
-  const components = useSuspense(ComponentResource.list(), {
+  const proposal = usePath('proposal') || '';
+  const components = useSuspense(ComponentResource.getList, {
     skip: 0,
     limit: 1000,
     proposal: proposal,
   });
 
-  const concentrationTypes = useSuspense(ConcentrationTypesRessource.list());
+  const concentrationTypes = useSuspense(ConcentrationTypeResource.getList);
 
   if (composition === undefined) return null;
 

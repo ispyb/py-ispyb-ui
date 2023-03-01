@@ -1,6 +1,7 @@
 import createPaginatedResource from './Base/Paginated';
 import { ConcentrationTypeBase, SampleBase } from 'models/Sample';
 import { ComponentBase } from 'models/Component';
+import { createAuthenticatedResource } from './Base/Authenticated';
 
 export class SampleEntity extends SampleBase {
   readonly blSampleId: number;
@@ -36,7 +37,7 @@ class ConcentrationTypeEntity extends ConcentrationTypeBase {
   }
 }
 
-export const ConcentrationTypeResource = createPaginatedResource({
+export const ConcentrationTypeResource = createAuthenticatedResource({
   path: '/samples/concentration/types/:concentrationTypeId',
   schema: ConcentrationTypeEntity,
 });
