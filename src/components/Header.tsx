@@ -81,7 +81,11 @@ function BeamlineMenu() {
           <NavDropdown.Divider />
           <NavDropdown.Header>My Beamlines</NavDropdown.Header>
           {currentUser.beamLines.map((beamLine) => (
-            <NavDropdown.Item as={Link} to={`/beamline/${beamLine}`}>
+            <NavDropdown.Item
+              key={beamLine}
+              as={Link}
+              to={`/beamline/${beamLine}`}
+            >
               {beamLine}
             </NavDropdown.Item>
           ))}

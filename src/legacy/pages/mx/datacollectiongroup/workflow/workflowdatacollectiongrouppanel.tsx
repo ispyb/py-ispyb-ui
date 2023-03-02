@@ -23,8 +23,9 @@ export default function WorkflowDataCollectionGroupPanel({
         dataCollectionGroup.WorkflowStep_status?.split(',') || []
       )
       .map(([id, type, status]) => [
-        <WorkflowThumbnail id={id}></WorkflowThumbnail>,
+        <WorkflowThumbnail id={id} key={`thumbnail${id}`}></WorkflowThumbnail>,
         <WorkflowDescription
+          key={`description${id}`}
           id={id}
           proposalName={proposalName}
           dataCollectionGroup={dataCollectionGroup}

@@ -3,8 +3,7 @@ const http = require('http');
 const fs = require('fs');
 
 const url =
-  process.env.OPENAPI_URL ||
-  'http://py-ispyb-development:8888/ispyb/api/v1/openapi.json';
+  process.env.OPENAPI_URL || 'http://localhost:8000/ispyb/api/v1/openapi.json';
 const req = http.get(url, (res) => {
   console.log(`statusCode: ${res.statusCode}`);
 
@@ -27,8 +26,6 @@ const req = http.get(url, (res) => {
         sc2t
           .compile(schema)
           .then((ts) => {
-            const construct =
-              'type Constructor<T = {}> = new (...args: any[]) => T;';
             // should be dealt with vis allow extra properties: forbid
             ts = ts.replaceAll('  [k: string]: unknown;\n', '');
             const interfaces = ts.split('export interface ');
@@ -36,17 +33,26 @@ const req = http.get(url, (res) => {
             classes.forEach((cls, idx) => {
               const lines = cls.split('\n');
               const name = lines[0].replace(' {', '');
+              // This is a nested class, skip it to avoid syntax errors
+              if (lines[1].startsWith('  [k: string]:')) {
+                console.log('skipping nested class', name);
+                classes[idx] = '';
+                return;
+              }
               classes[idx] = `
-export function with${name}<TBase extends Constructor>(Base: TBase) {
-  return class With${name} extends Base {\n  ${lines
+export abstract class ${name}Base extends Entity {\n${lines.slice(1).join('\n')}
+export abstract class ${name}SingletonBase extends SingletonEntity {\n${lines
                 .slice(1)
-                .join('\n  ')
-                .slice(0, -2)}}`;
+                .join('\n')}`;
             });
 
             fs.writeFileSync(
-              `src/models/${schemaName}.d.ts`,
-              ts + '\n' + construct + classes.join('') + '\n'
+              `src/models/${schemaName}.ts`,
+              "import { Entity } from '@rest-hooks/rest';\nimport { SingletonEntity } from 'api/resources/Base/Singleton';\n\n" +
+                ts +
+                '\n' +
+                classes.join('') +
+                '\n'
             );
           })
           .catch((e) => {

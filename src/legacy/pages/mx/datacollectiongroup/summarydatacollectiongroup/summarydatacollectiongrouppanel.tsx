@@ -1,5 +1,4 @@
-import React from 'react';
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, Alert } from 'react-bootstrap';
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
 import {
   getDiffrationThumbnail,
@@ -8,42 +7,55 @@ import {
 } from 'legacy/api/ispyb';
 import ZoomImage from 'legacy/components/image/zoomimage';
 import FirstSection from 'legacy/pages/mx/datacollectiongroup/summarydatacollectiongroup/firstsection';
-import SecondSection from 'legacy/pages/mx/datacollectiongroup/summarydatacollectiongroup/secondsection';
 import ThirdSection from 'legacy/pages/mx/datacollectiongroup/summarydatacollectiongroup/thirdsection';
 import UI from 'legacy/config/ui';
+import {
+  ResultRankParam,
+  ResultRankShell,
+} from 'legacy/helpers/mx/results/resultparser';
+import { PhasingSummary } from '../phasing/phasingSummary';
 
 export interface Props {
   proposalName: string;
   dataCollectionGroup: DataCollectionGroup;
   compact: boolean;
+  selectedPipelines: string[];
+  resultRankShell: ResultRankShell;
+  resultRankParam: ResultRankParam;
 }
 
 export default function SummaryDataCollectionGroupPanel({
   proposalName,
   dataCollectionGroup,
   compact,
+  selectedPipelines,
+  resultRankShell,
+  resultRankParam,
 }: Props) {
   return (
     <>
       <Row>
-        <Col xs={12} sm={6} md={3}>
+        <Col xs={12} md={6} xl={4} xxl={3}>
           <FirstSection
             compact={compact}
             dataCollectionGroup={dataCollectionGroup}
           ></FirstSection>
         </Col>
-        <Col xs={12} sm={6} md={2}>
-          <SecondSection
-            compact={compact}
-            dataCollectionGroup={dataCollectionGroup}
-          ></SecondSection>
-        </Col>
-        <Col xs={12} sm={12} md={compact ? 6 : 2}>
+        <Col sm={12} md={6} xl={compact ? 4 : 4} xxl={compact ? 4 : 3}>
           <ThirdSection
             compact={compact}
             dataCollectionGroup={dataCollectionGroup}
+            selectedPipelines={selectedPipelines}
+            resultRankShell={resultRankShell}
+            resultRankParam={resultRankParam}
+            proposalName={proposalName}
           ></ThirdSection>
         </Col>
+        <PhasingSummary
+          compact={compact}
+          dataCollectionGroup={dataCollectionGroup}
+          proposalName={proposalName}
+        ></PhasingSummary>
         {!compact && (
           <Col xs={12} sm={6} md={true}>
             <ZoomImage
@@ -90,6 +102,18 @@ export default function SummaryDataCollectionGroupPanel({
           </Col>
         )}
       </Row>
+      {dataCollectionGroup.SpaceGroupModelResolvedByMr && (
+        <Alert variant="success" className={'mt-3'}>
+          Automatic MR appears to have worked with the space group{' '}
+          {dataCollectionGroup.SpaceGroupModelResolvedByMr}
+        </Alert>
+      )}
+      {dataCollectionGroup.SpaceGroupModelResolvedByPhasing && (
+        <Alert variant="success" className={'mt-3'}>
+          Automatic SAD appears to have worked with the space group{' '}
+          {dataCollectionGroup.SpaceGroupModelResolvedByPhasing}
+        </Alert>
+      )}
       {!compact && (
         <Row>
           <h6>Comments</h6>

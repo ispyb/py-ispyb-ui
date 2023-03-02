@@ -13,6 +13,7 @@ export abstract class AbstractFlexHCD extends AbstractSampleChanger {
         {[0, Math.PI / 2, Math.PI / 4, (3 * Math.PI) / 4].map((angle) => {
           return (
             <line
+              key={angle}
               stroke={'#000'}
               strokeWidth={0.6}
               x1={this.sampleChangerRadius * Math.sin(angle)}
@@ -25,7 +26,7 @@ export abstract class AbstractFlexHCD extends AbstractSampleChanger {
         {range(0, 8).map((n) => {
           const angle = getSectionAnle(n);
           return (
-            <g>
+            <g key={n}>
               <circle
                 className="cell"
                 cx={this.sampleChangerRadius * Math.sin(angle)}

@@ -1,12 +1,14 @@
 import { useSuspense } from 'rest-hooks';
 
-import { HourliesResource } from 'api/resources/Stats/Hourlies';
+import { HourliesEndpoint } from 'api/resources/Stats/Hourlies';
 import { usePath } from 'hooks/usePath';
 import PlotEnhancer from './PlotEnhancer';
 
 export default function Hourlies() {
   const sessionId = usePath('sessionId');
-  const hourlies = useSuspense(HourliesResource.list(), { sessionId });
+  const hourlies = useSuspense(HourliesEndpoint, {
+    ...(sessionId ? { sessionId } : null),
+  });
   return (
     <>
       <PlotEnhancer

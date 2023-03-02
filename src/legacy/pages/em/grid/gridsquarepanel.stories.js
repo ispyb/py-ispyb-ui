@@ -1,4 +1,3 @@
-import React from 'react';
 import GridSquarePanel from 'legacy/pages/em/grid/gridsquarepanel';
 
 const l = { title: 'GridSquarePanel', component: GridSquarePanel };

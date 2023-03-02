@@ -111,8 +111,6 @@ export default function CollectionsDataCollectionGroupPanel({
   });
   if (isLoading) return <></>;
   if (isError) throw Error(isError);
-  console.log(dataCollections);
-  //return
   return (
     <BootstrapTable
       bootstrap4

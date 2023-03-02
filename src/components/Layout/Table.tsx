@@ -9,6 +9,7 @@ export interface IColumn {
   formatter?: (row: any, column?: any) => string | JSX.Element | null;
   formatterParams?: IFormatterParams;
   className?: string;
+  headerStyle?: React.CSSProperties;
 }
 
 export interface IResults {
@@ -23,6 +24,7 @@ interface IPaginatorProps {
   total: number;
   skip: number;
   limit: number;
+  suffix?: string;
 }
 
 interface ITable {
@@ -42,7 +44,9 @@ export default function Table(props: ITable) {
         <thead>
           <tr>
             {props.columns.map((column) => (
-              <th key={column.key}>{column.label}</th>
+              <th key={column.key} style={column.headerStyle}>
+                {column.label}
+              </th>
             ))}
           </tr>
         </thead>
@@ -76,6 +80,7 @@ export default function Table(props: ITable) {
           total={props.paginator.total}
           skip={props.paginator.skip}
           limit={props.paginator.limit}
+          suffix={props.paginator.suffix}
         />
       )}
     </>

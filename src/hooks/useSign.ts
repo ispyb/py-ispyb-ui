@@ -1,5 +1,5 @@
 import { useController } from 'rest-hooks';
-import { SignResource } from 'api/resources/Sign';
+import { SignEndpoint } from 'api/resources/Sign';
 import { MouseEventHandler } from 'react';
 
 /**
@@ -14,7 +14,7 @@ export function useSign() {
    * @returns {string} - the onetime token
    */
   async function sign({ url }: { url: string }) {
-    const resource = await fetch(SignResource.create(), {}, { validity: url });
+    const resource = await fetch(SignEndpoint, { validity: url });
     return resource.token;
   }
 

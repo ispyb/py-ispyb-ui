@@ -8,11 +8,13 @@
 export type Proposalid = string;
 export type Name = string;
 export type Acronym = string;
+export type Proteinid = number;
 
 export interface SampleProtein {
   proposalId: Proposalid;
   name: Name;
   acronym: Acronym;
+  proteinId: Proteinid;
 }
 
 type Constructor<T = {}> = new (...args: any[]) => T;
@@ -21,5 +23,6 @@ export function withSampleProtein<TBase extends Constructor>(Base: TBase) {
     proposalId: Proposalid;
     name: Name;
     acronym: Acronym;
+    proteinId: Proteinid;
   }
 }

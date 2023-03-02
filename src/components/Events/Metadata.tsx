@@ -1,4 +1,4 @@
-import React from 'react';
+import classNames from 'classnames';
 import { Container, Row, Col, Popover, OverlayTrigger } from 'react-bootstrap';
 
 export interface IMetadataItemProps {
@@ -6,19 +6,31 @@ export interface IMetadataItemProps {
   content: any;
   test?: any;
   unit?: string;
+  truncate?: boolean;
 }
 
 export interface IMetadataProps {
   properties: Array<IMetadataItemProps>;
+  truncate?: boolean;
 }
 
 export default function Metadata(props: IMetadataProps) {
   return (
     <Container className="g-0">
       <Row className="metadata-list g-0 me-2">
-        {props.properties.map((item) => (
-          <MetadataItem key={item.title} {...item} />
-        ))}
+        {props.properties
+          .filter((item) => item.test === undefined || item.test)
+          .map((item) => (
+            <Col key={item.title} sm={6}>
+              <MetadataItem
+                key={item.title}
+                {...item}
+                truncate={
+                  item.truncate !== undefined ? item.truncate : props.truncate
+                }
+              />
+            </Col>
+          ))}
       </Row>
     </Container>
   );
@@ -27,12 +39,38 @@ export default function Metadata(props: IMetadataProps) {
 export function MetadataCol(props: IMetadataProps) {
   return (
     <Col className="metadata-list  g-0 me-2">
-      {props.properties.map((item) => (
-        <Row>
-          <MetadataItem {...item} />
-        </Row>
-      ))}
+      {props.properties
+        .filter((item) => item.test === undefined || item.test)
+        .map((item) => (
+          <Row key={item.title}>
+            <MetadataItem
+              {...item}
+              truncate={
+                item.truncate !== undefined ? item.truncate : props.truncate
+              }
+            />
+          </Row>
+        ))}
     </Col>
+  );
+}
+
+export function MetadataRow(props: IMetadataProps) {
+  return (
+    <Row className="metadata-list  g-0 me-2">
+      {props.properties
+        .filter((item) => item.test === undefined || item.test)
+        .map((item) => (
+          <Col key={item.title}>
+            <MetadataItem
+              {...item}
+              truncate={
+                item.truncate !== undefined ? item.truncate : props.truncate
+              }
+            />
+          </Col>
+        ))}
+    </Row>
   );
 }
 
@@ -45,22 +83,34 @@ export function MetadataItem(props: IMetadataItemProps) {
       </Popover.Body>
     </Popover>
   );
-  return (
-    <>
-      {(props.test === undefined || props.test) && (
-        <Col sm="6">
+
+  const elem = (
+    <div
+      className={classNames({
+        'mx-1': true,
+        'mb-2': true,
+        'p-2': true,
+        'bg-light': true,
+        'text-truncate': props.truncate !== false,
+      })}
+    >
+      <span className="text-primary">{props.title}</span>: {props.content}{' '}
+      <span className="text-primary">{props.unit}</span>
+    </div>
+  );
+  if (props.truncate !== false)
+    return (
+      <>
+        {(props.test === undefined || props.test) && (
           <OverlayTrigger
             trigger={['hover', 'focus']}
             placement="auto"
             overlay={popover}
           >
-            <div className="mx-1 mb-2 p-2 bg-light text-truncate">
-              <span className="text-primary">{props.title}</span>:{' '}
-              {props.content} <span className="text-primary">{props.unit}</span>
-            </div>
+            {elem}
           </OverlayTrigger>
-        </Col>
-      )}
-    </>
-  );
+        )}
+      </>
+    );
+  return elem;
 }

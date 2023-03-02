@@ -53,6 +53,7 @@ const ParsedErrorRef = forwardRef(
     );
   }
 );
+ParsedErrorRef.displayName = 'ParsedErrorRef';
 
 export default ParsedErrorRef;
 

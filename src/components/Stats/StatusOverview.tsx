@@ -1,6 +1,6 @@
 import { useSuspense } from 'rest-hooks';
 
-import { ErrorsResource } from 'api/resources/Stats/Errors';
+import { ErrorsEndpoint } from 'api/resources/Stats/Errors';
 import { usePath } from 'hooks/usePath';
 import Table from 'components/Layout/Table';
 import { ExperimentTypeGroup } from '../../models/Errors';
@@ -25,7 +25,9 @@ function MessageTable(row: ExperimentTypeGroup) {
 
 export default function StatusOverview() {
   const sessionId = usePath('sessionId');
-  const errors = useSuspense(ErrorsResource.list(), { sessionId });
+  const errors = useSuspense(ErrorsEndpoint, {
+    ...(sessionId ? { sessionId } : null),
+  });
 
   return (
     <>

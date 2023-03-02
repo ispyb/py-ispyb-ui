@@ -1,5 +1,4 @@
 import { Col, Container, Row } from 'react-bootstrap';
-import React from 'react';
 import SimpleParameterTable from 'legacy/components/table/simpleparametertable';
 import { SampleList } from 'legacy/pages/em/model';
 

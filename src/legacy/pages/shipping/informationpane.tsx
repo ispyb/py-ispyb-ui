@@ -18,6 +18,7 @@ import { Container, Shipping } from './model';
 import './informationpane.scss';
 import { EditShippingModal } from './shipmenteditmodal';
 import _ from 'lodash';
+import { useAuth } from 'hooks/useAuth';
 
 export function InformationPane({
   shipping,
@@ -33,29 +34,28 @@ export function InformationPane({
   const [sendingShipment, setSendingShipment] = useState(false);
 
   const [showEditModal, setShowEditModal] = useState(false);
+  const { site, token } = useAuth();
 
   const onSendToFacility = () => {
     setSendingShipment(true);
-    axios
-      .get(
-        updateShippingStatus({
-          proposalName,
-          shippingId: shipping.shippingId,
-          status: 'Sent_to_ESRF',
-        }).url
-      )
-      .then(
-        () => {
-          mutateShipping();
-          mutateShipments();
-          setSendingShipment(false);
-        },
-        () => {
-          mutateShipping();
-          mutateShipments();
-          setSendingShipment(false);
-        }
-      );
+    const req = updateShippingStatus({
+      proposalName,
+      shippingId: shipping.shippingId,
+      status: 'Sent_to_ESRF',
+    });
+    const fullUrl = `${site.host}${site.apiPrefix}/${token}${req.url}`;
+    axios.get(fullUrl).then(
+      () => {
+        mutateShipping();
+        mutateShipments();
+        setSendingShipment(false);
+      },
+      () => {
+        mutateShipping();
+        mutateShipments();
+        setSendingShipment(false);
+      }
+    );
   };
   const data = shipping.sessions.length
     ? {
@@ -97,8 +97,9 @@ export function InformationPane({
       proposalName,
       shippingId: shipping.shippingId,
     });
+    const fullUrl = `${site.host}${site.apiPrefix}/${token}${req.url}`;
 
-    axios.get(req.url).then(
+    axios.get(fullUrl).then(
       () => {
         mutateShipping();
         mutateShipments();

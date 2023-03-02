@@ -15,19 +15,24 @@ export type Protein = SampleProtein;
 export type Proposalid = string;
 export type Name = string;
 export type Acronym = string;
+export type Proteinid = number;
 export type SizeX = number;
 export type SizeY = number;
 export type SizeZ = number;
 export type Abundance = number;
 export type Crystalid = number;
 export type Protein1 = number;
+export type Componentid = number;
 export type Name1 = string;
-export type Composition1 = string;
-export type Concentration = number;
+export type Composition1 = null | string;
 export type Name2 = string;
-export type Abundance1 = number;
-export type Ratio = number;
-export type Ph = number;
+export type Componentid1 = number;
+export type Abundance1 = null | number;
+export type Ratio = null | number;
+export type PH = null | number;
+export type Id = number;
+export type Name3 = string;
+export type Symbol = string;
 export type CrystalCompositions = Composition[];
 
 export interface SampleCrystal {
@@ -50,21 +55,29 @@ export interface SampleProtein {
   proposalId: Proposalid;
   name: Name;
   acronym: Acronym;
+  proteinId: Proteinid;
 }
 export interface Composition {
   Component: Component;
+  componentId: Componentid1;
   abundance?: Abundance1;
   ratio?: Ratio;
-  ph?: Ph;
+  ph?: PH;
+  ConcentrationType?: ConcentrationType;
 }
 export interface Component {
+  componentId: Componentid;
   name: Name1;
   composition?: Composition1;
-  concentration?: Concentration;
   ComponentType: ComponentType;
 }
 export interface ComponentType {
   name: Name2;
+}
+export interface ConcentrationType {
+  concentrationTypeId: Id;
+  name: Name3;
+  symbol: Symbol;
 }
 
 type Constructor<T = {}> = new (...args: any[]) => T;
@@ -91,26 +104,36 @@ export function withSampleProtein<TBase extends Constructor>(Base: TBase) {
     proposalId: Proposalid;
     name: Name;
     acronym: Acronym;
+    proteinId: Proteinid;
   }
 }
 export function withComposition<TBase extends Constructor>(Base: TBase) {
   return class WithComposition extends Base {
     Component: Component;
+    componentId: Componentid1;
     abundance?: Abundance1;
     ratio?: Ratio;
-    ph?: Ph;
+    ph?: PH;
+    ConcentrationType?: ConcentrationType;
   }
 }
 export function withComponent<TBase extends Constructor>(Base: TBase) {
   return class WithComponent extends Base {
+    componentId: Componentid;
     name: Name1;
     composition?: Composition1;
-    concentration?: Concentration;
     ComponentType: ComponentType;
   }
 }
 export function withComponentType<TBase extends Constructor>(Base: TBase) {
   return class WithComponentType extends Base {
     name: Name2;
+  }
+}
+export function withConcentrationType<TBase extends Constructor>(Base: TBase) {
+  return class WithConcentrationType extends Base {
+    concentrationTypeId: Id;
+    name: Name3;
+    symbol: Symbol;
   }
 }

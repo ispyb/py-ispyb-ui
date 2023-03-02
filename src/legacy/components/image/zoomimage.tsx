@@ -14,6 +14,7 @@ interface props {
   style?: CSSProperties;
   lazy?: boolean;
   legend?: string;
+  local?: boolean;
 }
 export default function ZoomImage({
   src,
@@ -21,10 +22,11 @@ export default function ZoomImage({
   style,
   lazy = true,
   legend,
+  local = false,
 }: props) {
   const { site, token } = useAuth();
 
-  const fullUrl = `${site.host}${site.apiPrefix}/${token}${src}`;
+  const fullUrl = local ? src : `${site.host}${site.apiPrefix}/${token}${src}`;
 
   const [error, setError] = useState(false);
 
@@ -59,7 +61,7 @@ export default function ZoomImage({
 
   const placeholder = (
     <>
-      <div className="zoom-image-placeholder">
+      <div className="zoom-image-placeholder" style={style}>
         <Spinner animation="border" role="status" variant="dark"></Spinner>
       </div>
       {legend && <span>{legend}</span>}

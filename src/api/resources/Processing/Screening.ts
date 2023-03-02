@@ -1,13 +1,15 @@
-import PaginatedResource from 'api/resources/Base/Paginated';
-import { withScreening } from 'models/Screening.d';
+import createPaginatedResource from '../Base/Paginated';
+import { ScreeningBase } from 'models/Screening';
 
-export class _ScreeningResource extends PaginatedResource {
+export class ScreeningEntity extends ScreeningBase {
   readonly screeningId: number;
 
   pk() {
     return this.screeningId?.toString();
   }
-  static urlRoot = 'processings/screenings';
 }
 
-export const ScreeningResource = withScreening(_ScreeningResource);
+export const ScreeningResource = createPaginatedResource({
+  path: '/processings/screenings/:screeningId',
+  schema: ScreeningEntity,
+});

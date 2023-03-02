@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import EMPage from 'legacy/pages/em/empage';
 import { Card, Accordion, Container, Row, Col, Form } from 'react-bootstrap';
@@ -15,14 +15,17 @@ type Param = {
 export default function SessionClassificationPage() {
   const { sessionId, proposalName = '' } = useParams<Param>();
 
-  const [cutoff, setCutoff] = useState<number>(0);
-
   const proposal: string = proposalName ? proposalName : '';
   const { data, isError: sessionError } = useEMClassification({
     sessionId,
     proposalName: proposal,
   });
   if (sessionError) throw Error(sessionError);
+  const resolutions = data.map((d: Classification) => d.estimatedResolution);
+  const maxCutoff = Math.max(...resolutions);
+  const minCutoff = Math.min(...resolutions);
+
+  const [cutoff, setCutoff] = useState<number>(maxCutoff);
 
   const classificationGroupsId = new Set(
     data.map((d: Classification) => d.particleClassificationGroupId)
@@ -40,23 +43,22 @@ export default function SessionClassificationPage() {
         data.filter(
           (d: Classification) =>
             d.particleClassificationGroupId === id &&
-            d.estimatedResolution > cutoff
+            d.estimatedResolution <= cutoff
         )
       );
     }
   });
 
-  const resolutions = data.map((d: Classification) => d.estimatedResolution);
-  const maxCutoff = Math.max(...resolutions);
-  const minCutoff = Math.min(...resolutions);
-
   return (
     <EMPage sessionId={sessionId} proposalName={proposalName}>
       <Menu>
         <div>
-          <Form.Label>{`Cutoff resolution > ${cutoff}`}</Form.Label>
+          <Form.Label>{`Cutoff resolution ${String.fromCharCode(
+            8804
+          )} ${cutoff}`}</Form.Label>{' '}
           <Form.Range
             onChange={(e) => setCutoff(e.target.valueAsNumber)}
+            step={0.5}
             value={cutoff}
             min={minCutoff}
             max={maxCutoff}
@@ -67,7 +69,7 @@ export default function SessionClassificationPage() {
         <div style={{ margin: 10 }}>
           <Accordion>
             {groups.map((group, i) => (
-              <Accordion.Item eventKey={i.toString()}>
+              <Accordion.Item key={i} eventKey={i.toString()}>
                 <Accordion.Header>
                   <span>
                     Classification #{i + 1}: {group.length} classes{' '}
@@ -83,8 +85,8 @@ export default function SessionClassificationPage() {
                         .sort((a: Classification, b: Classification) => {
                           return b.classDistribution - a.classDistribution;
                         })
-                        .map((c) => (
-                          <Col style={{ margin: 2 }}>
+                        .map((c, i) => (
+                          <Col key={i} xs={12} sm={6} lg={4} xl={3} xxl={2}>
                             <ClassificationPanel
                               classification={c}
                               proposalName={proposalName}

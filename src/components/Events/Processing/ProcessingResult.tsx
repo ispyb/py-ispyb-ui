@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useSuspense } from 'rest-hooks';
 import { Button } from 'react-bootstrap';
-import { AutoProcProgram as AutoProcProgramType } from 'models/AutoProcProgram.d';
+import { AutoProcProgram as AutoProcProgramType } from 'models/AutoProcProgram';
 import { AutoProcProgramResource } from 'api/resources/Processing/AutoProcProgram';
 
 import Table from 'components/Layout/Table';
@@ -56,7 +56,7 @@ export default function ProcessingResult({
 }: {
   dataCollectionId: number;
 }) {
-  const processings = useSuspense(AutoProcProgramResource.list(), {
+  const processings = useSuspense(AutoProcProgramResource.getList, {
     dataCollectionId,
   });
 

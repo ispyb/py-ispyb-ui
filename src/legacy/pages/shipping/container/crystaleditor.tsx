@@ -1,7 +1,7 @@
 import { BaseEditorComponent, HotEditorProps } from '@handsontable/react';
 import _ from 'lodash';
 import { Crystal, Protein } from 'legacy/pages/model';
-import React, { MouseEvent } from 'react';
+import { MouseEvent } from 'react';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import Select from 'react-select';
 import { getCrystalInfo, parseCrystalInfo } from './containertotabledata';

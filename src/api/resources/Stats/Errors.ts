@@ -1,8 +1,26 @@
-import { AuthenticatedSingletonResource } from '../Base/Singleton';
-import { withErrors } from 'models/Errors.d';
+import { AuthenticatedEndpoint } from 'api/resources/Base/Authenticated';
+import { ErrorsBase } from 'models/Errors';
 
-class _ErrorsResource extends AuthenticatedSingletonResource {
-  static urlRoot = 'stats/errors';
+class ErrorsEntity extends ErrorsBase {
+  readonly key: string;
+
+  pk() {
+    return this.key;
+  }
 }
 
-export const ErrorsResource = withErrors(_ErrorsResource);
+export const ErrorsEndpoint = new AuthenticatedEndpoint({
+  path: '/stats/errors',
+  schema: ErrorsEntity,
+  process(value, params) {
+    value.key = params.sessionId
+      ? `sessionId:${params.sessionId}`
+      : `runId:${params.runId}/${params.beamLineName}`;
+    return value;
+  },
+  searchParams: {} as {
+    beamLineName?: string;
+    runId?: string;
+    sessionId?: string;
+  },
+});

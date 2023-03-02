@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Menu from 'legacy/components/menu/menu';
 import moment, { Moment } from 'moment';
 import { useSearchParams } from 'react-router-dom';
@@ -78,8 +78,9 @@ export default function SessionTableMenu({
     <Menu>
       <ButtonGroup className="mb-2">
         {checkList &&
-          checkList.map((item: ToggleButtonProps) => (
+          checkList.map((item: ToggleButtonProps, i) => (
             <ToggleButton
+              key={i}
               {...item}
               variant={item.checked ? 'primary' : 'outline-primary'}
             >

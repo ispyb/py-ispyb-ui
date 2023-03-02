@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react';
+import { CSSProperties } from 'react';
 import { ColumnDescription } from 'react-bootstrap-table-next';
 
 const ContainerWidth = {

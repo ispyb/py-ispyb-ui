@@ -6,17 +6,17 @@ import { Gear, PieChartFill } from 'react-bootstrap-icons';
 
 import { EventResource } from 'api/resources/Event';
 import { EventTypeResource } from 'api/resources/EventType';
-import { ProcessingStatus } from 'api/resources/Processing/ProcessingStatus';
-import { ProcessingMessageStatus } from 'api/resources/Processing/ProcessingMessageStatus';
+import { ProcessingStatusEndpoint } from 'api/resources/Processing/ProcessingStatus';
+import { ProcessingMessageStatusEndpoint } from 'api/resources/Processing/ProcessingMessageStatus';
 import { usePath } from 'hooks/usePath';
 import { usePaging } from 'hooks/usePaging';
 import NetworkErrorPage from 'components/NetworkErrorPage';
 import Paginator from 'components/Layout/Paginator';
 import Filter from 'components/Filter';
 import TimesBar from 'components/Stats/TimesBar';
-import { Event } from 'models/Event.d';
-import { Statuses as ProcessingStatusesType } from 'models/ProcessingStatusesList.d';
-import { Statuses as ProcessingMessageStatusesType } from 'models/AutoProcProgramMessageStatuses.d';
+import { Event } from 'models/Event';
+import { Statuses as ProcessingStatusesType } from 'models/ProcessingStatusesList';
+import { Statuses as ProcessingMessageStatusesType } from 'models/AutoProcProgramMessageStatuses';
 import { EventBase } from './Events';
 import Default from './Default';
 import RobotAction from './RobotAction';
@@ -35,7 +35,7 @@ function EventTypeFilter({
   blSampleId?: string;
   proteinId?: string;
 }) {
-  const eventTypes = useSuspense(EventTypeResource.list(), {
+  const eventTypes = useSuspense(EventTypeResource.getList, {
     ...(sessionId ? { sessionId } : null),
     ...(blSampleId ? { blSampleId } : null),
     ...(proteinId ? { proteinId } : null),
@@ -175,35 +175,35 @@ function EventListMain({
     ...(status ? { status } : {}),
   };
 
-  const events = useSuspense(EventResource.list(), opts);
-  useSubscription(EventResource.list(), refresh ? opts : null);
+  const events = useSuspense(EventResource.getList, opts);
+  useSubscription(EventResource.getList, refresh ? opts : null);
 
   const dataCollectionIds = events.results
     .filter((event) => event.type === 'dc')
     .map((event) => event.id);
 
   const processingStatuses = useSuspense(
-    ProcessingStatus.list(),
+    ProcessingStatusEndpoint,
     dataCollectionIds.length > 0
       ? { dataCollectionIds: JSON.stringify(dataCollectionIds) }
       : null
   );
   useSubscription(
-    ProcessingStatus.list(),
+    ProcessingStatusEndpoint,
     refresh && dataCollectionIds.length > 0 && refresh
       ? { dataCollectionIds: JSON.stringify(dataCollectionIds) }
       : null
   );
 
   const messageStatuses = useSuspense(
-    ProcessingMessageStatus.list(),
+    ProcessingMessageStatusEndpoint,
     dataCollectionIds.length > 0
       ? { dataCollectionIds: JSON.stringify(dataCollectionIds) }
       : null
   );
 
   useSubscription(
-    ProcessingMessageStatus.list(),
+    ProcessingMessageStatusEndpoint,
     dataCollectionIds.length > 0 && refresh
       ? { dataCollectionIds: JSON.stringify(dataCollectionIds) }
       : null

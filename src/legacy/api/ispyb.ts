@@ -46,7 +46,7 @@ export function getProposals() {
 }
 
 export function getSessionById(sessionId: string | undefined) {
-  return { url: `/proposal/session/${sessionId}/list` };
+  return { url: `/proposal/session/${sessionId}` };
 }
 
 export function getMXDataCollectionsBy({
@@ -649,5 +649,101 @@ export function removeDewar({
 }) {
   return {
     url: `/proposal/${proposalName}/shipping/${shippingId}/dewar/${dewarId}/remove`,
+  };
+}
+
+export function getAutoProc({
+  proposalName,
+  dataCollectionId,
+}: {
+  proposalName: string;
+  dataCollectionId: string;
+}) {
+  return {
+    url: `/proposal/${proposalName}/mx/autoprocintegration/datacollection/${dataCollectionId}/view`,
+  };
+}
+
+export function getDownloadAttachmentUrl({
+  proposalName,
+  autoprocattachmentid,
+}: {
+  proposalName: string;
+  autoprocattachmentid: string;
+}) {
+  return {
+    url: `/proposal/${proposalName}/mx/autoprocintegration/autoprocattachmentid/${autoprocattachmentid}/download`,
+  };
+}
+
+export function getAttachmentList({
+  proposalName,
+  autoprocprogramid,
+}: {
+  proposalName: string;
+  autoprocprogramid: string;
+}) {
+  return {
+    url: `/proposal/${proposalName}/mx/autoprocintegration/attachment/autoprocprogramid/${autoprocprogramid}/list`,
+  };
+}
+
+export function getAttachmentsDownloadUrl({
+  proposalName,
+  autoprocprogramid,
+}: {
+  proposalName: string;
+  autoprocprogramid: string;
+}) {
+  return {
+    url: `/proposal/${proposalName}/mx/autoprocintegration/attachment/autoprocprogramid/${autoprocprogramid}/download`,
+  };
+}
+
+export function getPhasingList({
+  proposalName,
+  dataCollectionGroupId,
+}: {
+  proposalName: string;
+  dataCollectionGroupId: string;
+}) {
+  return {
+    url: `/proposal/${proposalName}/mx/phasing/datacollectiongroupid/${dataCollectionGroupId}/list`,
+  };
+}
+
+export function getPhasingDownloadUrl({
+  proposalName,
+  phasingstepid,
+}: {
+  proposalName: string;
+  phasingstepid: string;
+}) {
+  return {
+    url: `/proposal/${proposalName}/mx/phasing/phasingstepid/${phasingstepid}/download`,
+  };
+}
+
+export function getPhasingAttachmentDownloadUrl({
+  proposalName,
+  phasingprogramattachmentid,
+}: {
+  proposalName: string;
+  phasingprogramattachmentid: string;
+}) {
+  return {
+    url: `/proposal/${proposalName}/mx/phasing/phasingprogramattachmentid/${phasingprogramattachmentid}/download`,
+  };
+}
+
+export function getPhasingAttachmentImageUrl({
+  proposalName,
+  phasingprogramattachmentid,
+}: {
+  proposalName: string;
+  phasingprogramattachmentid: string;
+}) {
+  return {
+    url: `/proposal/${proposalName}/mx/phasing/phasingprogramattachmentid/${phasingprogramattachmentid}/image`,
   };
 }

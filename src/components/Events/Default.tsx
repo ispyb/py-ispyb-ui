@@ -1,5 +1,5 @@
 import { EventHeader } from './Events';
-import { Event } from 'models/Event.d';
+import { Event } from 'models/Event';
 
 export default function Default(event: Event) {
   return (

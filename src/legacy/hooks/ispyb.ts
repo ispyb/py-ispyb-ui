@@ -26,6 +26,9 @@ import {
   getShippingHistory,
   getShippingContainer,
   getProposalSamples,
+  getAutoProc,
+  getAttachmentList,
+  getPhasingList,
 } from 'legacy/api/ispyb';
 import {
   EnergyScan,
@@ -33,6 +36,9 @@ import {
   FluorescenceSpectra,
   Sample,
   DataCollectionGroup,
+  AutoProcInformation,
+  AutoProcAttachment,
+  PhasingInfo,
 } from 'legacy/pages/mx/model';
 import {
   Container,
@@ -340,6 +346,60 @@ export function useShippingContainer(
   return useGet<ShippingContainer>(
     getShippingContainer({ proposalName, shippingId, dewarId, containerId })
       .url,
+    options
+  );
+}
+
+export function useAutoProc(
+  {
+    proposalName,
+    dataCollectionId,
+  }: {
+    proposalName: string;
+    dataCollectionId: string;
+  },
+  options?: GetHookOption
+) {
+  return useGet<AutoProcInformation[][]>(
+    getAutoProc({ proposalName, dataCollectionId }).url,
+    options
+  );
+}
+
+export function useAttachmentList(
+  {
+    proposalName,
+    autoprocprogramid,
+  }: {
+    proposalName: string;
+    autoprocprogramid: string;
+  },
+  options?: GetHookOption
+) {
+  return useGet<AutoProcAttachment[][]>(
+    getAttachmentList({
+      proposalName,
+      autoprocprogramid,
+    }).url,
+    options
+  );
+}
+
+export function usePhasingList(
+  {
+    proposalName,
+    dataCollectionGroupId,
+  }: {
+    proposalName: string;
+    dataCollectionGroupId: string;
+  },
+  options?: GetHookOption
+) {
+  return useGet<PhasingInfo[][]>(
+    getPhasingList({
+      proposalName,
+      dataCollectionGroupId,
+    }).url,
     options
   );
 }

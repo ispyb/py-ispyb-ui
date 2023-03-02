@@ -1,21 +1,43 @@
-import { Resource } from '@rest-hooks/rest';
-import PaginatedResource from 'api/resources/Base/Paginated';
-import { withSample } from 'models/Sample.d';
+import createPaginatedResource from './Base/Paginated';
+import { ConcentrationTypeBase, SampleBase } from 'models/Sample';
+import { ComponentBase } from 'models/Component';
+import { createAuthenticatedResource } from './Base/Authenticated';
 
-export class _SampleResource extends PaginatedResource {
+export class SampleEntity extends SampleBase {
   readonly blSampleId: number;
 
   pk() {
     return this.blSampleId?.toString();
   }
-
-  static create<T extends typeof Resource>(this: T) {
-    return super.create().extend({
-      schema: { samples: [this] },
-    });
-  }
-
-  static urlRoot = 'samples';
 }
 
-export const SampleResource = withSample(_SampleResource);
+export const SampleResource = createPaginatedResource({
+  path: '/samples/:blSampleId',
+  schema: SampleEntity,
+});
+
+export class ComponentEntity extends ComponentBase {
+  readonly componentId: number;
+
+  pk() {
+    return this.componentId?.toString();
+  }
+}
+
+export const ComponentResource = createPaginatedResource({
+  path: '/samples/components/:componentId',
+  schema: ComponentEntity,
+});
+
+class ConcentrationTypeEntity extends ConcentrationTypeBase {
+  readonly concentrationTypeId: number;
+
+  pk() {
+    return this.concentrationTypeId?.toString();
+  }
+}
+
+export const ConcentrationTypeResource = createAuthenticatedResource({
+  path: '/samples/concentration/types/:concentrationTypeId',
+  schema: ConcentrationTypeEntity,
+});

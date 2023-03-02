@@ -1,22 +1,27 @@
-import { withSSXDataCollectionProcessingStats } from 'models/SSXDataCollectionProcessingStats.d';
-import { AuthenticatedResource } from '../Base/Authenticated';
+import { AuthenticatedEndpoint } from '../Base/Authenticated';
+import { SSXDataCollectionProcessingStatsBase } from 'models/SSXDataCollectionProcessingStats';
 
-class _SSXDataCollectionProcessingStats extends AuthenticatedResource {
-  readonly dataCollectionId: number;
+class SSXDataCollectionProcessingStatsEntity extends SSXDataCollectionProcessingStatsBase {
+  readonly key: string;
 
   pk() {
-    return this.dataCollectionId.toString();
+    return this.key;
   }
-
-  static getEndpointExtra() {
-    return {
-      ...super.getEndpointExtra(),
-      pollFrequency: 5000,
-    };
-  }
-
-  static urlRoot = 'ssx/datacollection/processing/stats';
 }
 
-export const SSXDataCollectionProcessingStatsResource =
-  withSSXDataCollectionProcessingStats(_SSXDataCollectionProcessingStats);
+export const SSXDataCollectionProcessingStatsEndpoint =
+  new AuthenticatedEndpoint({
+    path: '/ssx/datacollection/processing/stats',
+    schema: [SSXDataCollectionProcessingStatsEntity],
+    process(value, params) {
+      value.key = `dataCollectionIds:${params.dataCollectionIds
+        .split(',')
+        .sort()
+        .join(',')}`;
+      return value;
+    },
+    searchParams: {} as {
+      dataCollectionIds: string;
+    },
+    endpointOptions: { pollFrequency: 5000 },
+  });

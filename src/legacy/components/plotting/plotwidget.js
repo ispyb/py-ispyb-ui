@@ -1,4 +1,4 @@
-import React, { lazy } from 'react';
+import { lazy } from 'react';
 import createPlotlyComponent from 'react-plotly.js/factory';
 
 // https://reactjs.org/docs/code-splitting.html

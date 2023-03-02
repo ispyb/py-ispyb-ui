@@ -5,49 +5,69 @@
  * and run json-schema-to-typescript to regenerate this file.
  */
 
+export type Componentid = number;
 export type Name = string;
-export type Composition1 = string;
-export type Concentration = number;
+export type Composition1 = null | string;
 export type Name1 = string;
-export type Abundance = number;
-export type Ratio = number;
-export type Ph = number;
+export type Componentid1 = number;
+export type Abundance = null | number;
+export type Ratio = null | number;
+export type PH = null | number;
+export type Id = number;
+export type Name2 = string;
+export type Symbol = string;
 
 export interface Composition {
   Component: Component;
+  componentId: Componentid1;
   abundance?: Abundance;
   ratio?: Ratio;
-  ph?: Ph;
+  ph?: PH;
+  ConcentrationType?: ConcentrationType;
 }
 export interface Component {
+  componentId: Componentid;
   name: Name;
   composition?: Composition1;
-  concentration?: Concentration;
   ComponentType: ComponentType;
 }
 export interface ComponentType {
   name: Name1;
+}
+export interface ConcentrationType {
+  concentrationTypeId: Id;
+  name: Name2;
+  symbol: Symbol;
 }
 
 type Constructor<T = {}> = new (...args: any[]) => T;
 export function withComposition<TBase extends Constructor>(Base: TBase) {
   return class WithComposition extends Base {
     Component: Component;
+    componentId: Componentid1;
     abundance?: Abundance;
     ratio?: Ratio;
-    ph?: Ph;
+    ph?: PH;
+    ConcentrationType?: ConcentrationType;
   }
 }
 export function withComponent<TBase extends Constructor>(Base: TBase) {
   return class WithComponent extends Base {
+    componentId: Componentid;
     name: Name;
     composition?: Composition1;
-    concentration?: Concentration;
     ComponentType: ComponentType;
   }
 }
 export function withComponentType<TBase extends Constructor>(Base: TBase) {
   return class WithComponentType extends Base {
     name: Name1;
+  }
+}
+export function withConcentrationType<TBase extends Constructor>(Base: TBase) {
+  return class WithConcentrationType extends Base {
+    concentrationTypeId: Id;
+    name: Name2;
+    symbol: Symbol;
   }
 }

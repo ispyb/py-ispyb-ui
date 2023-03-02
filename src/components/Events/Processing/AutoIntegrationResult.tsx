@@ -5,7 +5,7 @@ import Table, { IColumn } from 'components/Layout/Table';
 import {
   AutoProcProgramIntegration as AutoProcProgramIntegrationType,
   AutoProcScalingStatistics as AutoProcScalingStatisticsType,
-} from 'models/AutoProcProgramIntegration.d';
+} from 'models/AutoProcProgramIntegration';
 import { messageStatusIcons } from '../AutoProcProgramMessages';
 import { AutoProcProgramIntegrationResource } from 'api/resources/Processing/AutoProcProgramIntegration';
 import { ActionsCell } from './ProcessingResult';
@@ -37,7 +37,7 @@ export default function AutoIntegrationResult({
 }: {
   dataCollectionId: number;
 }) {
-  const processings = useSuspense(AutoProcProgramIntegrationResource.list(), {
+  const processings = useSuspense(AutoProcProgramIntegrationResource.getList, {
     dataCollectionId,
     limit: 50,
   });
@@ -123,7 +123,11 @@ export default function AutoIntegrationResult({
           );
 
           return (
-            <Tab eventKey={result.autoProcProgramId} title={title}>
+            <Tab
+              key={result.autoProcProgramId}
+              eventKey={result.autoProcProgramId}
+              title={title}
+            >
               {/* <AttachmentsButton {...result} /> */}
               {result.processingStatus === 0 && (
                 <p>This job failed: {result.processingMessage}</p>
@@ -184,7 +188,7 @@ export default function AutoIntegrationResult({
                         </Card.Body>
                         <ListGroup horizontal="sm">
                           {Object.entries(cellParams).map(([key, value]) => (
-                            <ListGroup.Item>
+                            <ListGroup.Item key={key}>
                               {key}:{' '}
                               {
                                 // @ts-ignore

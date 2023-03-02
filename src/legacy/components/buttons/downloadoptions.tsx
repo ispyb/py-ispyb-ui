@@ -74,6 +74,7 @@ export default function DownloadOptions({
             const fullUrl = `${site.host}${site.apiPrefix}/${token}${option.href}`;
             return (
               <Dropdown.Item
+                key={option.title}
                 as={Anchor}
                 onClick={() => download(fullUrl, option.fileName)}
               >

@@ -1,13 +1,13 @@
-import { Shells } from 'legacy/helpers/mx/resultparser';
-import React from 'react';
-import { Col, ProgressBar, Row, Table } from 'react-bootstrap';
+import { Card, Col, ProgressBar, Row, Table } from 'react-bootstrap';
 import UnitCellSection from './unitcellsection';
+import { AutoProcIntegration } from 'legacy/helpers/mx/results/resultparser';
+import { HelpIcon } from 'components/Common/HelpIcon';
 
-function getColorProgressBarByCompleness(completeness: string) {
-  if (parseFloat(completeness) > 90) {
+function getColorProgressBarByCompleness(completeness: number) {
+  if (completeness > 90) {
     return 'info';
   }
-  if (parseFloat(completeness) > 50) {
+  if (completeness > 50) {
     return 'warning';
   }
   return 'danger';
@@ -15,39 +15,51 @@ function getColorProgressBarByCompleness(completeness: string) {
 
 function getShellStatistics(
   type: string,
-  completeness: string | undefined,
-  resolutionLimitLow: string | undefined,
-  resolutionLimitHigh: string | undefined,
-  rMerge: string | undefined
+  completeness: number | undefined,
+  resolutionLimitLow: number | undefined,
+  resolutionLimitHigh: number | undefined,
+  rMerge: number | undefined,
+  meanIOverSigI: number | undefined
 ) {
   if (completeness === undefined) {
-    completeness = '0';
+    completeness = 0;
   }
   return (
     <tr>
-      <td>{type}</td>
+      <td>
+        <small>{type}</small>
+      </td>
       <td>
         <ProgressBar
           variant={getColorProgressBarByCompleness(completeness)}
-          now={parseFloat(completeness)}
-          label={completeness + '%'}
-        />{' '}
+          now={completeness}
+          label={completeness.toFixed(1) + '%'}
+        />
       </td>
-      <td>{`${resolutionLimitLow} - ${resolutionLimitHigh}`}</td>
-      <td>{rMerge}</td>
+      <td>
+        <small>{`${resolutionLimitLow?.toFixed(
+          1
+        )} - ${resolutionLimitHigh?.toFixed(1)}`}</small>
+      </td>
+      <td>
+        <small>{rMerge?.toFixed(1)}</small>
+      </td>
+      <td>
+        <small>{meanIOverSigI?.toFixed(1)}</small>
+      </td>
     </tr>
   );
 }
 
-export default function AutoprocIntegrationSection({
+export default function BestResultSection({
   bestResult,
   compact,
 }: {
-  bestResult: Shells;
+  bestResult: AutoProcIntegration;
   compact: boolean;
 }) {
   const content = [
-    <Col>
+    <Col key={0}>
       <Table
         size="sm"
         style={{ whiteSpace: 'nowrap' }}
@@ -56,47 +68,91 @@ export default function AutoprocIntegrationSection({
       >
         <thead>
           <tr>
-            <td className="parameterValue">{bestResult.refShell.spaceGroup}</td>
-            <td className="parameterValue">Completeness</td>
-            <td className="parameterValue">Res.</td>
-            <td className="parameterValue">Rmerge</td>
+            <td className="parameterValue">
+              <small>{bestResult.spaceGroup}</small>
+            </td>
+            <td className="parameterValue">
+              <small>Compl.</small>
+            </td>
+            <td className="parameterValue">
+              <small>Res.</small>
+            </td>
+            <td className="parameterValue">
+              <small>Rmerge</small>
+            </td>
+            <td className="parameterValue">
+              <small>I/Sigma</small>
+            </td>
           </tr>
         </thead>
         <tbody>
           {getShellStatistics(
-            'Overall',
-            bestResult.shells.overall.completeness,
-            bestResult.shells.overall.resolutionLimitLow,
-            bestResult.shells.overall.resolutionLimitHigh,
-            bestResult.shells.overall.rMerge
-          )}
-          {getShellStatistics(
             'Inner',
-            bestResult.shells.innerShell.completeness,
-            bestResult.shells.innerShell.resolutionLimitLow,
-            bestResult.shells.innerShell.resolutionLimitHigh,
-            bestResult.shells.innerShell.rMerge
+            bestResult.inner?.completeness,
+            bestResult.inner?.resolutionLimitLow,
+            bestResult.inner?.resolutionLimitHigh,
+            bestResult.inner?.rMerge,
+            bestResult.inner?.meanIOverSigI
           )}
           {getShellStatistics(
             'Outer',
-            bestResult.shells.outerShell.completeness,
-            bestResult.shells.outerShell.resolutionLimitLow,
-            bestResult.shells.outerShell.resolutionLimitHigh,
-            bestResult.shells.outerShell.rMerge
+            bestResult.outer?.completeness,
+            bestResult.outer?.resolutionLimitLow,
+            bestResult.outer?.resolutionLimitHigh,
+            bestResult.outer?.rMerge,
+            bestResult.outer?.meanIOverSigI
+          )}
+          {getShellStatistics(
+            'Overall',
+            bestResult.overall?.completeness,
+            bestResult.overall?.resolutionLimitLow,
+            bestResult.overall?.resolutionLimitHigh,
+            bestResult.overall?.rMerge,
+            bestResult.overall?.meanIOverSigI
           )}
         </tbody>
       </Table>
     </Col>,
-    <Col>
+    <Col key={1}>
       <UnitCellSection
-        cell_a={bestResult.shells.innerShell.cell_a}
-        cell_b={bestResult.shells.innerShell.cell_b}
-        cell_c={bestResult.shells.innerShell.cell_c}
-        cell_alpha={bestResult.shells.innerShell.cell_alpha}
-        cell_beta={bestResult.shells.innerShell.cell_beta}
-        cell_gamma={bestResult.shells.innerShell.cell_gamma}
+        cell_a={bestResult.cell_a}
+        cell_b={bestResult.cell_b}
+        cell_c={bestResult.cell_c}
+        cell_alpha={bestResult.cell_alpha}
+        cell_beta={bestResult.cell_beta}
+        cell_gamma={bestResult.cell_gamma}
+        spaceGroup={bestResult.spaceGroup}
       ></UnitCellSection>
     </Col>,
   ];
-  return compact ? <Row>{content}</Row> : <Col>{content}</Col>;
+  return compact ? (
+    <Row>{content}</Row>
+  ) : (
+    <Card style={{ padding: 20 }}>
+      <Card.Body>
+        <Col>
+          <h5 className={'text-center m-0'}>
+            Best result{' '}
+            <HelpIcon
+              message={`You can adjust criteria for best result selection in the ranking
+                menu at the top of the page.`}
+            ></HelpIcon>
+          </h5>
+          <div className={'text-center'} style={{ textDecoration: 'italic' }}>
+            <small>
+              <i>from {bestResult.program}</i>
+            </small>
+          </div>
+          <div
+            style={{
+              marginTop: 10,
+              marginBottom: 10,
+              borderTop: '1px solid lightgray',
+            }}
+          />
+          {content}
+        </Col>
+      </Card.Body>
+    </Card>
+  );
 }

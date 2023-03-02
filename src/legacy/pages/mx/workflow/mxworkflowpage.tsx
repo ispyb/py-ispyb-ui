@@ -24,7 +24,11 @@ export default function MXWorkflowPage() {
         <Nav variant="pills">
           {steps.map((stepId) => {
             return (
-              <MXWorkflowStep proposalName={proposalName} stepId={stepId} />
+              <MXWorkflowStep
+                key={stepId}
+                proposalName={proposalName}
+                stepId={stepId}
+              />
             );
           })}
         </Nav>
@@ -34,6 +38,7 @@ export default function MXWorkflowPage() {
           {steps.map((stepId) => {
             return (
               <MXWorkflowStepContent
+                key={stepId}
                 proposalName={proposalName}
                 stepId={stepId}
               />

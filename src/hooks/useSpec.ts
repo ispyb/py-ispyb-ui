@@ -1,12 +1,12 @@
 import { useSuspense } from 'rest-hooks';
-import { OpenAPIResource } from 'api/resources/Base/OpenAPI';
+import { OpenAPIEndpoint } from 'api/resources/Base/OpenAPI';
 
 /**
  * Get the OpenAPI spec from the server
  * @returns - the OpenAPI resource
  */
 export function useSpec() {
-  return useSuspense(OpenAPIResource.detail(), { id: '' });
+  return useSuspense(OpenAPIEndpoint);
 }
 
 /**
@@ -15,7 +15,7 @@ export function useSpec() {
  * @param title - a title to give the schema
  * @returns - the schema
  */
-export function useSchema(schema: string, title: string) {
+export function useSchema(schema: string, title?: string) {
   const spec = useSpec();
   return {
     $ref: `#/components/schemas/${schema}`,

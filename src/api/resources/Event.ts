@@ -1,21 +1,17 @@
-import PaginatedResource from 'api/resources/Base/Paginated';
-import { withEvent } from 'models/Event.d';
+import createPaginatedResource from './Base/Paginated';
+import { EventBase } from 'models/Event';
 
-export class _EventResource extends PaginatedResource {
+export class EventEntity extends EventBase {
   readonly id: number;
   readonly type: string;
 
   pk() {
     return `${this.id}-${this.type}`;
   }
-  static urlRoot = 'events';
-
-  static getEndpointExtra() {
-    return {
-      ...super.getEndpointExtra(),
-      pollFrequency: 10000,
-    };
-  }
 }
 
-export const EventResource = withEvent(_EventResource);
+export const EventResource = createPaginatedResource({
+  path: '/events/:id',
+  schema: EventEntity,
+  endpointOptions: { pollFrequency: 10000 },
+});
