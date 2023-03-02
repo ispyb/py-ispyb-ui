@@ -1,13 +1,13 @@
 import { EventChainResource } from 'api/resources/EventChains';
 import _ from 'lodash';
 import { Event } from 'models/Event';
-import { EventChainResponse, EventType } from 'models/EventChainResponse.d';
+import { EventChainResponse, EventType } from 'models/EventChainResponse';
 import { Badge, Col, Container, Row, Toast } from 'react-bootstrap';
 import BootstrapTable from 'react-bootstrap-table-next';
 import { useSuspense } from 'rest-hooks';
 
 export function EventChains({ dcg }: { dcg: Event }) {
-  const eventChains = useSuspense(EventChainResource.list(), {
+  const eventChains = useSuspense(EventChainResource.getList, {
     dataCollectionId: dcg.id,
   });
   console.log(eventChains);

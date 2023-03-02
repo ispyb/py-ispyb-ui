@@ -12,7 +12,7 @@ export default function SessionList({ sortBy }: { sortBy?: string }) {
   const { skip, limit } = usePaging(10);
   const navigate = useNavigate();
   const proposal = usePath('proposal');
-  const sessions = useSuspense(SessionResource.list(), {
+  const sessions = useSuspense(SessionResource.getList, {
     skip,
     limit,
     ...(proposal ? { proposal } : {}),

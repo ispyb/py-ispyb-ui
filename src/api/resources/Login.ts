@@ -1,9 +1,19 @@
-import { SiteResource } from './Base/Site';
+import { Entity } from '@rest-hooks/endpoint';
+import { SiteEndpoint } from './Base/Site';
 
-export class LoginResource extends SiteResource {
+class LoginEntity extends Entity {
+  plugin: string;
+  login: string;
+  password: string;
+  token: string;
+
   pk() {
-    return '1';
+    return this.login;
   }
-
-  static urlRoot = `auth/login`;
 }
+
+export const LoginEndpoint = new SiteEndpoint({
+  path: '/auth/login',
+  schema: LoginEntity,
+  method: 'POST',
+});

@@ -1,13 +1,15 @@
 import { useSuspense } from 'rest-hooks';
 
-import { TimesResource } from 'api/resources/Stats/Times';
+import { TimesEndpoint } from 'api/resources/Stats/Times';
 import { usePath } from 'hooks/usePath';
 import PlotEnhancer from './PlotEnhancer';
 import { series } from './TimesPie';
 
 export default function TimesBar() {
   const sessionId = usePath('sessionId');
-  const times = useSuspense(TimesResource.list(), { sessionId });
+  const times = useSuspense(TimesEndpoint, {
+    ...(sessionId ? { sessionId } : null),
+  });
   const { duration, ...plottableTimes } = times.average;
   return (
     <div style={{ height: '25px' }} className="text-right">

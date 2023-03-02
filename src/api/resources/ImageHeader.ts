@@ -1,16 +1,47 @@
-import { AuthenticatedSingletonResource } from 'api/resources/Base/Singleton';
+import { Entity } from '@rest-hooks/rest';
+import { AuthenticatedEndpoint } from 'api/resources/Base/Authenticated';
 import { BraggyHeader } from 'components/Events/DataCollections/Braggy/models';
-import { withImageHistogram } from 'models/ImageHistogram.d';
+import { ImageHistogramBase } from 'models/ImageHistogram';
 
-export class ImageHeaderResource extends AuthenticatedSingletonResource {
+class ImageHeaderEntity extends Entity {
   readonly braggy_hdr: BraggyHeader;
-  static urlRoot = 'data/images/header';
+  readonly key: string;
+
+  pk() {
+    return this.key;
+  }
 }
 
-class _ImageHistogramResource extends AuthenticatedSingletonResource {
-  static urlRoot = 'data/images/histogram';
+export const ImageHeaderEndpoint = new AuthenticatedEndpoint({
+  path: '/data/images/header',
+  schema: ImageHeaderEntity,
+  process(value, params) {
+    value.key = `${params.dataCollectionId}:${params.imageNumber}`;
+    return value;
+  },
+  searchParams: {} as {
+    imageNumber: number;
+    dataCollectionId?: string;
+  },
+});
+
+class ImageHistogramEntity extends ImageHistogramBase {
+  readonly key: string;
+
+  pk() {
+    return this.key;
+  }
 }
 
-export const ImageHistogramResource = withImageHistogram(
-  _ImageHistogramResource
-);
+export const ImageHistogramEndpoint = new AuthenticatedEndpoint({
+  path: '/data/images/histogram',
+  schema: ImageHistogramEntity,
+  process(value, params) {
+    value.key = `${params.dataCollectionId}:${params.imageNumber}`;
+    return value;
+  },
+  searchParams: {} as {
+    imageNumber: number;
+    dataCollectionId?: string;
+  },
+});

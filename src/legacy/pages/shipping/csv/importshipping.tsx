@@ -15,10 +15,6 @@ import HotTable, { HotColumn } from '@handsontable/react';
 import _, { min } from 'lodash';
 import { EXPERIMENT_TYPES } from 'legacy/constants/experiments';
 
-import {
-  spaceGroupLongNames,
-  spaceGroupShortNames,
-} from 'legacy/constants/spacegroups';
 import './importshipping.scss';
 import {
   autofixShipping,
@@ -40,6 +36,13 @@ import { CommentObject } from 'handsontable/plugins/comments';
 import { CONTAINER_TYPES } from 'legacy/models';
 import { addDewarsToShipping } from 'legacy/api/ispyb';
 import axios from 'axios';
+import { useAuth } from 'hooks/useAuth';
+import { SPACE_GROUPS } from 'helpers/spacegroups';
+import { registerAllCellTypes } from 'handsontable/cellTypes';
+import { registerAllPlugins } from 'handsontable/plugins';
+
+registerAllCellTypes();
+registerAllPlugins();
 
 type Param = {
   proposalName: string;
@@ -134,6 +137,7 @@ export function CSVShippingImporter({
     []
   );
   const [done, setDone] = useState<string | undefined>(undefined);
+  const { site, token } = useAuth();
 
   const onCSVLoaded = (newData: Line[]) => {
     const autoReplacements = autofixShipping(
@@ -179,7 +183,8 @@ export function CSVShippingImporter({
         shippingId: shipping.shippingId,
         data: parcels,
       });
-      axios.post(req.url, req.data, { headers: req.headers }).then(
+      const fullUrl = `${site.host}${site.apiPrefix}/${token}${req.url}`;
+      axios.post(fullUrl, req.data, { headers: req.headers }).then(
         () => {
           setDone('success');
         },
@@ -456,7 +461,9 @@ export function CSVShippingImporterTable({
       title: 'Spacegroup',
       source: [
         '',
-        ..._(spaceGroupShortNames).concat(spaceGroupLongNames).uniq().value(),
+        ..._(SPACE_GROUPS)
+          .map((v) => v.name)
+          .value(),
       ],
       type: 'autocomplete',
       filter: true,
@@ -487,7 +494,9 @@ export function CSVShippingImporterTable({
       title: 'Forced<br />Spacegroup',
       source: [
         '',
-        ..._(spaceGroupShortNames).concat(spaceGroupLongNames).uniq().value(),
+        ..._(SPACE_GROUPS)
+          .map((v) => v.name)
+          .value(),
       ],
       type: 'autocomplete',
       filter: true,

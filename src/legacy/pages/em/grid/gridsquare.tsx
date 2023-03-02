@@ -1,5 +1,4 @@
 import { Badge, ProgressBar, Button, Card } from 'react-bootstrap';
-import React from 'react';
 import { getCrystalImage } from 'legacy/api/ispyb';
 import 'legacy/pages/em/styles.scss';
 import { Link } from 'react-router-dom';

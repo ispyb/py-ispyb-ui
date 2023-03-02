@@ -54,6 +54,7 @@ import {
 import axios from 'axios';
 import DownloadButton from 'legacy/components/buttons/downloadbutton';
 import { EditDewarModal } from './dewarEditModal';
+import { useAuth } from 'hooks/useAuth';
 
 export function ShipmentView({
   proposalName,
@@ -218,6 +219,7 @@ export function ContentPane({
 
   const [exporting, setExporting] = useState(false);
   const [creatingNewDewar, setCreatingNewDewar] = useState(false);
+  const { site, token } = useAuth();
 
   if (exporting) {
     return (
@@ -251,8 +253,9 @@ export function ContentPane({
                 shippingId: String(shipping.shippingId),
                 data: dewar,
               });
+              const fullUrl = `${site.host}${site.apiPrefix}/${token}${req.url}`;
               axios
-                .post(req.url, req.data, { headers: req.headers })
+                .post(fullUrl, req.data, { headers: req.headers })
                 .then(() => {
                   setCreatingNewDewar(false);
                   mutateShipping();
@@ -294,7 +297,10 @@ export function ContentPane({
           (a, b) => (a.dewarId ? a.dewarId : 0) - (b.dewarId ? b.dewarId : 0)
         )
         .map((dewar) => (
-          <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+          <Suspense
+            key={dewar.dewarId}
+            fallback={<LoadingPanel></LoadingPanel>}
+          >
             <DewarPane
               statisticsMode={statisticsMode}
               key={dewar.dewarId}
@@ -396,7 +402,7 @@ export function ExportPane({
           (a, b) => (a.dewarId ? a.dewarId : 0) - (b.dewarId ? b.dewarId : 0)
         )
         .map((dewar) => (
-          <div>
+          <div key={dewar.dewarId}>
             <FormCheck
               style={{
                 position: 'relative',
@@ -440,6 +446,7 @@ export function DewarPane({
 }) {
   const [hide, setHide] = useState(false);
   const [editingDewar, setEditingDewar] = useState(false);
+  const { site, token } = useAuth();
 
   const { data: samples, isError: isErrorContainer } = useMXContainers({
     proposalName,
@@ -528,7 +535,8 @@ export function DewarPane({
                       containerType: v.label,
                       capacity: v.value,
                     });
-                    axios.get(req.url).then(() => mutateShipping());
+                    const fullUrl = `${site.host}${site.apiPrefix}/${token}${req.url}`;
+                    axios.get(fullUrl).then(() => mutateShipping());
                   }
                 }}
               ></Select>
@@ -555,8 +563,9 @@ export function DewarPane({
                     shippingId: String(shipping.shippingId),
                     data: dewar,
                   });
+                  const fullUrl = `${site.host}${site.apiPrefix}/${token}${req.url}`;
                   axios
-                    .post(req.url, req.data, { headers: req.headers })
+                    .post(fullUrl, req.data, { headers: req.headers })
                     .then(() => {
                       setEditingDewar(false);
                       mutateShipping();
@@ -592,7 +601,8 @@ export function DewarPane({
                     shippingId: String(shipping.shippingId),
                     dewarId: String(dewar.dewarId),
                   });
-                  axios.get(req.url).then(() => mutateShipping());
+                  const fullUrl = `${site.host}${site.apiPrefix}/${token}${req.url}`;
+                  axios.get(fullUrl).then(() => mutateShipping());
                 }}
               >
                 <FontAwesomeIcon
@@ -630,6 +640,7 @@ export function ContainerView({
 }) {
   const [showPopover, setShowPopover] = useState(false);
   const [show, setShow] = useState(true);
+  const { site, token } = useAuth();
 
   const { data: samples, isError: isErrorContainer } = useMXContainers({
     proposalName,
@@ -696,7 +707,8 @@ export function ContainerView({
                       dewarId: String(dewar.dewarId),
                       containerId: String(container.containerId),
                     });
-                    axios.get(req.url).then(() => mutateShipping());
+                    const fullUrl = `${site.host}${site.apiPrefix}/${token}${req.url}`;
+                    axios.get(fullUrl).then(() => mutateShipping());
                   }}
                 >
                   <FontAwesomeIcon icon={faTrash}></FontAwesomeIcon> Remove

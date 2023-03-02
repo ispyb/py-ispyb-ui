@@ -13,7 +13,7 @@ import SamplesList from 'components/Samples/SamplesList';
 function ViewProteinMain() {
   const { proteinId } = useParams();
   // const controller = useController();
-  // const protein = useSuspense(ProteinResource.detail(), {
+  // const protein = useSuspense(ProteinResource.get, {
   //   proteinId,
   // });
 
@@ -30,7 +30,7 @@ function ViewProteinMain() {
   //   const obj = {};
   //   set(obj, field, value);
   //   return controller.fetch(
-  //     ProteinResource.partialUpdate(),
+  //     ProteinResource.partialUpdate,
   //     { proteinId },
   //     obj
   //   );

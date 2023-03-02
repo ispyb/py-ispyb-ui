@@ -1,5 +1,9 @@
 import SimpleParameterTable from 'legacy/components/table/simpleparametertable';
-import { getContainerType } from 'legacy/helpers/mx/samplehelper';
+import {
+  getBeamline,
+  getContainerType,
+  getSampleChanger,
+} from 'legacy/helpers/mx/samplehelper';
 import { useMXContainers } from 'legacy/hooks/ispyb';
 import _ from 'lodash';
 import { range } from 'lodash';
@@ -8,6 +12,7 @@ import { PropsWithChildren } from 'react';
 import { Badge, OverlayTrigger, Tooltip } from 'react-bootstrap';
 import { Sample } from '../model';
 import './mxcontainer.scss';
+import { useBeamlinesObjects } from 'legacy/hooks/site';
 
 const containerRadius = 75;
 
@@ -42,6 +47,17 @@ export function MXContainer({
   const sampleByPosition = _(samples)
     .groupBy((s) => s.BLSample_location)
     .value();
+
+  const beamlines = useBeamlinesObjects('MX');
+  const beamline =
+    samples && samples.length
+      ? getBeamline(beamlines, samples[0].Container_beamlineLocation)
+      : undefined;
+  const changer = getSampleChanger(beamline?.sampleChangerType);
+  const pos =
+    samples && samples.length
+      ? changer?.getPosition(Number(samples[0].Container_sampleChangerLocation))
+      : undefined;
 
   const type = findContainerType(containerType, samples, sampleByPosition);
   if (type) {
@@ -97,6 +113,7 @@ export function MXContainer({
 
           return (
             <SampleSVG
+              key={n}
               position={position}
               n={n}
               refSample={refSample}
@@ -133,10 +150,9 @@ export function MXContainer({
               },
               {
                 key: 'Location',
-                value:
-                  samples && samples.length
-                    ? samples[0].Container_sampleChangerLocation
-                    : 'unknown',
+                value: pos
+                  ? `cell ${pos.cell + 1} pos ${pos.position + 1}`
+                  : 'unknown',
               },
             ]}
           ></SimpleParameterTable>
@@ -262,6 +278,7 @@ export function EmptyContainer({
 
           return (
             <SampleSVG
+              key={n}
               clickableContainer={false}
               position={position}
               n={n}
@@ -314,7 +331,7 @@ function ContainerSVG({
         ></circle>
       )}
       {maxPosition === 16 && (
-        <g fill="#888888" stroke="#888888" pointer-events="none">
+        <g fill="#888888" stroke="#888888" pointerEvents="none">
           <circle
             cx={containerRadius}
             cy={containerRadius * 1.05}
@@ -324,19 +341,19 @@ function ContainerSVG({
             cx={containerRadius * 0.9}
             cy={containerRadius * 0.95}
             r={containerRadius * 0.05}
-            stroke-width="1"
+            strokeWidth="1"
           ></circle>
           <circle
             cx={containerRadius * 1.1}
             cy={containerRadius * 0.95}
             r={containerRadius * 0.05}
-            stroke-width="1"
+            strokeWidth="1"
           ></circle>
           <circle
             cx={containerRadius}
             cy={containerRadius * 1.5}
             r={containerRadius * 0.05}
-            stroke-width="1"
+            strokeWidth="1"
           ></circle>
         </g>
       )}
@@ -404,7 +421,7 @@ function SampleSVG({
           {sampleCircle}
         </OverlayTrigger>
         <text className={type} x={position.x} y={position.y}>
-          <tspan dx="0" dy="3" pointer-events="none">
+          <tspan dx="0" dy="3" pointerEvents="none">
             {n}
           </tspan>
         </text>
@@ -421,7 +438,7 @@ function SampleSVG({
         r={containerRadius * 0.175}
       ></circle>
       <text x={position.x} y={position.y} className="sampleEmpty">
-        <tspan dx="0" dy="3" pointer-events="none">
+        <tspan dx="0" dy="3" pointerEvents="none">
           {n}
         </tspan>
       </text>

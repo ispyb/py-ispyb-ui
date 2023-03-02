@@ -3,7 +3,6 @@
 
 import { range } from 'lodash';
 import { containerType } from 'legacy/models';
-import React from 'react';
 
 export abstract class AbstractSampleChanger {
   sampleChangerRadius: number;

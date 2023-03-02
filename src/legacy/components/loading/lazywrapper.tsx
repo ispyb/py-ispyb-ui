@@ -1,5 +1,5 @@
-import React, { PropsWithChildren, ReactNode, useState } from 'react';
-import LazyLoad from 'react-lazy-load';
+import { PropsWithChildren, ReactNode, Suspense } from 'react';
+import { useInView } from 'react-intersection-observer';
 
 export type LazyWrapperType = PropsWithChildren<{
   placeholder?: ReactNode;
@@ -9,14 +9,16 @@ export default function LazyWrapper({
   children,
   placeholder,
 }: LazyWrapperType) {
-  const [loaded, setLoaded] = useState(false);
-  if (loaded) return <>{children}</>;
+  const { ref, inView } = useInView({
+    rootMargin: '1000px 0px',
+    triggerOnce: true,
+  });
+
+  if (inView) return <>{children}</>;
+
   return (
-    <>
-      <LazyLoad height={0} onContentVisible={() => setLoaded(true)}>
-        <></>
-      </LazyLoad>
-      {placeholder}
-    </>
+    <div ref={ref}>
+      <Suspense fallback={placeholder}>{placeholder}</Suspense>
+    </div>
   );
 }

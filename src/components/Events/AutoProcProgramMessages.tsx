@@ -9,7 +9,7 @@ import {
 import {
   AutoProcProgram as AutoProcProgramType,
   AutoProcProgramMessage as AutoProcProgramMessageType,
-} from 'models/AutoProcProgram.d';
+} from 'models/AutoProcProgram';
 import Table from 'components/Layout/Table';
 
 export const messageStatusIcons: Record<string, JSX.Element> = {

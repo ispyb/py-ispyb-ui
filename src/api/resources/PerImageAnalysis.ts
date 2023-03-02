@@ -1,21 +1,16 @@
-import PaginatedResource from './Base/Paginated';
-import { withPerImageAnalysis } from 'models/PerImageAnalysis.d';
+import createPaginatedResource from './Base/Paginated';
+import { PerImageAnalysisBase } from 'models/PerImageAnalysis';
 
-class _PerImageAnalysisResource extends PaginatedResource {
+class PerImageAnalysisEntity extends PerImageAnalysisBase {
   readonly dataCollectionId: number;
 
   pk() {
     return this.dataCollectionId?.toString();
   }
-  static getEndpointExtra() {
-    return {
-      ...super.getEndpointExtra(),
-      pollFrequency: 5000,
-    };
-  }
-  static urlRoot = 'datacollections/quality';
 }
 
-export const PerImageAnalysisResource = withPerImageAnalysis(
-  _PerImageAnalysisResource
-);
+export const PerImageAnalysisResource = createPaginatedResource({
+  path: '/datacollections/quality/:dataCollectionId',
+  schema: PerImageAnalysisEntity,
+  endpointOptions: { pollFrequency: 5000 },
+});

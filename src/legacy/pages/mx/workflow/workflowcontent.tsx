@@ -54,16 +54,16 @@ export function TableContent({ item }: { item: WorkflowStepItem }) {
         <thead>
           <tr>
             {item.columns?.map((column) => {
-              return <th>{column}</th>;
+              return <th key={column}>{column}</th>;
             })}
           </tr>
         </thead>
         <tbody>
-          {item.data?.map((row) => {
+          {item.data?.map((row, irow) => {
             return (
-              <tr>
-                {row?.map((value) => {
-                  return <td>{value}</td>;
+              <tr key={irow}>
+                {row?.map((value, ivalue) => {
+                  return <td key={ivalue}>{value}</td>;
                 })}
               </tr>
             );
@@ -82,11 +82,12 @@ export function ImagesContent({ item }: { item: WorkflowStepItem }) {
           {item.items?.map((value) => {
             const src = 'data:image/png;base64,' + value.value;
             return (
-              <td>
+              <td key={value.title}>
                 <ZoomImage
                   style={{ maxWidth: 500 }}
                   lazy={false}
                   src={src}
+                  local={true}
                   legend={value.title}
                 ></ZoomImage>
               </td>

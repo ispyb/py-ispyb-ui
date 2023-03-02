@@ -22,6 +22,7 @@ import { saveShipment, SaveShipmentData } from 'legacy/api/ispyb';
 import axios from 'axios';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSave } from '@fortawesome/free-solid-svg-icons';
+import { useAuth } from 'hooks/useAuth';
 
 export function EditShippingModal({
   shipping = undefined,
@@ -39,6 +40,8 @@ export function EditShippingModal({
   // eslint-disable-next-line no-unused-vars
   setShow: (_: boolean) => void;
 }) {
+  const { site, token } = useAuth();
+
   const { data: contacts = [], isError: isErrorContacts } = useLabContacts({
     proposalName,
   });
@@ -148,7 +151,9 @@ export function EditShippingModal({
         };
         const req = saveShipment({ proposalName, data });
 
-        axios.post(req.url, req.data, { headers: req.headers }).then(
+        const fullUrl = `${site.host}${site.apiPrefix}/${token}${req.url}`;
+
+        axios.post(fullUrl, req.data, { headers: req.headers }).then(
           () => {
             mutateShipping && mutateShipping();
             mutateShipments();

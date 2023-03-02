@@ -1,8 +1,26 @@
-import { AuthenticatedSingletonResource } from '../Base/Singleton';
-import { withBreakdown } from 'models/Breakdown.d';
+import { AuthenticatedEndpoint } from 'api/resources/Base/Authenticated';
+import { BreakdownBase } from 'models/Breakdown';
 
-class _BreakdownResource extends AuthenticatedSingletonResource {
-  static urlRoot = 'stats/breakdown';
+class BreakdownEntity extends BreakdownBase {
+  readonly key: string;
+
+  pk() {
+    return this.key;
+  }
 }
 
-export const BreakdownResource = withBreakdown(_BreakdownResource);
+export const BreakdownEndpoint = new AuthenticatedEndpoint({
+  path: '/stats/breakdown',
+  schema: BreakdownEntity,
+  process(value, params) {
+    value.key = params.sessionId
+      ? `sessionId:${params.sessionId}`
+      : `runId:${params.runId}/${params.beamLineName}`;
+    return value;
+  },
+  searchParams: {} as {
+    beamLineName?: string;
+    runId?: string;
+    sessionId?: string;
+  },
+});

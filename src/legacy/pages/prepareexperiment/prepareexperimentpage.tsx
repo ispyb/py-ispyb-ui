@@ -35,6 +35,7 @@ import produce from 'immer';
 import LoadSampleChanger from './loadsamplechanger';
 import { Shipment } from 'legacy/pages/model';
 import { useState } from 'react';
+import { useAuth } from 'hooks/useAuth';
 
 type Param = {
   proposalName: string;
@@ -42,6 +43,7 @@ type Param = {
 
 export default function PrepareExperimentPage() {
   const [compactStep1, setCompactStep1] = useState(false);
+  const { site, token } = useAuth();
 
   const { proposalName = '' } = useParams<Param>();
   const { data, isError, mutate } = useDewars({ proposalName });
@@ -91,7 +93,9 @@ export default function PrepareExperimentPage() {
       }
     }
     if (req) {
-      axios.post(req.url, req.data, { headers: req.headers }).then(
+      const fullUrl = `${site.host}${site.apiPrefix}/${token}${req.url}`;
+
+      axios.post(fullUrl, req.data, { headers: req.headers }).then(
         () => {
           mutate();
         },
@@ -302,6 +306,7 @@ export function ToggleShipmentStatus({
   proposalName: string;
   mutate: KeyedMutator<ContainerDewar[]>;
 }) {
+  const { site, token } = useAuth();
   const isProcessing = shipmentIsProcessing(shipment);
   const newStatus = isProcessing ? 'at_ESRF' : 'processing';
   const onClick = () => {
@@ -317,27 +322,31 @@ export function ToggleShipmentStatus({
       }),
       false
     );
-    axios
-      .get(
-        updateShippingStatus({
-          proposalName,
-          shippingId: shipment.shippingId,
-          status: newStatus,
-        }).url
-      )
-      .then(
-        () => {
-          mutate();
-        },
-        () => {
-          mutate();
-        }
-      );
+    const req = updateShippingStatus({
+      proposalName,
+      shippingId: shipment.shippingId,
+      status: newStatus,
+    });
+    const fullUrl = `${site.host}${site.apiPrefix}/${token}${req.url}`;
+    axios.get(fullUrl).then(
+      () => {
+        mutate();
+      },
+      () => {
+        mutate();
+      }
+    );
   };
   return (
     <OverlayTrigger
       placement="right"
-      overlay={<Tooltip>Set status to '{newStatus}'</Tooltip>}
+      overlay={
+        <Tooltip>
+          {"Set status to '"}
+          {newStatus}
+          {"'"}
+        </Tooltip>
+      }
     >
       <Button style={{ padding: 0 }} variant="link" onClick={onClick}>
         <FontAwesomeIcon

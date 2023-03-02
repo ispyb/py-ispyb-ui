@@ -1,0 +1,37 @@
+$gutter-size: 15px;
+
+.masonry-grid {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  margin-left: -$gutter-size;
+  width: auto;
+}
+.masonry-grid-column {
+  margin-left: $gutter-size;
+  margin: top 10px;
+  background-clip: padding-box;
+  background-color: white;
+}
+
+.masonry-grid-column > div {
+  margin-bottom: $gutter-size;
+  padding-bottom: 10px;
+}
+
+.masonry-grid-column.masonry-grid-separator > div {
+  border-bottom: 1px solid lightgray;
+  margin-bottom: $gutter-size;
+  padding-bottom: $gutter-size;
+}
+
+.masonry-grid-column > div:last-child {
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+}
+
+.masonry-grid-column.masonry-grid-separator > div:last-child {
+  border-bottom: 0px solid lightgray;
+  margin-bottom: 0px;
+  padding-bottom: 0px;
+}

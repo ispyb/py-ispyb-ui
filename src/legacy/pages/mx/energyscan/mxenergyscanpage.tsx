@@ -1,4 +1,3 @@
-import React from 'react';
 import { useParams } from 'react-router-dom';
 import MXPage from 'legacy/pages/mx/mxpage';
 import { Alert, Card } from 'react-bootstrap';
@@ -33,7 +32,7 @@ export default function MXEnergyScanPage() {
       <MXPage sessionId={sessionId} proposalName={proposalName}>
         <Card>
           {energyScans.map((energyScan) => (
-            <div style={{ margin: 5 }}>
+            <div style={{ margin: 5 }} key={energyScan.energyScanId}>
               <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
                 <EnergyScanPanel
                   sessionId={sessionId}

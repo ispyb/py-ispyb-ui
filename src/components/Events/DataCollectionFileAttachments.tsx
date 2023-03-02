@@ -3,7 +3,7 @@ import { useSuspense } from 'rest-hooks';
 import { Modal } from 'react-bootstrap';
 import { Download } from 'react-bootstrap-icons';
 
-import { DataCollectionFileAttachment } from 'models/DataCollectionFileAttachment.d';
+import { DataCollectionFileAttachment } from 'models/DataCollectionFileAttachment';
 import { DataCollectionFileAttachmentResource } from 'api/resources/DataCollectionFileAttachment';
 import Table from 'components/Layout/Table';
 import Loading from 'components/Loading';
@@ -41,12 +41,15 @@ export function DataCollectionFileAttachments({
   dataCollectionId?: number;
   dataCollectionGroupId?: number;
 }) {
-  const attachments = useSuspense(DataCollectionFileAttachmentResource.list(), {
-    skip: 0,
-    limit: 10,
-    ...(dataCollectionId ? { dataCollectionId } : null),
-    ...(dataCollectionGroupId ? { dataCollectionGroupId } : null),
-  });
+  const attachments = useSuspense(
+    DataCollectionFileAttachmentResource.getList,
+    {
+      skip: 0,
+      limit: 10,
+      ...(dataCollectionId ? { dataCollectionId } : null),
+      ...(dataCollectionGroupId ? { dataCollectionGroupId } : null),
+    }
+  );
 
   return (
     <Table

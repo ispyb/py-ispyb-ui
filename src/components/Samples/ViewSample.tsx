@@ -1,18 +1,8 @@
-// import { useController, useSuspense } from 'rest-hooks';
 import { useParams } from 'react-router-dom';
-// import { set } from 'lodash';
 
 import NetworkErrorPage from 'components/NetworkErrorPage';
-// import { useSchema } from 'hooks/useSpec';
-// import { useProposalInfo } from 'hooks/useProposalInfo';
-// import { useProposal } from 'hooks/useProposal';
-// import { SampleResource } from 'api/resources/Sample';
-// import { ProteinResource } from 'api/resources/Protein';
 
 import EventList from 'components/Events/EventsList';
-// import InlineEditable from 'components/RJSF/InlineEditable';
-// import { Button } from 'react-bootstrap';
-// import { Search } from 'react-bootstrap-icons';
 
 // function ViewProtein({ proteinId }: { proteinId: number }) {
 //   const { proposalName } = useProposal();

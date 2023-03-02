@@ -1,6 +1,6 @@
 import { useSuspense } from 'rest-hooks';
 
-import { BreakdownResource } from 'api/resources/Stats/Breakdown';
+import { BreakdownEndpoint } from 'api/resources/Stats/Breakdown';
 import { usePath } from 'hooks/usePath';
 import PlotEnhancer from './PlotEnhancer';
 // import { DateTime } from 'luxon';
@@ -8,7 +8,9 @@ import { getColors } from '../../utils/colours';
 
 export default function HistoryBreakdown() {
   const sessionId = usePath('sessionId');
-  const breakdown = useSuspense(BreakdownResource.list(), { sessionId });
+  const breakdown = useSuspense(BreakdownEndpoint, {
+    ...(sessionId ? { sessionId } : null),
+  });
   // const types = Array.from(
   //   new Set(breakdown.history.map((obj) => obj.eventType))
   // );

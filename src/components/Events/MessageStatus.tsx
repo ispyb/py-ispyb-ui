@@ -3,7 +3,7 @@ import {
   ExclamationTriangleFill,
   InfoCircleFill,
 } from 'react-bootstrap-icons';
-import { AutoProcProgramMessageStatus as AutoProcProgramMessageStatusType } from 'models/AutoProcProgramMessageStatuses.d';
+import { AutoProcProgramMessageStatus as AutoProcProgramMessageStatusType } from 'models/AutoProcProgramMessageStatuses';
 
 export const messageStatusIcons: Record<string, JSX.Element> = {
   info: <InfoCircleFill color="#198754" />,

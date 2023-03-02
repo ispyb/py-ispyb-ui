@@ -1,8 +1,7 @@
-import { SingletonResource } from 'api/resources/Base/Singleton';
-import { withAuthConfig } from 'models/AuthConfig.d';
+import { SiteEndpoint } from './Base/Site';
+import { AuthConfigSingletonBase } from 'models/AuthConfig';
 
-class _AuthConfigResource extends SingletonResource {
-  static urlRoot = 'auth/config';
-}
-
-export const AuthConfigResource = withAuthConfig(_AuthConfigResource);
+export const AuthConfigEndpoint = new SiteEndpoint({
+  path: '/auth/config',
+  schema: AuthConfigSingletonBase,
+});

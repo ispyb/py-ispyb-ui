@@ -9,7 +9,7 @@ export default function ScreeningResult({
 }: {
   dataCollectionId: number;
 }) {
-  const screenings = useSuspense(ScreeningResource.list(), {
+  const screenings = useSuspense(ScreeningResource.getList, {
     dataCollectionId,
   });
 
@@ -27,7 +27,7 @@ export default function ScreeningResult({
     <>
       {!screenings.results && <p>No Screening Results</p>}
       {screenings.results.map((result) => (
-        <div>
+        <div key={result.screeningId}>
           <h1>{result.programVersion}</h1>
           <p>
             {result.shortComments} - {result.comments}
@@ -35,7 +35,7 @@ export default function ScreeningResult({
           <Card>
             <ListGroup horizontal="sm">
               {Object.entries(cellParams).map(([key, value]) => (
-                <ListGroup.Item>
+                <ListGroup.Item key={key}>
                   {key}:{' '}
                   {
                     // @ts-ignore

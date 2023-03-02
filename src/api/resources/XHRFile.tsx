@@ -1,18 +1,13 @@
-import React, {
-  ReactNode,
-  Component,
-  ErrorInfo,
-  Suspense,
-  useState,
-} from 'react';
-import { useResource } from '@rest-hooks/core';
+import React from 'react';
+import { ReactNode, Component, ErrorInfo, Suspense, useState } from 'react';
+import { useSuspense } from 'rest-hooks';
 import { Endpoint, EndpointInstance } from '@rest-hooks/endpoint';
 import classNames from 'classnames';
 import { useInView } from 'react-intersection-observer';
 import { Spinner } from 'react-bootstrap';
 import { Image as BSImage } from 'react-bootstrap-icons';
 
-import { AuthenticatedResource } from 'api/resources/Base/Authenticated';
+import { AuthenticatedEndpoint } from 'api/resources/Base/Authenticated';
 import { useAuth } from 'hooks/useAuth';
 
 // const emptyImage = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
@@ -30,10 +25,10 @@ export const getXHRArrayBuffer: EndpointInstance<
       let completedPercentage = 0;
       const xhr = new XMLHttpRequest();
       xhr.open('GET', src, true);
-      if (AuthenticatedResource.accessToken)
+      if (AuthenticatedEndpoint.accessToken)
         xhr.setRequestHeader(
           'Authorization',
-          `Bearer ${AuthenticatedResource.accessToken}`
+          `Bearer ${AuthenticatedEndpoint.accessToken}`
         );
       xhr.responseType = 'arraybuffer';
 
@@ -104,10 +99,10 @@ export const getXHRBlob: EndpointInstance<
       let completedPercentage = 0;
       const xhr = new XMLHttpRequest();
       xhr.open('GET', src, true);
-      if (AuthenticatedResource.accessToken)
+      if (AuthenticatedEndpoint.accessToken)
         xhr.setRequestHeader(
           'Authorization',
-          `Bearer ${AuthenticatedResource.accessToken}`
+          `Bearer ${AuthenticatedEndpoint.accessToken}`
         );
       xhr.responseType = 'arraybuffer';
 
@@ -161,6 +156,7 @@ type Props<
     | React.JSXElementConstructor<{ src: string }> = 'img'
 > = React.ComponentProps<C> & { component: C };
 
+/* eslint-disable */
 export default function XHRTag<
   C extends
     | keyof JSX.IntrinsicElements
@@ -168,7 +164,7 @@ export default function XHRTag<
 >(props: Props<C>): React.ReactElement {
   const { component, progress, src, ...rest } = props;
   // @ts-ignore
-  const blob = useResource(getXHRBlob, {
+  const blob = useSuspense(getXHRBlob, {
     ...(src ? { src } : null),
     ...(progress ? { progress } : null),
   });
@@ -177,6 +173,7 @@ export default function XHRTag<
 XHRTag.defaultProps = {
   component: 'img',
 };
+/* eslint-enable */
 
 export function Loading({ progress }: { progress: number }) {
   return (

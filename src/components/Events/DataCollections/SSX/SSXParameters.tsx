@@ -18,7 +18,7 @@ export default function SSXDataCollectionGroupParameters({
   dcg: Event;
   sample: Sample;
 }) {
-  const session = useSuspense(Session2Resource.detail(), {
+  const session = useSuspense(Session2Resource.get, {
     sessionId: dcg.sessionId,
   });
 
@@ -173,7 +173,7 @@ export function SampleParams({
         .map((v) => (v === undefined ? 'null' : v))
         .join(', '),
     },
-    { title: 'Crystal concentration', content: sample?.Crystal.abundance },
+    // { title: 'Crystal concentration', content: sample?.Crystal.abundance },
     {
       title: 'Support',
       content: dc.DataCollectionGroup.experimentType?.split('SSX-')[1],

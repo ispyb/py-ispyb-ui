@@ -20,10 +20,6 @@ import { registerAllCellTypes } from 'handsontable/cellTypes';
 import { Suspense, useEffect, useState } from 'react';
 import LoadingPanel from 'legacy/components/loading/loadingpanel';
 import LazyWrapper from 'legacy/components/loading/lazywrapper';
-import {
-  spaceGroupShortNames,
-  spaceGroupLongNames,
-} from 'legacy/constants/spacegroups';
 import _ from 'lodash';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -38,6 +34,8 @@ import axios from 'axios';
 import { CrystalEditor } from './crystaleditor';
 import { validateContainers } from 'legacy/helpers/mx/shipping/containervalidation';
 import { EXPERIMENT_TYPES } from 'legacy/constants/experiments';
+import { useAuth } from 'hooks/useAuth';
+import { SPACE_GROUPS } from 'helpers/spacegroups';
 
 type Param = {
   proposalName: string;
@@ -194,6 +192,8 @@ function ContainerEditor({
   const [modifiedCrystals, setModifiedCrystals] = useState<Crystal[]>([]);
   const [name, setName] = useState(container.code);
 
+  const { site, token } = useAuth();
+
   const synchronized =
     !changed && JSON.stringify(data) === JSON.stringify(upToDateData);
 
@@ -332,7 +332,9 @@ function ContainerEditor({
       title: 'Forced <br /> Space G.',
       source: [
         '',
-        ..._(spaceGroupShortNames).concat(spaceGroupLongNames).uniq().value(),
+        ..._(SPACE_GROUPS)
+          .map((v) => v.name)
+          .value(),
       ],
       type: 'autocomplete',
       filter: true,
@@ -421,7 +423,8 @@ function ContainerEditor({
         containerId: String(container.containerId),
         data: toSave,
       });
-      axios.post(request.url, request.data, { headers: request.headers }).then(
+      const fullUrl = `${site.host}${site.apiPrefix}/${token}${request.url}`;
+      axios.post(fullUrl, request.data, { headers: request.headers }).then(
         () => {
           forceRefresh();
         },

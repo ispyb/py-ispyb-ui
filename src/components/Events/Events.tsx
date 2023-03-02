@@ -2,7 +2,7 @@ import { ReactElement } from 'react';
 import { Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 
-import { Event } from 'models/Event.d';
+import { Event } from 'models/Event';
 import { usePath } from 'hooks/usePath';
 import { formatDateToDayAndTime } from 'helpers/dateparser';
 

@@ -1,8 +1,7 @@
-import { AuthenticatedSingletonResource } from 'api/resources/Base/Singleton';
-import { withUIOptions } from 'models/UIOptions.d';
+import { AuthenticatedEndpoint } from 'api/resources/Base/Authenticated';
+import { UIOptionsSingletonBase } from 'models/UIOptions';
 
-class _UIOptionsResource extends AuthenticatedSingletonResource {
-  static urlRoot = 'options/ui';
-}
-
-export const UIOptionsResource = withUIOptions(_UIOptionsResource);
+export const UIOptionsEndpoint = new AuthenticatedEndpoint({
+  path: '/options/ui',
+  schema: UIOptionsSingletonBase,
+});

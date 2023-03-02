@@ -1,4 +1,3 @@
-import React from 'react';
 import { useParams } from 'react-router-dom';
 import MXPage from 'legacy/pages/mx/mxpage';
 import { Alert, Card } from 'react-bootstrap';
@@ -33,7 +32,7 @@ export default function MXFluorescencePage() {
       <MXPage sessionId={sessionId} proposalName={proposalName}>
         <Card>
           {spectras.map((spectra) => (
-            <div style={{ margin: 5 }}>
+            <div style={{ margin: 5 }} key={spectra.xfeFluorescenceSpectrumId}>
               <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
                 <FluorescencePanel
                   sessionId={sessionId}

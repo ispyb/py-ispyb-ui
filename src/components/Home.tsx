@@ -20,7 +20,7 @@ function SessionRow(props: ISessionRow) {
   const { upcoming, previous, commissioning, beamLineGroup } = props;
 
   const resource = beamLineGroup ? SessionGroupResource : SessionResource;
-  const sessions = useSuspense(resource.list(), {
+  const sessions = useSuspense(resource.getList, {
     ...(upcoming ? { upcoming: true } : {}),
     ...(previous ? { previous: true } : {}),
     ...(commissioning ? { sessionType: 'commissioning' } : {}),
@@ -83,7 +83,9 @@ function BeamLineGroupHome({ beamLineGroups }: { beamLineGroups: string[] }) {
       {beamLineGroups.length > 1 && (
         <select onChange={(e) => setBeamLineGroup(e.target.value)}>
           {beamLineGroups.map((group) => (
-            <option value={group}>{group}</option>
+            <option key={group} value={group}>
+              {group}
+            </option>
           ))}
         </select>
       )}

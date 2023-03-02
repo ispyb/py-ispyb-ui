@@ -1,8 +1,17 @@
-import { AuthenticatedSingletonResource } from './Base/Singleton';
-import { withOneTimeToken } from 'models/OneTimeToken.d';
+import { AuthenticatedEndpoint } from 'api/resources/Base/Authenticated';
+import { OneTimeTokenBase } from 'models/OneTimeToken';
 
-class _SignResource extends AuthenticatedSingletonResource {
-  static urlRoot = 'user/sign';
+class OneTimeTokenEntity extends OneTimeTokenBase {
+  readonly validity: string;
+
+  pk() {
+    return this.validity;
+  }
 }
 
-export const SignResource = withOneTimeToken(_SignResource);
+export const SignEndpoint = new AuthenticatedEndpoint({
+  path: '/user/sign',
+  schema: OneTimeTokenEntity,
+  method: 'POST',
+  dataExpiryLength: 10000,
+});

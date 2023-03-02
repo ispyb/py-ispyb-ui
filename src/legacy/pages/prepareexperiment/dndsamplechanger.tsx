@@ -69,6 +69,7 @@ export default function DnDSampleChanger({
         );
         return (
           <ChangerContainer
+            key={position}
             beamline={beamline}
             setContainerLocation={setContainerLocation}
             proposalName={proposalName}

@@ -1,4 +1,3 @@
-import React from 'react';
 import GridSquarePanelHeader from 'legacy/pages/em/grid/gridsquarepanelheader';
 
 const l = { title: 'GridSquarePanelHeader', component: GridSquarePanelHeader };

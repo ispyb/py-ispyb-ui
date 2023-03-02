@@ -1,23 +1,27 @@
-import { withSSXDataCollectionProcessingCellsHistogram } from 'models/SSXDataCollectionProcessingCellsHistogram.d';
-import { AuthenticatedSingletonResource } from '../Base/Singleton';
+import { AuthenticatedEndpoint } from 'api/resources/Base/Authenticated';
+import { SSXDataCollectionProcessingCellsHistogramBase } from 'models/SSXDataCollectionProcessingCellsHistogram';
 
-class _SSXDataCollectionProcessingCellsHistogram extends AuthenticatedSingletonResource {
-  readonly dataCollectionIds: number[];
+class SSXDataCollectionProcessingCellsHistogramEntity extends SSXDataCollectionProcessingCellsHistogramBase {
+  readonly key: string;
+
   pk() {
-    return this.dataCollectionIds.sort().join(',');
+    return this.key;
   }
-
-  static getEndpointExtra() {
-    return {
-      ...super.getEndpointExtra(),
-      pollFrequency: 5000,
-    };
-  }
-
-  static urlRoot = 'ssx/datacollection/processing/cells/histogram';
 }
 
-export const SSXDataCollectionProcessingCellsHistogramResource =
-  withSSXDataCollectionProcessingCellsHistogram(
-    _SSXDataCollectionProcessingCellsHistogram
-  );
+export const SSXDataCollectionProcessingCellsHistogramEndpoint =
+  new AuthenticatedEndpoint({
+    path: '/ssx/datacollection/processing/cells/histogram',
+    schema: SSXDataCollectionProcessingCellsHistogramEntity,
+    process(value, params) {
+      value.key = `dataCollectionIds:${params.dataCollectionIds
+        .split(',')
+        .sort()
+        .join(',')}`;
+      return value;
+    },
+    searchParams: {} as {
+      dataCollectionIds: string;
+    },
+    pollFrequency: 5000,
+  });

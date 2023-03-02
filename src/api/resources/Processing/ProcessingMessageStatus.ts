@@ -1,17 +1,25 @@
-import { AuthenticatedSingletonResource } from '../Base/Singleton';
-import { withAutoProcProgramMessageStatuses } from 'models/AutoProcProgramMessageStatuses.d';
+import { AuthenticatedEndpoint } from 'api/resources/Base/Authenticated';
+import { AutoProcProgramMessageStatusesBase } from 'models/AutoProcProgramMessageStatuses';
 
-class _ProcessingMessageStatus extends AuthenticatedSingletonResource {
-  static getEndpointExtra() {
-    return {
-      ...super.getEndpointExtra(),
-      pollFrequency: 10000,
-    };
+class ProcessingMessageStatusEntity extends AutoProcProgramMessageStatusesBase {
+  readonly key: string;
+
+  pk() {
+    return this.key;
   }
-
-  static urlRoot = 'processings/messages/status';
 }
 
-export const ProcessingMessageStatus = withAutoProcProgramMessageStatuses(
-  _ProcessingMessageStatus
-);
+export const ProcessingMessageStatusEndpoint = new AuthenticatedEndpoint({
+  path: '/processings/messages/status',
+  schema: ProcessingMessageStatusEntity,
+  process(value, params) {
+    value.key = `dataCollectionIds:${JSON.parse(params.dataCollectionIds)
+      .sort()
+      .join(',')}`;
+    return value;
+  },
+  searchParams: {} as {
+    dataCollectionIds: string;
+  },
+  pollFrequency: 10000,
+});

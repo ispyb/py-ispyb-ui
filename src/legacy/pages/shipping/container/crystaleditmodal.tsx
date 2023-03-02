@@ -5,13 +5,10 @@ import { v4 as uuidv4 } from 'uuid';
 import validator from '@rjsf/validator-ajv6';
 import Form from '@rjsf/bootstrap-4';
 import rjsf from '@rjsf/utils';
-import {
-  spaceGroupLongNames,
-  spaceGroupShortNames,
-} from 'legacy/constants/spacegroups';
 import _ from 'lodash';
 import './crystaleditmodal.scss';
 import LayoutField from 'react-jsonschema-form-layout-2';
+import { SPACE_GROUPS } from 'helpers/spacegroups';
 
 export function EditCrystalModal({
   crystal,
@@ -38,9 +35,8 @@ export function EditCrystalModal({
       spaceGroup: {
         type: 'string',
         title: 'Space Group',
-        enum: _(spaceGroupShortNames)
-          .concat(spaceGroupLongNames)
-          .uniq()
+        enum: _(SPACE_GROUPS)
+          .map((v) => v.name)
           .value(),
       },
       cellA: { type: 'number', title: 'A' },
