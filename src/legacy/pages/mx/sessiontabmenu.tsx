@@ -34,6 +34,14 @@ export default function SessionTabMenu({
           as={NavLink}
           to={`/legacy/proposals/${proposalName}/MX/${sessionId}/summary`}
         >
+          Summary
+        </Nav.Link>
+      </Nav.Item>
+      <Nav.Item>
+        <Nav.Link
+          as={NavLink}
+          to={`/legacy/proposals/${proposalName}/MX/${sessionId}/collection`}
+        >
           Data Collections <NbBadge value={dataCollectionGroups?.length} />
         </Nav.Link>
       </Nav.Item>

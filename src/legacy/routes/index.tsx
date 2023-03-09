@@ -34,6 +34,13 @@ const SessionStatisticsPage = React.lazy(() =>
     })
   )
 );
+const MXSessionSummaryPage = React.lazy(() =>
+  import(
+    'legacy/pages/mx/sessionsummary' /* webpackChunkName: "legacy_mx_summary" */
+  ).then((m) => ({
+    default: m.MXSessionSummaryPage,
+  }))
+);
 const MXDataCollectionGroupPage = React.lazy(() =>
   import(
     'legacy/pages/mx/datacollectiongroup' /* webpackChunkName: "legacy_mx_dcg" */
@@ -201,7 +208,8 @@ const javaRoutes: TitledBreadcrumbsRoute[] = [
           {
             path: ':sessionId',
             children: [
-              { path: 'summary', element: <MXDataCollectionGroupPage /> },
+              { path: 'summary', element: <MXSessionSummaryPage /> },
+              { path: 'collection', element: <MXDataCollectionGroupPage /> },
               {
                 path: 'energy',
                 element: <MXEnergyScanPage />,
