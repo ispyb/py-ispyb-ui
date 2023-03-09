@@ -1,4 +1,4 @@
-import { Suspense, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import {
   OverlayTrigger,
   Tooltip,
@@ -43,7 +43,7 @@ type Props = {
   proposalName: string;
   dataCollectionGroup: DataCollectionGroup;
   defaultCompact: boolean;
-  compactToggle: Subject<boolean>;
+  compactToggle?: Subject<boolean>;
   selectedPipelines: string[];
   resultRankShell: ResultRankShell;
   resultRankParam: ResultRankParam;
@@ -67,11 +67,14 @@ export default function DataCollectionGroupPanel({
   resultRankParam,
 }: Props) {
   const [compact, setCompact] = useState(defaultCompact);
-  compactToggle.subscribe({
-    next: (value) => {
-      setCompact(value);
-    },
-  });
+
+  useEffect(() => {
+    compactToggle?.subscribe({
+      next: (value) => {
+        setCompact(value);
+      },
+    });
+  }, [compactToggle, setCompact]);
 
   const { data: procs } = useAutoProc({
     proposalName,

@@ -40,16 +40,18 @@ export function SessionInfo({
     sessionId,
   });
   return (
-    <Container>
+    <Container fluid>
       <Col style={{ margin: 10 }}>
         <Row>
-          <Alert variant="info">
-            <strong>
-              Session on beamline {session?.beamLineName || 'unknown'} from{' '}
-              {formatDateToDayAndTime(session?.BLSession_startDate)} to{' '}
-              {formatDateToDayAndTime(session?.BLSession_endDate)}
-            </strong>
-          </Alert>
+          <Col>
+            <Alert variant="info">
+              <strong>
+                Session on beamline {session?.beamLineName || 'unknown'} from{' '}
+                {formatDateToDayAndTime(session?.BLSession_startDate)} to{' '}
+                {formatDateToDayAndTime(session?.BLSession_endDate)}
+              </strong>
+            </Alert>
+          </Col>
         </Row>
         <MetadataRow
           properties={[
@@ -148,7 +150,34 @@ export function SessionTimeLine({
       >
         {buildLabelElements([...collections, ...scans, ...spects], start, end)}
       </div>
+      <TimelineLegend />
     </Col>
+  );
+}
+
+function TimelineLegend() {
+  return (
+    <Row>
+      {timelineElementTypes.map((e, i) => {
+        const color = timelineEventColors[e];
+        return (
+          <Col key={e} xs={'auto'}>
+            <span key={e} style={{ marginRight: 10 }}>
+              <span
+                style={{
+                  display: 'inline-block',
+                  width: 10,
+                  height: 10,
+                  backgroundColor: color,
+                  marginRight: 5,
+                }}
+              />
+              {e}
+            </span>
+          </Col>
+        );
+      })}
+    </Row>
   );
 }
 
@@ -280,10 +309,13 @@ function buildLabelElements(events: TimelineEvent[], start: Date, end: Date) {
   ];
 }
 
-type TimelineElementType =
-  | 'Data collection'
-  | 'Fluorescence spectra'
-  | 'Energy scan';
+const timelineElementTypes = [
+  'Data collection',
+  'Fluorescence spectra',
+  'Energy scan',
+] as const;
+
+type TimelineElementType = typeof timelineElementTypes[number];
 
 type TimelineEvent = {
   start: Date;
