@@ -1,7 +1,5 @@
 import { MetadataRow } from 'components/Events/Metadata';
-import { addMinutes } from 'date-fns';
 import { formatDateToDayAndTime, parseDate } from 'helpers/dateparser';
-import SimpleParameterTable from 'legacy/components/table/simpleparametertable';
 import {
   useMXDataCollectionsBy,
   useMXEnergyScans,
@@ -16,7 +14,6 @@ import {
   Container,
   OverlayTrigger,
   Popover,
-  ProgressBar,
   Row,
 } from 'react-bootstrap';
 import { DataCollectionGroup, EnergyScan, FluorescenceSpectra } from '../model';
@@ -99,8 +96,8 @@ export function SessionTimeLine({
     .map(
       (dcg) =>
         ({
-          start: dcg.DataCollectionGroup_startTime || 'undefined',
-          end: dcg.DataCollectionGroup_endTime || 'undefined',
+          start: parseDate(dcg.DataCollectionGroup_startTime),
+          end: parseDate(dcg.DataCollectionGroup_endTime),
           type: 'Data collection',
         } as TimelineEvent)
     )
@@ -110,8 +107,8 @@ export function SessionTimeLine({
     .map(
       (scan) =>
         ({
-          start: scan.startTime || 'undefined',
-          end: scan.endTime || 'undefined',
+          start: parseDate(scan.startTime),
+          end: parseDate(scan.endTime),
           type: 'Energy scan',
         } as TimelineEvent)
     )
@@ -121,180 +118,181 @@ export function SessionTimeLine({
     .map(
       (spect) =>
         ({
-          start: spect.startTime || 'undefined',
-          end: spect.endTime || 'undefined',
+          start: parseDate(spect.startTime),
+          end: parseDate(spect.endTime),
           type: 'Fluorescence spectra',
         } as TimelineEvent)
     )
     .value();
-  console.log(spects);
   return (
     <Col>
       <strong>Session timeline</strong>
-      <ProgressBar>
-        {buildElements(
-          getFullEvents(
-            [...collections, ...scans, ...spects],
-            session.BLSession_startDate,
-            session.BLSession_endDate
-          ),
-          start,
-          end
-        )}
-      </ProgressBar>
-      <Row>
-        <Col xs={'auto'}>
-          <small>
-            <i>{formatDateToDayAndTime(session.BLSession_startDate)}</i>
-          </small>
-        </Col>
-        <Col></Col>
-        <Col xs={'auto'}>
-          <small>
-            <i>{formatDateToDayAndTime(session.BLSession_endDate)}</i>
-          </small>
-        </Col>
-      </Row>
+      <div
+        style={{
+          border: '1px solid gray',
+          borderRadius: 5,
+          width: '100%',
+          height: 20,
+          position: 'relative',
+          overflow: 'hidden',
+        }}
+      >
+        {buildEventsElements([...collections, ...scans, ...spects], start, end)}
+      </div>
+      <div
+        style={{
+          width: '100%',
+          height: 20,
+          position: 'relative',
+        }}
+      >
+        {buildLabelElements([...collections, ...scans, ...spects], start, end)}
+      </div>
     </Col>
   );
 }
 
+function buildEventsElements(events: TimelineEvent[], start: Date, end: Date) {
+  const earliest = events.reduce(
+    (acc, e) => (e.start.getTime() < acc ? e.start.getTime() : acc),
+    start.getTime()
+  );
+  const latest = events.reduce(
+    (acc, e) => (e.end.getTime() > acc ? e.end.getTime() : acc),
+    end.getTime()
+  );
+  const duration = latest - earliest;
+  return events.map((e, i) => {
+    const leftPercentage = ((e.start.getTime() - earliest) / duration) * 100;
+    const rightPercentage =
+      100 - ((e.end.getTime() - earliest) / duration) * 100;
+    return (
+      <OverlayTrigger
+        key={i}
+        placement="bottom"
+        overlay={
+          <Popover id="popover-basic">
+            <Popover.Body>
+              <strong>{e.type}</strong>
+              <br />
+              <strong>Start: </strong>
+              <i>{formatDateToDayAndTime(e.start.toISOString())}</i>
+              <br />
+              <strong>End: </strong>
+              <i>{formatDateToDayAndTime(e.end.toISOString())}</i>
+            </Popover.Body>
+          </Popover>
+        }
+      >
+        <div
+          style={{
+            backgroundColor: timelineEventColors[e.type],
+            position: 'absolute',
+            top: 0,
+            bottom: 0,
+            minWidth: 5,
+            left: leftPercentage + '%',
+            right: rightPercentage + '%',
+            zIndex: i,
+          }}
+        ></div>
+      </OverlayTrigger>
+    );
+  });
+}
+
+function buildLabelElements(events: TimelineEvent[], start: Date, end: Date) {
+  const earliest = events.reduce(
+    (acc, e) => (e.start.getTime() < acc ? e.start.getTime() : acc),
+    start.getTime()
+  );
+  const latest = events.reduce(
+    (acc, e) => (e.end.getTime() > acc ? e.end.getTime() : acc),
+    end.getTime()
+  );
+  const duration = latest - earliest;
+  const sessionStart = start.getTime();
+  const sessionEnd = end.getTime();
+
+  const leftStartPercentage = ((sessionStart - earliest) / duration) * 100;
+  const rightEndPercentage = 100 - ((sessionEnd - earliest) / duration) * 100;
+
+  return [
+    leftStartPercentage ? (
+      <div
+        key="sessionStart"
+        style={{
+          backgroundColor: 'red',
+          position: 'absolute',
+          top: -20,
+          bottom: 0,
+          left: leftStartPercentage + '%',
+          zIndex: events.length,
+        }}
+      ></div>
+    ) : (
+      <></>
+    ),
+    <small
+      key="sessionStartLabel"
+      style={{
+        position: 'absolute',
+        top: 0,
+        left: leftStartPercentage + '%',
+        zIndex: events.length,
+      }}
+    >
+      <i>
+        <strong>Session start: </strong>
+        {formatDateToDayAndTime(start.toISOString())}
+      </i>
+    </small>,
+    rightEndPercentage ? (
+      <div
+        key="sessionEnd"
+        style={{
+          backgroundColor: 'red',
+          position: 'absolute',
+          top: -20,
+          bottom: 0,
+          width: 2,
+          right: rightEndPercentage + '%',
+          zIndex: events.length,
+        }}
+      ></div>
+    ) : (
+      <></>
+    ),
+    <small
+      key="sessionEndLabel"
+      style={{
+        position: 'absolute',
+        top: 0,
+        right: rightEndPercentage + '%',
+        zIndex: events.length,
+      }}
+    >
+      <i>
+        <strong>Session {rightEndPercentage ? 'programmed ' : ''} end: </strong>
+        {formatDateToDayAndTime(end.toISOString())}
+      </i>
+    </small>,
+  ];
+}
+
 type TimelineElementType =
-  | 'idle'
   | 'Data collection'
   | 'Fluorescence spectra'
   | 'Energy scan';
 
 type TimelineEvent = {
-  start: string;
-  end: string;
+  start: Date;
+  end: Date;
   type: TimelineElementType;
 };
 
 const timelineEventColors: Record<TimelineElementType, string> = {
-  idle: 'lightgray',
   'Data collection': 'blue',
   'Fluorescence spectra': 'green',
   'Energy scan': 'orange',
 };
-
-function getFullEvents(
-  unsortedEvents: TimelineEvent[],
-  start: string,
-  end: string
-): TimelineEvent[] {
-  const fullEvents: TimelineEvent[] = [];
-
-  const events = _(unsortedEvents)
-    .sortBy((e) => parseDate(e.start).getTime())
-    .value();
-
-  //Create first idle event
-  if (
-    events.length > 0 &&
-    parseDate(events[0].start).getTime() > parseDate(start).getTime()
-  ) {
-    const firstEvent: TimelineEvent = {
-      start,
-      end: events[0].start,
-      type: 'idle',
-    };
-    fullEvents.push(firstEvent);
-  }
-  events.forEach((event) => {
-    if (event.type === 'Fluorescence spectra') {
-      console.log(event);
-    }
-    if (event.start === 'undefined' || event.end === 'undefined') return;
-    let lastEvent =
-      fullEvents.length > 0 ? fullEvents[fullEvents.length - 1] : undefined;
-    //Skip event if it overlaps with previous
-    if (
-      lastEvent &&
-      parseDate(lastEvent.end).getTime() > parseDate(event.start).getTime()
-    ) {
-      return;
-    }
-    //Build idle event between previous and current event
-    if (
-      lastEvent &&
-      parseDate(lastEvent.end).getTime() < parseDate(event.start).getTime()
-    ) {
-      const idleEvent: TimelineEvent = {
-        start: lastEvent.end,
-        end: event.start,
-        type: 'idle',
-      };
-      fullEvents.push(idleEvent);
-      lastEvent = idleEvent;
-    }
-
-    let currentEnd = event.end;
-    const minimalEnd = addMinutes(parseDate(currentEnd), 1);
-    if (parseDate(event.end).getTime() < minimalEnd.getTime()) {
-      currentEnd = minimalEnd.toISOString();
-    }
-    const currentEvent: TimelineEvent = {
-      start: lastEvent?.end || event.start,
-      end: currentEnd,
-      type: event.type,
-    };
-    fullEvents.push(currentEvent);
-  });
-  //Build last idle event until end
-  fullEvents.push({
-    start: fullEvents[fullEvents.length - 1].end,
-    end,
-    type: 'idle',
-  });
-
-  return fullEvents;
-}
-
-function buildElements(
-  events: TimelineEvent[],
-  start: Date,
-  end: Date
-): JSX.Element[] {
-  console.log(events);
-  const duration = end.getTime() - start.getTime();
-  return events.map((event, index) => {
-    const eventStart = parseDate(event.start);
-    const eventEnd = parseDate(event.end);
-    const eventDuration = eventEnd.getTime() - eventStart.getTime();
-    const eventPercentage = (eventDuration / duration) * 100;
-
-    const popover = (
-      <Popover id="popover-basic">
-        <Popover.Header as="h3">{event.type}</Popover.Header>
-        <Popover.Body>
-          <Col>
-            <Row> {formatDateToDayAndTime(event.start)}</Row>
-            <Row> {formatDateToDayAndTime(event.end)}</Row>
-          </Col>
-        </Popover.Body>
-      </Popover>
-    );
-
-    return (
-      <OverlayTrigger
-        key={index}
-        trigger={['hover', 'focus']}
-        placement="bottom"
-        overlay={popover}
-      >
-        <ProgressBar
-          now={eventPercentage}
-          key={index}
-          isChild={true}
-          label={event.type}
-          visuallyHidden={eventPercentage < 5}
-          style={{
-            backgroundColor: timelineEventColors[event.type],
-            color: 'black',
-          }}
-        />
-      </OverlayTrigger>
-    );
-  });
-}
