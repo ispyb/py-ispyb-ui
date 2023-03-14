@@ -5,13 +5,18 @@ networks:
 
 services:
   py-ispyb-ui:
-    build: .
+    build:
+      args:
+        - NODE_ENV=development
+      context: .
+    environment:
+      - NODE_ENV=development
     container_name: py-ispyb-ui
     labels:
       - "traefik.backend=py-ispyb-ui-localhost"
       - "traefik.frontend.rule=Host:py-ispyb-ui.localhost"
       - "traefik.docker.network=traefik-network"
-      - "traefik.port=8080"
+      - "traefik.port=3000"
     volumes:
       - ./src:/usr/app/src
       - ./public:/usr/app/public
@@ -19,9 +24,4 @@ services:
       - traefik-network
     ports:
       - 5000:5000
-    deploy:
-      resources:
-        limits:
-          cpus: 1
-          memory: 4096M
  
