@@ -77,7 +77,7 @@ function PersonMenu() {
       id="admin-nav-dropdown"
       align="end"
     >
-      <NavDropdown.Header>{javaPerson?.roles}</NavDropdown.Header>
+      <NavDropdown.Header><div className='new-line'>{javaPerson?.roles.join('</br>')}</div></NavDropdown.Header>
     </NavDropdown>
   );
 }
