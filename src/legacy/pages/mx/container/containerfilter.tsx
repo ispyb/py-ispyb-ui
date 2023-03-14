@@ -59,7 +59,6 @@ export default function ContainerFilter({
         <Col style={{ display: 'flex', margin: 20 }}>
           <ButtonGroup style={{ display: 'flex', margin: 'auto' }}>
             <OverlayTrigger
-              key={'bottom'}
               placement={'bottom'}
               overlay={
                 <Tooltip id={`tooltip-bottom`}>
@@ -88,7 +87,6 @@ export default function ContainerFilter({
               </ToggleButton>
             </OverlayTrigger>
             <OverlayTrigger
-              key={'bottom'}
               placement={'bottom'}
               overlay={<Tooltip id={`tooltip-bottom`}>Select all</Tooltip>}
             >
@@ -117,7 +115,6 @@ export default function ContainerFilter({
               </ToggleButton>
             </OverlayTrigger>
             <OverlayTrigger
-              key={'bottom'}
               placement={'bottom'}
               overlay={<Tooltip id={`tooltip-bottom`}>Unselect all</Tooltip>}
             >

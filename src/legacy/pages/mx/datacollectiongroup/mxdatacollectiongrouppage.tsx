@@ -2,19 +2,14 @@ import { Suspense, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import MXPage from 'legacy/pages/mx/mxpage';
 import {
-  Anchor,
   Button,
   ButtonGroup,
   Card,
-  Col,
-  Container,
-  Dropdown,
   OverlayTrigger,
-  Popover,
   ToggleButton,
   Tooltip,
 } from 'react-bootstrap';
-import { useAutoProc, useMXDataCollectionsBy } from 'legacy/hooks/ispyb';
+import { useMXDataCollectionsBy } from 'legacy/hooks/ispyb';
 import DataCollectionGroupPanel from 'legacy/pages/mx/datacollectiongroup/datacollectiongrouppanel';
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
 import LazyWrapper from 'legacy/components/loading/lazywrapper';
@@ -24,19 +19,11 @@ import { Subject } from 'rxjs';
 import _ from 'lodash';
 import ContainerFilter from '../container/containerfilter';
 import {
-  faCheckCircle,
   faDotCircle,
   faListAlt,
   faListUl,
 } from '@fortawesome/free-solid-svg-icons';
-import {
-  parseResults,
-  ResultRankParam,
-  ResultRankShell,
-  RESULT_RANK_PARAM,
-  RESULT_RANK_SHELLS,
-} from 'legacy/helpers/mx/results/resultparser';
-import ReactSelect from 'react-select';
+import { useAutoProcRanking, usePipelines } from 'hooks/mx';
 
 type Param = {
   sessionId: string;
@@ -54,15 +41,12 @@ export default function MXDataCollectionGroupPage() {
   const compactToggle = new Subject<boolean>();
   const [filterContainers, setFilterContainers] = useState(false);
   const [selectedGroups, setSelectedGroups] = useState([] as number[]);
-  const [selectedPipelines, setSelectedPipelines] = useState<string[]>([]);
   const [filterMR, setFilterMR] = useState(false);
   const [filterSAD, setFilterSAD] = useState(false);
   const [filterScaling, setFilterScaling] = useState(false);
 
-  const [resultRankShell, setResultRankShell] =
-    useState<ResultRankShell>('Inner');
-  const [resultRankParam, setResultRankParam] =
-    useState<ResultRankParam>('Rmerge');
+  const pipelinesSelection = usePipelines();
+  const autoProcRankingSelection = useAutoProcRanking();
 
   if (dataCollectionGroups && dataCollectionGroups.length) {
     const containerIds = _(dataCollectionGroups)
@@ -100,67 +84,6 @@ export default function MXDataCollectionGroupPage() {
             }}
           >
             <ButtonGroup style={{ marginRight: 50 }}>
-              <OverlayTrigger
-                trigger={['click']}
-                placement={'bottom'}
-                rootClose
-                overlay={
-                  <Popover>
-                    <Container style={{ padding: 20 }}>
-                      <Col>
-                        <strong>
-                          Autoprocessing results will be ranked based on the
-                          value of:
-                        </strong>
-                        <br></br>
-                        <label>Bin</label>
-                        <ReactSelect
-                          options={RESULT_RANK_SHELLS.map((v) => ({
-                            value: v,
-                            label: v,
-                          }))}
-                          value={{
-                            value: resultRankShell,
-                            label: resultRankShell,
-                          }}
-                          onChange={(v) => v && setResultRankShell(v.value)}
-                        ></ReactSelect>
-                        <label>Parameter</label>
-                        <ReactSelect
-                          options={RESULT_RANK_PARAM.map((v) => ({
-                            value: v,
-                            label: v,
-                          }))}
-                          value={{
-                            value: resultRankParam,
-                            label: resultRankParam,
-                          }}
-                          onChange={(v) => v && setResultRankParam(v.value)}
-                        ></ReactSelect>
-                      </Col>
-                    </Container>
-                  </Popover>
-                }
-              >
-                <Dropdown.Toggle
-                  size="sm"
-                  variant="primary"
-                  style={{ marginRight: 2, marginLeft: 2 }}
-                >
-                  Ranking
-                </Dropdown.Toggle>
-              </OverlayTrigger>
-
-              <Suspense fallback={<SelectPipelinesFallback />}>
-                <SelectPipelines
-                  dataCollectionGroups={filteredDataCollectionGroups}
-                  proposalName={proposalName}
-                  selected={selectedPipelines}
-                  setSelected={setSelectedPipelines}
-                />
-              </Suspense>
-            </ButtonGroup>
-            <ButtonGroup style={{ marginRight: 50 }}>
               <Button
                 size="sm"
                 variant={filterScaling ? 'primary' : 'light'}
@@ -183,7 +106,6 @@ export default function MXDataCollectionGroupPage() {
                 SAD
               </Button>
               <OverlayTrigger
-                key={'bottom'}
                 placement={'bottom'}
                 overlay={
                   <Tooltip id={`tooltip-bottom`}>
@@ -212,7 +134,6 @@ export default function MXDataCollectionGroupPage() {
             </ButtonGroup>
             <ButtonGroup>
               <OverlayTrigger
-                key={'bottom'}
                 placement={'bottom'}
                 overlay={
                   <Tooltip id={`tooltip-bottom`}>Use detailed view</Tooltip>
@@ -236,7 +157,6 @@ export default function MXDataCollectionGroupPage() {
               </OverlayTrigger>
 
               <OverlayTrigger
-                key={'bottom'}
                 placement={'bottom'}
                 overlay={
                   <Tooltip id={`tooltip-bottom`}>Use compact view</Tooltip>
@@ -286,9 +206,9 @@ export default function MXDataCollectionGroupPage() {
                       dataCollectionGroup={dataCollectionGroup}
                       proposalName={proposalName}
                       sessionId={sessionId}
-                      selectedPipelines={selectedPipelines}
-                      resultRankParam={resultRankParam}
-                      resultRankShell={resultRankShell}
+                      selectedPipelines={pipelinesSelection.pipelines}
+                      resultRankParam={autoProcRankingSelection.rankParam}
+                      resultRankShell={autoProcRankingSelection.rankShell}
                     ></DataCollectionGroupPanel>
                   </Suspense>
                 </LazyWrapper>
@@ -305,108 +225,5 @@ export default function MXDataCollectionGroupPage() {
         <p>No data collection groups found.</p>
       </Card>
     </MXPage>
-  );
-}
-
-function SelectPipelinesFallback() {
-  return (
-    <Dropdown>
-      <Dropdown.Toggle
-        disabled={true}
-        size="sm"
-        variant="primary"
-        style={{ marginRight: 2, marginLeft: 2 }}
-      >
-        Select pipelines
-      </Dropdown.Toggle>
-    </Dropdown>
-  );
-}
-
-function SelectPipelines({
-  dataCollectionGroups,
-  proposalName,
-  selected,
-  setSelected,
-}: {
-  dataCollectionGroups: DataCollectionGroup[];
-  proposalName: string;
-  selected: string[];
-  setSelected: (_: string[]) => void;
-}) {
-  const ids = dataCollectionGroups
-    .map((d) => d.DataCollection_dataCollectionId)
-    .slice(0, 10)
-    .join(',');
-  const { data } = useAutoProc({
-    proposalName,
-    dataCollectionId: ids ? ids : '-1',
-  });
-
-  if (data === undefined || !data.length) return <SelectPipelinesFallback />;
-  const options = _(parseResults(data.flatMap((v) => v)))
-    .map((v) => v.program)
-    .uniq()
-    .sort()
-    .value();
-
-  if (options.length === 0) return <SelectPipelinesFallback />;
-  const allSelected = _(options).every((o) => selected.includes(o));
-
-  return (
-    <Dropdown>
-      <Dropdown.Toggle
-        disabled={false}
-        size="sm"
-        variant="primary"
-        style={{ marginRight: 2, marginLeft: 2 }}
-      >
-        Filter pipelines
-      </Dropdown.Toggle>
-      <Dropdown.Menu>
-        <Dropdown.Item
-          as={Anchor}
-          onClick={(e) => {
-            if (allSelected) {
-              setSelected([]);
-            } else {
-              setSelected(options);
-            }
-            e.stopPropagation();
-          }}
-        >
-          <strong style={{ borderBottom: '1px solid black' }}>
-            {allSelected ? 'Unselect all' : 'Select all'}
-          </strong>
-        </Dropdown.Item>
-        {options.map((v) => (
-          <Dropdown.Item
-            key={v}
-            as={Anchor}
-            onClick={(e) => {
-              if (selected.includes(v)) {
-                setSelected(selected.filter((e) => e !== v));
-              } else {
-                setSelected([...selected, v]);
-              }
-              e.stopPropagation();
-            }}
-          >
-            {selected.includes(v) ? (
-              <div>
-                <FontAwesomeIcon
-                  icon={faCheckCircle}
-                  style={{ marginRight: 5 }}
-                  color="green"
-                ></FontAwesomeIcon>
-                {v}
-              </div>
-            ) : (
-              <div style={{ marginLeft: 21 }}>{v}</div>
-            )}
-          </Dropdown.Item>
-        ))}
-      </Dropdown.Menu>
-    </Dropdown>
   );
 }

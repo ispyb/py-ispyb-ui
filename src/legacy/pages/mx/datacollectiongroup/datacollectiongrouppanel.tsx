@@ -309,9 +309,6 @@ export default function DataCollectionGroupPanel({
           <ProcessingSummary
             proposalName={proposalName}
             dataCollectionGroup={dataCollectionGroup}
-            selectedPipelines={selectedPipelines}
-            resultRankParam={resultRankParam}
-            resultRankShell={resultRankShell}
           />
         </Suspense>
       </Card>

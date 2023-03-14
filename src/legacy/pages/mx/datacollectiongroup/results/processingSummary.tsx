@@ -6,6 +6,7 @@ import {
   faQuestionCircle,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useAutoProcRanking, usePipelines } from 'hooks/mx';
 import {
   getRankedResults,
   ResultRankParam,
@@ -25,30 +26,28 @@ import {
 export interface Props {
   proposalName: string;
   dataCollectionGroup: DataCollectionGroup;
-  selectedPipelines: string[];
-  resultRankShell: ResultRankShell;
-  resultRankParam: ResultRankParam;
 }
 
 export default function ProcessingSummary({
   proposalName,
   dataCollectionGroup,
-  selectedPipelines,
-  resultRankShell,
-  resultRankParam,
 }: Props) {
   const { data } = useAutoProc({
     proposalName,
     dataCollectionId:
       dataCollectionGroup.DataCollection_dataCollectionId.toString(),
   });
+
+  const pipelinesSelection = usePipelines();
+  const autoProcRankingSelection = useAutoProcRanking();
+
   if (!data || data.flatMap((d) => d).length === 0) return null;
 
   const results = getRankedResults(
     data.flatMap((d) => d),
-    resultRankShell,
-    resultRankParam,
-    selectedPipelines
+    autoProcRankingSelection.rankShell,
+    autoProcRankingSelection.rankParam,
+    pipelinesSelection.pipelines
   );
 
   return (

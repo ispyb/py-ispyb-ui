@@ -352,8 +352,6 @@ function buildTicksElements(events: TimelineEvent[], start: Date, end: Date) {
 
   ticks = ticks.sort();
 
-  console.log(ticks.map((t) => formatDateToHour(new Date(t).toISOString())));
-
   return ticks.map((t, i) => {
     const leftPercentage = ((t - earliest) / duration) * 100;
     let position = 'translate(-50%, -50%)';
