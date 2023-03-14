@@ -1,5 +1,11 @@
 import { MetadataRow } from 'components/Events/Metadata';
-import { formatDateToDayAndTime, parseDate } from 'helpers/dateparser';
+import { addHours, setMinutes } from 'date-fns';
+import {
+  formatDateToDay,
+  formatDateToDayAndTime,
+  formatDateToHour,
+  parseDate,
+} from 'helpers/dateparser';
 import {
   useMXDataCollectionsBy,
   useMXEnergyScans,
@@ -134,12 +140,21 @@ export function SessionTimeLine({
           border: '1px solid gray',
           borderRadius: 5,
           width: '100%',
-          height: 20,
+          height: 30,
           position: 'relative',
           overflow: 'hidden',
         }}
       >
         {buildEventsElements([...collections, ...scans, ...spects], start, end)}
+      </div>
+      <div
+        style={{
+          width: '100%',
+          height: 20,
+          position: 'relative',
+        }}
+      >
+        {buildTicksElements([...collections, ...scans, ...spects], start, end)}
       </div>
       <div
         style={{
@@ -254,7 +269,7 @@ function buildLabelElements(events: TimelineEvent[], start: Date, end: Date) {
           backgroundColor: 'red',
           position: 'absolute',
           top: -20,
-          bottom: 0,
+          bottom: 15,
           left: leftStartPercentage + '%',
           zIndex: events.length,
         }}
@@ -273,7 +288,9 @@ function buildLabelElements(events: TimelineEvent[], start: Date, end: Date) {
     >
       <i>
         <strong>Session start: </strong>
-        {formatDateToDayAndTime(start.toISOString())}
+        {leftStartPercentage
+          ? formatDateToDayAndTime(start.toISOString())
+          : formatDateToDay(start.toISOString())}
       </i>
     </small>,
     rightEndPercentage ? (
@@ -283,7 +300,7 @@ function buildLabelElements(events: TimelineEvent[], start: Date, end: Date) {
           backgroundColor: 'red',
           position: 'absolute',
           top: -20,
-          bottom: 0,
+          bottom: 15,
           width: 2,
           right: rightEndPercentage + '%',
           zIndex: events.length,
@@ -303,10 +320,77 @@ function buildLabelElements(events: TimelineEvent[], start: Date, end: Date) {
     >
       <i>
         <strong>Session {rightEndPercentage ? 'programmed ' : ''} end: </strong>
-        {formatDateToDayAndTime(end.toISOString())}
+        {rightEndPercentage
+          ? formatDateToDayAndTime(end.toISOString())
+          : formatDateToDay(end.toISOString())}
       </i>
     </small>,
   ];
+}
+
+function buildTicksElements(events: TimelineEvent[], start: Date, end: Date) {
+  const earliest = events.reduce(
+    (acc, e) => (e.start.getTime() < acc ? e.start.getTime() : acc),
+    start.getTime()
+  );
+  const latest = events.reduce(
+    (acc, e) => (e.end.getTime() > acc ? e.end.getTime() : acc),
+    end.getTime()
+  );
+  const duration = latest - earliest;
+
+  let ticks = [earliest, latest];
+
+  let time = new Date(earliest);
+  time = setMinutes(time, 0);
+  time = addHours(time, 4);
+
+  while (time.getTime() < latest) {
+    ticks.push(time.getTime());
+    time = addHours(time, 4);
+  }
+
+  ticks = ticks.sort();
+
+  console.log(ticks.map((t) => formatDateToHour(new Date(t).toISOString())));
+
+  return ticks.map((t, i) => {
+    const leftPercentage = ((t - earliest) / duration) * 100;
+    let position = 'translate(-50%, -50%)';
+    if (i === 0) {
+      position = 'translate(0, -50%)';
+    } else if (i === ticks.length - 1) {
+      position = 'translate(-100%, -50%)';
+    }
+    return (
+      <>
+        <div
+          key={`${i}tick`}
+          style={{
+            position: 'absolute',
+            top: -30,
+            bottom: 10,
+            width: 1,
+            left: leftPercentage + '%',
+            zIndex: 0,
+            backgroundColor: 'grey',
+          }}
+        />
+        <small
+          style={{
+            position: 'absolute',
+            top: 10,
+            bottom: 0,
+            left: leftPercentage + '%',
+            zIndex: events.length,
+            transform: position,
+          }}
+        >
+          <i key={`${i}label`}>{formatDateToHour(new Date(t).toISOString())}</i>
+        </small>
+      </>
+    );
+  });
 }
 
 const timelineElementTypes = [
