@@ -369,17 +369,18 @@ function buildTicksElements(events: TimelineEvent[], start: Date, end: Date) {
           style={{
             position: 'absolute',
             top: -30,
-            bottom: 10,
+            bottom: 12,
             width: 1,
             left: leftPercentage + '%',
             zIndex: 0,
-            backgroundColor: 'grey',
+            borderLeft: '1px dashed grey',
+            // backgroundColor: 'grey',
           }}
         />
         <small
           style={{
             position: 'absolute',
-            top: 10,
+            top: 8,
             bottom: 0,
             left: leftPercentage + '%',
             zIndex: events.length,
