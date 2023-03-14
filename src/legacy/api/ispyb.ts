@@ -257,7 +257,7 @@ export function getDiffrationThumbnail({
   imageId: number;
 }) {
   return {
-    url: `/proposal/${proposalName}/mx/image/${imageId}/thumbnail`,
+    url: `/proposal/${proposalName}/mx/image/${imageId}/get`,
   };
 }
 
