@@ -27,4 +27,24 @@ export const NETLIFY: SiteConfig[] = [
       },
     },
   },
+  {
+    name: 'ALBA',
+    description: 'For MX@ALBA',
+    javaName: 'ALBA',
+    host: 'https://ispyb.cells.es',
+    apiPrefix: '/ispyb/ispyb-ws/rest',
+    javaMode: true,
+    javaConfig: {
+      techniques: {
+        MX: {
+          beamlines: [
+            {
+              name: 'BL13 - XALOC',
+              sampleChangerType: 'FlexHCDDual',
+            },
+          ],
+        },
+      },
+    },
+  },
 ];
