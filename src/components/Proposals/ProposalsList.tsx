@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import Table from 'components/Layout/Table';
 import { ProposalResource } from 'api/resources/Proposal';
 import { Proposal } from 'models/Proposal';
-import { useProposal } from 'hooks/useProposal';
 import Search from 'components/Layout/Search';
 import { usePaging } from 'hooks/usePaging';
 import { useSearch } from 'hooks/useSearch';
@@ -18,10 +17,8 @@ export default function ProposalsList({ sortBy }: { sortBy?: string }) {
     limit,
     ...(search ? { search } : null),
   });
-  const { setProposalName } = useProposal();
 
   const onRowClick = (row: Proposal) => {
-    setProposalName(row.proposal);
     navigate(`/proposals/${row.proposal}/sessions`);
   };
 

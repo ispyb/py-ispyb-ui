@@ -8,7 +8,6 @@ import paginationFactory from 'react-bootstrap-table2-paginator';
 import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
-import { useProposal } from 'hooks/useProposal';
 import { useNavigate } from 'react-router-dom';
 
 export default function ProposalTable({
@@ -85,18 +84,16 @@ export function ProposalName({ proposal }: { proposal: Proposal }) {
 }
 
 export function ProposalSessions({ proposal }: { proposal: Proposal }) {
-  const { setProposalName } = useProposal();
   const navigate = useNavigate();
   const proposalName = `${proposal.Proposal_proposalCode}${proposal.Proposal_proposalNumber}`;
   return (
     <OverlayTrigger
       placement="right"
-      overlay={<Tooltip>Search sessions for {proposalName}</Tooltip>}
+      overlay={<Tooltip>Open {proposalName}</Tooltip>}
     >
       <Button
         variant="link"
         onClick={() => {
-          setProposalName(proposalName);
           navigate(`/legacy/proposals/${proposalName}/sessions`);
         }}
       >
