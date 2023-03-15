@@ -51,14 +51,16 @@ export function ShippingsInfo({
   const pipelines = usePipelines();
   const ranking = useAutoProcRanking();
 
-  const dcIds = _.uniq(
-    (dataCollectionGroups || []).map(
-      (dcg) => dcg.DataCollection_dataCollectionId
+  const dcIds = _(dataCollectionGroups || [])
+    .filter(
+      (dcg) =>
+        dcg.AutoProcProgram_processingPrograms !== undefined &&
+        dcg.AutoProcProgram_processingPrograms.length > 0
     )
-  )
+    .map((dcg) => dcg.DataCollection_dataCollectionId)
+    .uniq()
     .sort()
     .join(',');
-
   const { data: integrations } = useAutoProc({
     proposalName,
     dataCollectionId: dcIds,
@@ -128,7 +130,7 @@ export function ShippingInfoLegend({
     <Container fluid>
       <Row>
         {sampleStatus.map((status) => {
-          const colors = sampleStatusColors[status];
+          const colors = getSampleColors([status, 'collected']);
           return (
             <Col key={status} xs={'auto'} s>
               <div
@@ -193,11 +195,27 @@ export function ShippingInfo({
 
   if (!shipping) return null;
 
+  const samples = _(shipping.dewarVOs)
+    .flatMap((d) => d.containerVOs)
+    .flatMap((d) => d.sampleVOs)
+    .value();
+
+  const onlyOneDewar = shipping.dewarVOs.length === 1;
+
   return (
     <div style={{ marginBottom: '1rem', padding: 10 }}>
       <Col>
         <Row>
           <strong>Shipping {shipping.shippingName}</strong>
+        </Row>
+        <Row>
+          <SamplesStatistics
+            samples={samples}
+            dataCollectionGroups={dataCollectionGroups}
+            rankedIntegrations={rankedIntegrations}
+          />
+        </Row>
+        <Row>
           {_(shipping.dewarVOs)
             .sortBy((d) => d.barCode)
             .value()
@@ -207,6 +225,7 @@ export function ShippingInfo({
                 dewar={dewar}
                 dataCollectionGroups={dataCollectionGroups}
                 rankedIntegrations={rankedIntegrations}
+                onlyOneDewar={onlyOneDewar}
               />
             ))}
         </Row>
@@ -219,11 +238,19 @@ export function DewarInfo({
   dewar,
   dataCollectionGroups,
   rankedIntegrations,
+  onlyOneDewar = false,
 }: {
   dewar: ShippingDewar;
   dataCollectionGroups: DataCollectionGroup[];
   rankedIntegrations: AutoProcIntegration[];
+  onlyOneDewar?: boolean;
 }) {
+  const samples = _(dewar.containerVOs)
+    .flatMap((d) => d.sampleVOs)
+    .value();
+
+  const onlyOnePuck = dewar.containerVOs.length === 1;
+
   return (
     <Container fluid>
       <div
@@ -239,6 +266,13 @@ export function DewarInfo({
           <Row>
             <strong>Dewar {dewar.barCode}</strong>
           </Row>
+          {!onlyOneDewar && (
+            <SamplesStatistics
+              samples={samples}
+              dataCollectionGroups={dataCollectionGroups}
+              rankedIntegrations={rankedIntegrations}
+            />
+          )}
           <Row>
             {_(dewar.containerVOs)
               .sortBy((c) => c.code)
@@ -249,6 +283,7 @@ export function DewarInfo({
                   container={container}
                   dataCollectionGroups={dataCollectionGroups}
                   rankedIntegrations={rankedIntegrations}
+                  onlyOnePuck={onlyOnePuck}
                 />
               ))}
           </Row>
@@ -262,11 +297,15 @@ export function ContainerInfo({
   container,
   dataCollectionGroups,
   rankedIntegrations,
+  onlyOnePuck = false,
 }: {
   container: ShippingContainer;
   dataCollectionGroups: DataCollectionGroup[];
   rankedIntegrations: AutoProcIntegration[];
+  onlyOnePuck?: boolean;
 }) {
+  const samples = container.sampleVOs;
+
   return (
     <Container fluid>
       <div
@@ -281,12 +320,21 @@ export function ContainerInfo({
         <Col>
           <Row>
             <Col xs={'auto'}>
-              <i style={{ width: 100, display: 'block' }}>
-                Puck {container.code}
-              </i>
+              <i>Puck {container.code}</i>
             </Col>
+            <Col xs={'auto'}>
+              {!onlyOnePuck && (
+                <SamplesStatistics
+                  samples={samples}
+                  dataCollectionGroups={dataCollectionGroups}
+                  rankedIntegrations={rankedIntegrations}
+                />
+              )}
+            </Col>
+          </Row>
+          <Row>
             <Col>
-              <Row>
+              <Row style={{ paddingLeft: 10, paddingRight: 10 }}>
                 {_(container.sampleVOs)
                   .sortBy((c) => Number(c.location))
                   .value()
@@ -307,6 +355,7 @@ export function ContainerInfo({
               </Row>
             </Col>
           </Row>
+          <Row></Row>
         </Col>
       </div>
     </Container>
@@ -321,11 +370,11 @@ const sampleStatus = [
 ] as const;
 type SampleStatus = typeof sampleStatus[number];
 
-function getSampleStatus(
+function getSampleStatuses(
   sample: ShippingSample,
   dataCollectionGroups: DataCollectionGroup[],
   rankedIntegrations: AutoProcIntegration[]
-): SampleStatus {
+): SampleStatus[] {
   const dcs = dataCollectionGroups.filter(
     (dcg) => dcg.BLSample_blSampleId === sample.blSampleId
   );
@@ -341,48 +390,113 @@ function getSampleStatus(
 
   const phasing = dcs.some((dcg) => dcg.hasPhasing || dcg.hasMR);
 
+  const res: SampleStatus[] = [];
+
   if (phasing) {
-    return 'phasing';
-  } else if (processed) {
-    return 'processed';
-  } else if (collected) {
-    return 'collected';
-  } else {
-    return 'not collected';
+    res.push('phasing');
   }
+  if (processed) {
+    res.push('processed');
+  }
+  if (collected) {
+    res.push('collected');
+  } else {
+    res.push('not collected');
+  }
+  return res;
 }
 
 const sampleStatusColors: Record<
   SampleStatus,
   {
-    background: string;
-    color: string;
-    border: string;
+    background?: string;
+    color?: string;
+    border?: string;
     underline?: boolean;
   }
 > = {
   'not collected': {
     background: '#d4e4bc',
     color: 'black',
-    border: 'black',
   },
   collected: {
     background: '#36558f',
     color: 'white',
-    border: 'black',
   },
   processed: {
-    background: '#36558f',
-    color: 'white',
     border: 'green',
   },
   phasing: {
-    background: '#36558f',
-    color: 'white',
-    border: 'black',
     underline: true,
   },
 };
+
+function getSampleColors(statuses: SampleStatus[]) {
+  const colors = statuses.map((s) => sampleStatusColors[s]);
+  const background =
+    colors.map((c) => c.background).filter((c) => c !== undefined)[0] ||
+    'white';
+  const color =
+    colors.map((c) => c.color).filter((c) => c !== undefined)[0] || 'black';
+  const border =
+    colors.map((c) => c.border).filter((c) => c !== undefined)[0] || 'black';
+  const underline = colors.some((c) => c.underline);
+  return { background, color, border, underline };
+}
+
+export function SamplesStatistics({
+  samples,
+  dataCollectionGroups,
+  rankedIntegrations,
+}: {
+  samples: ShippingSample[];
+  dataCollectionGroups: DataCollectionGroup[];
+  rankedIntegrations: AutoProcIntegration[];
+}) {
+  const statuses = _(samples)
+    .map((s) => getSampleStatuses(s, dataCollectionGroups, rankedIntegrations))
+    .value();
+  const proteins = _(samples)
+    .map((s) => s.crystalVO?.proteinVO.acronym)
+    .uniq()
+    .sort()
+    .value();
+  return (
+    <Row>
+      <Col xs={'auto'}>
+        <small>
+          <i>
+            <strong>total samples:</strong> {samples.length}
+          </i>
+        </small>
+      </Col>
+      {sampleStatus.map((s) => {
+        const nb = statuses.filter((st) => st.includes(s)).length;
+        return (
+          <Col xs={'auto'} key={s}>
+            <small>
+              <i>
+                <strong>{s}:</strong> {nb}
+              </i>
+            </small>
+          </Col>
+        );
+      })}
+      <Col xs={'auto'}>
+        <small>
+          <i>
+            <strong>Protein{proteins.length > 1 ? 's' : ''}: </strong>
+          </i>
+          {proteins.map((p) => (
+            <Badge bg="info" key={p}>
+              {p}
+            </Badge>
+          ))}
+        </small>
+      </Col>
+    </Row>
+  );
+}
 
 export function SampleInfo({
   sample,
@@ -393,13 +507,13 @@ export function SampleInfo({
   dataCollectionGroups: DataCollectionGroup[];
   rankedIntegrations: AutoProcIntegration[];
 }) {
-  const status = getSampleStatus(
+  const statuses = getSampleStatuses(
     sample,
     dataCollectionGroups,
     rankedIntegrations
   );
 
-  const colors = sampleStatusColors[status];
+  const colors = getSampleColors(statuses);
 
   const ranking = useAutoProcRanking();
 
@@ -461,11 +575,20 @@ export function SampleInfo({
       style={{ minWidth: bestIntegration ? 500 : undefined }}
     >
       <Popover.Header as="h3">
+        <strong>Sample: </strong>
         {sample.name}
-        <Badge>{status}</Badge>
+        <br />
+        <strong>Protein: </strong>
+        {sample.crystalVO?.proteinVO.acronym || 'unknown protein'}
       </Popover.Header>
       {
         <Popover.Body>
+          {statuses.map((status) => (
+            <Badge style={{ marginLeft: 0, marginRight: 10 }} key={status}>
+              {status}
+            </Badge>
+          ))}
+          <br />
           <i>
             {`${dcs.length} collection${
               dcs.length === 1 ? '' : 's'
@@ -491,12 +614,12 @@ export function SampleInfo({
   );
 
   return (
-    <OverlayTrigger
-      trigger={['hover', 'focus']}
-      placement="auto"
-      overlay={popover}
-    >
-      <>
+    <>
+      <OverlayTrigger
+        trigger={['hover', 'focus']}
+        placement="auto"
+        overlay={popover}
+      >
         <div
           style={{
             backgroundColor: colors.background,
@@ -512,19 +635,19 @@ export function SampleInfo({
         >
           <small className="text-center">{sample.location}</small>
         </div>
-        {colors.underline && (
-          <div
-            style={{
-              backgroundColor: 'yellow',
-              height: 5,
-              border: `1px solid black`,
-              borderRadius: 3,
-              marginTop: 2,
-            }}
-          />
-        )}
-      </>
-    </OverlayTrigger>
+      </OverlayTrigger>
+      {colors.underline && (
+        <div
+          style={{
+            backgroundColor: 'yellow',
+            height: 5,
+            border: `1px solid black`,
+            borderRadius: 3,
+            marginTop: 2,
+          }}
+        />
+      )}
+    </>
   );
 }
 

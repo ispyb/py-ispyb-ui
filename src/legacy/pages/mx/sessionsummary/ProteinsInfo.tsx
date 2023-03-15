@@ -31,11 +31,14 @@ export function ProteinsInfo({
   const pipelines = usePipelines();
   const ranking = useAutoProcRanking();
 
-  const dcIds = _.uniq(
-    (dataCollectionGroups || []).map(
-      (dcg) => dcg.DataCollection_dataCollectionId
+  const dcIds = _(dataCollectionGroups || [])
+    .filter(
+      (dcg) =>
+        dcg.AutoProcProgram_processingPrograms !== undefined &&
+        dcg.AutoProcProgram_processingPrograms.length > 0
     )
-  )
+    .map((dcg) => dcg.DataCollection_dataCollectionId)
+    .uniq()
     .sort()
     .join(',');
 

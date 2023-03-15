@@ -1,6 +1,5 @@
 import { Suspense } from 'react';
 import {
-  useAutoProc,
   useMXDataCollectionsBy,
   useMXEnergyScans,
   useMXFluorescenceSpectras,
@@ -9,7 +8,8 @@ import { useAutoProcRanking, usePipelines } from 'hooks/mx';
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
-  parseResults,
+  AUTOPROC_RANKING_METHOD_DESCRIPTION,
+  getRankingOrder,
   RESULT_RANK_PARAM,
   RESULT_RANK_SHELLS,
 } from 'legacy/helpers/mx/results/resultparser';
@@ -179,6 +179,7 @@ export function AutoprocParameters({
   sessionId: string;
   proposalName: string;
 }) {
+  const ranking = useAutoProcRanking();
   return (
     <Card style={{ padding: '1rem', marginBottom: '1rem' }}>
       <Row>
@@ -204,6 +205,30 @@ export function AutoprocParameters({
         <Col xs={'auto'}>
           <SelectAutoprocRanking />
         </Col>
+      </Row>
+      <Row>
+        <small>
+          <i>
+            {AUTOPROC_RANKING_METHOD_DESCRIPTION.map((line, i) => {
+              const text =
+                i === AUTOPROC_RANKING_METHOD_DESCRIPTION.length - 1
+                  ? line +
+                    ` (${
+                      getRankingOrder(ranking.rankParam) === 1
+                        ? 'lowest'
+                        : 'highest'
+                    } ${ranking.rankShell.toLocaleLowerCase()} ${
+                      ranking.rankParam
+                    })`
+                  : line;
+              return (
+                <>
+                  {text} <br />
+                </>
+              );
+            })}
+          </i>
+        </small>
       </Row>
     </Card>
   );
@@ -263,7 +288,11 @@ export function SelectAutoprocRanking() {
         variant="outline-dark"
         style={{ marginRight: 2, marginLeft: 2 }}
       >
-        Rank by {autoProcRankingSelection.rankShell.toLocaleLowerCase()}{' '}
+        Rank by{' '}
+        {getRankingOrder(autoProcRankingSelection.rankParam) === 1
+          ? 'lowest'
+          : 'highest'}{' '}
+        {autoProcRankingSelection.rankShell.toLocaleLowerCase()}{' '}
         {autoProcRankingSelection.rankParam}
       </Dropdown.Toggle>
     </OverlayTrigger>
@@ -310,18 +339,12 @@ function SelectPipelines({
     sessionId,
   });
   const pipelinesSelection = usePipelines();
-  const ids = (dataCollectionGroups || [])
-    .map((d) => d.DataCollection_dataCollectionId)
-    .slice(0, 10)
-    .join(',');
-  const { data } = useAutoProc({
-    proposalName,
-    dataCollectionId: ids ? ids : '-1',
-  });
 
-  if (data === undefined || !data.length) return <SelectPipelinesFallback />;
-  const options = _(parseResults(data.flatMap((v) => v)))
-    .map((v) => v.program)
+  const options = _(dataCollectionGroups || [])
+    .map((dcg) => dcg.processingPrograms || '')
+    .flatMap((programs) => programs.split(','))
+    .map((v) => v.trim())
+    .filter((v) => v.length > 0)
     .uniq()
     .sort()
     .value();

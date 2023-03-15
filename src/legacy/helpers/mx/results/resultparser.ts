@@ -143,6 +143,12 @@ export function parseResults(
     };
   });
 }
+export const AUTOPROC_RANKING_METHOD_DESCRIPTION = [
+  'Autoprocessing ranking is based on the following criteria by order of priority:',
+  '- Non anomalous over anomalous',
+  '- Highest space group symmetry',
+  '- Selected criteria',
+];
 
 function rank(
   results: AutoProcIntegration[],
@@ -166,14 +172,15 @@ function rank(
         r.overall !== undefined)
     );
   });
+  const success = [...anomalous, ...nonanomalous];
   const running = results.filter(function (r) {
-    return r.status === 'RUNNING';
+    return r.status === 'RUNNING' && !success.includes(r);
   });
   const failed = results.filter(function (r) {
-    return r.status === 'FAILED' || r.status === '0';
+    return (r.status === 'FAILED' || r.status === '0') && !success.includes(r);
   });
   const noResult = results.filter(function (r) {
-    return r.status === 'NO_RESULTS';
+    return r.status === 'NO_RESULTS' && !success.includes(r);
   });
 
   const anomalousdata = anomalous.sort((a, b) =>
