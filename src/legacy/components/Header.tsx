@@ -5,14 +5,10 @@ import { PersonBadge } from 'react-bootstrap-icons';
 import { useAuth } from 'hooks/useAuth';
 import { NavLink, useLocation } from 'react-router-dom';
 
-export function removeDuplicates(arr: string[] | undefined) {
-        return [...new Set(arr)];
-}
-
 export function JavaHeader() {
   const { proposalName } = useProposal();
   const { pathname } = useLocation();
-  
+
 
   return (
     <>
@@ -62,7 +58,7 @@ export function JavaHeader() {
 
         <Nav>
           <PersonMenu />
-          <Logout />
+          <Logout/>
         </Nav>
       </Navbar.Collapse>
     </>
@@ -82,7 +78,7 @@ function PersonMenu() {
       id="admin-nav-dropdown"
       align="end"
     >
-      <NavDropdown.Header><div className='new-line'>{removeDuplicates(javaPerson?.roles).join('\n\r')}</div></NavDropdown.Header>
+      <NavDropdown.Header><div className='new-line'>{javaPerson?.roles.join('\n\r')}</div></NavDropdown.Header>
       
     </NavDropdown>
   );
