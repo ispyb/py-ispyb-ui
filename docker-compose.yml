@@ -5,7 +5,12 @@ networks:
 
 services:
   py-ispyb-ui:
-    build: .
+    build:
+      args:
+        - NODE_ENV=development
+      context: .
+    environment:
+      - NODE_ENV=development
     container_name: py-ispyb-ui
     labels:
       - "traefik.backend=py-ispyb-ui-localhost"
