@@ -7,11 +7,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useAutoProcRanking, usePipelines } from 'hooks/mx';
-import {
-  getRankedResults,
-  ResultRankParam,
-  ResultRankShell,
-} from 'legacy/helpers/mx/results/resultparser';
+import { getRankedResults } from 'legacy/helpers/mx/results/resultparser';
 import { useAutoProc } from 'legacy/hooks/ispyb';
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
 import {
