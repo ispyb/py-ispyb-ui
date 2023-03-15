@@ -7,7 +7,7 @@ import {
 } from 'legacy/pages/shipping/model';
 import _ from 'lodash';
 import { Suspense } from 'react';
-import { Col, Container, Row } from 'react-bootstrap';
+import { Alert, Col, Container, Row } from 'react-bootstrap';
 import { DataCollectionGroup } from '../model';
 
 export function ShippingsInfo({
@@ -26,6 +26,18 @@ export function ShippingsInfo({
     .map((dcg) => dcg.Shipping_shippingId)
     .uniq()
     .value();
+
+  if (shippings.filter((s) => s !== undefined).length === 0)
+    return (
+      <Container fluid>
+        <Container fluid>
+          <Col>
+            <Alert variant="info">No shipping found</Alert>
+          </Col>
+        </Container>
+      </Container>
+    );
+
   return (
     <Container fluid>
       <Col>
