@@ -149,6 +149,17 @@ export function ShippingInfoLegend({
               >
                 <small>{status}</small>
               </div>
+              {colors.underline && (
+                <div
+                  style={{
+                    backgroundColor: 'yellow',
+                    height: 5,
+                    border: `1px solid black`,
+                    borderRadius: 3,
+                    marginTop: 2,
+                  }}
+                />
+              )}
             </Col>
           );
         })}
@@ -347,27 +358,29 @@ const sampleStatusColors: Record<
     background: string;
     color: string;
     border: string;
+    underline?: boolean;
   }
 > = {
   'not collected': {
-    background: 'white',
+    background: '#d4e4bc',
     color: 'black',
     border: 'black',
   },
   collected: {
-    background: '#becdbe',
-    color: 'black',
+    background: '#36558f',
+    color: 'white',
     border: 'black',
   },
   processed: {
-    background: '#becdbe',
-    color: 'black',
+    background: '#36558f',
+    color: 'white',
     border: 'green',
   },
   phasing: {
-    background: '#fbf77d',
-    color: 'black',
+    background: '#36558f',
+    color: 'white',
     border: 'black',
+    underline: true,
   },
 };
 
@@ -483,21 +496,34 @@ export function SampleInfo({
       placement="auto"
       overlay={popover}
     >
-      <div
-        style={{
-          backgroundColor: colors.background,
-          height: 30,
-          width: 30,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          border: `${border === 'black' ? 1 : 4}px solid ${border}`,
-          borderRadius: 15,
-          color: colors.color,
-        }}
-      >
-        <small className="text-center">{sample.location}</small>
-      </div>
+      <>
+        <div
+          style={{
+            backgroundColor: colors.background,
+            height: 30,
+            width: 30,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            border: `${border === 'black' ? 1 : 4}px solid ${border}`,
+            borderRadius: 15,
+            color: colors.color,
+          }}
+        >
+          <small className="text-center">{sample.location}</small>
+        </div>
+        {colors.underline && (
+          <div
+            style={{
+              backgroundColor: 'yellow',
+              height: 5,
+              border: `1px solid black`,
+              borderRadius: 3,
+              marginTop: 2,
+            }}
+          />
+        )}
+      </>
     </OverlayTrigger>
   );
 }

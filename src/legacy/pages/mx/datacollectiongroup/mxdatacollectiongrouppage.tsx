@@ -131,7 +131,7 @@ export default function MXDataCollectionGroupPage() {
                   style={{ marginRight: 5 }}
                   icon={faDotCircle}
                 ></FontAwesomeIcon>
-                Containers
+                Sample
               </ToggleButton>
             </OverlayTrigger>
           </ButtonGroup>
