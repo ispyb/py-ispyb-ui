@@ -1,6 +1,5 @@
 import { Suspense, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import MXPage from 'legacy/pages/mx/mxpage';
 import {
   Button,
   ButtonGroup,
@@ -73,157 +72,158 @@ export default function MXDataCollectionGroupPage() {
       );
 
     return (
-      <MXPage sessionId={sessionId} proposalName={proposalName}>
-        <Card>
-          <div
-            style={{
-              position: 'relative',
-              top: -39,
-              height: 0,
-              alignSelf: 'flex-end',
-            }}
-          >
-            <ButtonGroup style={{ marginRight: 50 }}>
-              <Button
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        <div
+          style={{
+            alignSelf: 'flex-end',
+          }}
+        >
+          <small style={{ marginRight: 10 }}>
+            <i>
+              <strong>Filter by:</strong>
+            </i>
+          </small>
+          <ButtonGroup style={{ marginRight: 50 }}>
+            <Button
+              size="sm"
+              variant={filterScaling ? 'primary' : 'light'}
+              onClick={() => setFilterScaling(!filterScaling)}
+            >
+              Scaling
+            </Button>
+            <Button
+              size="sm"
+              variant={filterMR ? 'primary' : 'light'}
+              onClick={() => setFilterMR(!filterMR)}
+            >
+              MR
+            </Button>
+            <Button
+              size="sm"
+              variant={filterSAD ? 'primary' : 'light'}
+              onClick={() => setFilterSAD(!filterSAD)}
+            >
+              SAD
+            </Button>
+            <OverlayTrigger
+              placement={'bottom'}
+              overlay={
+                <Tooltip id={`tooltip-bottom`}>Toggle sample filtering</Tooltip>
+              }
+            >
+              <ToggleButton
+                style={{ margin: 1 }}
                 size="sm"
-                variant={filterScaling ? 'primary' : 'light'}
-                onClick={() => setFilterScaling(!filterScaling)}
+                type="checkbox"
+                variant={filterContainers ? 'outline-primary' : 'light'}
+                checked={filterContainers}
+                onClick={() => {
+                  setFilterContainers(!filterContainers);
+                }}
+                value={''}
               >
-                Scaling
-              </Button>
-              <Button
+                <FontAwesomeIcon
+                  style={{ marginRight: 5 }}
+                  icon={faDotCircle}
+                ></FontAwesomeIcon>
+                Containers
+              </ToggleButton>
+            </OverlayTrigger>
+          </ButtonGroup>
+          <ButtonGroup>
+            <OverlayTrigger
+              placement={'bottom'}
+              overlay={
+                <Tooltip id={`tooltip-bottom`}>Use detailed view</Tooltip>
+              }
+            >
+              <ToggleButton
+                style={{ margin: 1 }}
                 size="sm"
-                variant={filterMR ? 'primary' : 'light'}
-                onClick={() => setFilterMR(!filterMR)}
+                type="checkbox"
+                variant={!compact ? 'outline-primary' : 'light'}
+                name="radio"
+                checked={!compact}
+                onClick={() => {
+                  setCompact(false);
+                  compactToggle.next(false);
+                }}
+                value={''}
               >
-                MR
-              </Button>
-              <Button
-                size="sm"
-                variant={filterSAD ? 'primary' : 'light'}
-                onClick={() => setFilterSAD(!filterSAD)}
-              >
-                SAD
-              </Button>
-              <OverlayTrigger
-                placement={'bottom'}
-                overlay={
-                  <Tooltip id={`tooltip-bottom`}>
-                    Toggle sample filtering
-                  </Tooltip>
-                }
-              >
-                <ToggleButton
-                  style={{ margin: 1 }}
-                  size="sm"
-                  type="checkbox"
-                  variant={filterContainers ? 'outline-primary' : 'light'}
-                  checked={filterContainers}
-                  onClick={() => {
-                    setFilterContainers(!filterContainers);
-                  }}
-                  value={''}
-                >
-                  <FontAwesomeIcon
-                    style={{ marginRight: 5 }}
-                    icon={faDotCircle}
-                  ></FontAwesomeIcon>
-                  Containers
-                </ToggleButton>
-              </OverlayTrigger>
-            </ButtonGroup>
-            <ButtonGroup>
-              <OverlayTrigger
-                placement={'bottom'}
-                overlay={
-                  <Tooltip id={`tooltip-bottom`}>Use detailed view</Tooltip>
-                }
-              >
-                <ToggleButton
-                  style={{ margin: 1 }}
-                  size="sm"
-                  type="checkbox"
-                  variant={!compact ? 'outline-primary' : 'light'}
-                  name="radio"
-                  checked={!compact}
-                  onClick={() => {
-                    setCompact(false);
-                    compactToggle.next(false);
-                  }}
-                  value={''}
-                >
-                  <FontAwesomeIcon icon={faListAlt}></FontAwesomeIcon>
-                </ToggleButton>
-              </OverlayTrigger>
+                <FontAwesomeIcon icon={faListAlt}></FontAwesomeIcon>
+              </ToggleButton>
+            </OverlayTrigger>
 
-              <OverlayTrigger
-                placement={'bottom'}
-                overlay={
-                  <Tooltip id={`tooltip-bottom`}>Use compact view</Tooltip>
-                }
+            <OverlayTrigger
+              placement={'bottom'}
+              overlay={
+                <Tooltip id={`tooltip-bottom`}>Use compact view</Tooltip>
+              }
+            >
+              <ToggleButton
+                style={{ margin: 1 }}
+                size="sm"
+                type="checkbox"
+                variant={compact ? 'outline-primary' : 'light'}
+                name="radio"
+                checked={compact}
+                onClick={() => {
+                  setCompact(true);
+                  compactToggle.next(true);
+                }}
+                value={''}
               >
-                <ToggleButton
-                  style={{ margin: 1 }}
-                  size="sm"
-                  type="checkbox"
-                  variant={compact ? 'outline-primary' : 'light'}
-                  name="radio"
-                  checked={compact}
-                  onClick={() => {
-                    setCompact(true);
-                    compactToggle.next(true);
-                  }}
-                  value={''}
-                >
-                  <FontAwesomeIcon icon={faListUl}></FontAwesomeIcon>
-                </ToggleButton>
-              </OverlayTrigger>
-            </ButtonGroup>
-          </div>
-          {filterContainers && (
-            <ContainerFilter
-              setSelectedGroups={setSelectedGroups}
-              dataCollectionGroups={dataCollectionGroups}
-              selectedGroups={selectedGroups}
-              containerIds={containerIds}
-              sessionId={sessionId}
-              proposalName={proposalName}
-            ></ContainerFilter>
-          )}
-          {filteredDataCollectionGroups.map(
-            (dataCollectionGroup: DataCollectionGroup) => (
-              <div
-                key={
-                  dataCollectionGroup.DataCollectionGroup_dataCollectionGroupId
-                }
-                style={compact ? { margin: 1 } : { margin: 5 }}
-              >
-                <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                  <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-                    <DataCollectionGroupPanel
-                      compactToggle={compactToggle}
-                      defaultCompact={compact}
-                      dataCollectionGroup={dataCollectionGroup}
-                      proposalName={proposalName}
-                      sessionId={sessionId}
-                      selectedPipelines={pipelinesSelection.pipelines}
-                      resultRankParam={autoProcRankingSelection.rankParam}
-                      resultRankShell={autoProcRankingSelection.rankShell}
-                    ></DataCollectionGroupPanel>
-                  </Suspense>
-                </LazyWrapper>
-              </div>
-            )
-          )}
-        </Card>
-      </MXPage>
+                <FontAwesomeIcon icon={faListUl}></FontAwesomeIcon>
+              </ToggleButton>
+            </OverlayTrigger>
+          </ButtonGroup>
+        </div>
+        {filterContainers && (
+          <ContainerFilter
+            setSelectedGroups={setSelectedGroups}
+            dataCollectionGroups={dataCollectionGroups}
+            selectedGroups={selectedGroups}
+            containerIds={containerIds}
+            sessionId={sessionId}
+            proposalName={proposalName}
+          ></ContainerFilter>
+        )}
+        {filteredDataCollectionGroups.map(
+          (dataCollectionGroup: DataCollectionGroup) => (
+            <div
+              key={
+                dataCollectionGroup.DataCollectionGroup_dataCollectionGroupId
+              }
+              style={compact ? { margin: 1 } : { margin: 5 }}
+            >
+              <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+                <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+                  <DataCollectionGroupPanel
+                    compactToggle={compactToggle}
+                    defaultCompact={compact}
+                    dataCollectionGroup={dataCollectionGroup}
+                    proposalName={proposalName}
+                    sessionId={sessionId}
+                    selectedPipelines={pipelinesSelection.pipelines}
+                    resultRankParam={autoProcRankingSelection.rankParam}
+                    resultRankShell={autoProcRankingSelection.rankShell}
+                  ></DataCollectionGroupPanel>
+                </Suspense>
+              </LazyWrapper>
+            </div>
+          )
+        )}
+      </div>
     );
   }
   return (
-    <MXPage sessionId={sessionId} proposalName={proposalName}>
-      <Card>
-        <p>No data collection groups found.</p>
-      </Card>
-    </MXPage>
+    <Card>
+      <p>No data collection groups found.</p>
+    </Card>
   );
 }

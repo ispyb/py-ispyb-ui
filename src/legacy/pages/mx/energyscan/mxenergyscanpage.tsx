@@ -1,6 +1,5 @@
 import { useParams } from 'react-router-dom';
-import MXPage from 'legacy/pages/mx/mxpage';
-import { Alert, Card } from 'react-bootstrap';
+import { Alert } from 'react-bootstrap';
 import { useMXEnergyScans } from 'legacy/hooks/ispyb';
 
 import LazyWrapper from 'legacy/components/loading/lazywrapper';
@@ -29,30 +28,24 @@ export default function MXEnergyScanPage() {
   if (isError) throw Error(isError);
   if (energyScans && energyScans.length) {
     return (
-      <MXPage sessionId={sessionId} proposalName={proposalName}>
-        <Card>
-          {energyScans.map((energyScan) => (
-            <div style={{ margin: 5 }} key={energyScan.energyScanId}>
-              <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                <EnergyScanPanel
-                  sessionId={sessionId}
-                  proposalName={proposalName}
-                  energyScan={energyScan}
-                ></EnergyScanPanel>
-              </LazyWrapper>
-            </div>
-          ))}
-        </Card>
-      </MXPage>
+      <>
+        {energyScans.map((energyScan) => (
+          <div style={{ margin: 5 }} key={energyScan.energyScanId}>
+            <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+              <EnergyScanPanel
+                sessionId={sessionId}
+                proposalName={proposalName}
+                energyScan={energyScan}
+              ></EnergyScanPanel>
+            </LazyWrapper>
+          </div>
+        ))}
+      </>
     );
   }
   return (
-    <MXPage sessionId={sessionId} proposalName={proposalName}>
-      <Card>
-        <Alert variant="info" style={{ margin: 20 }}>
-          No Energy scan found!
-        </Alert>
-      </Card>
-    </MXPage>
+    <Alert variant="info" style={{ margin: 20 }}>
+      No Energy scan found!
+    </Alert>
   );
 }

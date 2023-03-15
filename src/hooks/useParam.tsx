@@ -24,6 +24,16 @@ export function useParam<T extends string = string>(
   return [value as T, setParam];
 }
 
+/**
+ * Use a state variable that is persisted in the URL (state is preserved when copy/pasting or saving an URL)
+ * The variable will stay in the URL as long as the component lives :
+ * - when the component is mounted, the variable is declared in the URL
+ * - when the component is unmounted, the variable is removed from the URL
+ * - when the url is changed, the variable is written back if the component is still alive
+ * @param paramName name of the parameter in the URL
+ * @param defaultValue default value of the parameter
+ * @returns [value, update callback]
+ */
 export function usePersistentParamState<T extends string = string>(
   paramName: string,
   defaultValue: T
@@ -131,13 +141,11 @@ export function PersistentParamStateProvider({
       setUsedParams((prev) => {
         const count = name in prev ? prev[name] : undefined;
         if (count !== undefined) {
-          console.log('dec count', name, count - 1);
           return {
             ...prev,
             [name]: count - 1,
           };
         } else {
-          console.log('unchanged count', name, prev);
           return prev;
         }
       });

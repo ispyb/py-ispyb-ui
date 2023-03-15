@@ -5,6 +5,7 @@ import {
   BreadcrumbComponentType,
   BreadcrumbMatch,
 } from 'use-react-router-breadcrumbs';
+import MXSessionPage from '../pages/mx/mxsessionpage';
 
 const SessionClassificationPage = React.lazy(() =>
   import(
@@ -207,6 +208,7 @@ const javaRoutes: TitledBreadcrumbsRoute[] = [
           { path: 'prepare', element: <PrepareExperimentPage /> },
           {
             path: ':sessionId',
+            element: <MXSessionPage />,
             children: [
               { path: 'summary', element: <MXSessionSummaryPage /> },
               { path: 'collection', element: <MXDataCollectionGroupPage /> },

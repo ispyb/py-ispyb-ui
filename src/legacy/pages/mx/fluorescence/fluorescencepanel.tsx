@@ -46,73 +46,76 @@ export default function FluorescencePanel({
         </Container>
       </Card.Header>
       <Card.Body>
-        <Row>
-          <Col>
-            <SimpleParameterTable
-              parameters={[
-                {
-                  key: 'Protein',
-                  value: spectra.acronym ? `${spectra.acronym}` : 'unknown',
-                },
-                {
-                  key: 'Sample',
-                  value: spectra.name ? `${spectra.name}` : 'unknown',
-                },
-                { key: 'Filename', value: spectra.filename },
-                { key: 'Energy', value: `${spectra.energy} keV` },
-                {
-                  key: 'Flux',
-                  value: spectra.flux ? `${spectra.flux}  ph/sec` : 'unknown',
-                },
-                {
-                  key: 'Transmission',
-                  value: spectra.beamTransmission
-                    ? `${spectra.beamTransmission}  %`
-                    : 'unknown',
-                },
-                {
-                  key: 'Beam Size Hor',
-                  value: `${spectra.beamSizeHorizontal} μm`,
-                },
-                {
-                  key: 'Beam Size Vert',
-                  value: `${spectra.beamSizeVertical} μm`,
-                },
-                {
-                  key: 'Exposure Time',
-                  value: spectra.exposureTime
-                    ? `${spectra.exposureTime}  s`
-                    : 'unknown',
-                },
-              ]}
-            ></SimpleParameterTable>
-          </Col>
-          <Col>
-            <ZoomImage
-              style={{ maxWidth: 600, maxHeight: 300 }}
-              alt="Scan thumbnail"
-              src={
-                getJpegxrfscan({
-                  proposalName,
-                  xfeFluorescenceSpectrumId: spectra.xfeFluorescenceSpectrumId,
-                }).url
-              }
-            ></ZoomImage>
-            <Row>
-              <Col>
-                <Button
-                  style={{ margin: 5 }}
-                  onClick={() => {
-                    openInNewTab(url);
-                  }}
-                >
-                  Open spectrum{' '}
-                  <FontAwesomeIcon icon={faWindowRestore}></FontAwesomeIcon>
-                </Button>
-              </Col>
-            </Row>
-          </Col>
-        </Row>
+        <Container fluid>
+          <Row>
+            <Col>
+              <SimpleParameterTable
+                parameters={[
+                  {
+                    key: 'Protein',
+                    value: spectra.acronym ? `${spectra.acronym}` : 'unknown',
+                  },
+                  {
+                    key: 'Sample',
+                    value: spectra.name ? `${spectra.name}` : 'unknown',
+                  },
+                  { key: 'Filename', value: spectra.filename },
+                  { key: 'Energy', value: `${spectra.energy} keV` },
+                  {
+                    key: 'Flux',
+                    value: spectra.flux ? `${spectra.flux}  ph/sec` : 'unknown',
+                  },
+                  {
+                    key: 'Transmission',
+                    value: spectra.beamTransmission
+                      ? `${spectra.beamTransmission}  %`
+                      : 'unknown',
+                  },
+                  {
+                    key: 'Beam Size Hor',
+                    value: `${spectra.beamSizeHorizontal} μm`,
+                  },
+                  {
+                    key: 'Beam Size Vert',
+                    value: `${spectra.beamSizeVertical} μm`,
+                  },
+                  {
+                    key: 'Exposure Time',
+                    value: spectra.exposureTime
+                      ? `${spectra.exposureTime}  s`
+                      : 'unknown',
+                  },
+                ]}
+              ></SimpleParameterTable>
+            </Col>
+            <Col>
+              <ZoomImage
+                style={{ maxWidth: 600, maxHeight: 300 }}
+                alt="Scan thumbnail"
+                src={
+                  getJpegxrfscan({
+                    proposalName,
+                    xfeFluorescenceSpectrumId:
+                      spectra.xfeFluorescenceSpectrumId,
+                  }).url
+                }
+              ></ZoomImage>
+              <Row>
+                <Col>
+                  <Button
+                    style={{ margin: 5 }}
+                    onClick={() => {
+                      openInNewTab(url);
+                    }}
+                  >
+                    Open spectrum{' '}
+                    <FontAwesomeIcon icon={faWindowRestore}></FontAwesomeIcon>
+                  </Button>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
+        </Container>
       </Card.Body>
     </Card>
   );

@@ -1,5 +1,4 @@
 import { useParams } from 'react-router-dom';
-import MXPage from 'legacy/pages/mx/mxpage';
 import { Alert, Card } from 'react-bootstrap';
 import { useMXFluorescenceSpectras } from 'legacy/hooks/ispyb';
 
@@ -29,30 +28,26 @@ export default function MXFluorescencePage() {
   if (isError) throw Error(isError);
   if (spectras && spectras.length) {
     return (
-      <MXPage sessionId={sessionId} proposalName={proposalName}>
-        <Card>
-          {spectras.map((spectra) => (
-            <div style={{ margin: 5 }} key={spectra.xfeFluorescenceSpectrumId}>
-              <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                <FluorescencePanel
-                  sessionId={sessionId}
-                  proposalName={proposalName}
-                  spectra={spectra}
-                ></FluorescencePanel>
-              </LazyWrapper>
-            </div>
-          ))}
-        </Card>
-      </MXPage>
+      <>
+        {spectras.map((spectra) => (
+          <div style={{ margin: 5 }} key={spectra.xfeFluorescenceSpectrumId}>
+            <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+              <FluorescencePanel
+                sessionId={sessionId}
+                proposalName={proposalName}
+                spectra={spectra}
+              ></FluorescencePanel>
+            </LazyWrapper>
+          </div>
+        ))}
+      </>
     );
   }
   return (
-    <MXPage sessionId={sessionId} proposalName={proposalName}>
-      <Card>
-        <Alert variant="info" style={{ margin: 20 }}>
-          No Fluorescence spectras found!
-        </Alert>
-      </Card>
-    </MXPage>
+    <Card>
+      <Alert variant="info" style={{ margin: 20 }}>
+        No Fluorescence spectras found!
+      </Alert>
+    </Card>
   );
 }
