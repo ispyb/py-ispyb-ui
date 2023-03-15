@@ -51,10 +51,10 @@ export function JavaProposalMenu({ proposal }: { proposal: string }) {
         Sessions
       </Nav.Link>
       <Nav.Link as={NavLink} to={`/legacy/proposals/${proposal}/shipping`}>
-        Shipping
+        Shipments
       </Nav.Link>
       <Nav.Link as={NavLink} to={`/legacy/proposals/${proposal}/MX/prepare`}>
-        MX Prepare
+        Sample changer
       </Nav.Link>
     </>
   );
