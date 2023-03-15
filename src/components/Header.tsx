@@ -1,14 +1,17 @@
 import { Suspense } from 'react';
-import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
+import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useController } from 'rest-hooks';
 import { Navbar, NavDropdown, Container, Nav, Button } from 'react-bootstrap';
 import { PersonBadge } from 'react-bootstrap-icons';
-
 import { useAuth } from 'hooks/useAuth';
-import { useProposal } from 'hooks/useProposal';
 import { useCurrentUser } from 'hooks/useCurrentUser';
 import AuthErrorBoundary from './AuthErrorBoundary';
 import { JavaHeader } from 'legacy/components/Header';
+import LoadingProgress from './LoadingProgress';
+import Breadcrumbs from './Breadcrumbs';
+import { ActiveProposal } from './ActiveProposal';
+import { Footer } from './Footer';
+import Loading from './Loading';
 
 
 
@@ -36,7 +39,6 @@ function PersonMenu() {
 
 export function Logout() {
   const { clearToken } = useAuth();
-  const { clearProposal } = useProposal();
   const { resetEntireStore } = useController();
   const navigate = useNavigate();
   
@@ -44,7 +46,6 @@ export function Logout() {
     <Button
       onClick={() => {
         clearToken();
-        clearProposal();
         resetEntireStore();
         navigate("/");
       }}
@@ -104,28 +105,58 @@ export default function Header() {
   const { isAuthenticated, site } = useAuth();
 
   return (
-    <Navbar
-      bg="primary"
-      variant="dark"
-      expand="md"
-      sticky="top"
-      className="main-header p-2"
+    <div
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        display: 'flex',
+        flexDirection: 'column',
+      }}
     >
-      <Container>
-        <Navbar.Brand as={Link} to="/">
-          Home
-        </Navbar.Brand>
-        {isAuthenticated && !site.javaMode && <PyHeader />}
-        {isAuthenticated && site.javaMode && <JavaHeader />}
-      </Container>
-    </Navbar>
+      <Navbar
+        bg="primary"
+        variant="dark"
+        expand="md"
+        className="main-header p-2"
+      >
+        <Container>
+          <Navbar.Brand as={Link} to="/">
+            Home
+          </Navbar.Brand>
+          {isAuthenticated && !site.javaMode && <PyHeader />}
+          {isAuthenticated && site.javaMode && <JavaHeader />}
+        </Container>
+      </Navbar>
+      <ActiveProposal />
+      <Breadcrumbs />
+      <LoadingProgress />
+      <div
+        style={{
+          overflow: 'auto',
+          height: 'auto',
+        }}
+      >
+        <Container
+          fluid
+          className="main"
+          style={{
+            marginTop: '1rem',
+          }}
+        >
+          <Suspense fallback={<Loading />}>
+            <Outlet />
+          </Suspense>
+          <Footer />
+        </Container>
+      </div>
+    </div>
   );
 }
 
 function PyHeader() {
-  const { proposalName } = useProposal();
-  const { pathname } = useLocation();
-
   return (
     <>
       <Navbar.Toggle aria-controls="main-navbar" />
@@ -137,57 +168,6 @@ function PyHeader() {
           <Nav.Link as={NavLink} to="/proposals/list">
             Proposals
           </Nav.Link>
-          {!proposalName && (
-            <Nav.Link className="nav-link" eventKey="disabled" disabled>
-              No Proposal
-            </Nav.Link>
-          )}
-          {proposalName && (
-            <NavDropdown
-              active={pathname.includes(proposalName)}
-              title={proposalName}
-              id="proposal-nav-dropdown"
-            >
-              <>
-                <NavDropdown.Item
-                  as={NavLink}
-                  to={`/proposals/${proposalName}/sessions`}
-                >
-                  Sessions
-                </NavDropdown.Item>
-                <NavDropdown.Item
-                  as={NavLink}
-                  to={`/proposals/${proposalName}/calendar`}
-                >
-                  Calendar
-                </NavDropdown.Item>
-                <NavDropdown.Item
-                  as={NavLink}
-                  to={`/proposals/${proposalName}/contacts`}
-                >
-                  Contacts
-                </NavDropdown.Item>
-                <NavDropdown.Item
-                  as={NavLink}
-                  to={`/proposals/${proposalName}/shipments`}
-                >
-                  Shipments
-                </NavDropdown.Item>
-                <NavDropdown.Item
-                  as={NavLink}
-                  to={`/proposals/${proposalName}/proteins`}
-                >
-                  Proteins
-                </NavDropdown.Item>
-                <NavDropdown.Item
-                  as={NavLink}
-                  to={`/proposals/${proposalName}/samples`}
-                >
-                  Samples
-                </NavDropdown.Item>
-              </>
-            </NavDropdown>
-          )}
         </Nav>
 
         <Nav>
@@ -199,6 +179,31 @@ function PyHeader() {
           <Logout />
         </Nav>
       </Navbar.Collapse>
+    </>
+  );
+}
+
+export function ProposalMenu({ proposal }: { proposal: string }) {
+  return (
+    <>
+      <NavDropdown.Item as={NavLink} to={`/proposals/${proposal}/sessions`}>
+        Sessions
+      </NavDropdown.Item>
+      <NavDropdown.Item as={NavLink} to={`/proposals/${proposal}/calendar`}>
+        Calendar
+      </NavDropdown.Item>
+      <NavDropdown.Item as={NavLink} to={`/proposals/${proposal}/contacts`}>
+        Contacts
+      </NavDropdown.Item>
+      <NavDropdown.Item as={NavLink} to={`/proposals/${proposal}/shipments`}>
+        Shipments
+      </NavDropdown.Item>
+      <NavDropdown.Item as={NavLink} to={`/proposals/${proposal}/proteins`}>
+        Proteins
+      </NavDropdown.Item>
+      <NavDropdown.Item as={NavLink} to={`/proposals/${proposal}/samples`}>
+        Samples
+      </NavDropdown.Item>
     </>
   );
 }

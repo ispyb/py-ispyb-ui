@@ -14,6 +14,7 @@ import PyRoute from 'components/Auth/PyRoute';
 import JavaRoute from 'components/Auth/JavaRoute';
 import javaRoutes from 'legacy/routes';
 import React from 'react';
+import Header from 'components/Header';
 
 const Home = React.lazy(
   () => import('components/Home' /* webpackChunkName: "home" */)
@@ -34,6 +35,7 @@ export function NotFound() {
 const routes: TitledBreadcrumbsRoute[] = [
   {
     path: '/',
+    element: <Header />,
     children: [
       {
         element: <PrivateRoute />,
@@ -60,6 +62,7 @@ const routes: TitledBreadcrumbsRoute[] = [
   },
   {
     path: 'legacy',
+    element: <Header />,
     children: [
       {
         element: <PrivateRoute />,

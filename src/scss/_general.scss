@@ -1,38 +1,22 @@
 html {
   min-height: 100vh;
+  overflow: hidden;
 }
 
 * {
   scroll-margin-top: calc(59px + 10px);
 }
 
-/* Bring z-index up for main header to dropdowns are above breadcrumbs */
-.main-header {
-  min-height: 59px;
-  z-index: 1021;
-}
-
 .breadcrumbs {
   background-color: $tertiary;
-  box-shadow: rgb(0 0 0 / 10%) 0 0 0.2rem, rgb(0 0 0 / 20%) 0 0.2rem 0.4rem;
   font-family: Poppins;
   font-size: 12px;
   font-weight: 400;
   padding: 0.25rem 0;
 }
 
-@include media-breakpoint-up(md) {
-  .loading-progress {
-    top: 59px;
-  }
-
-  .breadcrumbs {
-    top: 64px;
-  }
-}
-
-.main-wrapper {
-  margin: 1.5rem 0 0;
+.loading-progress {
+  background-color: $tertiary;
 }
 
 .main {
@@ -75,14 +59,11 @@ html {
 .event {
   border: 1px solid $secondary;
   h3 {
-    // border-bottom: 5px solid $tertiary;
     font-family: Poppins;
     font-size: 1rem;
     font-weight: normal;
     word-break: break-all;
     background-color: $tertiary;
-    // padding: 10px;
-    // border-radius: 10px;
   }
 }
 
