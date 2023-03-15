@@ -19,6 +19,7 @@ export interface AutoProcIntegration {
   cell_beta: number;
   cell_gamma: number;
   spaceGroup: string;
+  dataCollectionId: number;
 }
 
 export interface AutoProcStatistics {
@@ -120,6 +121,7 @@ export function parseResults(
         inner,
         outer,
         overall,
+        dataCollectionId: p.AutoProcIntegration_dataCollectionId,
       };
     return {
       id: p.AutoProcIntegration_autoProcIntegrationId,
@@ -137,6 +139,7 @@ export function parseResults(
       inner,
       outer,
       overall,
+      dataCollectionId: p.AutoProcIntegration_dataCollectionId,
     };
   });
 }
@@ -174,10 +177,10 @@ function rank(
   });
 
   const anomalousdata = anomalous.sort((a, b) =>
-    sort(a, b, rankShell, rankParam)
+    compareAutoProcIntegrations(a, b, rankShell, rankParam)
   );
   const nonanomalousdata = nonanomalous.sort((a, b) =>
-    sort(a, b, rankShell, rankParam)
+    compareAutoProcIntegrations(a, b, rankShell, rankParam)
   );
 
   return _.concat(
@@ -189,12 +192,11 @@ function rank(
   );
 }
 
-function sort(
-  a: AutoProcIntegration,
-  b: AutoProcIntegration,
+export function getRankingValue(
+  integration: AutoProcIntegration,
   rankShell: ResultRankShell,
   rankParam: ResultRankParam
-): number {
+): number | undefined {
   function getShell(i: AutoProcIntegration) {
     if (rankShell === 'Inner') return i.inner;
     if (rankShell === 'Outer') return i.outer;
@@ -208,13 +210,25 @@ function sort(
     if (rankParam === 'cc(1/2)') return getShell(i)?.ccHalf;
     if (rankParam === 'ccAno') return getShell(i)?.ccAno;
   }
+  return getValue(integration);
+}
 
-  function getOrder() {
-    if (rankParam === '<I/Sigma>') return -1;
-    if (rankParam === 'Rmerge') return 1;
-    if (rankParam === 'cc(1/2)') return -1;
-    if (rankParam === 'ccAno') return -1;
-    return -1;
+export function getRankingOrder(rankParam: ResultRankParam) {
+  if (rankParam === '<I/Sigma>') return -1;
+  if (rankParam === 'Rmerge') return 1;
+  if (rankParam === 'cc(1/2)') return -1;
+  if (rankParam === 'ccAno') return -1;
+  return -1;
+}
+
+export function compareAutoProcIntegrations(
+  a: AutoProcIntegration,
+  b: AutoProcIntegration,
+  rankShell: ResultRankShell,
+  rankParam: ResultRankParam
+): number {
+  function getValue(i: AutoProcIntegration) {
+    return getRankingValue(i, rankShell, rankParam);
   }
 
   const spaceGroupA = getSpaceGroup(a.spaceGroup);
@@ -231,6 +245,20 @@ function sort(
 
   const va = getValue(a);
   const vb = getValue(b);
+  return compareRankingValues(va, vb, rankParam);
+}
+
+export function compareRankingValues(
+  a: number | undefined,
+  b: number | undefined,
+  rankParam: ResultRankParam
+): number {
+  function getOrder() {
+    return getRankingOrder(rankParam);
+  }
+
+  const va = a;
+  const vb = b;
   if (va === vb) return 0;
   if (va === undefined) return 1;
   if (vb === undefined) return -1;

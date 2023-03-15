@@ -45,6 +45,7 @@ export function SessionInfo({
     proposalName,
     sessionId,
   });
+
   return (
     <Container fluid>
       <Col style={{ margin: 10 }}>

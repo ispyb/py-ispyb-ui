@@ -1,5 +1,17 @@
 import Loading from 'components/Loading';
-import { useMXDataCollectionsBy, useShipping } from 'legacy/hooks/ispyb';
+import { useAutoProcRanking, usePipelines } from 'hooks/mx';
+import {
+  AutoProcIntegration,
+  compareRankingValues,
+  getRankedResults,
+  getRankingOrder,
+  getRankingValue,
+} from 'legacy/helpers/mx/results/resultparser';
+import {
+  useAutoProc,
+  useMXDataCollectionsBy,
+  useShipping,
+} from 'legacy/hooks/ispyb';
 import {
   ShippingContainer,
   ShippingDewar,
@@ -7,7 +19,16 @@ import {
 } from 'legacy/pages/shipping/model';
 import _ from 'lodash';
 import { Suspense } from 'react';
-import { Alert, Col, Container, Row } from 'react-bootstrap';
+import {
+  Alert,
+  Badge,
+  Col,
+  Container,
+  OverlayTrigger,
+  Popover,
+  Row,
+} from 'react-bootstrap';
+import BestResultSection from '../datacollectiongroup/summarydatacollectiongroup/autoprocintegrationsection';
 import { DataCollectionGroup } from '../model';
 
 export function ShippingsInfo({
@@ -27,6 +48,30 @@ export function ShippingsInfo({
     .uniq()
     .value();
 
+  const pipelines = usePipelines();
+  const ranking = useAutoProcRanking();
+
+  const dcIds = _.uniq(
+    (dataCollectionGroups || []).map(
+      (dcg) => dcg.DataCollection_dataCollectionId
+    )
+  )
+    .sort()
+    .join(',');
+
+  const { data: integrations } = useAutoProc({
+    proposalName,
+    dataCollectionId: dcIds,
+  });
+
+  const rankedIntegrations = getRankedResults(
+    integrations?.flatMap((d) => d) || [],
+    ranking.rankShell,
+    ranking.rankParam,
+    pipelines.pipelines,
+    true
+  );
+
   if (shippings.filter((s) => s !== undefined).length === 0)
     return (
       <Container fluid>
@@ -42,7 +87,11 @@ export function ShippingsInfo({
     <Container fluid>
       <Col>
         <Row></Row>
-        <ShippingInfoLegend />
+        <ShippingInfoLegend
+          dataCollectionGroups={dataCollectionGroups || []}
+          proposalName={proposalName}
+          rankedIntegrations={rankedIntegrations}
+        />
         {_(shippings)
           .sort()
           .value()
@@ -56,6 +105,7 @@ export function ShippingsInfo({
                     proposalName={proposalName}
                     shippingId={shippingId}
                     dataCollectionGroups={dataCollectionGroups || []}
+                    rankedIntegrations={rankedIntegrations}
                   />
                 </Suspense>
               )
@@ -65,7 +115,15 @@ export function ShippingsInfo({
   );
 }
 
-export function ShippingInfoLegend() {
+export function ShippingInfoLegend({
+  dataCollectionGroups,
+  proposalName,
+  rankedIntegrations,
+}: {
+  dataCollectionGroups: DataCollectionGroup[];
+  proposalName: string;
+  rankedIntegrations: AutoProcIntegration[];
+}) {
   return (
     <Container fluid>
       <Row>
@@ -95,6 +153,11 @@ export function ShippingInfoLegend() {
           );
         })}
       </Row>
+      <Row>
+        <div style={{ marginTop: 10, maxWidth: 500 }}>
+          <ColorScale rankedIntegrations={rankedIntegrations} />
+        </div>
+      </Row>
     </Container>
   );
 }
@@ -104,11 +167,13 @@ export function ShippingInfo({
   proposalName,
   shippingId,
   dataCollectionGroups,
+  rankedIntegrations,
 }: {
   sessionId: string;
   proposalName: string;
   shippingId: number;
   dataCollectionGroups: DataCollectionGroup[];
+  rankedIntegrations: AutoProcIntegration[];
 }) {
   const { data: shipping } = useShipping({
     proposalName,
@@ -130,6 +195,7 @@ export function ShippingInfo({
                 key={dewar.dewarId}
                 dewar={dewar}
                 dataCollectionGroups={dataCollectionGroups}
+                rankedIntegrations={rankedIntegrations}
               />
             ))}
         </Row>
@@ -141,9 +207,11 @@ export function ShippingInfo({
 export function DewarInfo({
   dewar,
   dataCollectionGroups,
+  rankedIntegrations,
 }: {
   dewar: ShippingDewar;
   dataCollectionGroups: DataCollectionGroup[];
+  rankedIntegrations: AutoProcIntegration[];
 }) {
   return (
     <Container fluid>
@@ -169,6 +237,7 @@ export function DewarInfo({
                   key={container.containerId}
                   container={container}
                   dataCollectionGroups={dataCollectionGroups}
+                  rankedIntegrations={rankedIntegrations}
                 />
               ))}
           </Row>
@@ -181,9 +250,11 @@ export function DewarInfo({
 export function ContainerInfo({
   container,
   dataCollectionGroups,
+  rankedIntegrations,
 }: {
   container: ShippingContainer;
   dataCollectionGroups: DataCollectionGroup[];
+  rankedIntegrations: AutoProcIntegration[];
 }) {
   return (
     <Container fluid>
@@ -218,6 +289,7 @@ export function ContainerInfo({
                         key={sample.blSampleId}
                         sample={sample}
                         dataCollectionGroups={dataCollectionGroups}
+                        rankedIntegrations={rankedIntegrations}
                       />
                     </Col>
                   ))}
@@ -231,7 +303,7 @@ export function ContainerInfo({
 }
 
 const sampleStatus = [
-  'untouched',
+  'not collected',
   'collected',
   'processed',
   'phasing',
@@ -240,16 +312,21 @@ type SampleStatus = typeof sampleStatus[number];
 
 function getSampleStatus(
   sample: ShippingSample,
-  dataCollectionGroups: DataCollectionGroup[]
+  dataCollectionGroups: DataCollectionGroup[],
+  rankedIntegrations: AutoProcIntegration[]
 ): SampleStatus {
   const dcs = dataCollectionGroups.filter(
     (dcg) => dcg.BLSample_blSampleId === sample.blSampleId
   );
   const collected = !!dcs.length;
 
-  const processed = dcs.some((dcg) =>
-    dcg.AutoProcProgram_processingStatus?.includes('SUCCESS')
+  const dcsIds = dcs.map((dcg) => dcg.DataCollection_dataCollectionId);
+
+  const bestIntegration = rankedIntegrations.find((r) =>
+    dcsIds.includes(r.dataCollectionId)
   );
+
+  const processed = bestIntegration !== undefined;
 
   const phasing = dcs.some((dcg) => dcg.hasPhasing || dcg.hasMR);
 
@@ -260,7 +337,7 @@ function getSampleStatus(
   } else if (collected) {
     return 'collected';
   } else {
-    return 'untouched';
+    return 'not collected';
   }
 }
 
@@ -272,54 +349,286 @@ const sampleStatusColors: Record<
     border: string;
   }
 > = {
-  untouched: {
-    background: 'orange',
+  'not collected': {
+    background: 'white',
     color: 'black',
     border: 'black',
   },
   collected: {
-    background: '#7eaf7e',
+    background: '#becdbe',
     color: 'black',
     border: 'black',
   },
   processed: {
-    background: '#7eaf7e',
+    background: '#becdbe',
     color: 'black',
-    border: 'blue',
+    border: 'green',
   },
   phasing: {
-    background: '#7eaf7e',
+    background: '#fbf77d',
     color: 'black',
-    border: 'yellow',
+    border: 'black',
   },
 };
 
 export function SampleInfo({
   sample,
   dataCollectionGroups,
+  rankedIntegrations,
 }: {
   sample: ShippingSample;
   dataCollectionGroups: DataCollectionGroup[];
+  rankedIntegrations: AutoProcIntegration[];
 }) {
-  const status = getSampleStatus(sample, dataCollectionGroups);
+  const status = getSampleStatus(
+    sample,
+    dataCollectionGroups,
+    rankedIntegrations
+  );
 
   const colors = sampleStatusColors[status];
 
-  return (
-    <div
-      style={{
-        backgroundColor: colors.background,
-        height: 30,
-        width: 30,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        border: `${colors.border === 'black' ? 1 : 4}px solid ${colors.border}`,
-        borderRadius: 15,
-        color: colors.color,
-      }}
+  const ranking = useAutoProcRanking();
+
+  const values = rankedIntegrations.map((r) =>
+    getRankingValue(r, ranking.rankShell, ranking.rankParam)
+  );
+
+  const valuesWithoutUndefined: number[] = [];
+  values.forEach((v) => {
+    if (v !== undefined) {
+      valuesWithoutUndefined.push(v);
+    }
+  });
+
+  const sortedValues = valuesWithoutUndefined.sort((a, b) =>
+    compareRankingValues(a, b, ranking.rankParam)
+  );
+
+  const bestOverall = sortedValues[0];
+  const worstOverall = sortedValues[sortedValues.length - 1];
+
+  const dcs = dataCollectionGroups.filter(
+    (dcg) => dcg.BLSample_blSampleId === sample.blSampleId
+  );
+  const dcsIds = dcs.map((dcg) => dcg.DataCollection_dataCollectionId);
+
+  const bestIntegration = rankedIntegrations.find((r) =>
+    dcsIds.includes(r.dataCollectionId)
+  );
+
+  const value = bestIntegration
+    ? getRankingValue(bestIntegration, ranking.rankShell, ranking.rankParam)
+    : undefined;
+
+  const order = getRankingOrder(ranking.rankParam);
+
+  const min = order === 1 ? bestOverall : worstOverall;
+  const max = order === 1 ? worstOverall : bestOverall;
+  const minColor =
+    order === 1
+      ? { red: 0, green: 255, blue: 0 }
+      : { red: 255, green: 0, blue: 0 };
+  const maxColor =
+    order === 1
+      ? { red: 255, green: 0, blue: 0 }
+      : { red: 0, green: 255, blue: 0 };
+
+  const color = value
+    ? ColourGradient(min, max, value, minColor, maxColor)
+    : undefined;
+
+  const border = color
+    ? `rgb(${color.red},${color.green},${color.blue})`
+    : colors.border;
+
+  const popover = (
+    <Popover
+      id="popover-basic"
+      style={{ minWidth: bestIntegration ? 500 : undefined }}
     >
-      <small className="text-center">{sample.location}</small>
+      <Popover.Header as="h3">
+        {sample.name}
+        <Badge>{status}</Badge>
+      </Popover.Header>
+      {
+        <Popover.Body>
+          <i>
+            {`${dcs.length} collection${
+              dcs.length === 1 ? '' : 's'
+            } for this sample`}
+          </i>
+          {value && (
+            <>
+              <br />
+              <strong>
+                {ranking.rankShell} {ranking.rankParam} = {value}
+              </strong>
+            </>
+          )}
+          {bestIntegration && (
+            <div>
+              <br />
+              <BestResultSection bestResult={bestIntegration} compact={false} />
+            </div>
+          )}
+        </Popover.Body>
+      }
+    </Popover>
+  );
+
+  return (
+    <OverlayTrigger
+      trigger={['hover', 'focus']}
+      placement="auto"
+      overlay={popover}
+    >
+      <div
+        style={{
+          backgroundColor: colors.background,
+          height: 30,
+          width: 30,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          border: `${border === 'black' ? 1 : 4}px solid ${border}`,
+          borderRadius: 15,
+          color: colors.color,
+        }}
+      >
+        <small className="text-center">{sample.location}</small>
+      </div>
+    </OverlayTrigger>
+  );
+}
+
+export function ColorScale({
+  rankedIntegrations,
+}: {
+  rankedIntegrations: AutoProcIntegration[];
+}) {
+  const ranking = useAutoProcRanking();
+
+  const values = rankedIntegrations.map((r) =>
+    getRankingValue(r, ranking.rankShell, ranking.rankParam)
+  );
+
+  const valuesWithoutUndefined: number[] = [];
+  values.forEach((v) => {
+    if (v !== undefined) {
+      valuesWithoutUndefined.push(v);
+    }
+  });
+
+  const sortedValues = valuesWithoutUndefined.sort((a, b) =>
+    compareRankingValues(a, b, ranking.rankParam)
+  );
+
+  const best = sortedValues[0];
+  const worst = sortedValues[sortedValues.length - 1];
+
+  const width = 100;
+  return (
+    <div>
+      <div
+        style={{
+          height: 20,
+          position: 'relative',
+          border: '1px solid black',
+          borderRadius: 5,
+          overflow: 'hidden',
+        }}
+      >
+        {_.range(0, width).map((x) => {
+          const color = ColourGradient(
+            0,
+            width,
+            x,
+            { red: 0, green: 255, blue: 0 },
+            { red: 255, green: 0, blue: 0 }
+          );
+          return (
+            <div
+              key={x}
+              style={{
+                position: 'absolute',
+                left: (x / width) * 100 + '%',
+                top: 0,
+                bottom: 0,
+                width: 100 / width + 0.01 + '%',
+                backgroundColor: `rgb(${color.red}, ${color.green}, ${color.blue})`,
+              }}
+            />
+          );
+        })}
+      </div>
+      <div
+        style={{
+          height: 20,
+          position: 'relative',
+        }}
+      >
+        <div
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            bottom: 0,
+            width: '100%',
+            display: 'flex',
+            justifyContent: 'space-between',
+          }}
+        >
+          <div>{best}</div>
+          <div>
+            {ranking.rankShell} {ranking.rankParam}
+          </div>
+          <div>{worst}</div>
+        </div>
+      </div>
     </div>
   );
+}
+
+/** Valid values are from 0 to 255 (inclusive) */
+export interface Colour {
+  red: number;
+  blue: number;
+  green: number;
+}
+
+/** Calculates an intermediary colour between 2 or 3 colours.
+ * @returns {Colour} Object with red, green, and blue number fields.
+ * @example -> {red: 123, blue: 255, green: 0}
+ */
+export default function ColourGradient(
+  min: number,
+  max: number,
+  current: number,
+  colorA: Colour,
+  colorB: Colour,
+  colorC?: Colour
+): Colour {
+  let color_progression;
+  if (current >= max) color_progression = 1;
+  else color_progression = (current - min) / (max - min); // Standardize as decimal [0-1 (inc)].
+  if (colorC) {
+    color_progression *= 2;
+    if (color_progression >= 1) {
+      color_progression -= 1;
+      colorA = colorB;
+      colorB = colorC;
+    }
+  }
+
+  const newRed = colorA.red + color_progression * (colorB.red - colorA.red);
+  const newGreen =
+    colorA.green + color_progression * (colorB.green - colorA.green);
+  const newBlue = colorA.blue + color_progression * (colorB.blue - colorA.blue);
+
+  const red = Math.floor(newRed);
+  const green = Math.floor(newGreen);
+  const blue = Math.floor(newBlue);
+
+  return { red, green, blue };
 }
