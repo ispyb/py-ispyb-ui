@@ -21,7 +21,7 @@ import {
   ShippingSample,
 } from 'legacy/pages/shipping/model';
 import _ from 'lodash';
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import {
   Alert,
   Badge,
@@ -34,6 +34,11 @@ import {
 } from 'react-bootstrap';
 import BestResultSection from '../datacollectiongroup/summarydatacollectiongroup/autoprocintegrationsection';
 import { DataCollectionGroup } from '../model';
+import {
+  percentToScaleValue,
+  scaleValueToPercent,
+  useProcColorScale,
+} from './ProcColourScale';
 
 export function ShippingsInfo({
   sessionId,
@@ -741,27 +746,22 @@ export function ColorScale({
 }: {
   rankedIntegrations: AutoProcIntegration[];
 }) {
-  const ranking = useAutoProcRanking();
+  const scale = useProcColorScale(rankedIntegrations);
 
-  const values = rankedIntegrations.map((r) =>
-    getRankingValue(r, ranking.rankShell, ranking.rankParam)
+  const width = 1000;
+
+  const [currentBestScale, setCurrentBestScale] = useState<number>(
+    scale.scaleBest
+  );
+  const [currentWorstScale, setCurrentWorstScale] = useState<number>(
+    scale.scaleWorst
   );
 
-  const valuesWithoutUndefined: number[] = [];
-  values.forEach((v) => {
-    if (v !== undefined) {
-      valuesWithoutUndefined.push(v);
-    }
-  });
+  useEffect(() => {
+    setCurrentBestScale(scale.scaleBest);
+    setCurrentWorstScale(scale.scaleWorst);
+  }, [scale.scaleBest, scale.scaleWorst]);
 
-  const sortedValues = valuesWithoutUndefined.sort((a, b) =>
-    compareRankingValues(a, b, ranking.rankParam)
-  );
-
-  const best = sortedValues[0];
-  const worst = sortedValues[sortedValues.length - 1];
-
-  const width = 100;
   return (
     <div>
       <div
@@ -774,27 +774,103 @@ export function ColorScale({
         }}
       >
         {_.range(0, width).map((x) => {
-          const color = ColourGradient(
-            0,
-            width,
-            x,
-            { red: 0, green: 255, blue: 0 },
-            { red: 255, green: 0, blue: 0 }
-          );
+          const percent = (x / width) * 100;
+          const value = percentToScaleValue(percent, scale);
+          const color = scale.getColor(value);
           return (
             <div
               key={x}
               style={{
                 position: 'absolute',
-                left: (x / width) * 100 + '%',
+                left: percent + '%',
                 top: 0,
                 bottom: 0,
                 width: 100 / width + 0.01 + '%',
-                backgroundColor: `rgb(${color.red}, ${color.green}, ${color.blue})`,
+                backgroundColor: color,
               }}
             />
           );
         })}
+        {/* cursor */}
+        <div
+          style={{
+            position: 'absolute',
+            right: 100 - scaleValueToPercent(currentBestScale, scale) + '%',
+            top: 0,
+            bottom: 0,
+            width: 5,
+            backgroundColor: 'black',
+            zIndex: Number.MAX_SAFE_INTEGER,
+            cursor: 'ew-resize',
+          }}
+          draggable="true"
+          onDragStart={(e) => {
+            e.dataTransfer.setDragImage(new Image(), 0, 0);
+          }}
+          onDrag={(e) => {
+            if (!e.currentTarget.parentNode) return;
+            if (!(e.currentTarget.parentNode instanceof HTMLElement)) return;
+            const x = e.clientX;
+            if (!x) return;
+            const parentRect = (
+              e.currentTarget.parentNode as HTMLElement
+            ).getBoundingClientRect();
+            const parentLeft = parentRect.left;
+            const parentRight = parentRect.right;
+            const parentWidth = parentRight - parentLeft;
+            const newX = x - parentLeft;
+            const percent = newX / parentWidth;
+            const correctedPercent = Math.min(0.95, Math.max(0.05, percent));
+            const scaleValue = percentToScaleValue(
+              correctedPercent * 100,
+              scale
+            );
+            setCurrentBestScale(scaleValue);
+          }}
+          onDragEnd={(e) => {
+            scale.setScaleBest(currentBestScale);
+          }}
+        />
+        <div
+          style={{
+            position: 'absolute',
+            left: scaleValueToPercent(currentWorstScale, scale) + '%',
+            top: 0,
+            bottom: 0,
+            width: 5,
+            backgroundColor: 'black',
+            zIndex: Number.MAX_SAFE_INTEGER,
+            cursor: 'ew-resize',
+          }}
+          draggable="true"
+          onDragStart={(e) => {
+            e.dataTransfer.setDragImage(new Image(), 0, 0);
+          }}
+          onDrag={(e) => {
+            if (!e.currentTarget.parentNode) return;
+            if (!(e.currentTarget.parentNode instanceof HTMLElement)) return;
+            const x = e.clientX;
+            if (!x) return;
+            const parentRect = (
+              e.currentTarget.parentNode as HTMLElement
+            ).getBoundingClientRect();
+            const parentLeft = parentRect.left;
+            const parentRight = parentRect.right;
+            const parentWidth = parentRight - parentLeft;
+            const newX = x - parentLeft;
+            const percent = newX / parentWidth;
+            const correctedPercent = Math.min(0.95, Math.max(0.05, percent));
+            const scaleValue = percentToScaleValue(
+              correctedPercent * 100,
+              scale
+            );
+            // setCurrentWorstScale(scaleValue);
+            scale.setScaleWorst(scaleValue);
+          }}
+          onDragEnd={(e) => {
+            scale.setScaleWorst(currentWorstScale);
+          }}
+        />
       </div>
       <div
         style={{
@@ -813,11 +889,11 @@ export function ColorScale({
             justifyContent: 'space-between',
           }}
         >
-          <div>{best}</div>
+          <div>{scale.worst}</div>
           <div>
-            {ranking.rankShell} {ranking.rankParam}
+            {scale.ranking.rankShell} {scale.ranking.rankParam}
           </div>
-          <div>{worst}</div>
+          <div>{scale.best}</div>
         </div>
       </div>
     </div>
