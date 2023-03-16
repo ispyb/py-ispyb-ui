@@ -23,6 +23,7 @@ import {
   faListUl,
 } from '@fortawesome/free-solid-svg-icons';
 import { useAutoProcRanking, usePipelines } from 'hooks/mx';
+import { usePersistentParamState } from 'hooks/useParam';
 
 type Param = {
   sessionId: string;
@@ -40,9 +41,17 @@ export default function MXDataCollectionGroupPage() {
   const compactToggle = new Subject<boolean>();
   const [filterContainers, setFilterContainers] = useState(false);
   const [selectedGroups, setSelectedGroups] = useState([] as number[]);
-  const [filterMR, setFilterMR] = useState(false);
-  const [filterSAD, setFilterSAD] = useState(false);
-  const [filterScaling, setFilterScaling] = useState(false);
+  const [filterMR, setFilterMR] = usePersistentParamState<'true' | 'false'>(
+    'filterMR',
+    'false'
+  );
+  const [filterSAD, setFilterSAD] = usePersistentParamState<'true' | 'false'>(
+    'filterSAD',
+    'false'
+  );
+  const [filterScaling, setFilterScaling] = usePersistentParamState<
+    'true' | 'false'
+  >('filterScaling', 'false');
 
   const pipelinesSelection = usePipelines();
   const autoProcRankingSelection = useAutoProcRanking();
@@ -65,10 +74,14 @@ export default function MXDataCollectionGroupPage() {
     const filteredDataCollectionGroups =
       filteredDataCollectionGroupsByContainer.filter(
         (dcg) =>
-          !(filterMR || filterSAD || filterScaling) ||
-          (filterMR && dcg.SpaceGroupModelResolvedByMr) ||
-          (filterSAD && dcg.SpaceGroupModelResolvedByPhasing) ||
-          (filterScaling && dcg.scalingStatisticsType)
+          !(
+            filterMR === 'true' ||
+            filterSAD === 'true' ||
+            filterScaling === 'true'
+          ) ||
+          (filterMR === 'true' && dcg.SpaceGroupModelResolvedByMr) ||
+          (filterSAD === 'true' && dcg.SpaceGroupModelResolvedByPhasing) ||
+          (filterScaling === 'true' && dcg.scalingStatisticsType)
       );
 
     return (
@@ -91,22 +104,28 @@ export default function MXDataCollectionGroupPage() {
           <ButtonGroup style={{ marginRight: 50 }}>
             <Button
               size="sm"
-              variant={filterScaling ? 'primary' : 'light'}
-              onClick={() => setFilterScaling(!filterScaling)}
+              variant={filterScaling === 'true' ? 'primary' : 'light'}
+              onClick={() =>
+                setFilterScaling(filterScaling === 'true' ? 'false' : 'true')
+              }
             >
               Scaling
             </Button>
             <Button
               size="sm"
-              variant={filterMR ? 'primary' : 'light'}
-              onClick={() => setFilterMR(!filterMR)}
+              variant={filterMR === 'true' ? 'primary' : 'light'}
+              onClick={() =>
+                setFilterMR(filterMR === 'true' ? 'false' : 'true')
+              }
             >
               MR
             </Button>
             <Button
               size="sm"
-              variant={filterSAD ? 'primary' : 'light'}
-              onClick={() => setFilterSAD(!filterSAD)}
+              variant={filterSAD === 'true' ? 'primary' : 'light'}
+              onClick={() =>
+                setFilterSAD(filterSAD === 'true' ? 'false' : 'true')
+              }
             >
               SAD
             </Button>
