@@ -144,6 +144,7 @@ export function parseResults(
   });
 }
 export const AUTOPROC_RANKING_METHOD_DESCRIPTION = [
+  'Results from unselected pipelines are ignored.',
   'Autoprocessing ranking is based on the following criteria by order of priority:',
   '- Non anomalous over anomalous',
   '- Highest space group symmetry',

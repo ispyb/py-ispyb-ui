@@ -14,6 +14,7 @@ import {
 } from 'legacy/hooks/ispyb';
 import { Session } from 'legacy/pages/model';
 import _ from 'lodash';
+import { useState } from 'react';
 import {
   Alert,
   Col,
@@ -108,6 +109,10 @@ export function SessionTimeLine({
           start: parseDate(dcg.DataCollectionGroup_startTime),
           end: parseDate(dcg.DataCollectionGroup_endTime),
           type: 'Data collection',
+          info: [
+            `Sample: ${dcg.BLSample_name}`,
+            `Protein: ${dcg.Protein_acronym}`,
+          ],
         } as TimelineEvent)
     )
     .value();
@@ -207,43 +212,67 @@ function buildEventsElements(events: TimelineEvent[], start: Date, end: Date) {
     end.getTime()
   );
   const duration = latest - earliest;
+
   return events.map((e, i) => {
-    const leftPercentage = ((e.start.getTime() - earliest) / duration) * 100;
-    const rightPercentage =
-      100 - ((e.end.getTime() - earliest) / duration) * 100;
     return (
-      <OverlayTrigger
-        key={i}
-        placement="bottom"
-        overlay={
-          <Popover id="popover-basic">
-            <Popover.Body>
-              <strong>{e.type}</strong>
-              <br />
-              <strong>Start: </strong>
-              <i>{formatDateToDayAndTime(e.start.toISOString())}</i>
-              <br />
-              <strong>End: </strong>
-              <i>{formatDateToDayAndTime(e.end.toISOString())}</i>
-            </Popover.Body>
-          </Popover>
-        }
-      >
-        <div
-          style={{
-            backgroundColor: timelineEventColors[e.type],
-            position: 'absolute',
-            top: 0,
-            bottom: 0,
-            minWidth: 5,
-            left: leftPercentage + '%',
-            right: rightPercentage + '%',
-            zIndex: i,
-          }}
-        ></div>
-      </OverlayTrigger>
+      <EventElement key={i} e={e} earliest={earliest} duration={duration} />
     );
   });
+}
+
+function EventElement({
+  e,
+  earliest,
+  duration,
+}: {
+  e: TimelineEvent;
+  earliest: number;
+  duration: number;
+}) {
+  const [active, setActive] = useState(false);
+  const leftPercentage = ((e.start.getTime() - earliest) / duration) * 100;
+  const rightPercentage = 100 - ((e.end.getTime() - earliest) / duration) * 100;
+  return (
+    <OverlayTrigger
+      onEnter={() => setActive(true)}
+      onExit={() => setActive(false)}
+      placement="bottom"
+      overlay={
+        <Popover id="popover-basic">
+          <Popover.Body>
+            <strong>{e.type}</strong>
+            <br />
+            <strong>Start: </strong>
+            <i>{formatDateToDayAndTime(e.start.toISOString())}</i>
+            <br />
+            <strong>End: </strong>
+            <i>{formatDateToDayAndTime(e.end.toISOString())}</i>
+            <br />
+            {e.info?.map((i, j) => (
+              <span key={j}>
+                <i>{i}</i>
+                <br />
+              </span>
+            ))}
+          </Popover.Body>
+        </Popover>
+      }
+    >
+      <div
+        style={{
+          backgroundColor: timelineEventColors[e.type],
+          position: 'absolute',
+          top: 0,
+          bottom: 0,
+          minWidth: 5,
+          left: leftPercentage + '%',
+          right: rightPercentage + '%',
+          border: active ? '2px solid black' : undefined,
+          zIndex: active ? Number.MAX_SAFE_INTEGER : e.start.getTime(),
+        }}
+      ></div>
+    </OverlayTrigger>
+  );
 }
 
 function buildLabelElements(events: TimelineEvent[], start: Date, end: Date) {
@@ -373,7 +402,6 @@ function buildTicksElements(events: TimelineEvent[], start: Date, end: Date) {
             left: leftPercentage + '%',
             zIndex: 0,
             borderLeft: '1px dashed grey',
-            // backgroundColor: 'grey',
           }}
         />
         <small
@@ -405,6 +433,7 @@ type TimelineEvent = {
   start: Date;
   end: Date;
   type: TimelineElementType;
+  info?: string[];
 };
 
 const timelineEventColors: Record<TimelineElementType, string> = {
