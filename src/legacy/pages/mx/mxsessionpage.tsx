@@ -8,9 +8,7 @@ import { useAutoProcRanking, usePipelines } from 'hooks/mx';
 import {
   faAngleDown,
   faAngleUp,
-  faArrowUp,
   faCheckCircle,
-  faChevronUp,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
@@ -31,14 +29,12 @@ import {
   Spinner,
   Card,
   Row,
-  Button,
 } from 'react-bootstrap';
 import ReactSelect from 'react-select';
 import { NavLink, Outlet, useParams } from 'react-router-dom';
 import Loading from 'components/Loading';
 import NbBadge from 'legacy/components/nbBadge';
 import { useInView } from 'react-intersection-observer';
-import { ArrowUp } from 'react-bootstrap-icons';
 
 type Param = {
   sessionId: string | undefined;

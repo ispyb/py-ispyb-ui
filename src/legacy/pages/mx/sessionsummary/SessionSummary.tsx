@@ -1,6 +1,6 @@
 import Loading from 'components/Loading';
 import { usePersistentParamState } from 'hooks/useParam';
-import { Suspense, useState } from 'react';
+import { Suspense } from 'react';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import { ProteinsInfo } from './ProteinsInfo';
