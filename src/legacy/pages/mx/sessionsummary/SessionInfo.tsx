@@ -260,14 +260,13 @@ function EventElement({
     >
       <div
         style={{
-          backgroundColor: timelineEventColors[e.type],
+          backgroundColor: active ? 'red' : timelineEventColors[e.type],
           position: 'absolute',
           top: 0,
           bottom: 0,
           minWidth: 5,
           left: leftPercentage + '%',
           right: rightPercentage + '%',
-          border: active ? '2px solid black' : undefined,
           zIndex: active ? Number.MAX_SAFE_INTEGER : e.start.getTime(),
         }}
       ></div>
