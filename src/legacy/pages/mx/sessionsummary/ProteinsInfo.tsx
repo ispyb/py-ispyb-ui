@@ -2,7 +2,16 @@ import Loading from 'components/Loading';
 import { useAutoProc, useMXDataCollectionsBy } from 'legacy/hooks/ispyb';
 import _ from 'lodash';
 import { Suspense } from 'react';
-import { Col, Container, Row } from 'react-bootstrap';
+import {
+  Accordion,
+  Alert,
+  Badge,
+  Button,
+  Card,
+  Col,
+  Container,
+  Row,
+} from 'react-bootstrap';
 import { DataCollectionGroup } from '../model';
 
 import DataCollectionGroupPanel from '../datacollectiongroup/datacollectiongrouppanel';
@@ -11,6 +20,11 @@ import {
   AutoProcIntegration,
   getRankedResults,
 } from 'legacy/helpers/mx/results/resultparser';
+import { usePersistentParamState } from 'hooks/useParam';
+import LazyWrapper from 'legacy/components/loading/lazywrapper';
+import { MetadataRow } from 'components/Events/Metadata';
+import UnitCellSection from 'legacy/pages/mx/datacollectiongroup/summarydatacollectiongroup/unitcellsection';
+import MasonryLayout from 'components/Layout/Mansonry';
 
 export function ProteinsInfo({
   sessionId,
@@ -26,12 +40,20 @@ export function ProteinsInfo({
   const proteins = _(dataCollectionGroups || [])
     .map((dcg) => dcg.Protein_acronym)
     .uniq()
+    .sort()
     .value();
+
+  const [proteinFilter, setProteinFilter] = usePersistentParamState<string>(
+    'protein',
+    'unknown'
+  );
+
+  const target = proteinFilter === 'unknown' ? proteins[0] : proteinFilter;
 
   const pipelines = usePipelines();
   const ranking = useAutoProcRanking();
 
-  const dcIds = _(dataCollectionGroups || [])
+  const programDcIds = _(dataCollectionGroups || [])
     .filter(
       (dcg) =>
         dcg.AutoProcProgram_processingPrograms !== undefined &&
@@ -44,7 +66,7 @@ export function ProteinsInfo({
 
   const { data: integrations } = useAutoProc({
     proposalName,
-    dataCollectionId: dcIds,
+    dataCollectionId: programDcIds,
   });
 
   const rankedIntegrations = getRankedResults(
@@ -54,28 +76,48 @@ export function ProteinsInfo({
     pipelines.pipelines,
     true
   );
+
+  if (!proteins.length) {
+    return <Alert variant={'info'}>No targets in this session.</Alert>;
+  }
+
   return (
     <Container fluid>
-      <Col>
-        {_(proteins)
-          .sort()
-          .value()
-          .map(
-            (protein) =>
-              protein && (
-                <Suspense key={protein} fallback={<Loading />}>
-                  <ProteinInfo
-                    key={protein}
-                    sessionId={sessionId}
-                    proposalName={proposalName}
-                    protein={protein}
-                    dataCollectionGroups={dataCollectionGroups || []}
-                    rankedIntegrations={rankedIntegrations}
-                  />
-                </Suspense>
-              )
-          )}
-      </Col>
+      <Container fluid style={{ marginBottom: '1rem' }}>
+        <Row>
+          <Col xs={'auto'} style={{ display: 'flex', alignItems: 'center' }}>
+            <strong>Select target:</strong>
+          </Col>
+          {proteins.map((p) => {
+            return (
+              <Col key={p} xs={'auto'}>
+                <Button
+                  size="sm"
+                  variant={p === target ? 'primary' : 'outline-primary'}
+                  onClick={() => {
+                    setProteinFilter(p);
+                  }}
+                >
+                  {p}
+                </Button>
+              </Col>
+            );
+          })}
+        </Row>
+        <div style={{ borderBottom: '1px solid grey', marginTop: '1rem' }} />
+      </Container>
+      {target && (
+        <Suspense fallback={<Loading />}>
+          <ProteinInfo
+            key={target}
+            sessionId={sessionId}
+            proposalName={proposalName}
+            protein={target}
+            dataCollectionGroups={dataCollectionGroups || []}
+            rankedIntegrations={rankedIntegrations}
+          />
+        </Suspense>
+      )}
     </Container>
   );
 }
@@ -93,8 +135,6 @@ export function ProteinInfo({
   dataCollectionGroups: DataCollectionGroup[];
   rankedIntegrations: AutoProcIntegration[];
 }) {
-  const ranking = useAutoProcRanking();
-
   const proteinDataCollectionGroups = dataCollectionGroups.filter(
     (dcg) => dcg.Protein_acronym === protein
   );
@@ -105,51 +145,240 @@ export function ProteinInfo({
     )
   ).sort();
 
-  const proteinBestIntegration = rankedIntegrations.find((i) =>
+  const proteinIntegrations = rankedIntegrations.filter((i) =>
     dataCollectionIds.includes(i.dataCollectionId)
   );
 
+  return (
+    <Container fluid>
+      <Card style={{ backgroundColor: 'lightgrey', padding: '1rem' }}>
+        <Col>
+          <Row>
+            <Col>
+              <h1>{protein}</h1>
+            </Col>
+          </Row>
+          <MetadataRow
+            properties={[
+              {
+                title: 'Data collections',
+                content: proteinDataCollectionGroups.length,
+              },
+              {
+                title: 'Collected samples',
+                content: _(proteinDataCollectionGroups)
+                  .map((dcg) => dcg.BLSample_blSampleId)
+                  .uniq()
+                  .value().length,
+              },
+              {
+                title: 'Successful pipelines',
+                content: proteinIntegrations.length,
+              },
+            ]}
+          ></MetadataRow>
+          <Row>
+            <Col>
+              <StatisticsSection
+                sessionId={sessionId}
+                proposalName={proposalName}
+                dataCollectionGroups={proteinDataCollectionGroups}
+                rankedIntegrations={proteinIntegrations}
+              />
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <BestCollectionSection
+                sessionId={sessionId}
+                proposalName={proposalName}
+                dataCollectionGroups={proteinDataCollectionGroups}
+                rankedIntegrations={proteinIntegrations}
+              />
+            </Col>
+          </Row>
+        </Col>
+      </Card>
+    </Container>
+  );
+}
+
+function BestCollectionSection({
+  sessionId,
+  proposalName,
+  dataCollectionGroups,
+  rankedIntegrations,
+}: {
+  sessionId: string;
+  proposalName: string;
+  dataCollectionGroups: DataCollectionGroup[];
+  rankedIntegrations: AutoProcIntegration[];
+}) {
+  const ranking = useAutoProcRanking();
+
+  const proteinBestIntegration = rankedIntegrations[0];
+
   const proteinBestCollection =
-    proteinDataCollectionGroups.find(
+    dataCollectionGroups.find(
       (dcg) =>
         dcg.DataCollection_dataCollectionId ===
         proteinBestIntegration?.dataCollectionId
-    ) || proteinDataCollectionGroups[0];
+    ) || dataCollectionGroups[0];
 
   return (
-    <Container fluid>
-      <Row>
-        <Col>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              padding: '1rem',
-              backgroundColor: 'lightgrey',
-              borderRadius: '0.5rem',
-              marginBottom: '1rem',
-            }}
-          >
-            <h1>
-              <strong>{protein} </strong> - {proteinDataCollectionGroups.length}{' '}
-              collections
-              <br></br>
-              <small style={{ fontSize: 20 }}>
-                <i>Best collection</i>
-              </small>
-            </h1>
-            <DataCollectionGroupPanel
-              sessionId={sessionId}
-              proposalName={proposalName}
-              dataCollectionGroup={proteinBestCollection}
-              defaultCompact={false}
-              selectedPipelines={[]}
-              resultRankShell={ranking.rankShell}
-              resultRankParam={ranking.rankParam}
-            />
-          </div>
-        </Col>
-      </Row>
-    </Container>
+    <Accordion>
+      <Accordion.Item eventKey="bestcollection">
+        <Accordion.Header>
+          Best data collection during this session
+        </Accordion.Header>
+        <Accordion.Body style={{ padding: 5 }}>
+          <LazyWrapper placeholder={<Loading />}>
+            <Suspense fallback={<Loading />}>
+              <DataCollectionGroupPanel
+                sessionId={sessionId}
+                proposalName={proposalName}
+                dataCollectionGroup={proteinBestCollection}
+                defaultCompact={false}
+                selectedPipelines={[]}
+                resultRankShell={ranking.rankShell}
+                resultRankParam={ranking.rankParam}
+              />
+            </Suspense>
+          </LazyWrapper>
+        </Accordion.Body>
+      </Accordion.Item>
+    </Accordion>
+  );
+}
+
+function StatisticsSection({
+  sessionId,
+  proposalName,
+  dataCollectionGroups,
+  rankedIntegrations,
+}: {
+  sessionId: string;
+  proposalName: string;
+  dataCollectionGroups: DataCollectionGroup[];
+  rankedIntegrations: AutoProcIntegration[];
+}) {
+  const spacegroups = _(rankedIntegrations)
+    .map((i) => i.spaceGroup)
+    .uniq()
+    .value();
+
+  const breakpointColumnsObj = {
+    default: 6,
+    2000: 5,
+    1700: 4,
+    1400: 3,
+    1100: 2,
+    900: 1,
+  };
+  return (
+    <Card
+      style={{
+        backgroundColor: 'white',
+        padding: '1rem',
+        marginBottom: '1rem',
+        marginTop: '1rem',
+      }}
+    >
+      <Col>
+        <Row style={{ marginBottom: 10 }}>
+          <strong>Statistics</strong>
+        </Row>
+        <Row>
+          <MasonryLayout breakpointCols={breakpointColumnsObj}>
+            {_(spacegroups)
+              .sortBy(
+                (sg) =>
+                  rankedIntegrations.filter((i) => i.spaceGroup === sg).length
+              )
+              .reverse()
+              .map((sg) => {
+                const sgIntegrations = rankedIntegrations.filter(
+                  (i) => i.spaceGroup === sg
+                );
+                const hasBestCollection = sgIntegrations.includes(
+                  rankedIntegrations[0]
+                );
+                const minA = _.minBy(sgIntegrations, (i) => i.cell_a)?.cell_a;
+                const maxA = _.maxBy(sgIntegrations, (i) => i.cell_a)?.cell_a;
+                const minB = _.minBy(sgIntegrations, (i) => i.cell_b)?.cell_b;
+                const maxB = _.maxBy(sgIntegrations, (i) => i.cell_b)?.cell_b;
+                const minC = _.minBy(sgIntegrations, (i) => i.cell_c)?.cell_c;
+                const maxC = _.maxBy(sgIntegrations, (i) => i.cell_c)?.cell_c;
+                const minAlpha = _.minBy(
+                  sgIntegrations,
+                  (i) => i.cell_alpha
+                )?.cell_alpha;
+                const maxAlpha = _.maxBy(
+                  sgIntegrations,
+                  (i) => i.cell_alpha
+                )?.cell_alpha;
+                const minBeta = _.minBy(
+                  sgIntegrations,
+                  (i) => i.cell_beta
+                )?.cell_beta;
+                const maxBeta = _.maxBy(
+                  sgIntegrations,
+                  (i) => i.cell_beta
+                )?.cell_beta;
+                const minGamma = _.minBy(
+                  sgIntegrations,
+                  (i) => i.cell_gamma
+                )?.cell_gamma;
+                const maxGamma = _.maxBy(
+                  sgIntegrations,
+                  (i) => i.cell_gamma
+                )?.cell_gamma;
+
+                return (
+                  <Card key={sg}>
+                    <Card.Header className="text-center">
+                      <h5 style={{ whiteSpace: 'nowrap' }}>
+                        {sg}
+                        {hasBestCollection && (
+                          <>
+                            <br />
+                            <Badge bg={'success'}>{'Best collection'}</Badge>
+                          </>
+                        )}
+                      </h5>
+
+                      <i style={{ whiteSpace: 'nowrap' }}>
+                        {sgIntegrations.length} pipelines -{' '}
+                        {(
+                          (sgIntegrations.length / rankedIntegrations.length) *
+                          100
+                        ).toFixed(0)}
+                        %
+                      </i>
+                    </Card.Header>
+                    <UnitCellSection
+                      cell_a={`${minA?.toFixed(1)} - ${maxA?.toFixed(1)}`}
+                      cell_b={`${minB?.toFixed(1)} - ${maxB?.toFixed(1)}`}
+                      cell_c={`${minC?.toFixed(1)} - ${maxC?.toFixed(1)}`}
+                      cell_alpha={`${minAlpha?.toFixed(
+                        1
+                      )} - ${maxAlpha?.toFixed(1)}`}
+                      cell_beta={`${minBeta?.toFixed(1)} - ${maxBeta?.toFixed(
+                        1
+                      )}`}
+                      cell_gamma={`${minGamma?.toFixed(
+                        1
+                      )} - ${maxGamma?.toFixed(1)}`}
+                      spaceGroup={sg}
+                    />
+                  </Card>
+                  // </Col>
+                );
+              })
+              .value()}
+          </MasonryLayout>
+        </Row>
+      </Col>
+    </Card>
   );
 }

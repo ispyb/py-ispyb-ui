@@ -38,9 +38,9 @@ export type AutoProcRankingSelection = {
 };
 export function useAutoProcRanking(): AutoProcRankingSelection {
   const [resultRankShell, setResultRankShell] =
-    usePersistentParamState<ResultRankShell>('rankShell', 'Inner');
+    usePersistentParamState<ResultRankShell>('rankShell', 'Overall');
   const [resultRankParam, setResultRankParam] =
-    usePersistentParamState<ResultRankParam>('rankParam', 'Rmerge');
+    usePersistentParamState<ResultRankParam>('rankParam', '<I/Sigma>');
 
   return {
     rankShell: resultRankShell,
