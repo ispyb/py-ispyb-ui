@@ -1,11 +1,17 @@
-import { Suspense } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import {
   useMXDataCollectionsBy,
   useMXEnergyScans,
   useMXFluorescenceSpectras,
 } from 'legacy/hooks/ispyb';
 import { useAutoProcRanking, usePipelines } from 'hooks/mx';
-import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
+import {
+  faAngleDown,
+  faAngleUp,
+  faArrowUp,
+  faCheckCircle,
+  faChevronUp,
+} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   AUTOPROC_RANKING_METHOD_DESCRIPTION,
@@ -25,11 +31,14 @@ import {
   Spinner,
   Card,
   Row,
+  Button,
 } from 'react-bootstrap';
 import ReactSelect from 'react-select';
 import { NavLink, Outlet, useParams } from 'react-router-dom';
 import Loading from 'components/Loading';
 import NbBadge from 'legacy/components/nbBadge';
+import { useInView } from 'react-intersection-observer';
+import { ArrowUp } from 'react-bootstrap-icons';
 
 type Param = {
   sessionId: string | undefined;
@@ -180,8 +189,12 @@ export function AutoprocParameters({
   proposalName: string;
 }) {
   const ranking = useAutoProcRanking();
-  return (
-    <Card style={{ padding: '1rem', marginBottom: '1rem' }}>
+  const { ref, inView } = useInView({
+    rootMargin: '0px 0px',
+    triggerOnce: false,
+  });
+  const selector = (
+    <div>
       <Row>
         <Col
           xs={'auto'}
@@ -230,6 +243,84 @@ export function AutoprocParameters({
           </i>
         </small>
       </Row>
+    </div>
+  );
+
+  const [expandHoveringSelector, setExpandHoveringSelector] = useState(false);
+
+  useEffect(() => {
+    if (inView) {
+      setExpandHoveringSelector(false);
+    }
+  }, [inView]);
+
+  const hoveringSelector = (
+    <div
+      style={{
+        position: 'fixed',
+        bottom: 10,
+        right: 30,
+        width: 300,
+        display: inView ? 'none' : 'block',
+        zIndex: 1000,
+        cursor: 'pointer',
+      }}
+      onClick={() => setExpandHoveringSelector(!expandHoveringSelector)}
+    >
+      <Card
+        style={{
+          padding: '0.5rem',
+          marginBottom: '1rem',
+          backgroundColor: '#cedbf3',
+        }}
+      >
+        <Row>
+          <Col xs={'auto'}>
+            <FontAwesomeIcon
+              icon={expandHoveringSelector ? faAngleDown : faAngleUp}
+            />
+          </Col>
+          <Col
+            xs={'auto'}
+            style={{
+              display: expandHoveringSelector ? undefined : 'none',
+            }}
+          >
+            <div
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+              style={{ cursor: 'default' }}
+            >
+              {selector}
+            </div>
+          </Col>
+          <Col
+            style={{
+              display: expandHoveringSelector ? 'none' : 'flex',
+              alignItems: 'center',
+            }}
+          >
+            <i>
+              <strong>Select pipelines and ranking</strong>
+            </i>
+          </Col>
+        </Row>
+      </Card>
+    </div>
+  );
+
+  return (
+    <Card
+      ref={ref}
+      style={{
+        padding: '1rem',
+        marginBottom: '1rem',
+        backgroundColor: '#cedbf3',
+      }}
+    >
+      {selector}
+      {hoveringSelector}
     </Card>
   );
 }
@@ -240,7 +331,7 @@ export function SelectAutoprocRanking() {
   return (
     <OverlayTrigger
       trigger={['click']}
-      placement={'bottom'}
+      placement={'auto'}
       rootClose
       overlay={
         <Popover>
