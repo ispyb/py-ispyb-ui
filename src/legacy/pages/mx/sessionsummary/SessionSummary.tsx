@@ -1,4 +1,5 @@
 import Loading from 'components/Loading';
+import { usePersistentParamState } from 'hooks/useParam';
 import { Suspense, useState } from 'react';
 import { Button, Col, Container, Row } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
@@ -14,7 +15,10 @@ type Param = {
 export default function MXSessionSummaryPage() {
   const { sessionId = '', proposalName = '' } = useParams<Param>();
 
-  const [selected, setSelected] = useState('shipping');
+  const [selected, setSelected] = usePersistentParamState<'sample' | 'target'>(
+    'view',
+    'sample'
+  );
 
   return (
     <>
@@ -22,42 +26,43 @@ export default function MXSessionSummaryPage() {
         <SessionInfo sessionId={sessionId} proposalName={proposalName} />
       </Suspense>
       <Container fluid>
-        <Container fluid>
+        <Container fluid style={{ marginBottom: '1rem' }}>
           <div
             style={{ borderBottom: '1px solid grey', marginBottom: '1rem' }}
           />
 
           <Row>
-            <Col xs={'auto'} style={{ marginBottom: '1rem' }}>
+            <Col xs={'auto'} style={{ display: 'flex', alignItems: 'center' }}>
+              <strong>Select view by:</strong>
+            </Col>
+            <Col xs={'auto'}>
               <Button
-                variant={
-                  selected === 'shipping' ? 'primary' : 'outline-primary'
-                }
-                onClick={() => setSelected('shipping')}
+                size="sm"
+                variant={selected === 'sample' ? 'primary' : 'outline-primary'}
+                onClick={() => setSelected('sample')}
               >
-                Shippings
+                Sample
               </Button>
             </Col>
-            <Col xs={'auto'} style={{ marginBottom: '1rem' }}>
+            <Col xs={'auto'}>
               <Button
-                variant={selected === 'protein' ? 'primary' : 'outline-primary'}
-                onClick={() => setSelected('protein')}
+                size="sm"
+                variant={selected === 'target' ? 'primary' : 'outline-primary'}
+                onClick={() => setSelected('target')}
               >
-                Proteins
+                Target
               </Button>
             </Col>
           </Row>
-          <div
-            style={{ borderBottom: '1px solid grey', marginBottom: '1rem' }}
-          />
+          <div style={{ borderBottom: '1px solid grey', marginTop: '1rem' }} />
         </Container>
       </Container>
-      {selected === 'shipping' && (
+      {selected === 'sample' && (
         <Suspense fallback={<Loading />}>
           <ShippingsInfo sessionId={sessionId} proposalName={proposalName} />
         </Suspense>
       )}
-      {selected === 'protein' && (
+      {selected === 'target' && (
         <Suspense fallback={<Loading />}>
           <ProteinsInfo sessionId={sessionId} proposalName={proposalName} />
         </Suspense>

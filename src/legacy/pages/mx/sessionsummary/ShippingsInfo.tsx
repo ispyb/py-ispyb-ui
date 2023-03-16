@@ -1,5 +1,6 @@
 import Loading from 'components/Loading';
 import { useAutoProcRanking, usePipelines } from 'hooks/mx';
+import { usePersistentParamState } from 'hooks/useParam';
 import {
   AutoProcIntegration,
   compareRankingValues,
@@ -22,6 +23,7 @@ import { Suspense } from 'react';
 import {
   Alert,
   Badge,
+  Button,
   Col,
   Container,
   OverlayTrigger,
@@ -74,6 +76,20 @@ export function ShippingsInfo({
     true
   );
 
+  const proteins = [
+    'All',
+    ..._(dataCollectionGroups || [])
+      .map((dcg) => dcg.Protein_acronym)
+      .uniq()
+      .sort()
+      .value(),
+  ];
+
+  const [proteinFilter, setProteinFilter] = usePersistentParamState<string>(
+    'protein',
+    'All'
+  );
+
   if (shippings.filter((s) => s !== undefined).length === 0)
     return (
       <Container fluid>
@@ -88,7 +104,31 @@ export function ShippingsInfo({
   return (
     <Container fluid>
       <Col>
-        <Row></Row>
+        <Container fluid style={{ marginBottom: '1rem' }}>
+          <Row>
+            <Col xs={'auto'} style={{ display: 'flex', alignItems: 'center' }}>
+              <strong>Filter by target:</strong>
+            </Col>
+            {proteins.map((p) => {
+              return (
+                <Col key={p} xs={'auto'}>
+                  <Button
+                    size="sm"
+                    variant={
+                      p === proteinFilter ? 'primary' : 'outline-primary'
+                    }
+                    onClick={() => {
+                      setProteinFilter(p);
+                    }}
+                  >
+                    {p}
+                  </Button>
+                </Col>
+              );
+            })}
+          </Row>
+          <div style={{ borderBottom: '1px solid grey', marginTop: '1rem' }} />
+        </Container>
         <ShippingInfoLegend
           dataCollectionGroups={dataCollectionGroups || []}
           proposalName={proposalName}
@@ -108,6 +148,7 @@ export function ShippingsInfo({
                     shippingId={shippingId}
                     dataCollectionGroups={dataCollectionGroups || []}
                     rankedIntegrations={rankedIntegrations}
+                    proteinFilter={proteinFilter}
                   />
                 </Suspense>
               )
@@ -129,10 +170,13 @@ export function ShippingInfoLegend({
   return (
     <Container fluid>
       <Row>
+        <Col xs={'auto'} style={{ display: 'flex', alignItems: 'center' }}>
+          <strong>Legend:</strong>
+        </Col>
         {sampleStatus.map((status) => {
           const colors = getSampleColors([status, 'collected']);
           return (
-            <Col key={status} xs={'auto'} s>
+            <Col key={status} xs={'auto'}>
               <div
                 style={{
                   border: `${colors.border === 'black' ? 1 : 4}px solid ${
@@ -181,12 +225,14 @@ export function ShippingInfo({
   shippingId,
   dataCollectionGroups,
   rankedIntegrations,
+  proteinFilter,
 }: {
   sessionId: string;
   proposalName: string;
   shippingId: number;
   dataCollectionGroups: DataCollectionGroup[];
   rankedIntegrations: AutoProcIntegration[];
+  proteinFilter: string;
 }) {
   const { data: shipping } = useShipping({
     proposalName,
@@ -226,6 +272,7 @@ export function ShippingInfo({
                 dataCollectionGroups={dataCollectionGroups}
                 rankedIntegrations={rankedIntegrations}
                 onlyOneDewar={onlyOneDewar}
+                proteinFilter={proteinFilter}
               />
             ))}
         </Row>
@@ -239,11 +286,13 @@ export function DewarInfo({
   dataCollectionGroups,
   rankedIntegrations,
   onlyOneDewar = false,
+  proteinFilter,
 }: {
   dewar: ShippingDewar;
   dataCollectionGroups: DataCollectionGroup[];
   rankedIntegrations: AutoProcIntegration[];
   onlyOneDewar?: boolean;
+  proteinFilter: string;
 }) {
   const samples = _(dewar.containerVOs)
     .flatMap((d) => d.sampleVOs)
@@ -284,6 +333,7 @@ export function DewarInfo({
                   dataCollectionGroups={dataCollectionGroups}
                   rankedIntegrations={rankedIntegrations}
                   onlyOnePuck={onlyOnePuck}
+                  proteinFilter={proteinFilter}
                 />
               ))}
           </Row>
@@ -298,11 +348,13 @@ export function ContainerInfo({
   dataCollectionGroups,
   rankedIntegrations,
   onlyOnePuck = false,
+  proteinFilter,
 }: {
   container: ShippingContainer;
   dataCollectionGroups: DataCollectionGroup[];
   rankedIntegrations: AutoProcIntegration[];
   onlyOnePuck?: boolean;
+  proteinFilter: string;
 }) {
   const samples = container.sampleVOs;
 
@@ -349,6 +401,7 @@ export function ContainerInfo({
                         sample={sample}
                         dataCollectionGroups={dataCollectionGroups}
                         rankedIntegrations={rankedIntegrations}
+                        proteinFilter={proteinFilter}
                       />
                     </Col>
                   ))}
@@ -502,11 +555,17 @@ export function SampleInfo({
   sample,
   dataCollectionGroups,
   rankedIntegrations,
+  proteinFilter,
 }: {
   sample: ShippingSample;
   dataCollectionGroups: DataCollectionGroup[];
   rankedIntegrations: AutoProcIntegration[];
+  proteinFilter: string;
 }) {
+  const proteinEnabled =
+    proteinFilter === 'All' ||
+    proteinFilter === sample.crystalVO?.proteinVO.acronym;
+
   const statuses = getSampleStatuses(
     sample,
     dataCollectionGroups,
@@ -613,6 +672,8 @@ export function SampleInfo({
     </Popover>
   );
 
+  const disabledColor = '#b5b5b5';
+
   return (
     <>
       <OverlayTrigger
@@ -622,13 +683,15 @@ export function SampleInfo({
       >
         <div
           style={{
-            backgroundColor: colors.background,
+            backgroundColor: proteinEnabled ? colors.background : disabledColor,
             height: 30,
             width: 30,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            border: `${border === 'black' ? 1 : 4}px solid ${border}`,
+            border: `${border === 'black' ? 1 : 4}px solid ${
+              proteinEnabled ? border : 'grey'
+            }`,
             borderRadius: 15,
             color: colors.color,
           }}
@@ -639,7 +702,7 @@ export function SampleInfo({
       {colors.underline && (
         <div
           style={{
-            backgroundColor: 'yellow',
+            backgroundColor: proteinEnabled ? 'yellow' : disabledColor,
             height: 5,
             border: `1px solid black`,
             borderRadius: 3,
