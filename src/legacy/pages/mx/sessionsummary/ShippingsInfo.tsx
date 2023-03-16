@@ -1,6 +1,8 @@
 import Loading from 'components/Loading';
 import { useAutoProcRanking, usePipelines } from 'hooks/mx';
 import { usePersistentParamState } from 'hooks/useParam';
+import { getDozorPlot } from 'legacy/api/ispyb';
+import ZoomImage from 'legacy/components/image/zoomimage';
 import {
   AutoProcIntegration,
   compareRankingValues,
@@ -273,6 +275,7 @@ export function ShippingInfo({
                 rankedIntegrations={rankedIntegrations}
                 onlyOneDewar={onlyOneDewar}
                 proteinFilter={proteinFilter}
+                proposalName={proposalName}
               />
             ))}
         </Row>
@@ -287,12 +290,14 @@ export function DewarInfo({
   rankedIntegrations,
   onlyOneDewar = false,
   proteinFilter,
+  proposalName,
 }: {
   dewar: ShippingDewar;
   dataCollectionGroups: DataCollectionGroup[];
   rankedIntegrations: AutoProcIntegration[];
   onlyOneDewar?: boolean;
   proteinFilter: string;
+  proposalName: string;
 }) {
   const samples = _(dewar.containerVOs)
     .flatMap((d) => d.sampleVOs)
@@ -334,6 +339,7 @@ export function DewarInfo({
                   rankedIntegrations={rankedIntegrations}
                   onlyOnePuck={onlyOnePuck}
                   proteinFilter={proteinFilter}
+                  proposalName={proposalName}
                 />
               ))}
           </Row>
@@ -349,12 +355,14 @@ export function ContainerInfo({
   rankedIntegrations,
   onlyOnePuck = false,
   proteinFilter,
+  proposalName,
 }: {
   container: ShippingContainer;
   dataCollectionGroups: DataCollectionGroup[];
   rankedIntegrations: AutoProcIntegration[];
   onlyOnePuck?: boolean;
   proteinFilter: string;
+  proposalName: string;
 }) {
   const samples = container.sampleVOs;
 
@@ -402,6 +410,7 @@ export function ContainerInfo({
                         dataCollectionGroups={dataCollectionGroups}
                         rankedIntegrations={rankedIntegrations}
                         proteinFilter={proteinFilter}
+                        proposalName={proposalName}
                       />
                     </Col>
                   ))}
@@ -556,11 +565,13 @@ export function SampleInfo({
   dataCollectionGroups,
   rankedIntegrations,
   proteinFilter,
+  proposalName,
 }: {
   sample: ShippingSample;
   dataCollectionGroups: DataCollectionGroup[];
   rankedIntegrations: AutoProcIntegration[];
   proteinFilter: string;
+  proposalName: string;
 }) {
   const proteinEnabled =
     proteinFilter === 'All' ||
@@ -640,35 +651,46 @@ export function SampleInfo({
         <strong>Protein: </strong>
         {sample.crystalVO?.proteinVO.acronym || 'unknown protein'}
       </Popover.Header>
-      {
-        <Popover.Body>
-          {statuses.map((status) => (
-            <Badge style={{ marginLeft: 0, marginRight: 10 }} key={status}>
-              {status}
-            </Badge>
-          ))}
-          <br />
-          <i>
-            {`${dcs.length} collection${
-              dcs.length === 1 ? '' : 's'
-            } for this sample`}
-          </i>
-          {value && (
-            <>
-              <br />
-              <strong>
-                {ranking.rankShell} {ranking.rankParam} = {value}
-              </strong>
-            </>
-          )}
-          {bestIntegration && (
-            <div>
-              <br />
-              <BestResultSection bestResult={bestIntegration} compact={false} />
-            </div>
-          )}
-        </Popover.Body>
-      }
+
+      <Popover.Body>
+        {statuses.map((status) => (
+          <Badge style={{ marginLeft: 0, marginRight: 10 }} key={status}>
+            {status}
+          </Badge>
+        ))}
+        <br />
+        <i>
+          {`${dcs.length} collection${
+            dcs.length === 1 ? '' : 's'
+          } for this sample`}
+        </i>
+        {value && (
+          <>
+            <br />
+            <strong>
+              {ranking.rankShell} {ranking.rankParam} = {value}
+            </strong>
+          </>
+        )}
+        {bestIntegration && (
+          <div>
+            <br />
+            <BestResultSection bestResult={bestIntegration} compact={false} />
+          </div>
+        )}
+        {bestIntegration?.dataCollectionId && (
+          <ZoomImage
+            style={{ maxWidth: 500, minHeight: 350 }}
+            alt="Dozor"
+            src={
+              getDozorPlot({
+                proposalName,
+                dataCollectionId: bestIntegration?.dataCollectionId,
+              }).url
+            }
+          ></ZoomImage>
+        )}
+      </Popover.Body>
     </Popover>
   );
 
