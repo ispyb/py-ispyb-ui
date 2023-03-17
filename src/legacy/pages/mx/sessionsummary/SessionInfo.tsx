@@ -143,33 +143,46 @@ export function SessionTimeLine({
       <strong>Session timeline</strong>
       <div
         style={{
-          border: '1px solid gray',
-          borderRadius: 5,
           width: '100%',
-          height: 30,
           position: 'relative',
-          overflow: 'hidden',
+          paddingBottom: 30,
+          paddingTop: 30,
         }}
       >
-        {buildEventsElements([...collections, ...scans, ...spects], start, end)}
-      </div>
-      <div
-        style={{
-          width: '100%',
-          height: 20,
-          position: 'relative',
-        }}
-      >
+        <div
+          style={{
+            border: '1px solid gray',
+            borderRadius: 5,
+            width: '100%',
+            height: 30,
+            position: 'relative',
+            overflow: 'hidden',
+          }}
+        >
+          {buildEventsElements(
+            [...collections, ...scans, ...spects],
+            start,
+            end
+          )}
+        </div>
+        {/* <div
+          style={{
+            width: '100%',
+            height: 20,
+            position: 'relative',
+          }}
+        > */}
         {buildTicksElements([...collections, ...scans, ...spects], start, end)}
-      </div>
-      <div
-        style={{
-          width: '100%',
-          height: 20,
-          position: 'relative',
-        }}
-      >
+        {/* </div> */}
+        {/* <div
+          style={{
+            width: '100%',
+            height: 20,
+            position: 'relative',
+          }}
+        > */}
         {buildLabelElements([...collections, ...scans, ...spects], start, end)}
+        {/* </div> */}
       </div>
       <TimelineLegend />
     </Col>
@@ -215,7 +228,13 @@ function buildEventsElements(events: TimelineEvent[], start: Date, end: Date) {
 
   return events.map((e, i) => {
     return (
-      <EventElement key={i} e={e} earliest={earliest} duration={duration} />
+      <EventElement
+        key={i}
+        e={e}
+        earliest={earliest}
+        duration={duration}
+        index={i}
+      />
     );
   });
 }
@@ -224,10 +243,12 @@ function EventElement({
   e,
   earliest,
   duration,
+  index,
 }: {
   e: TimelineEvent;
   earliest: number;
   duration: number;
+  index: number;
 }) {
   const [active, setActive] = useState(false);
   const leftPercentage = ((e.start.getTime() - earliest) / duration) * 100;
@@ -267,7 +288,7 @@ function EventElement({
           minWidth: 5,
           left: leftPercentage + '%',
           right: rightPercentage + '%',
-          zIndex: active ? Number.MAX_SAFE_INTEGER : e.start.getTime(),
+          zIndex: active ? Number.MAX_SAFE_INTEGER : index,
         }}
       ></div>
     </OverlayTrigger>
@@ -297,10 +318,11 @@ function buildLabelElements(events: TimelineEvent[], start: Date, end: Date) {
         style={{
           backgroundColor: 'red',
           position: 'absolute',
-          top: -20,
-          bottom: 15,
+          top: 20,
+          bottom: 20,
+          width: 2,
           left: leftStartPercentage + '%',
-          zIndex: events.length,
+          zIndex: events.length + 1,
         }}
       ></div>
     ) : (
@@ -312,7 +334,7 @@ function buildLabelElements(events: TimelineEvent[], start: Date, end: Date) {
         position: 'absolute',
         top: 0,
         left: leftStartPercentage + '%',
-        zIndex: events.length,
+        zIndex: events.length + 1,
       }}
     >
       <i>
@@ -328,11 +350,11 @@ function buildLabelElements(events: TimelineEvent[], start: Date, end: Date) {
         style={{
           backgroundColor: 'red',
           position: 'absolute',
-          top: -20,
-          bottom: 15,
+          top: 20,
+          bottom: 20,
           width: 2,
           right: rightEndPercentage + '%',
-          zIndex: events.length,
+          zIndex: events.length + 1,
         }}
       ></div>
     ) : (
@@ -344,7 +366,7 @@ function buildLabelElements(events: TimelineEvent[], start: Date, end: Date) {
         position: 'absolute',
         top: 0,
         right: rightEndPercentage + '%',
-        zIndex: events.length,
+        zIndex: events.length + 1,
       }}
     >
       <i>
@@ -383,31 +405,32 @@ function buildTicksElements(events: TimelineEvent[], start: Date, end: Date) {
 
   return ticks.map((t, i) => {
     const leftPercentage = ((t - earliest) / duration) * 100;
-    let position = 'translate(-50%, -50%)';
+    let position = 'translate(-50%, 0)';
     if (i === 0) {
-      position = 'translate(0, -50%)';
+      position = 'translate(0, 0)';
     } else if (i === ticks.length - 1) {
-      position = 'translate(-100%, -50%)';
+      position = 'translate(-100%, 0)';
     }
     return (
       <>
-        <div
-          key={`${i}tick`}
-          style={{
-            position: 'absolute',
-            top: -30,
-            bottom: 12,
-            width: 1,
-            left: leftPercentage + '%',
-            zIndex: 0,
-            borderLeft: '1px dashed grey',
-          }}
-        />
+        {i !== 0 && i !== ticks.length - 1 && (
+          <div
+            key={`${i}tick`}
+            style={{
+              position: 'absolute',
+              top: 30,
+              bottom: 22,
+              width: 1,
+              left: leftPercentage + '%',
+              zIndex: 0,
+              borderLeft: '1px dashed grey',
+            }}
+          />
+        )}
         <small
           style={{
             position: 'absolute',
-            top: 8,
-            bottom: 0,
+            bottom: 5,
             left: leftPercentage + '%',
             zIndex: events.length,
             transform: position,
