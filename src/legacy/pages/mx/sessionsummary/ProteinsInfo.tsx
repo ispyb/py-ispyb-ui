@@ -349,7 +349,7 @@ function StatisticsSection({
                 )?.cell_gamma;
 
                 return (
-                  <Card key={sg}>
+                  <Card key={sg} style={{ margin: 5 }}>
                     <Card.Header className="text-center">
                       <h5 style={{ whiteSpace: 'nowrap' }}>
                         {sg}
@@ -377,9 +377,7 @@ function StatisticsSection({
                             {samples.length > 1 ? 's' : ''}
                           </i>
                           <br />
-                          <i style={{ whiteSpace: 'nowrap' }}>
-                            {samples.join(', ')}
-                          </i>
+                          <i>{samples.join(', ')}</i>
                         </>
                       )}
                     </Card.Header>
