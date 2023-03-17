@@ -779,7 +779,7 @@ export function ColorScale({
 
   return (
     <div>
-      <strong>Processing quality:</strong>
+      <strong>Processing indicator:</strong>
       {/* Min/max and parameter display */}
       <div
         style={{
