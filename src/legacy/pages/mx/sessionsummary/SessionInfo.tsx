@@ -1,11 +1,17 @@
 import { MetadataRow } from 'components/Events/Metadata';
-import { addHours, setMinutes } from 'date-fns';
+import {
+  addHours,
+  formatDuration,
+  intervalToDuration,
+  setMinutes,
+} from 'date-fns';
 import {
   formatDateToDay,
   formatDateToDayAndTime,
   formatDateToHour,
   parseDate,
 } from 'helpers/dateparser';
+import { isDataset } from 'legacy/helpers/mx/isDataset';
 import {
   useMXDataCollectionsBy,
   useMXEnergyScans,
@@ -47,6 +53,39 @@ export function SessionInfo({
     sessionId,
   });
 
+  const bookedTime = intervalToDuration({
+    start: parseDate(session?.BLSession_startDate),
+    end: parseDate(session?.BLSession_endDate),
+  });
+
+  const usedTime = intervalToDuration({
+    start:
+      dataCollectionGroups?.reduce((acc, dcg) => {
+        const v = parseDate(dcg.DataCollectionGroup_startTime).getTime();
+        return acc < v ? acc : v;
+      }, Date.now()) || Date.now(),
+    end:
+      dataCollectionGroups?.reduce((acc, dcg) => {
+        const v = parseDate(dcg.DataCollectionGroup_endTime).getTime();
+        return acc > v ? acc : v;
+      }, parseDate(session?.BLSession_startDate).getTime()) || Date.now(),
+  });
+
+  const duration = _(dataCollectionGroups)
+    .map((dcg) => {
+      const start = parseDate(dcg.DataCollectionGroup_startTime);
+      const end = parseDate(dcg.DataCollectionGroup_endTime);
+      return end.getTime() - start.getTime();
+    })
+    .sum();
+
+  const effectiveDuration = intervalToDuration({
+    start: 0,
+    end: duration || 0,
+  });
+
+  const datasets = dataCollectionGroups?.filter(isDataset) || [];
+
   return (
     <Container fluid>
       <Col style={{ margin: 10 }}>
@@ -64,13 +103,39 @@ export function SessionInfo({
         <MetadataRow
           properties={[
             { title: 'Beamline operator', content: session?.beamLineOperator },
-            { title: 'Images', content: session?.imagesCount },
             {
               title: 'Data collections',
               content: dataCollectionGroups?.length,
             },
+            {
+              title: 'Datasets',
+              content:
+                datasets.length +
+                ' (auto processed ' +
+                datasets?.filter((dc) => {
+                  return dc.scalingStatisticsTypes !== undefined;
+                }).length +
+                ')',
+            },
             { title: 'Energy scans', content: energyScans?.length },
             { title: 'Fluorescence spectras', content: spectras?.length },
+            {
+              title: 'Sample analyzed',
+              content: _(dataCollectionGroups)
+                .map((dcg) => dcg.BLSample_name)
+                .uniq()
+                .value().length,
+            },
+          ]}
+        ></MetadataRow>
+        <MetadataRow
+          properties={[
+            { title: 'Booked time', content: formatDuration(bookedTime) },
+            { title: 'Used time', content: formatDuration(usedTime) },
+            {
+              title: 'Effective beamtime used',
+              content: formatDuration(effectiveDuration),
+            },
           ]}
         />
         {session && (
@@ -165,24 +230,8 @@ export function SessionTimeLine({
             end
           )}
         </div>
-        {/* <div
-          style={{
-            width: '100%',
-            height: 20,
-            position: 'relative',
-          }}
-        > */}
         {buildTicksElements([...collections, ...scans, ...spects], start, end)}
-        {/* </div> */}
-        {/* <div
-          style={{
-            width: '100%',
-            height: 20,
-            position: 'relative',
-          }}
-        > */}
         {buildLabelElements([...collections, ...scans, ...spects], start, end)}
-        {/* </div> */}
       </div>
       <TimelineLegend />
     </Col>

@@ -81,7 +81,7 @@ export default function MXDataCollectionGroupPage() {
           ) ||
           (filterMR === 'true' && dcg.SpaceGroupModelResolvedByMr) ||
           (filterSAD === 'true' && dcg.SpaceGroupModelResolvedByPhasing) ||
-          (filterScaling === 'true' && dcg.scalingStatisticsType)
+          (filterScaling === 'true' && dcg.scalingStatisticsTypes)
       );
 
     return (

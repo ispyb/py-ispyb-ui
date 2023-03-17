@@ -209,7 +209,7 @@ export function useProcColorScale(
       const color = ColourGradient(min, max, value, minColor, yellow, maxColor);
 
       if (forScale && (value <= min || value >= max)) {
-        const add = 220;
+        const add = 200;
         return `rgba(${safeColorValue(color.red + add)},${safeColorValue(
           color.green + add
         )},${safeColorValue(color.blue + add)})`;

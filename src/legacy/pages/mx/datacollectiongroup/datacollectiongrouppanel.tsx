@@ -90,9 +90,6 @@ export default function DataCollectionGroupPanel({
       selectedPipelines.includes(v.program) || selectedPipelines.length === 0
   );
 
-  if (pipelines.filter((p) => p.status === 'SUCCESS').length === 7) {
-    console.log(pipelines);
-  }
   return (
     <Tab.Container
       activeKey={compact ? 'Summary' : undefined}

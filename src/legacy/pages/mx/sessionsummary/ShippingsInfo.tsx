@@ -3,6 +3,7 @@ import { useAutoProcRanking, usePipelines } from 'hooks/mx';
 import { usePersistentParamState } from 'hooks/useParam';
 import { getDozorPlot } from 'legacy/api/ispyb';
 import ZoomImage from 'legacy/components/image/zoomimage';
+import { isDataset } from 'legacy/helpers/mx/isDataset';
 import {
   AutoProcIntegration,
   getRankedResults,
@@ -213,7 +214,7 @@ export function ContainerColors() {
         <strong>Containers:</strong>
       </Col>
       {sampleStatus.map((status) => {
-        const colors = getSampleColors([status, 'collected']);
+        const colors = getSampleColors([status, 'collected dataset']);
         return (
           <Col key={status} xs={'auto'}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
@@ -470,6 +471,7 @@ export function ContainerInfo({
 const sampleStatus = [
   'not collected',
   'collected',
+  'collected dataset',
   'processed',
   'phasing',
 ] as const;
@@ -484,6 +486,8 @@ function getSampleStatuses(
     (dcg) => dcg.BLSample_blSampleId === sample.blSampleId
   );
   const collected = !!dcs.length;
+
+  const dataset = dcs.some(isDataset);
 
   const dcsIds = dcs.map((dcg) => dcg.DataCollection_dataCollectionId);
 
@@ -503,6 +507,9 @@ function getSampleStatuses(
   if (processed) {
     res.push('processed');
   }
+  if (dataset) {
+    res.push('collected dataset');
+  }
   if (collected) {
     res.push('collected');
   } else {
@@ -521,10 +528,14 @@ const sampleStatusColors: Record<
   }
 > = {
   'not collected': {
-    background: '#d4e4bc',
+    background: 'white',
     color: 'black',
   },
   collected: {
+    background: '#d4e4bc',
+    color: 'black',
+  },
+  'collected dataset': {
     background: '#36558f',
     color: 'white',
   },
