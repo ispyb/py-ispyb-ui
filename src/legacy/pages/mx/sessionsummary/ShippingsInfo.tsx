@@ -101,7 +101,7 @@ export function ShippingsInfo({
       <Container fluid>
         <Container fluid>
           <Col>
-            <Alert variant="info">No shipping found</Alert>
+            <Alert variant="info">No shipment found</Alert>
           </Col>
         </Container>
       </Container>
@@ -254,11 +254,13 @@ export function ShippingInfo({
 
   const onlyOneDewar = shipping.dewarVOs.length === 1;
 
+  if (!shipping.dewarVOs.length) return null;
+
   return (
     <div style={{ marginBottom: '1rem', padding: 10 }}>
       <Col>
         <Row>
-          <strong>Shipping {shipping.shippingName}</strong>
+          <strong>Shipment {shipping.shippingName}</strong>
         </Row>
         <Row>
           <SamplesStatistics
@@ -308,6 +310,8 @@ export function DewarInfo({
     .value();
 
   const onlyOnePuck = dewar.containerVOs.length === 1;
+
+  if (!dewar.containerVOs.length) return null;
 
   return (
     <Container fluid>
@@ -369,6 +373,8 @@ export function ContainerInfo({
   proposalName: string;
 }) {
   const samples = container.sampleVOs;
+
+  if (!samples.length) return null;
 
   return (
     <Container fluid>

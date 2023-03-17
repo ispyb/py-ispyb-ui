@@ -45,10 +45,10 @@ export function ProteinsInfo({
 
   const [proteinFilter, setProteinFilter] = usePersistentParamState<string>(
     'protein',
-    'unknown'
+    'All'
   );
 
-  const target = proteinFilter === 'unknown' ? proteins[0] : proteinFilter;
+  const target = proteinFilter === 'All' ? proteins[0] : proteinFilter;
 
   const pipelines = usePipelines();
   const ranking = useAutoProcRanking();
@@ -215,6 +215,7 @@ function BestCollectionSection({
   rankedIntegrations: AutoProcIntegration[];
 }) {
   const ranking = useAutoProcRanking();
+  const pipelines = usePipelines();
 
   const proteinBestIntegration = rankedIntegrations[0];
 
@@ -229,7 +230,7 @@ function BestCollectionSection({
     <Accordion>
       <Accordion.Item eventKey="bestcollection">
         <Accordion.Header>
-          Best data collection during this session
+          Best data collection for this target during this session
         </Accordion.Header>
         <Accordion.Body style={{ padding: 5 }}>
           <LazyWrapper placeholder={<Loading />}>
@@ -239,7 +240,7 @@ function BestCollectionSection({
                 proposalName={proposalName}
                 dataCollectionGroup={proteinBestCollection}
                 defaultCompact={false}
-                selectedPipelines={[]}
+                selectedPipelines={pipelines.pipelines}
                 resultRankShell={ranking.rankShell}
                 resultRankParam={ranking.rankParam}
               />
@@ -300,6 +301,19 @@ function StatisticsSection({
                 const sgIntegrations = rankedIntegrations.filter(
                   (i) => i.spaceGroup === sg
                 );
+                const collections = _.uniq(
+                  sgIntegrations.map((i) => i.dataCollectionId)
+                )
+                  .map((dcId) =>
+                    dataCollectionGroups.find(
+                      (dcg) => dcg.DataCollection_dataCollectionId === dcId
+                    )
+                  )
+                  .filter((dcg) => dcg !== undefined);
+                const samples = _.uniq(collections.map((c) => c?.BLSample_name))
+                  .filter((s) => s !== undefined)
+                  .sort();
+
                 const hasBestCollection = sgIntegrations.includes(
                   rankedIntegrations[0]
                 );
@@ -355,6 +369,19 @@ function StatisticsSection({
                         ).toFixed(0)}
                         %
                       </i>
+                      {samples.length > 0 && (
+                        <>
+                          <br />
+                          <i style={{ whiteSpace: 'nowrap' }}>
+                            {samples.length} sample
+                            {samples.length > 1 ? 's' : ''}
+                          </i>
+                          <br />
+                          <i style={{ whiteSpace: 'nowrap' }}>
+                            {samples.join(', ')}
+                          </i>
+                        </>
+                      )}
                     </Card.Header>
                     <UnitCellSection
                       cell_a={`${minA?.toFixed(1)} - ${maxA?.toFixed(1)}`}
@@ -372,7 +399,6 @@ function StatisticsSection({
                       spaceGroup={sg}
                     />
                   </Card>
-                  // </Col>
                 );
               })
               .value()}
