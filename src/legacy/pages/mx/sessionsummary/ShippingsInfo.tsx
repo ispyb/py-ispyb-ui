@@ -756,11 +756,11 @@ export function ColorScale({
             justifyContent: 'space-between',
           }}
         >
-          <div>{scale.worst}</div>
+          <div>{scale.worst.toFixed(2)}</div>
           <div>
             {scale.ranking.rankShell} {scale.ranking.rankParam}
           </div>
-          <div>{scale.best}</div>
+          <div>{scale.best.toFixed(2)}</div>
         </div>
       </div>
       <div
@@ -850,6 +850,7 @@ export function ColorScale({
           {currentWorstScale.toFixed(2)}
         </div>
         <div
+          key={currentBestScale}
           style={{
             position: 'absolute',
             left: scaleValueToPercent(currentBestScale, scale) + '%',

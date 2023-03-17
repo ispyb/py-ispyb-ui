@@ -29,8 +29,8 @@ import {
   Spinner,
   Card,
   Row,
+  Button,
 } from 'react-bootstrap';
-import ReactSelect from 'react-select';
 import { NavLink, Outlet, useParams } from 'react-router-dom';
 import Loading from 'components/Loading';
 import NbBadge from 'legacy/components/nbBadge';
@@ -333,38 +333,59 @@ export function SelectAutoprocRanking() {
         <Popover>
           <Container style={{ padding: 20 }}>
             <Col>
-              <strong>
-                Autoprocessing results will be ranked based on the value of:
-              </strong>
-              <br></br>
-              <label>Bin</label>
-              <ReactSelect
-                options={RESULT_RANK_SHELLS.map((v) => ({
-                  value: v,
-                  label: v,
-                }))}
-                value={{
-                  value: autoProcRankingSelection.rankShell,
-                  label: autoProcRankingSelection.rankShell,
-                }}
-                onChange={(v) =>
-                  v && autoProcRankingSelection.setRankShell(v.value)
-                }
-              ></ReactSelect>
-              <label>Parameter</label>
-              <ReactSelect
-                options={RESULT_RANK_PARAM.map((v) => ({
-                  value: v,
-                  label: v,
-                }))}
-                value={{
-                  value: autoProcRankingSelection.rankParam,
-                  label: autoProcRankingSelection.rankParam,
-                }}
-                onChange={(v) =>
-                  v && autoProcRankingSelection.setRankParam(v.value)
-                }
-              ></ReactSelect>
+              <Row>
+                <i>
+                  Autoprocessing results will be ranked based on the value of:
+                </i>
+              </Row>
+              <Row style={{ padding: 10 }}>
+                <div style={{ borderBottom: '1px solid grey' }} />
+              </Row>
+              <Row>
+                <strong>Parameter</strong>
+              </Row>
+              <Row>
+                {RESULT_RANK_PARAM.map((v) => (
+                  <Col xs={'auto'} key={v} style={{ padding: 10 }}>
+                    <Button
+                      variant={
+                        autoProcRankingSelection.rankParam === v
+                          ? 'primary'
+                          : 'outline-primary'
+                      }
+                      onClick={() => autoProcRankingSelection.setRankParam(v)}
+                      size={'sm'}
+                      key={v}
+                    >
+                      {v}
+                    </Button>
+                  </Col>
+                ))}
+              </Row>
+              <Row style={{ padding: 10 }}>
+                <div style={{ borderBottom: '1px solid grey' }} />
+              </Row>
+              <Row>
+                <strong>Bin</strong>
+              </Row>
+              <Row>
+                {RESULT_RANK_SHELLS.map((v) => (
+                  <Col key={v} xs={'auto'} style={{ padding: 10 }}>
+                    <Button
+                      variant={
+                        autoProcRankingSelection.rankShell === v
+                          ? 'primary'
+                          : 'outline-primary'
+                      }
+                      onClick={() => autoProcRankingSelection.setRankShell(v)}
+                      size={'sm'}
+                      key={v}
+                    >
+                      {v}
+                    </Button>
+                  </Col>
+                ))}
+              </Row>
             </Col>
           </Container>
         </Popover>

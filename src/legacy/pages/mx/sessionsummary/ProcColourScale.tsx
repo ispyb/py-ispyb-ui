@@ -135,36 +135,19 @@ export function useProcColorScale(
     compareRankingValues(a, b, ranking.rankParam)
   )[0];
 
-  useEffect(() => {
-    saveDefault(
-      ranking.rankShell,
-      ranking.rankParam,
-      'best',
-      actualScaleBest,
-      refId
-    );
-    saveDefault(
-      ranking.rankShell,
-      ranking.rankParam,
-      'worst',
-      actualScaleWorst,
-      refId
-    );
-  }, [
-    ranking.rankParam,
-    ranking.rankShell,
-    actualScaleBest,
-    actualScaleWorst,
-    refId,
-  ]);
-
   return {
     best,
     worst,
     scaleWorst: actualScaleWorst,
     scaleBest: actualScaleBest,
-    setScaleWorst: (value: number) => setScaleWorst(value.toFixed(2)),
-    setScaleBest: (value: number) => setScaleBest(value.toFixed(2)),
+    setScaleWorst: (value: number) => {
+      saveDefault(ranking.rankShell, ranking.rankParam, 'worst', value, refId);
+      setScaleWorst(value.toFixed(2));
+    },
+    setScaleBest: (value: number) => {
+      saveDefault(ranking.rankShell, ranking.rankParam, 'best', value, refId);
+      setScaleBest(value.toFixed(2));
+    },
     ranking,
     getColor: (
       value: number,
