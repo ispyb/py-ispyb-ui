@@ -165,8 +165,6 @@ export function ShippingsInfo({
 }
 
 export function ShippingInfoLegend({
-  dataCollectionGroups,
-  proposalName,
   rankedIntegrations,
 }: {
   dataCollectionGroups: DataCollectionGroup[];
@@ -176,52 +174,88 @@ export function ShippingInfoLegend({
   return (
     <Container fluid>
       <Row>
-        <Col xs={'auto'} style={{ display: 'flex', alignItems: 'center' }}>
-          <strong>Legend:</strong>
-        </Col>
-        {sampleStatus.map((status) => {
-          const colors = getSampleColors([status, 'collected']);
-          return (
-            <Col key={status} xs={'auto'}>
+        <strong>Legend:</strong>
+      </Row>
+      <Row>
+        <Container fluid>
+          <Col
+            style={{
+              marginTop: 10,
+              maxWidth: 800,
+              backgroundColor: '#EEEEEE',
+              paddingTop: 10,
+              paddingLeft: 10,
+              paddingRight: 10,
+              border: '1px solid lightgrey',
+              borderRadius: 5,
+            }}
+          >
+            <Row style={{ paddingTop: 10 }}>
+              <ContainerColors />
+            </Row>
+            <Row style={{ padding: 20 }}>
+              <div style={{ borderTop: '1px solid lightgrey' }} />
+            </Row>
+            <Row>
+              <ColorScale rankedIntegrations={rankedIntegrations} />
+            </Row>
+          </Col>
+        </Container>
+      </Row>
+    </Container>
+  );
+}
+
+export function ContainerColors() {
+  return (
+    <Row>
+      <Col xs={'auto'} style={{ display: 'flex', alignItems: 'center' }}>
+        <strong>Containers:</strong>
+      </Col>
+      <Col xs={'auto'} style={{ display: 'flex', alignItems: 'center' }}></Col>
+      {sampleStatus.map((status) => {
+        const colors = getSampleColors([status, 'collected']);
+        return (
+          <Col key={status} xs={'auto'}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
               <div
                 style={{
                   border: `${colors.border === 'black' ? 1 : 4}px solid ${
                     colors.border
                   }`,
-                  paddingLeft: 5,
-                  paddingRight: 5,
                   backgroundColor: colors.background,
                   color: colors.color,
-                  borderRadius: 5,
-                  height: 35,
+                  borderRadius: 15,
+                  height: 30,
+                  width: 30,
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
+                  position: 'relative',
                 }}
               >
-                <small>{status}</small>
+                <small>1</small>
+                {colors.underline && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      bottom: -8,
+                      backgroundColor: 'yellow',
+                      height: 5,
+                      width: 30,
+                      border: `1px solid black`,
+                      borderRadius: 3,
+                      marginTop: 2,
+                    }}
+                  />
+                )}
               </div>
-              {colors.underline && (
-                <div
-                  style={{
-                    backgroundColor: 'yellow',
-                    height: 5,
-                    border: `1px solid black`,
-                    borderRadius: 3,
-                    marginTop: 2,
-                  }}
-                />
-              )}
-            </Col>
-          );
-        })}
-      </Row>
-      <Row>
-        <div style={{ marginTop: 10, maxWidth: 800 }}>
-          <ColorScale rankedIntegrations={rankedIntegrations} />
-        </div>
-      </Row>
-    </Container>
+              <i>{status}</i>
+            </div>
+          </Col>
+        );
+      })}
+    </Row>
   );
 }
 
@@ -496,7 +530,7 @@ const sampleStatusColors: Record<
     color: 'white',
   },
   processed: {
-    border: 'green',
+    border: 'rgb(0,255,0)',
   },
   phasing: {
     underline: true,
@@ -745,24 +779,25 @@ export function ColorScale({
 
   return (
     <div>
-      <div>
-        <div
-          style={{
-            left: 0,
-            top: 0,
-            bottom: 0,
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'space-between',
-          }}
-        >
-          <div>{scale.worst.toFixed(2)}</div>
-          <div>
-            {scale.ranking.rankShell} {scale.ranking.rankParam}
-          </div>
-          <div>{scale.best.toFixed(2)}</div>
+      <strong>Processing quality:</strong>
+      {/* Min/max and parameter display */}
+      <div
+        style={{
+          left: 0,
+          top: 0,
+          bottom: 0,
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'space-between',
+        }}
+      >
+        <div>{scale.worst.toFixed(2)}</div>
+        <div>
+          {scale.ranking.rankShell} {scale.ranking.rankParam}
         </div>
+        <div>{scale.best.toFixed(2)}</div>
       </div>
+      {/* Scale */}
       <div
         style={{
           position: 'relative',
@@ -813,7 +848,6 @@ export function ColorScale({
                   right: 100 - nextPercent + '%',
                   top: 0,
                   bottom: 0,
-                  // width: 100 / width + '%',
                   backgroundColor: color,
                 }}
               />
@@ -839,6 +873,7 @@ export function ColorScale({
           limitDown={0}
         />
       </div>
+      {/* Scale cursor values */}
       <div style={{ position: 'relative', height: 40 }}>
         <div
           style={{
@@ -865,6 +900,18 @@ export function ColorScale({
         >
           {currentBestScale.toFixed(2)}
         </div>
+      </div>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'center',
+          marginTop: -15,
+        }}
+      >
+        <Button variant="link" onClick={() => scale.resetScale()}>
+          Reset color scale to defaults
+        </Button>
       </div>
     </div>
   );

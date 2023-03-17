@@ -40,7 +40,7 @@ const DEFAULTS_SCALE: Record<
   },
 };
 
-function getDefault(
+function getDefaultSaved(
   shell: ResultRankShell,
   param: ResultRankParam,
   type: 'best' | 'worst',
@@ -51,7 +51,7 @@ function getDefault(
   if (value) {
     return Number(value);
   }
-  return DEFAULTS_SCALE[param][shell][type];
+  return undefined;
 }
 
 function saveDefault(
@@ -61,11 +61,24 @@ function saveDefault(
   value: number,
   refId?: number
 ) {
-  const currentDefault = getDefault(shell, param, type);
-  if (currentDefault !== value && currentDefault !== undefined) {
-    const key = `${shell}-${param}-${type}-${refId}`;
+  const currentDefault = getDefaultSaved(shell, param, type);
+  const key = `${shell}-${param}-${type}-${refId}`;
+  if (currentDefault !== value) {
     sessionStorage.setItem(key, value.toString());
   }
+  if (DEFAULTS_SCALE[param][shell][type] === value) {
+    sessionStorage.removeItem(key);
+  }
+}
+
+function clearSaveDefault(
+  shell: ResultRankShell,
+  param: ResultRankParam,
+  type: 'best' | 'worst',
+  refId?: number
+) {
+  const key = `${shell}-${param}-${type}-${refId}`;
+  sessionStorage.removeItem(key);
 }
 
 export type ProcColorScaleInformation = {
@@ -82,6 +95,7 @@ export type ProcColorScaleInformation = {
     forScale?: boolean
   ) => string;
   ranking: ReturnType<typeof useAutoProcRanking>;
+  resetScale: () => void;
 };
 
 export function useProcColorScale(
@@ -104,42 +118,62 @@ export function useProcColorScale(
   const best = sortedValues[0] || 0;
   const worst = sortedValues[sortedValues.length - 1] || 0;
 
-  const defaults = {
-    best: getDefault(ranking.rankShell, ranking.rankParam, 'best', refId),
-    worst: getDefault(ranking.rankShell, ranking.rankParam, 'worst', refId),
+  const getDefault = (type: 'best' | 'worst') => {
+    let defaultValue =
+      DEFAULTS_SCALE[ranking.rankParam][ranking.rankShell][type];
+    const saved = getDefaultSaved(
+      ranking.rankShell,
+      ranking.rankParam,
+      type,
+      refId
+    );
+    if (saved !== undefined) {
+      defaultValue = saved;
+    }
+    const value = type === 'best' ? best : worst;
+
+    if (defaultValue === undefined) {
+      return value;
+    }
+
+    const sorted = [defaultValue, value].sort((a, b) =>
+      compareRankingValues(a, b, ranking.rankParam)
+    );
+    return sorted[type === 'best' ? 1 : 0];
   };
 
-  const defaultScaleBest = defaults.best?.toString() || best.toString();
-  const defaultScaleWorst = defaults.worst?.toString() || worst.toString();
+  const defaultScaleBest = getDefault('best');
+  const defaultScaleWorst = getDefault('worst');
 
   const [scaleBest, setScaleBest] = usePersistentParamState<string>(
     'scaleBest',
-    defaultScaleBest
+    defaultScaleBest.toString()
   );
 
   const [scaleWorst, setScaleWorst] = usePersistentParamState<string>(
     'scaleWorst',
-    defaultScaleWorst
+    defaultScaleWorst.toString()
   );
 
   useEffect(() => {
-    setScaleBest(defaultScaleBest);
-    setScaleWorst(defaultScaleWorst);
+    setScaleBest(defaultScaleBest.toString());
+    setScaleWorst(defaultScaleWorst.toString());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ranking.rankParam, ranking.rankShell]);
 
-  const actualScaleBest = [best, Number(scaleBest)].sort((a, b) =>
-    compareRankingValues(a, b, ranking.rankParam)
-  )[1];
-  const actualScaleWorst = [worst, Number(scaleWorst)].sort((a, b) =>
-    compareRankingValues(a, b, ranking.rankParam)
-  )[0];
+  const resetScale = () => {
+    clearSaveDefault(ranking.rankShell, ranking.rankParam, 'best', refId);
+    clearSaveDefault(ranking.rankShell, ranking.rankParam, 'worst', refId);
+
+    setScaleBest(getDefault('best').toString());
+    setScaleWorst(getDefault('worst').toString());
+  };
 
   return {
     best,
     worst,
-    scaleWorst: actualScaleWorst,
-    scaleBest: actualScaleBest,
+    scaleWorst: Number(scaleWorst),
+    scaleBest: Number(scaleBest),
     setScaleWorst: (value: number) => {
       saveDefault(ranking.rankShell, ranking.rankParam, 'worst', value, refId);
       setScaleWorst(value.toFixed(2));
@@ -149,14 +183,15 @@ export function useProcColorScale(
       setScaleBest(value.toFixed(2));
     },
     ranking,
+    resetScale,
     getColor: (
       value: number,
       worstOverride?: number,
       bestOverride?: number,
       forScale?: boolean
     ) => {
-      const worst = worstOverride ?? actualScaleWorst;
-      const best = bestOverride ?? actualScaleBest;
+      const worst = worstOverride ?? Number(scaleWorst);
+      const best = bestOverride ?? Number(scaleBest);
       const order = getRankingOrder(ranking.rankParam);
       const min = order === 1 ? best : worst;
       const max = order === 1 ? worst : best;
