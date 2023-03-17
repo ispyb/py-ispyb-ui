@@ -891,6 +891,25 @@ function ScaleCursor({
 }) {
   const position = scaleValueToPercent(currentValue, scale);
 
+  const handleMove = (parent: HTMLElement, x: number) => {
+    const parentRect = parent.getBoundingClientRect();
+    const parentLeft = parentRect.left;
+    const parentRight = parentRect.right;
+    const parentWidth = parentRight - parentLeft;
+    const newX = x - parentLeft;
+    const percent = (newX / parentWidth) * 100;
+    const correctedPercent = Math.min(limitUp, Math.max(limitDown, percent));
+    const scaleValue = percentToScaleValue(correctedPercent, scale);
+    setCurrentValue(scaleValue);
+  };
+  const handleFinished = () => {
+    if (type === 'best') {
+      scale.setScaleBest(currentValue);
+    } else {
+      scale.setScaleWorst(currentValue);
+    }
+  };
+
   return (
     <div
       style={{
@@ -905,6 +924,22 @@ function ScaleCursor({
         cursor: 'ew-resize',
       }}
       draggable="true"
+      onTouchMove={(e) => {
+        if (!e.currentTarget.parentNode) {
+          return;
+        }
+        if (!(e.currentTarget.parentNode instanceof HTMLElement)) {
+          return;
+        }
+        const x = e.touches[0].clientX;
+        if (!x) {
+          return;
+        }
+        handleMove(e.currentTarget.parentNode as HTMLElement, x);
+      }}
+      onTouchEnd={(e) => {
+        handleFinished();
+      }}
       onDragStart={(e) => {
         e.dataTransfer.setDragImage(dragImg, 0, 0);
         e.dataTransfer.setData('type', type);
@@ -920,30 +955,10 @@ function ScaleCursor({
         if (!x) {
           return;
         }
-        const parentRect = (
-          e.currentTarget.parentNode as HTMLElement
-        ).getBoundingClientRect();
-        const parentLeft = parentRect.left;
-        const parentRight = parentRect.right;
-        const parentWidth = parentRight - parentLeft;
-        const newX = x - parentLeft;
-        const percent = (newX / parentWidth) * 100;
-        const correctedPercent = Math.min(
-          limitUp,
-          Math.max(limitDown, percent)
-        );
-        const scaleValue = percentToScaleValue(correctedPercent, scale);
-        setCurrentValue(scaleValue);
-      }}
-      onDragOver={(e) => {
-        console.log(e);
+        handleMove(e.currentTarget.parentNode as HTMLElement, x);
       }}
       onDragEnd={(e) => {
-        if (type === 'best') {
-          scale.setScaleBest(currentValue);
-        } else {
-          scale.setScaleWorst(currentValue);
-        }
+        handleFinished();
       }}
     >
       <div
