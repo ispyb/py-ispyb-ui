@@ -608,13 +608,6 @@ export function SampleInfo({
     }
   });
 
-  // const sortedValues = valuesWithoutUndefined.sort((a, b) =>
-  //   compareRankingValues(a, b, ranking.rankParam)
-  // );
-
-  // const bestOverall = sortedValues[0];
-  // const worstOverall = sortedValues[sortedValues.length - 1];
-
   const dcs = dataCollectionGroups.filter(
     (dcg) => dcg.BLSample_blSampleId === sample.blSampleId
   );
@@ -627,23 +620,6 @@ export function SampleInfo({
   const value = bestIntegration
     ? getRankingValue(bestIntegration, ranking.rankShell, ranking.rankParam)
     : undefined;
-
-  // const order = getRankingOrder(ranking.rankParam);
-
-  // const min = order === 1 ? bestOverall : worstOverall;
-  // const max = order === 1 ? worstOverall : bestOverall;
-  // const minColor =
-  //   order === 1
-  //     ? { red: 0, green: 255, blue: 0 }
-  //     : { red: 255, green: 0, blue: 0 };
-  // const maxColor =
-  //   order === 1
-  //     ? { red: 255, green: 0, blue: 0 }
-  //     : { red: 0, green: 255, blue: 0 };
-
-  // const color = value
-  //   ? ColourGradient(min, max, value, minColor, maxColor)
-  //   : undefined;
 
   const scale = useProcColorScale(rankedIntegrations);
 
@@ -791,6 +767,23 @@ export function ColorScale({
         style={{
           position: 'relative',
         }}
+        onDragOver={(e) => {
+          const type = e.dataTransfer.getData('type');
+          if (type === 'best' || type === 'worst') {
+            e.preventDefault();
+            const parent = e.currentTarget as HTMLElement;
+            const rect = parent.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const percent = (x / rect.width) * 100;
+            const value = percentToScaleValue(percent, scale);
+            if (type === 'best') {
+              setCurrentBestScale(value);
+            }
+            if (type === 'worst') {
+              setCurrentWorstScale(value);
+            }
+          }
+        }}
       >
         <div
           style={{
@@ -803,6 +796,7 @@ export function ColorScale({
         >
           {_.range(0, width).map((x) => {
             const percent = (x / width) * 100;
+            const nextPercent = ((x + 1) / width) * 100;
             const value = percentToScaleValue(percent, scale);
             const color = scale.getColor(
               value,
@@ -816,9 +810,10 @@ export function ColorScale({
                 style={{
                   position: 'absolute',
                   left: percent + '%',
+                  right: 100 - nextPercent + '%',
                   top: 0,
                   bottom: 0,
-                  width: 100 / width + '%',
+                  // width: 100 / width + '%',
                   backgroundColor: color,
                 }}
               />
@@ -874,6 +869,11 @@ export function ColorScale({
   );
 }
 
+//Preload empty image to put as drag image for the cursors
+const dragImg = document.createElement('img');
+dragImg.src =
+  'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+
 function ScaleCursor({
   type,
   scale,
@@ -890,29 +890,36 @@ function ScaleCursor({
   limitDown: number;
 }) {
   const position = scaleValueToPercent(currentValue, scale);
+
   return (
     <div
       style={{
+        paddingLeft: 5,
+        paddingRight: 5,
         position: 'absolute',
         left: position + '%',
         transform: 'translateX(-50%)',
         top: -5,
         bottom: -5,
-        width: 5,
-        backgroundColor: '#424242',
         zIndex: Number.MAX_SAFE_INTEGER,
         cursor: 'ew-resize',
-        borderRadius: 3,
       }}
       draggable="true"
       onDragStart={(e) => {
-        e.dataTransfer.setDragImage(new Image(), 0, 0);
+        e.dataTransfer.setDragImage(dragImg, 0, 0);
+        e.dataTransfer.setData('type', type);
       }}
       onDrag={(e) => {
-        if (!e.currentTarget.parentNode) return;
-        if (!(e.currentTarget.parentNode instanceof HTMLElement)) return;
-        const x = e.clientX;
-        if (!x) return;
+        if (!e.currentTarget.parentNode) {
+          return;
+        }
+        if (!(e.currentTarget.parentNode instanceof HTMLElement)) {
+          return;
+        }
+        const x = e.pageX;
+        if (!x) {
+          return;
+        }
         const parentRect = (
           e.currentTarget.parentNode as HTMLElement
         ).getBoundingClientRect();
@@ -928,6 +935,9 @@ function ScaleCursor({
         const scaleValue = percentToScaleValue(correctedPercent, scale);
         setCurrentValue(scaleValue);
       }}
+      onDragOver={(e) => {
+        console.log(e);
+      }}
       onDragEnd={(e) => {
         if (type === 'best') {
           scale.setScaleBest(currentValue);
@@ -935,6 +945,16 @@ function ScaleCursor({
           scale.setScaleWorst(currentValue);
         }
       }}
-    />
+    >
+      <div
+        style={{
+          width: 5,
+          backgroundColor: '#424242',
+          borderRadius: 3,
+          height: '100%',
+          zIndex: Number.MAX_SAFE_INTEGER,
+        }}
+      />
+    </div>
   );
 }
