@@ -729,7 +729,7 @@ export function ColorScale({
 }) {
   const scale = useProcColorScale(rankedIntegrations);
 
-  const width = 1000;
+  const width = 800;
 
   const [currentBestScale, setCurrentBestScale] = useState<number>(
     scale.scaleBest
