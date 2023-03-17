@@ -5,9 +5,7 @@ import { getDozorPlot } from 'legacy/api/ispyb';
 import ZoomImage from 'legacy/components/image/zoomimage';
 import {
   AutoProcIntegration,
-  compareRankingValues,
   getRankedResults,
-  getRankingOrder,
   getRankingValue,
 } from 'legacy/helpers/mx/results/resultparser';
 import {
@@ -36,6 +34,7 @@ import BestResultSection from '../datacollectiongroup/summarydatacollectiongroup
 import { DataCollectionGroup } from '../model';
 import {
   percentToScaleValue,
+  ProcColorScaleInformation,
   scaleValueToPercent,
   useProcColorScale,
 } from './ProcColourScale';
@@ -218,7 +217,7 @@ export function ShippingInfoLegend({
         })}
       </Row>
       <Row>
-        <div style={{ marginTop: 10, maxWidth: 500 }}>
+        <div style={{ marginTop: 10, maxWidth: 800 }}>
           <ColorScale rankedIntegrations={rankedIntegrations} />
         </div>
       </Row>
@@ -603,12 +602,12 @@ export function SampleInfo({
     }
   });
 
-  const sortedValues = valuesWithoutUndefined.sort((a, b) =>
-    compareRankingValues(a, b, ranking.rankParam)
-  );
+  // const sortedValues = valuesWithoutUndefined.sort((a, b) =>
+  //   compareRankingValues(a, b, ranking.rankParam)
+  // );
 
-  const bestOverall = sortedValues[0];
-  const worstOverall = sortedValues[sortedValues.length - 1];
+  // const bestOverall = sortedValues[0];
+  // const worstOverall = sortedValues[sortedValues.length - 1];
 
   const dcs = dataCollectionGroups.filter(
     (dcg) => dcg.BLSample_blSampleId === sample.blSampleId
@@ -623,26 +622,26 @@ export function SampleInfo({
     ? getRankingValue(bestIntegration, ranking.rankShell, ranking.rankParam)
     : undefined;
 
-  const order = getRankingOrder(ranking.rankParam);
+  // const order = getRankingOrder(ranking.rankParam);
 
-  const min = order === 1 ? bestOverall : worstOverall;
-  const max = order === 1 ? worstOverall : bestOverall;
-  const minColor =
-    order === 1
-      ? { red: 0, green: 255, blue: 0 }
-      : { red: 255, green: 0, blue: 0 };
-  const maxColor =
-    order === 1
-      ? { red: 255, green: 0, blue: 0 }
-      : { red: 0, green: 255, blue: 0 };
+  // const min = order === 1 ? bestOverall : worstOverall;
+  // const max = order === 1 ? worstOverall : bestOverall;
+  // const minColor =
+  //   order === 1
+  //     ? { red: 0, green: 255, blue: 0 }
+  //     : { red: 255, green: 0, blue: 0 };
+  // const maxColor =
+  //   order === 1
+  //     ? { red: 255, green: 0, blue: 0 }
+  //     : { red: 0, green: 255, blue: 0 };
 
-  const color = value
-    ? ColourGradient(min, max, value, minColor, maxColor)
-    : undefined;
+  // const color = value
+  //   ? ColourGradient(min, max, value, minColor, maxColor)
+  //   : undefined;
 
-  const border = color
-    ? `rgb(${color.red},${color.green},${color.blue})`
-    : colors.border;
+  const scale = useProcColorScale(rankedIntegrations);
+
+  const border = value ? scale.getColor(value) : colors.border;
 
   const popover = (
     <Popover
@@ -764,123 +763,9 @@ export function ColorScale({
 
   return (
     <div>
-      <div
-        style={{
-          height: 20,
-          position: 'relative',
-          border: '1px solid black',
-          borderRadius: 5,
-          overflow: 'hidden',
-        }}
-      >
-        {_.range(0, width).map((x) => {
-          const percent = (x / width) * 100;
-          const value = percentToScaleValue(percent, scale);
-          const color = scale.getColor(value);
-          return (
-            <div
-              key={x}
-              style={{
-                position: 'absolute',
-                left: percent + '%',
-                top: 0,
-                bottom: 0,
-                width: 100 / width + 0.01 + '%',
-                backgroundColor: color,
-              }}
-            />
-          );
-        })}
-        {/* cursor */}
+      <div>
         <div
           style={{
-            position: 'absolute',
-            right: 100 - scaleValueToPercent(currentBestScale, scale) + '%',
-            top: 0,
-            bottom: 0,
-            width: 5,
-            backgroundColor: 'black',
-            zIndex: Number.MAX_SAFE_INTEGER,
-            cursor: 'ew-resize',
-          }}
-          draggable="true"
-          onDragStart={(e) => {
-            e.dataTransfer.setDragImage(new Image(), 0, 0);
-          }}
-          onDrag={(e) => {
-            if (!e.currentTarget.parentNode) return;
-            if (!(e.currentTarget.parentNode instanceof HTMLElement)) return;
-            const x = e.clientX;
-            if (!x) return;
-            const parentRect = (
-              e.currentTarget.parentNode as HTMLElement
-            ).getBoundingClientRect();
-            const parentLeft = parentRect.left;
-            const parentRight = parentRect.right;
-            const parentWidth = parentRight - parentLeft;
-            const newX = x - parentLeft;
-            const percent = newX / parentWidth;
-            const correctedPercent = Math.min(0.95, Math.max(0.05, percent));
-            const scaleValue = percentToScaleValue(
-              correctedPercent * 100,
-              scale
-            );
-            setCurrentBestScale(scaleValue);
-          }}
-          onDragEnd={(e) => {
-            scale.setScaleBest(currentBestScale);
-          }}
-        />
-        <div
-          style={{
-            position: 'absolute',
-            left: scaleValueToPercent(currentWorstScale, scale) + '%',
-            top: 0,
-            bottom: 0,
-            width: 5,
-            backgroundColor: 'black',
-            zIndex: Number.MAX_SAFE_INTEGER,
-            cursor: 'ew-resize',
-          }}
-          draggable="true"
-          onDragStart={(e) => {
-            e.dataTransfer.setDragImage(new Image(), 0, 0);
-          }}
-          onDrag={(e) => {
-            if (!e.currentTarget.parentNode) return;
-            if (!(e.currentTarget.parentNode instanceof HTMLElement)) return;
-            const x = e.clientX;
-            if (!x) return;
-            const parentRect = (
-              e.currentTarget.parentNode as HTMLElement
-            ).getBoundingClientRect();
-            const parentLeft = parentRect.left;
-            const parentRight = parentRect.right;
-            const parentWidth = parentRight - parentLeft;
-            const newX = x - parentLeft;
-            const percent = newX / parentWidth;
-            const correctedPercent = Math.min(0.95, Math.max(0.05, percent));
-            const scaleValue = percentToScaleValue(
-              correctedPercent * 100,
-              scale
-            );
-            // setCurrentWorstScale(scaleValue);
-            scale.setScaleWorst(scaleValue);
-          }}
-          onDragEnd={(e) => {
-            scale.setScaleWorst(currentWorstScale);
-          }}
-        />
-      </div>
-      <div
-        style={{
-          height: 20,
-          position: 'relative',
-        }}
-      >
-        <div
-          style={{
-            position: 'absolute',
             left: 0,
             top: 0,
             bottom: 0,
@@ -896,49 +781,154 @@ export function ColorScale({
           <div>{scale.best}</div>
         </div>
       </div>
+      <div
+        style={{
+          position: 'relative',
+        }}
+      >
+        <div
+          style={{
+            height: 30,
+            position: 'relative',
+            border: '1px solid black',
+            borderRadius: 5,
+            overflow: 'hidden',
+          }}
+        >
+          {_.range(0, width).map((x) => {
+            const percent = (x / width) * 100;
+            const value = percentToScaleValue(percent, scale);
+            const color = scale.getColor(
+              value,
+              currentWorstScale,
+              currentBestScale,
+              true
+            );
+            return (
+              <div
+                key={x}
+                style={{
+                  position: 'absolute',
+                  left: percent + '%',
+                  top: 0,
+                  bottom: 0,
+                  width: 100 / width + '%',
+                  backgroundColor: color,
+                }}
+              />
+            );
+          })}
+        </div>
+
+        {/* cursors */}
+        <ScaleCursor
+          type={'best'}
+          scale={scale}
+          currentValue={currentBestScale}
+          setCurrentValue={setCurrentBestScale}
+          limitUp={100}
+          limitDown={scaleValueToPercent(currentWorstScale, scale) + 1}
+        />
+        <ScaleCursor
+          type={'worst'}
+          scale={scale}
+          currentValue={currentWorstScale}
+          setCurrentValue={setCurrentWorstScale}
+          limitUp={scaleValueToPercent(currentBestScale, scale) - 1}
+          limitDown={0}
+        />
+      </div>
+      <div style={{ position: 'relative', height: 40 }}>
+        <div
+          style={{
+            position: 'absolute',
+            left: scaleValueToPercent(currentWorstScale, scale) + '%',
+            transform: 'translateX(-50%)',
+          }}
+        >
+          {currentWorstScale.toFixed(2)}
+        </div>
+        <div
+          style={{
+            position: 'absolute',
+            left: scaleValueToPercent(currentBestScale, scale) + '%',
+            transform: 'translateX(-50%)',
+            bottom:
+              scaleValueToPercent(currentBestScale, scale) -
+                scaleValueToPercent(currentWorstScale, scale) <=
+              10
+                ? 0
+                : undefined,
+          }}
+        >
+          {currentBestScale.toFixed(2)}
+        </div>
+      </div>
     </div>
   );
 }
 
-/** Valid values are from 0 to 255 (inclusive) */
-export interface Colour {
-  red: number;
-  blue: number;
-  green: number;
-}
-
-/** Calculates an intermediary colour between 2 or 3 colours.
- * @returns {Colour} Object with red, green, and blue number fields.
- * @example -> {red: 123, blue: 255, green: 0}
- */
-export default function ColourGradient(
-  min: number,
-  max: number,
-  current: number,
-  colorA: Colour,
-  colorB: Colour,
-  colorC?: Colour
-): Colour {
-  let color_progression;
-  if (current >= max) color_progression = 1;
-  else color_progression = (current - min) / (max - min); // Standardize as decimal [0-1 (inc)].
-  if (colorC) {
-    color_progression *= 2;
-    if (color_progression >= 1) {
-      color_progression -= 1;
-      colorA = colorB;
-      colorB = colorC;
-    }
-  }
-
-  const newRed = colorA.red + color_progression * (colorB.red - colorA.red);
-  const newGreen =
-    colorA.green + color_progression * (colorB.green - colorA.green);
-  const newBlue = colorA.blue + color_progression * (colorB.blue - colorA.blue);
-
-  const red = Math.floor(newRed);
-  const green = Math.floor(newGreen);
-  const blue = Math.floor(newBlue);
-
-  return { red, green, blue };
+function ScaleCursor({
+  type,
+  scale,
+  currentValue,
+  setCurrentValue,
+  limitUp,
+  limitDown,
+}: {
+  type: 'best' | 'worst';
+  scale: ProcColorScaleInformation;
+  currentValue: number;
+  setCurrentValue: React.Dispatch<React.SetStateAction<number>>;
+  limitUp: number;
+  limitDown: number;
+}) {
+  const position = scaleValueToPercent(currentValue, scale);
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        left: position + '%',
+        transform: 'translateX(-50%)',
+        top: -5,
+        bottom: -5,
+        width: 5,
+        backgroundColor: '#424242',
+        zIndex: Number.MAX_SAFE_INTEGER,
+        cursor: 'ew-resize',
+        borderRadius: 3,
+      }}
+      draggable="true"
+      onDragStart={(e) => {
+        e.dataTransfer.setDragImage(new Image(), 0, 0);
+      }}
+      onDrag={(e) => {
+        if (!e.currentTarget.parentNode) return;
+        if (!(e.currentTarget.parentNode instanceof HTMLElement)) return;
+        const x = e.clientX;
+        if (!x) return;
+        const parentRect = (
+          e.currentTarget.parentNode as HTMLElement
+        ).getBoundingClientRect();
+        const parentLeft = parentRect.left;
+        const parentRight = parentRect.right;
+        const parentWidth = parentRight - parentLeft;
+        const newX = x - parentLeft;
+        const percent = (newX / parentWidth) * 100;
+        const correctedPercent = Math.min(
+          limitUp,
+          Math.max(limitDown, percent)
+        );
+        const scaleValue = percentToScaleValue(correctedPercent, scale);
+        setCurrentValue(scaleValue);
+      }}
+      onDragEnd={(e) => {
+        if (type === 'best') {
+          scale.setScaleBest(currentValue);
+        } else {
+          scale.setScaleWorst(currentValue);
+        }
+      }}
+    />
+  );
 }

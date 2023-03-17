@@ -5,6 +5,8 @@ import {
   compareRankingValues,
   getRankingOrder,
   getRankingValue,
+  ResultRankParam,
+  ResultRankShell,
 } from 'legacy/helpers/mx/results/resultparser';
 import { useEffect } from 'react';
 
@@ -12,21 +14,82 @@ function valuesWithoutUndefineds(values: (number | undefined)[]) {
   return values.filter((v) => v !== undefined) as number[];
 }
 
-export type ProcCoulorScaleInformation = {
+const DEFAULTS_SCALE: Record<
+  ResultRankParam,
+  Record<ResultRankShell, Record<'worst' | 'best', number | undefined>>
+> = {
+  Rmerge: {
+    Inner: { worst: 15, best: 5 },
+    Outer: { worst: 50, best: 30 },
+    Overall: { worst: 15, best: 10 },
+  },
+  '<I/Sigma>': {
+    Inner: { worst: 5, best: 10 },
+    Outer: { worst: 0.5, best: 1.5 },
+    Overall: { worst: 5, best: 10 },
+  },
+  'cc(1/2)': {
+    Inner: { worst: 0.9, best: 0.99 },
+    Outer: { worst: 0.1, best: 0.4 },
+    Overall: { worst: 0.9, best: 0.95 },
+  },
+  ccAno: {
+    Inner: { worst: 30, best: 80 },
+    Outer: { worst: 0, best: 10 },
+    Overall: { worst: 0, best: 30 },
+  },
+};
+
+function getDefault(
+  shell: ResultRankShell,
+  param: ResultRankParam,
+  type: 'best' | 'worst',
+  refId?: number
+) {
+  const key = `${shell}-${param}-${type}-${refId}`;
+  const value = sessionStorage.getItem(key);
+  if (value) {
+    return Number(value);
+  }
+  return DEFAULTS_SCALE[param][shell][type];
+}
+
+function saveDefault(
+  shell: ResultRankShell,
+  param: ResultRankParam,
+  type: 'best' | 'worst',
+  value: number,
+  refId?: number
+) {
+  const currentDefault = getDefault(shell, param, type);
+  if (currentDefault !== value && currentDefault !== undefined) {
+    const key = `${shell}-${param}-${type}-${refId}`;
+    sessionStorage.setItem(key, value.toString());
+  }
+}
+
+export type ProcColorScaleInformation = {
   best: number;
   worst: number;
   scaleWorst: number;
   scaleBest: number;
   setScaleWorst: (value: number) => void;
   setScaleBest: (value: number) => void;
-  getColor: (value: number) => string;
+  getColor: (
+    value: number,
+    worstOverride?: number,
+    bestOverride?: number,
+    forScale?: boolean
+  ) => string;
   ranking: ReturnType<typeof useAutoProcRanking>;
 };
 
 export function useProcColorScale(
   rankedIntegrations: AutoProcIntegration[]
-): ProcCoulorScaleInformation {
+): ProcColorScaleInformation {
   const ranking = useAutoProcRanking();
+
+  const refId = rankedIntegrations[0]?.id;
 
   const values = valuesWithoutUndefineds(
     rankedIntegrations.map((r) =>
@@ -41,27 +104,29 @@ export function useProcColorScale(
   const best = sortedValues[0] || 0;
   const worst = sortedValues[sortedValues.length - 1] || 0;
 
+  const defaults = {
+    best: getDefault(ranking.rankShell, ranking.rankParam, 'best', refId),
+    worst: getDefault(ranking.rankShell, ranking.rankParam, 'worst', refId),
+  };
+
+  const defaultScaleBest = defaults.best?.toString() || best.toString();
+  const defaultScaleWorst = defaults.worst?.toString() || worst.toString();
+
   const [scaleBest, setScaleBest] = usePersistentParamState<string>(
     'scaleBest',
-    best.toString()
+    defaultScaleBest
   );
 
   const [scaleWorst, setScaleWorst] = usePersistentParamState<string>(
     'scaleWorst',
-    worst.toString()
+    defaultScaleWorst
   );
 
   useEffect(() => {
-    setScaleBest(best.toString());
-    setScaleWorst(worst.toString());
-  }, [
-    best,
-    ranking.rankParam,
-    ranking.rankShell,
-    setScaleBest,
-    setScaleWorst,
-    worst,
-  ]);
+    setScaleBest(defaultScaleBest);
+    setScaleWorst(defaultScaleWorst);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ranking.rankParam, ranking.rankShell]);
 
   const actualScaleBest = [best, Number(scaleBest)].sort((a, b) =>
     compareRankingValues(a, b, ranking.rankParam)
@@ -69,6 +134,29 @@ export function useProcColorScale(
   const actualScaleWorst = [worst, Number(scaleWorst)].sort((a, b) =>
     compareRankingValues(a, b, ranking.rankParam)
   )[0];
+
+  useEffect(() => {
+    saveDefault(
+      ranking.rankShell,
+      ranking.rankParam,
+      'best',
+      actualScaleBest,
+      refId
+    );
+    saveDefault(
+      ranking.rankShell,
+      ranking.rankParam,
+      'worst',
+      actualScaleWorst,
+      refId
+    );
+  }, [
+    ranking.rankParam,
+    ranking.rankShell,
+    actualScaleBest,
+    actualScaleWorst,
+    refId,
+  ]);
 
   return {
     best,
@@ -78,10 +166,17 @@ export function useProcColorScale(
     setScaleWorst: (value: number) => setScaleWorst(value.toFixed(2)),
     setScaleBest: (value: number) => setScaleBest(value.toFixed(2)),
     ranking,
-    getColor: (value: number) => {
+    getColor: (
+      value: number,
+      worstOverride?: number,
+      bestOverride?: number,
+      forScale?: boolean
+    ) => {
+      const worst = worstOverride ?? actualScaleWorst;
+      const best = bestOverride ?? actualScaleBest;
       const order = getRankingOrder(ranking.rankParam);
-      const min = order === 1 ? actualScaleBest : actualScaleWorst;
-      const max = order === 1 ? actualScaleWorst : actualScaleBest;
+      const min = order === 1 ? best : worst;
+      const max = order === 1 ? worst : best;
       const minColor =
         order === 1
           ? { red: 0, green: 255, blue: 0 }
@@ -91,7 +186,17 @@ export function useProcColorScale(
           ? { red: 255, green: 0, blue: 0 }
           : { red: 0, green: 255, blue: 0 };
 
-      const color = ColourGradient(min, max, value, minColor, maxColor);
+      const yellow = { red: 255, green: 255, blue: 0 };
+
+      const color = ColourGradient(min, max, value, minColor, yellow, maxColor);
+
+      if (forScale && (value <= min || value >= max)) {
+        const add = 220;
+        return `rgba(${safeColorValue(color.red + add)},${safeColorValue(
+          color.green + add
+        )},${safeColorValue(color.blue + add)})`;
+      }
+
       return `rgb(${color.red},${color.green},${color.blue})`;
     },
   };
@@ -99,21 +204,26 @@ export function useProcColorScale(
 
 export function percentToScaleValue(
   percent: number,
-  scale: ProcCoulorScaleInformation
+  scale: ProcColorScaleInformation
 ) {
   const range = scale.best - scale.worst;
   const value = scale.worst + range * (percent / 100);
-  //   console.log(value);
   return value;
 }
 
 export function scaleValueToPercent(
   value: number,
-  scale: ProcCoulorScaleInformation
+  scale: ProcColorScaleInformation
 ) {
   const range = scale.best - scale.worst;
   const percent = ((value - scale.worst) / range) * 100;
   return percent;
+}
+
+function safeColorValue(value: number) {
+  if (value > 255) return 255;
+  if (value < 0) return 0;
+  return value;
 }
 
 export interface Colour {
@@ -151,9 +261,9 @@ export default function ColourGradient(
     colorA.green + color_progression * (colorB.green - colorA.green);
   const newBlue = colorA.blue + color_progression * (colorB.blue - colorA.blue);
 
-  const red = Math.floor(newRed);
-  const green = Math.floor(newGreen);
-  const blue = Math.floor(newBlue);
+  const red = safeColorValue(Math.floor(newRed));
+  const green = safeColorValue(Math.floor(newGreen));
+  const blue = safeColorValue(Math.floor(newBlue));
 
   return { red, green, blue };
 }
