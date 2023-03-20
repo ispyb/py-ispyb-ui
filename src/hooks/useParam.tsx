@@ -52,8 +52,8 @@ export function usePersistentParamState<T extends string = string>(
   }, [declareParam, cleanParam, paramName]);
 
   const value = useMemo(() => {
-    return getValue(paramName) || defaultValue;
-  }, [getValue, paramName, defaultValue]) as T;
+    return (getValue(paramName) || defaultValue) as T;
+  }, [getValue, paramName, defaultValue]);
 
   const update = useCallback(
     (value?: T) => {
@@ -88,17 +88,22 @@ export function PersistentParamStateProvider({
   const [usedParams, setUsedParams] = useState<Record<string, number>>({});
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const searchParamsObj = Object.fromEntries(searchParams);
-  const [values, setValues] = useState<Record<string, string>>(searchParamsObj);
+  const [values, setValues] = useState<Record<string, string>>(
+    Object.fromEntries(searchParams)
+  );
 
   useEffect(() => {
+    const searchParamsObj = Object.fromEntries(searchParams);
+
     let updateValues = false;
     let updateParams = false;
 
-    const newValues = { ...values };
+    const newValues = { ...searchParamsObj, ...values };
     const newParams = {
       ...searchParamsObj,
     };
+
+    console.log(newValues);
 
     // Check all values to see if they are still used by a component or if they need to be updated in the url
     Object.entries(values).forEach(([name, value]) => {
@@ -114,13 +119,16 @@ export function PersistentParamStateProvider({
         newParams[name] = value;
       }
     });
+    if (JSON.stringify(newValues) !== JSON.stringify(values)) {
+      updateValues = true;
+    }
     if (updateValues) {
       setValues(newValues);
     }
     if (updateParams) {
       setSearchParams(newParams, { replace: true });
     }
-  }, [values, usedParams, searchParamsObj, setSearchParams]);
+  }, [values, usedParams, searchParams, setSearchParams]);
 
   // counts how many components are using a param
   const declareParam = useCallback(

@@ -39,8 +39,15 @@ export default function MXDataCollectionGroupPage() {
   if (isError) throw Error(isError);
   const [compact, setCompact] = useState(false);
   const compactToggle = new Subject<boolean>();
-  const [filterContainers, setFilterContainers] = useState(false);
-  const [selectedGroups, setSelectedGroups] = useState([] as number[]);
+
+  const [filterSamples, setFilterSamples] = usePersistentParamState<
+    'true' | 'false'
+  >('filterSamples', 'false');
+
+  const [selectedSamples, setSelectedSamples] = usePersistentParamState<string>(
+    'samples',
+    'all'
+  );
   const [filterMR, setFilterMR] = usePersistentParamState<'true' | 'false'>(
     'filterMR',
     'false'
@@ -63,13 +70,14 @@ export default function MXDataCollectionGroupPage() {
       .sort()
       .value();
 
-    const filteredDataCollectionGroupsByContainer = filterContainers
-      ? dataCollectionGroups.filter(
-          (g) =>
-            g.DataCollection_dataCollectionGroupId &&
-            selectedGroups.includes(g.DataCollection_dataCollectionGroupId)
-        )
-      : dataCollectionGroups;
+    const filteredDataCollectionGroupsByContainer =
+      filterSamples === 'true'
+        ? dataCollectionGroups.filter(
+            (g) =>
+              g.BLSample_name &&
+              selectedSamples.split(',').includes(g.BLSample_name)
+          )
+        : dataCollectionGroups;
 
     const filteredDataCollectionGroups =
       filteredDataCollectionGroupsByContainer.filter(
@@ -139,10 +147,10 @@ export default function MXDataCollectionGroupPage() {
                 style={{ margin: 1 }}
                 size="sm"
                 type="checkbox"
-                variant={filterContainers ? 'outline-primary' : 'light'}
-                checked={filterContainers}
+                variant={filterSamples === 'true' ? 'outline-primary' : 'light'}
+                checked={filterSamples === 'true'}
                 onClick={() => {
-                  setFilterContainers(!filterContainers);
+                  setFilterSamples(filterSamples === 'true' ? 'false' : 'true');
                 }}
                 value={''}
               >
@@ -202,11 +210,11 @@ export default function MXDataCollectionGroupPage() {
             </OverlayTrigger>
           </ButtonGroup>
         </div>
-        {filterContainers && (
+        {filterSamples === 'true' && (
           <ContainerFilter
-            setSelectedGroups={setSelectedGroups}
+            setSelectedSamples={setSelectedSamples}
             dataCollectionGroups={dataCollectionGroups}
-            selectedGroups={selectedGroups}
+            selectedSamples={selectedSamples}
             containerIds={containerIds}
             sessionId={sessionId}
             proposalName={proposalName}

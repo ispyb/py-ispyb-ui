@@ -8,7 +8,7 @@ import {
   ResultRankParam,
   ResultRankShell,
 } from 'legacy/helpers/mx/results/resultparser';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 function valuesWithoutUndefineds(values: (number | undefined)[]) {
   return values.filter((v) => v !== undefined) as number[];
@@ -64,7 +64,7 @@ function saveDefault(
   const currentDefault = getDefaultSaved(shell, param, type);
   const key = `${shell}-${param}-${type}-${refId}`;
   if (currentDefault !== value) {
-    sessionStorage.setItem(key, value.toString());
+    sessionStorage.setItem(key, value.toFixed(2));
   }
   if (DEFAULTS_SCALE[param][shell][type] === value) {
     sessionStorage.removeItem(key);
@@ -155,9 +155,17 @@ export function useProcColorScale(
     defaultScaleWorst.toString()
   );
 
+  const [rankingParamsKey, setRankingParamsKey] = useState(
+    `${ranking.rankParam}-${ranking.rankShell}`
+  );
+
   useEffect(() => {
-    setScaleBest(defaultScaleBest.toString());
-    setScaleWorst(defaultScaleWorst.toString());
+    const newRankingParamsKey = `${ranking.rankParam}-${ranking.rankShell}`;
+    if (rankingParamsKey !== newRankingParamsKey) {
+      setScaleBest(defaultScaleBest.toString());
+      setScaleWorst(defaultScaleWorst.toString());
+      setRankingParamsKey(newRankingParamsKey);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ranking.rankParam, ranking.rankShell]);
 

@@ -31,6 +31,7 @@ import {
   Popover,
   Row,
 } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 import BestResultSection from '../datacollectiongroup/summarydatacollectiongroup/autoprocintegrationsection';
 import { DataCollectionGroup } from '../model';
 import {
@@ -637,6 +638,8 @@ export function SampleInfo({
     rankedIntegrations
   );
 
+  const navigate = useNavigate();
+
   const colors = getSampleColors(statuses);
 
   const ranking = useAutoProcRanking();
@@ -726,6 +729,9 @@ export function SampleInfo({
 
   const disabledColor = '#b5b5b5';
 
+  const onClick = () => {
+    navigate(`../collection?filterSamples=true&samples=${sample.name}`);
+  };
   return (
     <>
       <OverlayTrigger
@@ -746,7 +752,9 @@ export function SampleInfo({
             }`,
             borderRadius: 15,
             color: colors.color,
+            cursor: 'pointer',
           }}
+          onClick={onClick}
         >
           <small className="text-center">{sample.location}</small>
         </div>

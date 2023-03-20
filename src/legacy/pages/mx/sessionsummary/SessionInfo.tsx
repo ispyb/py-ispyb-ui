@@ -3,6 +3,7 @@ import {
   addHours,
   formatDuration,
   intervalToDuration,
+  roundToNearestMinutes,
   setMinutes,
 } from 'date-fns';
 import {
@@ -54,22 +55,31 @@ export function SessionInfo({
   });
 
   const bookedTime = intervalToDuration({
-    start: parseDate(session?.BLSession_startDate),
-    end: parseDate(session?.BLSession_endDate),
+    start: roundToNearestMinutes(parseDate(session?.BLSession_startDate)),
+    end: roundToNearestMinutes(parseDate(session?.BLSession_endDate)),
   });
 
-  const usedTime = intervalToDuration({
-    start:
-      dataCollectionGroups?.reduce((acc, dcg) => {
-        const v = parseDate(dcg.DataCollectionGroup_startTime).getTime();
-        return acc < v ? acc : v;
-      }, Date.now()) || Date.now(),
-    end:
-      dataCollectionGroups?.reduce((acc, dcg) => {
-        const v = parseDate(dcg.DataCollectionGroup_endTime).getTime();
-        return acc > v ? acc : v;
-      }, parseDate(session?.BLSession_startDate).getTime()) || Date.now(),
-  });
+  const useTimeStart = dataCollectionGroups?.length
+    ? _(dataCollectionGroups)
+        .filter((dcg) => dcg.DataCollectionGroup_startTime !== null)
+        .map((dcg) => parseDate(dcg.DataCollectionGroup_startTime).getTime())
+        .min()
+    : undefined;
+
+  const useTimeEnd = dataCollectionGroups?.length
+    ? _(dataCollectionGroups)
+        .filter((dcg) => dcg.DataCollectionGroup_endTime !== null)
+        .map((dcg) => parseDate(dcg.DataCollectionGroup_endTime).getTime())
+        .max()
+    : undefined;
+
+  const usedTime =
+    useTimeStart && useTimeEnd
+      ? intervalToDuration({
+          start: roundToNearestMinutes(useTimeStart),
+          end: roundToNearestMinutes(useTimeEnd),
+        })
+      : undefined;
 
   const duration = _(dataCollectionGroups)
     .map((dcg) => {
@@ -131,7 +141,10 @@ export function SessionInfo({
         <MetadataRow
           properties={[
             { title: 'Booked time', content: formatDuration(bookedTime) },
-            { title: 'Used time', content: formatDuration(usedTime) },
+            {
+              title: 'Used time',
+              content: usedTime ? formatDuration(usedTime) : 'none',
+            },
             {
               title: 'Effective beamtime used',
               content: formatDuration(effectiveDuration),

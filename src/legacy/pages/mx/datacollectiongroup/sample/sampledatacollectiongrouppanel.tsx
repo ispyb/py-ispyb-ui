@@ -117,9 +117,11 @@ export default function SampleDataCollectionGroupPanel({
         {dataCollectionGroup.Container_containerId && (
           <Suspense fallback={<LoadingPanel></LoadingPanel>}>
             <MXContainer
-              selectedGroups={[
-                dataCollectionGroup.DataCollection_dataCollectionGroupId || 0,
-              ]}
+              selectedSamples={
+                dataCollectionGroup.BLSample_name
+                  ? [dataCollectionGroup.BLSample_name]
+                  : []
+              }
               containerId={String(dataCollectionGroup.Container_containerId)}
               sessionId={sessionId}
               proposalName={proposalName}

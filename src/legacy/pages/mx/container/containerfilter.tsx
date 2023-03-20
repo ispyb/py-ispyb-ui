@@ -6,6 +6,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LazyWrapper from 'legacy/components/loading/lazywrapper';
 import LoadingPanel from 'legacy/components/loading/loadingpanel';
+import _ from 'lodash';
 import { Suspense, useState } from 'react';
 import {
   Row,
@@ -21,38 +22,36 @@ import { MXContainer } from './mxcontainer';
 export default function ContainerFilter({
   proposalName,
   sessionId,
-  setSelectedGroups = () => undefined,
-  selectedGroups = [],
+  setSelectedSamples = () => undefined,
+  selectedSamples = 'all',
   containerIds,
   dataCollectionGroups,
 }: {
   containerIds: (number | undefined)[];
   proposalName: string;
   sessionId: string;
-  selectedGroups?: number[];
+  selectedSamples?: string;
   // eslint-disable-next-line no-unused-vars
-  setSelectedGroups?: (ids: number[]) => void;
+  setSelectedSamples?: (v: string) => void;
   dataCollectionGroups: DataCollectionGroup[];
 }) {
   const [selectMultiple, setSelectMultiple] = useState(false);
 
-  const addSelectedGroups = (ids: number[]) => {
-    const newSelected = selectMultiple ? selectedGroups.slice() : [];
-    newSelected.push(...ids);
-    setSelectedGroups(newSelected);
+  const addSelectedSample = (name: string) => {
+    const newSelected = selectMultiple ? selectedSamples.split(',') : [];
+    newSelected.push(name);
+    setSelectedSamples(newSelected.filter((s) => s !== 'all').join(','));
   };
 
-  const removeSelectedGroups = (ids: number[]) => {
+  const removeSelectedSample = (name: string) => {
     if (selectMultiple) {
-      const newSelected = selectedGroups.slice();
-      for (const i of ids) {
-        newSelected.splice(newSelected.indexOf(i), 1);
-      }
-      setSelectedGroups(newSelected);
+      const newSelected = selectedSamples.split(',').filter((s) => s !== name);
+      setSelectedSamples(newSelected.join(','));
     } else {
-      setSelectedGroups([]);
+      setSelectedSamples('all');
     }
   };
+
   return (
     <Col>
       <Row>
@@ -73,7 +72,7 @@ export default function ContainerFilter({
                 checked={true}
                 onClick={() => {
                   if (selectMultiple) {
-                    setSelectedGroups([]);
+                    setSelectedSamples('all');
                   }
                   setSelectMultiple(!selectMultiple);
                 }}
@@ -97,12 +96,11 @@ export default function ContainerFilter({
                 checked={true}
                 onClick={() => {
                   setSelectMultiple(true);
-                  setSelectedGroups(
+                  setSelectedSamples(
                     dataCollectionGroups
-                      .filter((g) => Boolean(g.Container_containerId))
-                      .map(
-                        (g) => g.DataCollectionGroup_dataCollectionGroupId || 0
-                      )
+                      .filter((g) => g.BLSample_name !== undefined)
+                      .map((g) => g.BLSample_name)
+                      .join(',') || 'all'
                   );
                 }}
                 value={''}
@@ -124,7 +122,7 @@ export default function ContainerFilter({
                 variant={'light'}
                 checked={true}
                 onClick={() => {
-                  setSelectedGroups([]);
+                  setSelectedSamples('all');
                 }}
                 value={''}
               >
@@ -139,26 +137,37 @@ export default function ContainerFilter({
         </Col>
       </Row>
       <Row style={{ margin: 10 }}>
-        {containerIds.map((id) => {
-          return (
-            id && (
-              <Col>
-                <LazyWrapper>
-                  <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-                    <MXContainer
-                      addSelectedGroups={addSelectedGroups}
-                      removeSelectedGroups={removeSelectedGroups}
-                      selectedGroups={selectedGroups}
-                      containerId={String(id)}
-                      sessionId={sessionId}
-                      proposalName={proposalName}
-                    ></MXContainer>
-                  </Suspense>
-                </LazyWrapper>
-              </Col>
-            )
-          );
-        })}
+        {_(containerIds)
+          .sortBy((c) => c)
+          .map((c) => {
+            return (
+              c && (
+                <Col>
+                  <LazyWrapper>
+                    <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+                      <MXContainer
+                        onSampleClick={(s) => {
+                          const isSelected = selectedSamples
+                            .split(',')
+                            .includes(s.BLSample_name);
+                          if (isSelected) {
+                            removeSelectedSample(s.BLSample_name);
+                          } else {
+                            addSelectedSample(s.BLSample_name);
+                          }
+                        }}
+                        selectedSamples={selectedSamples.split(',')}
+                        containerId={c.toString()}
+                        sessionId={sessionId}
+                        proposalName={proposalName}
+                      ></MXContainer>
+                    </Suspense>
+                  </LazyWrapper>
+                </Col>
+              )
+            );
+          })
+          .value()}
       </Row>
     </Col>
   );
