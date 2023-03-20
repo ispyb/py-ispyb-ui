@@ -215,7 +215,7 @@ export function ContainerColors() {
         <strong>Containers:</strong>
       </Col>
       {sampleStatus.map((status) => {
-        const colors = getSampleColors([status, 'collected dataset']);
+        const colors = getSampleColors([status, 'dataset']);
         return (
           <Col key={status} xs={'auto'}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
@@ -470,11 +470,11 @@ export function ContainerInfo({
 }
 
 const sampleStatus = [
-  'not collected',
-  'collected',
-  'collected dataset',
-  'processed',
-  'phasing',
+  'not analysed',
+  'analysed',
+  'dataset',
+  'autoprocessed',
+  'phased',
 ] as const;
 type SampleStatus = typeof sampleStatus[number];
 
@@ -503,18 +503,18 @@ function getSampleStatuses(
   const res: SampleStatus[] = [];
 
   if (phasing) {
-    res.push('phasing');
+    res.push('phased');
   }
   if (processed) {
-    res.push('processed');
+    res.push('autoprocessed');
   }
   if (dataset) {
-    res.push('collected dataset');
+    res.push('dataset');
   }
   if (collected) {
-    res.push('collected');
+    res.push('analysed');
   } else {
-    res.push('not collected');
+    res.push('not analysed');
   }
   return res;
 }
@@ -528,22 +528,22 @@ const sampleStatusColors: Record<
     underline?: boolean;
   }
 > = {
-  'not collected': {
+  'not analysed': {
     background: 'white',
     color: 'black',
   },
-  collected: {
+  analysed: {
     background: '#d4e4bc',
     color: 'black',
   },
-  'collected dataset': {
+  dataset: {
     background: '#36558f',
     color: 'white',
   },
-  processed: {
+  autoprocessed: {
     border: 'rgb(0,255,0)',
   },
-  phasing: {
+  phased: {
     underline: true,
   },
 };
@@ -583,7 +583,7 @@ export function SamplesStatistics({
       <Col xs={'auto'}>
         <small>
           <i>
-            <strong>total samples:</strong> {samples.length}
+            <strong>Samples shipped:</strong> {samples.length}
           </i>
         </small>
       </Col>

@@ -1,3 +1,4 @@
+import { HelpIcon } from 'components/Common/HelpIcon';
 import { MetadataRow } from 'components/Events/Metadata';
 import {
   addHours,
@@ -54,46 +55,6 @@ export function SessionInfo({
     sessionId,
   });
 
-  const bookedTime = intervalToDuration({
-    start: roundToNearestMinutes(parseDate(session?.BLSession_startDate)),
-    end: roundToNearestMinutes(parseDate(session?.BLSession_endDate)),
-  });
-
-  const useTimeStart = dataCollectionGroups?.length
-    ? _(dataCollectionGroups)
-        .filter((dcg) => dcg.DataCollectionGroup_startTime !== null)
-        .map((dcg) => parseDate(dcg.DataCollectionGroup_startTime).getTime())
-        .min()
-    : undefined;
-
-  const useTimeEnd = dataCollectionGroups?.length
-    ? _(dataCollectionGroups)
-        .filter((dcg) => dcg.DataCollectionGroup_endTime !== null)
-        .map((dcg) => parseDate(dcg.DataCollectionGroup_endTime).getTime())
-        .max()
-    : undefined;
-
-  const usedTime =
-    useTimeStart && useTimeEnd
-      ? intervalToDuration({
-          start: roundToNearestMinutes(useTimeStart),
-          end: roundToNearestMinutes(useTimeEnd),
-        })
-      : undefined;
-
-  const duration = _(dataCollectionGroups)
-    .map((dcg) => {
-      const start = parseDate(dcg.DataCollectionGroup_startTime);
-      const end = parseDate(dcg.DataCollectionGroup_endTime);
-      return end.getTime() - start.getTime();
-    })
-    .sum();
-
-  const effectiveDuration = intervalToDuration({
-    start: 0,
-    end: duration || 0,
-  });
-
   const datasets = dataCollectionGroups?.filter(isDataset) || [];
 
   return (
@@ -111,55 +72,64 @@ export function SessionInfo({
           </Col>
         </Row>
         <MetadataRow
+          truncate={false}
+          auto
           properties={[
             { title: 'Beamline operator', content: session?.beamLineOperator },
+            {
+              title: 'Samples analysed',
+              content: (
+                <>
+                  {
+                    _(dataCollectionGroups)
+                      .map((dcg) => dcg.BLSample_name)
+                      .uniq()
+                      .value().length
+                  }
+                  <HelpIcon
+                    style={{ marginLeft: 10 }}
+                    message="This is the number of samples which have been analysed whether or not they gave a result."
+                  />
+                </>
+              ),
+            },
+            {
+              title: 'Datasets',
+              content: (
+                <>
+                  {datasets.length +
+                    ' (autoprocessed ' +
+                    datasets?.filter((dc) => {
+                      return dc.scalingStatisticsTypes !== undefined;
+                    }).length +
+                    ')'}
+                  <HelpIcon
+                    style={{ marginLeft: 10 }}
+                    message="This is the number of samples for which a complete dataset (with oscillation) has been collected."
+                  />
+                </>
+              ),
+            },
             {
               title: 'Data collections',
               content: dataCollectionGroups?.length,
             },
-            {
-              title: 'Datasets',
-              content:
-                datasets.length +
-                ' (auto processed ' +
-                datasets?.filter((dc) => {
-                  return dc.scalingStatisticsTypes !== undefined;
-                }).length +
-                ')',
-            },
             { title: 'Energy scans', content: energyScans?.length },
             { title: 'Fluorescence spectras', content: spectras?.length },
-            {
-              title: 'Sample analyzed',
-              content: _(dataCollectionGroups)
-                .map((dcg) => dcg.BLSample_name)
-                .uniq()
-                .value().length,
-            },
           ]}
         ></MetadataRow>
-        <MetadataRow
-          properties={[
-            { title: 'Booked time', content: formatDuration(bookedTime) },
-            {
-              title: 'Used time',
-              content: usedTime ? formatDuration(usedTime) : 'none',
-            },
-            {
-              title: 'Effective beamtime used',
-              content: formatDuration(effectiveDuration),
-            },
-          ]}
-        />
+
         {session && (
-          <Row>
-            <SessionTimeLine
-              dataCollectionGroups={dataCollectionGroups || []}
-              energyScans={energyScans || []}
-              fluorescenceSpectras={spectras || []}
-              session={session}
-            />
-          </Row>
+          <>
+            <Row style={{ marginBottom: '1rem' }}>
+              <SessionTimeLine
+                dataCollectionGroups={dataCollectionGroups || []}
+                energyScans={energyScans || []}
+                fluorescenceSpectras={spectras || []}
+                session={session}
+              />
+            </Row>
+          </>
         )}
       </Col>
     </Container>
@@ -216,37 +186,126 @@ export function SessionTimeLine({
         } as TimelineEvent)
     )
     .value();
+
+  const bookedTime = intervalToDuration({
+    start: roundToNearestMinutes(parseDate(session?.BLSession_startDate)),
+    end: roundToNearestMinutes(parseDate(session?.BLSession_endDate)),
+  });
+
+  const useTimeStart = dataCollectionGroups?.length
+    ? _(dataCollectionGroups)
+        .filter((dcg) => dcg.DataCollectionGroup_startTime !== null)
+        .map((dcg) => parseDate(dcg.DataCollectionGroup_startTime).getTime())
+        .min()
+    : undefined;
+
+  const useTimeEnd = dataCollectionGroups?.length
+    ? _(dataCollectionGroups)
+        .filter((dcg) => dcg.DataCollectionGroup_endTime !== null)
+        .map((dcg) => parseDate(dcg.DataCollectionGroup_endTime).getTime())
+        .max()
+    : undefined;
+
+  const usedTime =
+    useTimeStart && useTimeEnd
+      ? intervalToDuration({
+          start: roundToNearestMinutes(useTimeStart),
+          end: roundToNearestMinutes(useTimeEnd),
+        })
+      : undefined;
+
+  const duration = _(dataCollectionGroups)
+    .map((dcg) => {
+      const start = parseDate(dcg.DataCollectionGroup_startTime);
+      const end = parseDate(dcg.DataCollectionGroup_endTime);
+      return end.getTime() - start.getTime();
+    })
+    .sum();
+
+  const effectiveDuration = intervalToDuration({
+    start: 0,
+    end: duration || 0,
+  });
   return (
     <Col>
       <strong>Session timeline</strong>
       <div
         style={{
-          width: '100%',
-          position: 'relative',
-          paddingBottom: 30,
-          paddingTop: 30,
+          backgroundColor: 'rgb(238,238,238)',
+          borderRadius: 5,
+          border: '1px solid lightgrey',
+          padding: 10,
         }}
       >
         <div
           style={{
-            border: '1px solid gray',
-            borderRadius: 5,
             width: '100%',
-            height: 30,
             position: 'relative',
-            overflow: 'hidden',
+            paddingBottom: 30,
+            paddingTop: 30,
           }}
         >
-          {buildEventsElements(
+          <div
+            style={{
+              border: '1px solid gray',
+              borderRadius: 5,
+              width: '100%',
+              height: 30,
+              position: 'relative',
+              overflow: 'hidden',
+              backgroundColor: 'white',
+            }}
+          >
+            {buildEventsElements(
+              [...collections, ...scans, ...spects],
+              start,
+              end
+            )}
+          </div>
+          {buildTicksElements(
+            [...collections, ...scans, ...spects],
+            start,
+            end
+          )}
+          {buildLabelElements(
             [...collections, ...scans, ...spects],
             start,
             end
           )}
         </div>
-        {buildTicksElements([...collections, ...scans, ...spects], start, end)}
-        {buildLabelElements([...collections, ...scans, ...spects], start, end)}
+        <TimelineLegend />
+        <div style={{ borderTop: '1px solid grey', margin: 10 }} />
+        <Row>
+          <Col>
+            <strong>Booked time: </strong>
+            <i>{formatDuration(bookedTime)}</i>
+          </Col>
+          <Col>
+            <strong>Used time: </strong>
+            <i>
+              <>
+                {usedTime ? formatDuration(usedTime) : 'none'}
+                <HelpIcon
+                  style={{ marginLeft: 10 }}
+                  message="Time between first and last data collection"
+                />
+              </>
+            </i>
+          </Col>
+          <Col>
+            <strong>Effective beamtime used: </strong>
+            <i>
+              <>
+                {formatDuration(effectiveDuration)}
+                <HelpIcon
+                  style={{ marginLeft: 10 }}
+                  message="Cumulative data collection duration"
+                />
+              </>
+            </i>
+          </Col>
+        </Row>
       </div>
-      <TimelineLegend />
     </Col>
   );
 }

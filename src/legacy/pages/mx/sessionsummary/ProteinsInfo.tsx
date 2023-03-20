@@ -264,7 +264,7 @@ function StatisticsSection({
   rankedIntegrations: AutoProcIntegration[];
 }) {
   const spacegroups = _(rankedIntegrations)
-    .map((i) => i.spaceGroup)
+    .map((i) => i.spaceGroup.trim())
     .uniq()
     .value();
 
@@ -299,7 +299,7 @@ function StatisticsSection({
               .reverse()
               .map((sg) => {
                 const sgIntegrations = rankedIntegrations.filter(
-                  (i) => i.spaceGroup === sg
+                  (i) => i.spaceGroup.trim() === sg
                 );
                 const collections = _.uniq(
                   sgIntegrations.map((i) => i.dataCollectionId)
@@ -376,8 +376,6 @@ function StatisticsSection({
                             {samples.length} sample
                             {samples.length > 1 ? 's' : ''}
                           </i>
-                          <br />
-                          <i>{samples.join(', ')}</i>
                         </>
                       )}
                     </Card.Header>
