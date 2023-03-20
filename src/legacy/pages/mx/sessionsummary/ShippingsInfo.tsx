@@ -214,7 +214,7 @@ export function ContainerColors() {
   return (
     <Row>
       <Col xs={'auto'} style={{ display: 'flex', alignItems: 'center' }}>
-        <strong>Containers:</strong>
+        <strong>Samples:</strong>
       </Col>
       {sampleStatus.map((status) => {
         const colors = getSampleColors([status, 'dataset']);
