@@ -379,6 +379,7 @@ function EventElement({
       onEnter={() => setActive(true)}
       onExit={() => setActive(false)}
       placement="bottom"
+      trigger={['hover', 'focus']}
       overlay={
         <Popover id="popover-basic">
           <Popover.Body>
