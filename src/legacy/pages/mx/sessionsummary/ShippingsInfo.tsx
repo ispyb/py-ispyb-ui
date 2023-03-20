@@ -29,6 +29,7 @@ import {
   Button,
   Col,
   Container,
+  Form,
   OverlayTrigger,
   Popover,
   Row,
@@ -807,9 +808,36 @@ export function ColorScale({
     scale.scaleWorst
   );
 
+  const [currentWorstScaleText, setCurrentWorstScaleText] = useState<string>(
+    currentWorstScale.toFixed(2)
+  );
+  const isValidBestScale = (v: number) => {
+    const percent = scaleValueToPercent(v, scale);
+    const currentWorstPercent = scaleValueToPercent(currentWorstScale, scale);
+    return percent >= currentWorstPercent && percent <= 100;
+  };
+  const isValidWorstScale = (v: number) => {
+    const percent = scaleValueToPercent(v, scale);
+    const currentBestPercent = scaleValueToPercent(currentBestScale, scale);
+    return percent <= currentBestPercent && percent >= 0;
+  };
+
+  const [currentBestScaleText, setCurrentBestScaleText] = useState<string>(
+    currentBestScale.toFixed(2)
+  );
+
+  const updateCurrentBestScale = (v: number) => {
+    setCurrentBestScaleText(v.toFixed(2));
+    setCurrentBestScale(v);
+  };
+  const updateCurrentWorstScale = (v: number) => {
+    setCurrentWorstScaleText(v.toFixed(2));
+    setCurrentWorstScale(v);
+  };
+
   useEffect(() => {
-    setCurrentBestScale(scale.scaleBest);
-    setCurrentWorstScale(scale.scaleWorst);
+    updateCurrentBestScale(scale.scaleBest);
+    updateCurrentWorstScale(scale.scaleWorst);
   }, [scale.scaleBest, scale.scaleWorst]);
 
   return (
@@ -847,10 +875,10 @@ export function ColorScale({
             const percent = (x / rect.width) * 100;
             const value = percentToScaleValue(percent, scale);
             if (type === 'best') {
-              setCurrentBestScale(value);
+              updateCurrentBestScale(value);
             }
             if (type === 'worst') {
-              setCurrentWorstScale(value);
+              updateCurrentWorstScale(value);
             }
           }
         }}
@@ -895,7 +923,7 @@ export function ColorScale({
           type={'best'}
           scale={scale}
           currentValue={currentBestScale}
-          setCurrentValue={setCurrentBestScale}
+          setCurrentValue={updateCurrentBestScale}
           limitUp={100}
           limitDown={scaleValueToPercent(currentWorstScale, scale) + 1}
         />
@@ -903,7 +931,7 @@ export function ColorScale({
           type={'worst'}
           scale={scale}
           currentValue={currentWorstScale}
-          setCurrentValue={setCurrentWorstScale}
+          setCurrentValue={updateCurrentWorstScale}
           limitUp={scaleValueToPercent(currentBestScale, scale) - 1}
           limitDown={0}
         />
@@ -914,26 +942,101 @@ export function ColorScale({
           style={{
             position: 'absolute',
             left: scaleValueToPercent(currentWorstScale, scale) + '%',
-            transform: 'translateX(-50%)',
-          }}
-        >
-          {currentWorstScale.toFixed(2)}
-        </div>
-        <div
-          key={currentBestScale}
-          style={{
-            position: 'absolute',
-            left: scaleValueToPercent(currentBestScale, scale) + '%',
-            transform: 'translateX(-50%)',
-            bottom:
+            transform:
               scaleValueToPercent(currentBestScale, scale) -
                 scaleValueToPercent(currentWorstScale, scale) <=
               10
-                ? 0
-                : undefined,
+                ? 'translateX(-100%)'
+                : 'translateX(-50%)',
+            display: 'flex',
+            flexDirection: 'row',
+            top: 2,
+            alignItems: 'center',
           }}
         >
-          {currentBestScale.toFixed(2)}
+          <Form.Control
+            size="sm"
+            className="text-center"
+            value={currentWorstScaleText}
+            style={{
+              width: `${currentWorstScaleText.toString().length + 3}ch`,
+            }}
+            onInput={(e) => {
+              setCurrentWorstScaleText(e.currentTarget.value);
+            }}
+          ></Form.Control>
+          {currentWorstScaleText !== currentWorstScale.toFixed(2) && (
+            <>
+              {Number.isNaN(parseFloat(currentWorstScaleText)) ||
+              !isValidWorstScale(parseFloat(currentWorstScaleText)) ? (
+                <span style={{ color: 'red' }}>Invalid</span>
+              ) : (
+                <Button
+                  style={{ padding: 0 }}
+                  variant="link"
+                  onClick={() => {
+                    const value = parseFloat(currentWorstScaleText);
+                    if (!isNaN(value)) {
+                      updateCurrentWorstScale(value);
+                      scale.setScaleWorst(value);
+                    }
+                  }}
+                >
+                  Set
+                </Button>
+              )}
+            </>
+          )}
+        </div>
+        <div
+          style={{
+            position: 'absolute',
+            left: scaleValueToPercent(currentBestScale, scale) + '%',
+            transform:
+              scaleValueToPercent(currentBestScale, scale) -
+                scaleValueToPercent(currentWorstScale, scale) <=
+              10
+                ? 'translateX(0%)'
+                : 'translateX(-50%)',
+            display: 'flex',
+            flexDirection: 'row',
+            top: 2,
+            alignItems: 'center',
+          }}
+        >
+          <Form.Control
+            size="sm"
+            className="text-center"
+            value={currentBestScaleText}
+            style={{
+              width: `${currentBestScaleText.toString().length + 3}ch`,
+            }}
+            onInput={(e) => {
+              setCurrentBestScaleText(e.currentTarget.value);
+            }}
+          ></Form.Control>
+          {currentBestScaleText !== currentBestScale.toFixed(2) && (
+            <>
+              {Number.isNaN(parseFloat(currentBestScaleText)) ||
+              !isValidBestScale(parseFloat(currentBestScaleText)) ? (
+                <span style={{ color: 'red' }}>Invalid</span>
+              ) : (
+                <Button
+                  style={{ padding: 0 }}
+                  variant="link"
+                  onClick={() => {
+                    const value = parseFloat(currentBestScaleText);
+                    if (!isNaN(value)) {
+                      updateCurrentBestScale(value);
+                      scale.setScaleBest(value);
+                    }
+                  }}
+                >
+                  Set
+                </Button>
+              )}
+            </>
+          )}
         </div>
       </div>
       <div
@@ -968,7 +1071,7 @@ function ScaleCursor({
   type: 'best' | 'worst';
   scale: ProcColorScaleInformation;
   currentValue: number;
-  setCurrentValue: React.Dispatch<React.SetStateAction<number>>;
+  setCurrentValue: (v: number) => void;
   limitUp: number;
   limitDown: number;
 }) {
