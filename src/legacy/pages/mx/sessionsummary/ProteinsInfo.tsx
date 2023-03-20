@@ -39,6 +39,7 @@ export function ProteinsInfo({
   });
   const proteins = _(dataCollectionGroups || [])
     .map((dcg) => dcg.Protein_acronym)
+    .filter((p) => p !== undefined)
     .uniq()
     .sort()
     .value();
@@ -66,7 +67,7 @@ export function ProteinsInfo({
 
   const { data: integrations } = useAutoProc({
     proposalName,
-    dataCollectionId: programDcIds,
+    dataCollectionId: programDcIds || 'none',
   });
 
   const rankedIntegrations = getRankedResults(

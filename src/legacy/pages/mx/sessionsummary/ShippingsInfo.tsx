@@ -73,9 +73,10 @@ export function ShippingsInfo({
     .uniq()
     .sort()
     .join(',');
+
   const { data: integrations } = useAutoProc({
     proposalName,
-    dataCollectionId: dcIds,
+    dataCollectionId: dcIds || 'none',
   });
 
   const rankedIntegrations = getRankedResults(
@@ -90,6 +91,7 @@ export function ShippingsInfo({
     'All',
     ..._(dataCollectionGroups || [])
       .map((dcg) => dcg.Protein_acronym)
+      .filter((p) => p !== undefined)
       .uniq()
       .sort()
       .value(),

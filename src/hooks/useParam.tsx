@@ -95,7 +95,6 @@ export function PersistentParamStateProvider({
   useEffect(() => {
     const searchParamsObj = Object.fromEntries(searchParams);
 
-    let updateValues = false;
     let updateParams = false;
 
     const newValues = { ...searchParamsObj, ...values };
@@ -103,13 +102,10 @@ export function PersistentParamStateProvider({
       ...searchParamsObj,
     };
 
-    console.log(newValues);
-
     // Check all values to see if they are still used by a component or if they need to be updated in the url
-    Object.entries(values).forEach(([name, value]) => {
+    Object.entries(newValues).forEach(([name, value]) => {
       if (usedParams[name] === 0) {
         // if the param is not used by any component anymore, remove it from the state and the url
-        updateValues = true;
         updateParams = true;
         delete newValues[name];
         delete newParams[name];
@@ -120,9 +116,6 @@ export function PersistentParamStateProvider({
       }
     });
     if (JSON.stringify(newValues) !== JSON.stringify(values)) {
-      updateValues = true;
-    }
-    if (updateValues) {
       setValues(newValues);
     }
     if (updateParams) {
