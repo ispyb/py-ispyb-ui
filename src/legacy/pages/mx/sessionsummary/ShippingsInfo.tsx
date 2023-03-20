@@ -9,11 +9,13 @@ import {
   getRankedResults,
   getRankingValue,
 } from 'legacy/helpers/mx/results/resultparser';
+import { getBeamline, getSampleChanger } from 'legacy/helpers/mx/samplehelper';
 import {
   useAutoProc,
   useMXDataCollectionsBy,
   useShipping,
 } from 'legacy/hooks/ispyb';
+import { useBeamlinesObjects } from 'legacy/hooks/site';
 import {
   ShippingContainer,
   ShippingDewar,
@@ -409,6 +411,16 @@ export function ContainerInfo({
 }) {
   const samples = container.sampleVOs;
 
+  const beamlines = useBeamlinesObjects('MX');
+
+  const beamline = getBeamline(beamlines, container.beamlineLocation || '');
+
+  const changer = getSampleChanger(beamline?.sampleChangerType);
+
+  const pos = container.sampleChangerLocation
+    ? changer?.getPosition(Number(container.sampleChangerLocation))
+    : undefined;
+  const posStr = pos ? `${pos.cell + 1}-${pos.position + 1}` : '';
   if (!samples.length) return null;
 
   return (
@@ -425,7 +437,10 @@ export function ContainerInfo({
         <Col>
           <Row>
             <Col xs={'auto'}>
-              <i>Puck {container.code}</i>
+              <i>
+                Puck {container.code}
+                {pos ? <strong> [Mounted at {posStr}]</strong> : ''}
+              </i>
             </Col>
             <Col xs={'auto'}>
               {!onlyOnePuck && (
@@ -533,7 +548,7 @@ const sampleStatusColors: Record<
     color: 'black',
   },
   analysed: {
-    background: '#d4e4bc',
+    background: '#a9ddff',
     color: 'black',
   },
   dataset: {
