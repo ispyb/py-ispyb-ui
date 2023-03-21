@@ -962,7 +962,9 @@ export function ColorScale({
               width: `${currentWorstScaleText.toString().length + 3}ch`,
             }}
             onInput={(e) => {
-              setCurrentWorstScaleText(e.currentTarget.value);
+              setCurrentWorstScaleText(
+                e.currentTarget.value.replaceAll(/[^0-9.-]/g, '')
+              );
             }}
           ></Form.Control>
           {currentWorstScaleText !== currentWorstScale.toFixed(2) && (
@@ -1012,7 +1014,9 @@ export function ColorScale({
               width: `${currentBestScaleText.toString().length + 3}ch`,
             }}
             onInput={(e) => {
-              setCurrentBestScaleText(e.currentTarget.value);
+              setCurrentBestScaleText(
+                e.currentTarget.value.replaceAll(/[^0-9.-]/g, '')
+              );
             }}
           ></Form.Control>
           {currentBestScaleText !== currentBestScale.toFixed(2) && (
