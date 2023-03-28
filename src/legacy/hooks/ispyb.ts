@@ -171,10 +171,13 @@ export function useSessions(
 }
 
 export function useSession(
-  { sessionId }: { sessionId: string },
+  { proposalName, sessionId }: { proposalName: string; sessionId: string },
   options?: GetHookOption
 ) {
-  return useGet(getSessionById(sessionId).url, options);
+  return useGet<Session[]>(
+    getSessionById(proposalName, sessionId).url,
+    options
+  );
 }
 
 export function useEMDataCollectionsBy(

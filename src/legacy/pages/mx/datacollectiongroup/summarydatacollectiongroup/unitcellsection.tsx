@@ -167,17 +167,17 @@ function UnitCellTable({
           <tr>
             {show_cell_a && (
               <td>
-                <small>{toNumber(cell_a)} Å</small>
+                <small>{toNumber(cell_a) || cell_a} Å</small>
               </td>
             )}
             {show_cell_b && (
               <td>
-                <small>{toNumber(cell_b)} Å</small>
+                <small>{toNumber(cell_b) || cell_b} Å</small>
               </td>
             )}
             {show_cell_c && (
               <td>
-                <small>{toNumber(cell_c)} Å</small>
+                <small>{toNumber(cell_c) || cell_c} Å</small>
               </td>
             )}
           </tr>
@@ -215,17 +215,17 @@ function UnitCellTable({
           <tr>
             {show_cell_alpha && (
               <td>
-                <small>{toNumber(cell_alpha)} °</small>
+                <small>{toNumber(cell_alpha) || cell_alpha} °</small>
               </td>
             )}
             {show_cell_beta && (
               <td>
-                <small>{toNumber(cell_beta)} °</small>
+                <small>{toNumber(cell_beta) || cell_beta} °</small>
               </td>
             )}
             {show_cell_gamma && (
               <td>
-                <small>{toNumber(cell_gamma)} °</small>
+                <small>{toNumber(cell_gamma) || cell_gamma} °</small>
               </td>
             )}
           </tr>

@@ -45,8 +45,10 @@ export function getProposals() {
   return { url: `/proposal/list` };
 }
 
-export function getSessionById(sessionId: string | undefined) {
-  return { url: `/proposal/session/${sessionId}` };
+export function getSessionById(proposalName: string, sessionId: string) {
+  return {
+    url: `/proposal/${proposalName}/session/sessionId/${sessionId}/list`,
+  };
 }
 
 export function getMXDataCollectionsBy({

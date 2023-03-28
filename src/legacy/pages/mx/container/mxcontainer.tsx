@@ -21,23 +21,19 @@ export function MXContainer({
   sessionId,
   containerId,
   containerType,
-  removeSelectedGroups = undefined,
-  addSelectedGroups = undefined,
-  selectedGroups = [],
+  selectedSamples = [],
   showInfo = true,
   onContainerClick = undefined,
+  onSampleClick,
 }: {
   proposalName: string;
   sessionId?: string;
   containerId: string;
   containerType?: containerType;
-  selectedGroups?: number[];
   showInfo?: boolean;
   onContainerClick?: () => void;
-  // eslint-disable-next-line no-unused-vars
-  removeSelectedGroups?: (ids: number[]) => void;
-  // eslint-disable-next-line no-unused-vars
-  addSelectedGroups?: (ids: number[]) => void;
+  selectedSamples?: string[];
+  onSampleClick?: (sample: Sample) => void;
 }) {
   const { data: samples, isError: isErrorContainer } = useMXContainers({
     proposalName,
@@ -80,18 +76,6 @@ export function MXContainer({
               sampleArray.length &&
               sampleArray.filter((s) => Number(sessionId) === s?.sessionId);
           }
-          const collectionIds =
-            collected &&
-            collected.length &&
-            collected
-              .map((s) => s.DataCollectionGroup_dataCollectionGroupId)
-              .filter((id) => id);
-          const selected =
-            collectionIds &&
-            collectionIds.length &&
-            _(collectionIds)
-              .map((i) => selectedGroups.includes(i))
-              .reduce((a, b) => a && b, true);
 
           const refSample =
             collected && collected.length
@@ -100,16 +84,15 @@ export function MXContainer({
               ? sampleArray[0]
               : undefined;
 
-          const onClick =
-            removeSelectedGroups && addSelectedGroups
-              ? () => {
-                  if (collectionIds) {
-                    selected
-                      ? removeSelectedGroups(collectionIds)
-                      : addSelectedGroups(collectionIds);
-                  }
-                }
-              : undefined;
+          const sampleName = refSample?.BLSample_name;
+
+          const selected = sampleName && selectedSamples.includes(sampleName);
+
+          const onClick = () => {
+            if (refSample && onSampleClick) {
+              onSampleClick(refSample);
+            }
+          };
 
           return (
             <SampleSVG
@@ -391,6 +374,7 @@ function SampleSVG({
       <circle
         pointerEvents={clickableContainer ? 'none' : undefined}
         onClick={onClick}
+        cursor={onClick && !clickableContainer ? 'pointer' : undefined}
         className={className}
         cx={position.x}
         cy={position.y}

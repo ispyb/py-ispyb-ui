@@ -1,4 +1,4 @@
-import { Suspense, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import {
   OverlayTrigger,
   Tooltip,
@@ -43,7 +43,7 @@ type Props = {
   proposalName: string;
   dataCollectionGroup: DataCollectionGroup;
   defaultCompact: boolean;
-  compactToggle: Subject<boolean>;
+  compactToggle?: Subject<boolean>;
   selectedPipelines: string[];
   resultRankShell: ResultRankShell;
   resultRankParam: ResultRankParam;
@@ -67,11 +67,14 @@ export default function DataCollectionGroupPanel({
   resultRankParam,
 }: Props) {
   const [compact, setCompact] = useState(defaultCompact);
-  compactToggle.subscribe({
-    next: (value) => {
-      setCompact(value);
-    },
-  });
+
+  useEffect(() => {
+    compactToggle?.subscribe({
+      next: (value) => {
+        setCompact(value);
+      },
+    });
+  }, [compactToggle, setCompact]);
 
   const { data: procs } = useAutoProc({
     proposalName,
@@ -87,9 +90,6 @@ export default function DataCollectionGroupPanel({
       selectedPipelines.includes(v.program) || selectedPipelines.length === 0
   );
 
-  if (pipelines.filter((p) => p.status === 'SUCCESS').length === 7) {
-    console.log(pipelines);
-  }
   return (
     <Tab.Container
       activeKey={compact ? 'Summary' : undefined}
@@ -306,9 +306,6 @@ export default function DataCollectionGroupPanel({
           <ProcessingSummary
             proposalName={proposalName}
             dataCollectionGroup={dataCollectionGroup}
-            selectedPipelines={selectedPipelines}
-            resultRankParam={resultRankParam}
-            resultRankShell={resultRankShell}
           />
         </Suspense>
       </Card>

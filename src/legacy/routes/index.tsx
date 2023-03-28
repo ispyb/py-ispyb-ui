@@ -5,6 +5,7 @@ import {
   BreadcrumbComponentType,
   BreadcrumbMatch,
 } from 'use-react-router-breadcrumbs';
+import MXSessionPage from '../pages/mx/mxsessionpage';
 
 const SessionClassificationPage = React.lazy(() =>
   import(
@@ -33,6 +34,13 @@ const SessionStatisticsPage = React.lazy(() =>
       default: m.SessionStatisticsPage,
     })
   )
+);
+const MXSessionSummaryPage = React.lazy(() =>
+  import(
+    'legacy/pages/mx/sessionsummary' /* webpackChunkName: "legacy_mx_summary" */
+  ).then((m) => ({
+    default: m.MXSessionSummaryPage,
+  }))
 );
 const MXDataCollectionGroupPage = React.lazy(() =>
   import(
@@ -200,8 +208,10 @@ const javaRoutes: TitledBreadcrumbsRoute[] = [
           { path: 'prepare', element: <PrepareExperimentPage /> },
           {
             path: ':sessionId',
+            element: <MXSessionPage />,
             children: [
-              { path: 'summary', element: <MXDataCollectionGroupPage /> },
+              { path: 'summary', element: <MXSessionSummaryPage /> },
+              { path: 'collection', element: <MXDataCollectionGroupPage /> },
               {
                 path: 'energy',
                 element: <MXEnergyScanPage />,
