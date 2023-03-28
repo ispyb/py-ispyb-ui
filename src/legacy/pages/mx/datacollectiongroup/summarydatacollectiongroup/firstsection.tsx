@@ -16,7 +16,7 @@ export default function FirstSection({
     DataCollection_numberOfImages,
     totalNumberOfImages,
     transmission,
-    DataCollection_numberOfPasses,
+    DataCollection_dataCollectionNumber,
   } = dataCollectionGroup;
   const parameters = compact
     ? [
@@ -32,7 +32,7 @@ export default function FirstSection({
         { key: 'Protein', value: Protein_acronym },
         { key: 'Sample', value: BLSample_name },
         { key: 'Prefix', value: DataCollection_imagePrefix },
-        { key: 'Run', value: DataCollection_numberOfPasses },
+        { key: 'Run', value: DataCollection_dataCollectionNumber },
         {
           key: '# Images (Total)',
           value: `${DataCollection_numberOfImages} (${totalNumberOfImages})`,
