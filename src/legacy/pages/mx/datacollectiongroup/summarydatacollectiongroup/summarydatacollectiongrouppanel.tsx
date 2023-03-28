@@ -14,6 +14,7 @@ import {
   ResultRankShell,
 } from 'legacy/helpers/mx/results/resultparser';
 import { PhasingSummary } from '../phasing/phasingSummary';
+import { CopyValue } from 'components/Common/CopyValue';
 
 export interface Props {
   proposalName: string;
@@ -33,7 +34,36 @@ export default function SummaryDataCollectionGroupPanel({
   resultRankParam,
 }: Props) {
   return (
-    <>
+    <Col>
+      {dataCollectionGroup.DataCollection_imageDirectory && (
+        <Row style={{ marginBottom: '1rem' }}>
+          <Col
+            xs={'auto'}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '1rem',
+            }}
+          >
+            <strong>Path:</strong>
+          </Col>
+          <Col
+            xs={'auto'}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 0,
+            }}
+          >
+            <CopyValue
+              value={dataCollectionGroup.DataCollection_imageDirectory}
+            />
+          </Col>
+        </Row>
+      )}
+
       <Row>
         <Col xs={12} md={6} xl={4} xxl={3}>
           <FirstSection
@@ -120,6 +150,6 @@ export default function SummaryDataCollectionGroupPanel({
           <p>{dataCollectionGroup.DataCollectionGroup_comments}</p>
         </Row>
       )}
-    </>
+    </Col>
   );
 }
