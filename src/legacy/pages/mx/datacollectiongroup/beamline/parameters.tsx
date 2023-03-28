@@ -302,7 +302,7 @@ export function Collection({
     },
     {
       title: 'Run',
-      content: dataCollectionGroup.DataCollection_numberOfPasses,
+      content: dataCollectionGroup.DataCollection_dataCollectionNumber,
     },
     {
       title: '# Images (Total)',
