@@ -1,7 +1,7 @@
 import SessionTableMenu from 'legacy/pages/session/sessiontablemenu';
 import SessionTableColumns from 'legacy/pages/session/sessiontablecolumns';
 import { Session } from 'legacy/pages/model';
-import { Alert } from 'react-bootstrap';
+import { Alert, Container } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import {
@@ -71,7 +71,7 @@ export default function SessionTable({
   });
 
   return (
-    <>
+    <Container>
       <SessionTableMenu
         startDate={startDate}
         setStartDate={setStartDate}
@@ -101,6 +101,6 @@ export default function SessionTable({
           No session found.
         </Alert>
       )}
-    </>
+    </Container>
   );
 }

@@ -1,5 +1,11 @@
 import { Proposal } from 'legacy/pages/model';
-import { Badge, Button, Row, Tooltip, OverlayTrigger } from 'react-bootstrap';
+import {
+  Badge,
+  Button,
+  Tooltip,
+  OverlayTrigger,
+  Container,
+} from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
@@ -55,9 +61,9 @@ export default function ProposalTable({
   });
 
   return (
-    <Row style={{ maxWidth: 1000, margin: 'auto' }}>
+    <Container>
       <TanstackBootstrapTable table={table} />
-    </Row>
+    </Container>
   );
 }
 

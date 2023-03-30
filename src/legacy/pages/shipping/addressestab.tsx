@@ -1,4 +1,5 @@
 import { useLabContacts } from 'legacy/hooks/ispyb';
+import { Container } from 'react-bootstrap';
 import { AddressesTable } from './addressestable';
 
 export function AddressesTab({ proposalName }: { proposalName: string }) {
@@ -6,10 +7,12 @@ export function AddressesTab({ proposalName }: { proposalName: string }) {
   if (isError) throw Error(isError);
 
   return (
-    <AddressesTable
-      proposalName={proposalName}
-      addresses={data}
-      mutate={mutate}
-    ></AddressesTable>
+    <Container>
+      <AddressesTable
+        proposalName={proposalName}
+        addresses={data}
+        mutate={mutate}
+      ></AddressesTable>
+    </Container>
   );
 }

@@ -85,7 +85,7 @@ export function AddressesTable({
     },
   });
   return (
-    <Row style={{ padding: '1rem', maxWidth: 1000 }}>
+    <Row>
       <TanstackBootstrapTable table={table} />
     </Row>
   );
