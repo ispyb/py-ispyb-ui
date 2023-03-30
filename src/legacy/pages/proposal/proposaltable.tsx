@@ -1,14 +1,16 @@
 import { Proposal } from 'legacy/pages/model';
 import { Badge, Button, Row, Tooltip, OverlayTrigger } from 'react-bootstrap';
-import BootstrapTable, { ColumnDescription } from 'react-bootstrap-table-next';
-import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
-import 'react-bootstrap-table2-filter/dist/react-bootstrap-table2-filter.min.css';
-import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
-import paginationFactory from 'react-bootstrap-table2-paginator';
-import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
+import {
+  ColumnDef,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
+import { TanstackBootstrapTable } from 'components/Layout/TanstackBootstrapTable';
 
 export default function ProposalTable({
   data,
@@ -16,55 +18,45 @@ export default function ProposalTable({
   data: Proposal[];
   variant: 'sessions' | 'experiments';
 }) {
-  const columns: ColumnDescription[] = [
-    { text: 'id', dataField: 'Proposal_proposalId', hidden: true },
+  const columns: ColumnDef<Proposal>[] = [
     {
-      text: '',
-      dataField: 'Proposal_proposalId',
-      formatter: (cell, row) => {
-        return <ProposalSessions proposal={row}></ProposalSessions>;
+      header: '',
+      accessorKey: 'Proposal_proposalId',
+      cell: (info) => {
+        return <ProposalSessions proposal={info.row.original} />;
       },
-      headerStyle: { width: 56 },
-      style: { verticalAlign: 'middle', textAlign: 'center' },
+      enableColumnFilter: false,
     },
     {
-      text: 'Proposal',
-      dataField: '',
-      filter: textFilter({
-        placeholder: 'Search...',
-      }),
-      sort: true,
-      sortValue: (cell, row) =>
+      header: 'Proposal',
+      footer: 'Proposal',
+      accessorFn: (row) =>
         `${row.Proposal_proposalCode}${row.Proposal_proposalNumber}`,
-      filterValue: (cell, row) =>
-        `${row.Proposal_proposalCode}${row.Proposal_proposalNumber}`,
-      formatter: (cell, row) => <ProposalName proposal={row}></ProposalName>,
-      headerStyle: { textAlign: 'center', verticalAlign: 'sub' },
-      style: { verticalAlign: 'middle' },
+      cell: (info) => <ProposalName proposal={info.row.original} />,
     },
     {
-      text: 'Title',
-      dataField: 'Proposal_title',
-      filter: textFilter({
-        placeholder: 'Search...',
-      }),
-      sort: true,
-      headerStyle: { textAlign: 'center', verticalAlign: 'sub' },
-      style: { verticalAlign: 'middle' },
+      header: 'Title',
+      footer: 'Title',
+      accessorKey: 'Proposal_title',
     },
   ];
 
+  const table = useReactTable({
+    data: data || [],
+    columns: columns,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    initialState: {
+      pagination: {
+        pageSize: 20,
+      },
+    },
+  });
+
   return (
     <Row style={{ maxWidth: 1000, margin: 'auto' }}>
-      <BootstrapTable
-        bootstrap4
-        wrapperClasses="table-responsive"
-        keyField="Id"
-        data={data}
-        columns={columns}
-        pagination={paginationFactory({ showTotal: true })}
-        filter={filterFactory()}
-      />
+      <TanstackBootstrapTable table={table} />
     </Row>
   );
 }

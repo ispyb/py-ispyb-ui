@@ -43,24 +43,17 @@ export function useGetTechniqueByBeamline(beamline: string): string | null {
 
 export function useGetBeamlines({
   areMXColumnsVisible,
-  areSAXSColumnsVisible,
   areEMColumnsVisible,
 }: {
   areMXColumnsVisible: boolean;
-  areSAXSColumnsVisible: boolean;
   areEMColumnsVisible: boolean;
 }): string[] {
   let beamlines: string[] = [];
 
   const mxBeamlines = useBeamlines('MX');
-  const saxsBeamlines = useBeamlines('SAXS');
   const emBeamlines = useBeamlines('EM');
   if (areMXColumnsVisible) {
     beamlines = beamlines.concat(mxBeamlines);
-  }
-
-  if (areSAXSColumnsVisible) {
-    beamlines = beamlines.concat(saxsBeamlines);
   }
 
   if (areEMColumnsVisible) {

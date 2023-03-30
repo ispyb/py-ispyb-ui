@@ -1,71 +1,94 @@
 import { useMxDataCollectionsByGroupId } from 'legacy/hooks/ispyb';
 import { DataCollection, DataCollectionGroup } from 'legacy/pages/mx/model';
 import { useParams } from 'react-router-dom';
-import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
-import BootstrapTable, { ColumnDescription } from 'react-bootstrap-table-next';
 import { convertToFixed } from 'legacy/helpers/numerictransformation';
 import ZoomImage from 'legacy/components/image/zoomimage';
 import { getDozorPlot } from 'legacy/api/ispyb';
+import {
+  ColumnDef,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
+import { TanstackBootstrapTable } from 'components/Layout/TanstackBootstrapTable';
+import { formatDateToDayAndTime } from 'helpers/dateparser';
+import { CopyValue } from 'components/Common/CopyValue';
 
 type Param = {
   proposalName: string;
 };
 
-function getColumns(proposalName: string): ColumnDescription<DataCollection>[] {
+function getColumns(proposalName: string): ColumnDef<DataCollection>[] {
   return [
     {
-      text: 'Prefix',
-      dataField: 'imagePrefix',
-    },
-    {
-      text: 'Run',
-      dataField: 'dataCollectionNumber',
-    },
-    {
-      text: '# Images',
-      dataField: 'numberOfImages',
-    },
-    {
-      text: 'Exp. Time',
-      dataField: 'exposureTime',
-    },
-    {
-      text: 'Res.(corner)',
-      dataField: 'resolution',
-      formatter: function (cell, row) {
+      header: 'Prefix',
+      footer: 'Prefix',
+      accessorKey: 'imagePrefix',
+      cell: (info) => {
         return (
-          convertToFixed(row.resolution, 1) +
+          <div style={{ fontSize: '0.8rem' }}>
+            <CopyValue value={info.getValue() as string} />
+          </div>
+        );
+      },
+    },
+    {
+      header: 'Run',
+      footer: 'Run',
+      accessorKey: 'dataCollectionNumber',
+      enableColumnFilter: false,
+    },
+    {
+      header: '# Images',
+      footer: '# Images',
+      accessorKey: 'numberOfImages',
+      enableColumnFilter: false,
+    },
+    {
+      header: 'Exp. Time',
+      footer: 'Exp. Time',
+      accessorKey: 'exposureTime',
+      enableColumnFilter: false,
+    },
+    {
+      header: 'Res.(corner)',
+      footer: 'Res.(corner)',
+      accessorKey: 'resolution',
+      enableColumnFilter: false,
+      cell: (info) => {
+        return (
+          convertToFixed(info.row.original.resolution, 1) +
           ' Å (' +
-          convertToFixed(row.resolutionAtCorner, 1) +
+          convertToFixed(info.row.original.resolutionAtCorner, 1) +
           'Å)'
         );
       },
     },
     {
-      text: 'Folder',
-      dataField: 'folder',
-      formatter: function () {
-        return '-';
-      },
+      header: 'Time',
+      footer: 'Time',
+      accessorKey: 'startTime',
+      cell: (info) => formatDateToDayAndTime(info.getValue() as string),
+      enableColumnFilter: false,
     },
     {
-      text: 'Time',
-      dataField: 'startTime',
+      header: 'Status',
+      footer: 'Status',
+      accessorKey: 'runStatus',
+      enableColumnFilter: false,
     },
     {
-      text: 'Status',
-      dataField: 'runStatus',
-    },
-    {
-      text: 'Indicators',
-      dataField: 'Indicators',
-      formatter: function (cell, row) {
+      header: 'Indicators',
+      footer: 'Indicators',
+      accessorKey: 'Indicators',
+      cell: (info) => {
         return (
           <ZoomImage
             style={{ maxWidth: 110 }}
             src={
               getDozorPlot({
-                dataCollectionId: row.dataCollectionId,
+                dataCollectionId: info.row.original.dataCollectionId,
                 proposalName,
               }).url
             }
@@ -74,19 +97,15 @@ function getColumns(proposalName: string): ColumnDescription<DataCollection>[] {
       },
     },
     {
-      text: 'View Results',
-      dataField: 'View Result',
-      formatter: function () {
-        return '-';
-      },
+      header: 'Phasing',
+      footer: 'Phasing',
+      accessorKey: 'hasPhasing',
+      enableColumnFilter: false,
     },
     {
-      text: 'Phasing',
-      dataField: 'hasPhasing',
-    },
-    {
-      text: 'Comments',
-      dataField: 'comments',
+      header: 'Comments',
+      footer: 'Comments',
+      accessorKey: 'comments',
     },
   ];
 }
@@ -109,15 +128,21 @@ export default function CollectionsDataCollectionGroupPanel({
     proposalName,
     dataCollectionGroupId: `${dataCollectionGroup.DataCollection_dataCollectionGroupId}`,
   });
+
+  const table = useReactTable({
+    data: dataCollections || [],
+    columns: getColumns(proposalName),
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    initialState: {
+      pagination: {
+        pageSize: 20,
+      },
+    },
+  });
+
   if (isLoading) return <></>;
   if (isError) throw Error(isError);
-  return (
-    <BootstrapTable
-      bootstrap4
-      wrapperClasses="table-responsive"
-      keyField="dataCollectionId"
-      data={dataCollections}
-      columns={getColumns(proposalName)}
-    />
-  );
+  return <TanstackBootstrapTable table={table} />;
 }
