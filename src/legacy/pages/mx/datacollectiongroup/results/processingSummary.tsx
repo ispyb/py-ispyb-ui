@@ -143,7 +143,7 @@ function StatusIcon({ status }: { status: string }) {
   if (status.toUpperCase() === 'SUCCESS')
     [icon, color] = [faCheckCircle, 'green'];
   if (status.toUpperCase() === 'NO_RESULTS')
-    [icon, color] = [faCircleQuestion, 'blue'];
+    [icon, color] = [faCheckCircle, 'green'];
   if (status.toUpperCase() === '1') [icon, color] = [faCheckCircle, 'green'];
   return <FontAwesomeIcon color={color} icon={icon} />;
 }
