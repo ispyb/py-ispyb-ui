@@ -186,8 +186,6 @@ export default function PrepareExperimentPage() {
       },
     },
   });
-  if (Math.random() < 0.01) return <>{'infinite loop ended here'}</>;
-
   const step1 = (
     <Card style={{ border: 'none' }}>
       <Card.Header>

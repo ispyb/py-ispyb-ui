@@ -88,7 +88,6 @@ export function AddressesTable({
       },
     },
   });
-  if (Math.random() < 0.01) return <>{'infinite loop ended here'}</>;
   return (
     <Row>
       <TanstackBootstrapTable table={table} />
