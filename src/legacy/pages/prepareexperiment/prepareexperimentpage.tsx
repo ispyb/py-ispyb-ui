@@ -251,9 +251,7 @@ export default function PrepareExperimentPage() {
     return (
       <Row>
         <Col md={'auto'}>
-          <Row>
-            <div style={{ maxWidth: 450 }}>{step1}</div>
-          </Row>
+          <Row>{step1}</Row>
         </Col>
         <Col>{step2}</Col>
       </Row>
