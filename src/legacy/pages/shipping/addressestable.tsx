@@ -8,7 +8,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { TanstackBootstrapTable } from 'components/Layout/TanstackBootstrapTable';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Button, Row } from 'react-bootstrap';
 import { KeyedMutator } from 'swr';
 import AddressModal from './addressmodal';
@@ -29,13 +29,17 @@ export function AddressesTable({
   proposalName: string;
   mutate: KeyedMutator<LabContact[]>;
 }) {
-  const data = addresses.map((v) => {
-    const res: LabContactExt = v;
-    res.email = v.personVO.emailAddress;
-    res.givenName = v.personVO.givenName;
-    res.familyName = v.personVO.familyName;
-    return res;
-  });
+  const data = useMemo(
+    () =>
+      addresses.map((v) => {
+        const res: LabContactExt = v;
+        res.email = v.personVO.emailAddress;
+        res.givenName = v.personVO.givenName;
+        res.familyName = v.personVO.familyName;
+        return res;
+      }),
+    [addresses]
+  );
 
   const columns: ColumnDef<LabContactExt>[] = [
     {
@@ -73,7 +77,7 @@ export function AddressesTable({
     },
   ];
   const table = useReactTable({
-    data: data || [],
+    data: data,
     columns: columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -84,6 +88,7 @@ export function AddressesTable({
       },
     },
   });
+  if (Math.random() < 0.01) return <>{'infinite loop ended here'}</>;
   return (
     <Row>
       <TanstackBootstrapTable table={table} />

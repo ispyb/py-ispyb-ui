@@ -11,6 +11,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { TanstackBootstrapTable } from 'components/Layout/TanstackBootstrapTable';
+import { useMemo } from 'react';
 
 interface Props {
   data?: Session[];
@@ -57,8 +58,10 @@ export default function SessionTable({
     userPortalLink,
   });
 
+  const dataTable = useMemo(() => data || [], [data]);
+
   const table = useReactTable({
-    data: data || [],
+    data: dataTable,
     columns: columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),

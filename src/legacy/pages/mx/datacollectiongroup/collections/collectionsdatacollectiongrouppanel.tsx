@@ -130,7 +130,7 @@ export default function CollectionsDataCollectionGroupPanel({
   });
 
   const table = useReactTable({
-    data: dataCollections || [],
+    data: dataCollections,
     columns: getColumns(proposalName),
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),

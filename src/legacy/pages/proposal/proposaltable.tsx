@@ -48,7 +48,7 @@ export default function ProposalTable({
   ];
 
   const table = useReactTable({
-    data: data || [],
+    data: data,
     columns: columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),

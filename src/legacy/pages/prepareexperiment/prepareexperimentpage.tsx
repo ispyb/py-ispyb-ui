@@ -28,7 +28,7 @@ import { KeyedMutator } from 'swr';
 import produce from 'immer';
 import LoadSampleChanger from './loadsamplechanger';
 import { Shipment } from 'legacy/pages/model';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useAuth } from 'hooks/useAuth';
 import {
   ColumnDef,
@@ -110,21 +110,25 @@ export default function PrepareExperimentPage() {
     }
   };
 
-  const shipments = _(data)
-    .groupBy((d) => d.shippingId)
-    .filter((dewars: ContainerDewar[]) => dewars.length > 0)
-    .map((dewars: ContainerDewar[]) => {
-      const d = dewars[0];
-      const res: Shipment = {
-        shippingId: d.shippingId,
-        name: d.shippingName,
-        status: d.shippingStatus,
-        creationDate: d.creationDate,
-        dewars: dewars,
-      };
-      return res;
-    })
-    .value();
+  const shipments = useMemo(
+    () =>
+      _(data)
+        .groupBy((d) => d.shippingId)
+        .filter((dewars: ContainerDewar[]) => dewars.length > 0)
+        .map((dewars: ContainerDewar[]) => {
+          const d = dewars[0];
+          const res: Shipment = {
+            shippingId: d.shippingId,
+            name: d.shippingName,
+            status: d.shippingStatus,
+            creationDate: d.creationDate,
+            dewars: dewars,
+          };
+          return res;
+        })
+        .value(),
+    [data]
+  );
 
   const processingDewars = _(shipments)
     .filter((s) => Boolean(shipmentIsProcessing(s)))
@@ -166,9 +170,12 @@ export default function PrepareExperimentPage() {
       enableColumnFilter: false,
     },
   ];
-
+  const sortedShipments = useMemo(
+    () => shipments.sort(sortShipments),
+    [shipments]
+  );
   const table = useReactTable({
-    data: shipments.sort(sortShipments) || [],
+    data: sortedShipments,
     columns: columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -179,6 +186,7 @@ export default function PrepareExperimentPage() {
       },
     },
   });
+  if (Math.random() < 0.01) return <>{'infinite loop ended here'}</>;
 
   const step1 = (
     <Card style={{ border: 'none' }}>

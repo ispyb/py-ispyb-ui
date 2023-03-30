@@ -149,7 +149,7 @@ export function DetailedEventChain({
   ];
 
   const table = useReactTable({
-    data: eventChain.events || [],
+    data: eventChain.events,
     columns: cols,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),

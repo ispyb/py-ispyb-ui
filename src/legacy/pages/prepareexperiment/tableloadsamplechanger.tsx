@@ -143,7 +143,7 @@ export function ContainerTable({
     },
   ];
   const table = useReactTable({
-    data: dewars || [],
+    data: dewars,
     columns: columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),

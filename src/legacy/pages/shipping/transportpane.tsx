@@ -169,7 +169,7 @@ export function DewarTransport({
     },
   ];
   const table = useReactTable({
-    data: history.steps || [],
+    data: history.steps,
     columns: columns,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
