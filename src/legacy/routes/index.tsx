@@ -49,20 +49,6 @@ const MXDataCollectionGroupPage = React.lazy(() =>
     default: m.MXDataCollectionGroupPage,
   }))
 );
-const MXEnergyScanPage = React.lazy(() =>
-  import(
-    'legacy/pages/mx/energyscan' /* webpackChunkName: "legacy_mx_energy" */
-  ).then((m) => ({
-    default: m.MXEnergyScanPage,
-  }))
-);
-const MXFluorescencePage = React.lazy(() =>
-  import(
-    'legacy/pages/mx/fluorescence' /* webpackChunkName: "legacy_mx_fluo" */
-  ).then((m) => ({
-    default: m.MXFluorescencePage,
-  }))
-);
 const MxFluorescenceViewer = React.lazy(() =>
   import(
     'legacy/pages/mx/fluorescence' /* webpackChunkName: "legacy_mx_fluo" */
@@ -213,13 +199,8 @@ const javaRoutes: TitledBreadcrumbsRoute[] = [
               { path: 'summary', element: <MXSessionSummaryPage /> },
               { path: 'collection', element: <MXDataCollectionGroupPage /> },
               {
-                path: 'energy',
-                element: <MXEnergyScanPage />,
-              },
-              {
                 path: 'xrf',
                 children: [
-                  { index: true, element: <MXFluorescencePage /> },
                   { path: ':xrfId', element: <MxFluorescenceViewer /> },
                 ],
               },

@@ -1,6 +1,7 @@
-import { Suspense, useState } from 'react';
+import { Suspense, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
+  Alert,
   Button,
   ButtonGroup,
   Card,
@@ -8,9 +9,12 @@ import {
   ToggleButton,
   Tooltip,
 } from 'react-bootstrap';
-import { useMXDataCollectionsBy } from 'legacy/hooks/ispyb';
+import {
+  useMXDataCollectionsBy,
+  useMXEnergyScans,
+  useMXFluorescenceSpectras,
+} from 'legacy/hooks/ispyb';
 import DataCollectionGroupPanel from 'legacy/pages/mx/datacollectiongroup/datacollectiongrouppanel';
-import { DataCollectionGroup } from 'legacy/pages/mx/model';
 import LazyWrapper from 'legacy/components/loading/lazywrapper';
 import LoadingPanel from 'legacy/components/loading/loadingpanel';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -24,6 +28,9 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useAutoProcRanking, usePipelines } from 'hooks/mx';
 import { usePersistentParamState } from 'hooks/useParam';
+import { parseDate } from 'helpers/dateparser';
+import EnergyScanPanel from '../energyscan/energyscanpanel';
+import FluorescencePanel from '../fluorescence/fluorescencepanel';
 
 type Param = {
   sessionId: string;
@@ -32,11 +39,19 @@ type Param = {
 
 export default function MXDataCollectionGroupPage() {
   const { sessionId = '', proposalName = '' } = useParams<Param>();
-  const { data: dataCollectionGroups, isError } = useMXDataCollectionsBy({
+  const { data: dataCollectionGroups } = useMXDataCollectionsBy({
     proposalName,
     sessionId,
   });
-  if (isError) throw Error(isError);
+  const { data: spectras } = useMXFluorescenceSpectras({
+    proposalName,
+    sessionId,
+  });
+  const { data: energyScans } = useMXEnergyScans({
+    proposalName,
+    sessionId,
+  });
+
   const [compact, setCompact] = useState(false);
   const compactToggle = new Subject<boolean>();
 
@@ -63,13 +78,16 @@ export default function MXDataCollectionGroupPage() {
   const pipelinesSelection = usePipelines();
   const autoProcRankingSelection = useAutoProcRanking();
 
-  if (dataCollectionGroups && dataCollectionGroups.length) {
-    const containerIds = _(dataCollectionGroups)
+  const containerIds = useMemo(() => {
+    return _(dataCollectionGroups)
       .map((dataCollectionGroup) => dataCollectionGroup?.Container_containerId)
       .uniq()
       .sort()
       .value();
+  }, [dataCollectionGroups]);
 
+  const filteredDataCollectionGroups = useMemo(() => {
+    if (!dataCollectionGroups) return [];
     const filteredDataCollectionGroupsByContainer =
       filterSamples === 'true'
         ? dataCollectionGroups.filter(
@@ -79,19 +97,43 @@ export default function MXDataCollectionGroupPage() {
           )
         : dataCollectionGroups;
 
-    const filteredDataCollectionGroups =
-      filteredDataCollectionGroupsByContainer.filter(
-        (dcg) =>
-          !(
-            filterMR === 'true' ||
-            filterSAD === 'true' ||
-            filterScaling === 'true'
-          ) ||
-          (filterMR === 'true' && dcg.SpaceGroupModelResolvedByMr) ||
-          (filterSAD === 'true' && dcg.SpaceGroupModelResolvedByPhasing) ||
-          (filterScaling === 'true' && dcg.scalingStatisticsTypes)
-      );
+    return filteredDataCollectionGroupsByContainer.filter(
+      (dcg) =>
+        !(
+          filterMR === 'true' ||
+          filterSAD === 'true' ||
+          filterScaling === 'true'
+        ) ||
+        (filterMR === 'true' && dcg.SpaceGroupModelResolvedByMr) ||
+        (filterSAD === 'true' && dcg.SpaceGroupModelResolvedByPhasing) ||
+        (filterScaling === 'true' && dcg.scalingStatisticsTypes)
+    );
+  }, [
+    dataCollectionGroups,
+    filterMR,
+    filterSAD,
+    filterScaling,
+    filterSamples,
+    selectedSamples,
+  ]);
 
+  const acquisitionData = useMemo(() => {
+    return _([
+      ...(filteredDataCollectionGroups || []),
+      ...(spectras || []),
+      ...(energyScans || []),
+    ])
+      .orderBy((v) => {
+        const start =
+          'startTime' in v ? v.startTime : v.DataCollectionGroup_startTime;
+        if (!start) return new Date().getTime();
+        return parseDate(start).getTime();
+      })
+      .reverse()
+      .value();
+  }, [filteredDataCollectionGroups, spectras, energyScans]);
+
+  if (dataCollectionGroups && dataCollectionGroups.length) {
     return (
       <div
         style={{
@@ -220,31 +262,68 @@ export default function MXDataCollectionGroupPage() {
             proposalName={proposalName}
           ></ContainerFilter>
         )}
-        {filteredDataCollectionGroups.map(
-          (dataCollectionGroup: DataCollectionGroup) => (
-            <div
-              key={
-                dataCollectionGroup.DataCollectionGroup_dataCollectionGroupId
-              }
-              style={compact ? { margin: 1 } : { margin: 5 }}
-            >
-              <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-                  <DataCollectionGroupPanel
-                    compactToggle={compactToggle}
-                    defaultCompact={compact}
-                    dataCollectionGroup={dataCollectionGroup}
-                    proposalName={proposalName}
-                    sessionId={sessionId}
-                    selectedPipelines={pipelinesSelection.pipelines}
-                    resultRankParam={autoProcRankingSelection.rankParam}
-                    resultRankShell={autoProcRankingSelection.rankShell}
-                  ></DataCollectionGroupPanel>
-                </Suspense>
-              </LazyWrapper>
-            </div>
-          )
-        )}
+        {acquisitionData.map((acquisition, i) => {
+          if ('DataCollectionGroup_dataCollectionGroupId' in acquisition) {
+            return (
+              <div
+                key={acquisition.DataCollectionGroup_dataCollectionGroupId}
+                style={compact ? { margin: 1 } : { margin: 5 }}
+              >
+                <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+                  <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+                    <DataCollectionGroupPanel
+                      compactToggle={compactToggle}
+                      defaultCompact={compact}
+                      dataCollectionGroup={acquisition}
+                      proposalName={proposalName}
+                      sessionId={sessionId}
+                      selectedPipelines={pipelinesSelection.pipelines}
+                      resultRankParam={autoProcRankingSelection.rankParam}
+                      resultRankShell={autoProcRankingSelection.rankShell}
+                    ></DataCollectionGroupPanel>
+                  </Suspense>
+                </LazyWrapper>
+              </div>
+            );
+          } else if ('xfeFluorescenceSpectrumId' in acquisition) {
+            return (
+              <div
+                key={acquisition.xfeFluorescenceSpectrumId}
+                style={{ margin: 5 }}
+              >
+                <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+                  <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+                    <FluorescencePanel
+                      spectra={acquisition}
+                      proposalName={proposalName}
+                      sessionId={sessionId}
+                    ></FluorescencePanel>
+                  </Suspense>
+                </LazyWrapper>
+              </div>
+            );
+          } else if ('scanFileFullPath' in acquisition) {
+            return (
+              <div key={acquisition.scanFileFullPath} style={{ margin: 5 }}>
+                <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+                  <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+                    <EnergyScanPanel
+                      energyScan={acquisition}
+                      proposalName={proposalName}
+                      sessionId={sessionId}
+                    ></EnergyScanPanel>
+                  </Suspense>
+                </LazyWrapper>
+              </div>
+            );
+          } else {
+            return (
+              <div key={i} style={{ margin: 5 }}>
+                <Alert variant="danger">Unknown acquisition type</Alert>
+              </div>
+            );
+          }
+        })}
       </div>
     );
   }
