@@ -1,4 +1,4 @@
-import { Suspense, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   Alert,
@@ -15,8 +15,6 @@ import {
   useMXFluorescenceSpectras,
 } from 'legacy/hooks/ispyb';
 import DataCollectionGroupPanel from 'legacy/pages/mx/datacollectiongroup/datacollectiongrouppanel';
-import LazyWrapper from 'legacy/components/loading/lazywrapper';
-import LoadingPanel from 'legacy/components/loading/loadingpanel';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Subject } from 'rxjs';
 import _ from 'lodash';
@@ -305,29 +303,21 @@ export default function MXDataCollectionGroupPage() {
                 key={acquisition.xfeFluorescenceSpectrumId}
                 style={{ margin: 5 }}
               >
-                <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                  <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-                    <FluorescencePanel
-                      spectra={acquisition}
-                      proposalName={proposalName}
-                      sessionId={sessionId}
-                    ></FluorescencePanel>
-                  </Suspense>
-                </LazyWrapper>
+                <FluorescencePanel
+                  spectra={acquisition}
+                  proposalName={proposalName}
+                  sessionId={sessionId}
+                ></FluorescencePanel>
               </div>
             );
-          } else if ('scanFileFullPath' in acquisition) {
+          } else if ('energyScanId' in acquisition) {
             return (
-              <div key={acquisition.scanFileFullPath} style={{ margin: 5 }}>
-                <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                  <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-                    <EnergyScanPanel
-                      energyScan={acquisition}
-                      proposalName={proposalName}
-                      sessionId={sessionId}
-                    ></EnergyScanPanel>
-                  </Suspense>
-                </LazyWrapper>
+              <div key={acquisition.energyScanId} style={{ margin: 5 }}>
+                <EnergyScanPanel
+                  energyScan={acquisition}
+                  proposalName={proposalName}
+                  sessionId={sessionId}
+                ></EnergyScanPanel>
               </div>
             );
           } else {
