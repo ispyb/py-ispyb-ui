@@ -6,6 +6,8 @@ import {
   BreadcrumbMatch,
 } from 'use-react-router-breadcrumbs';
 import MXSessionPage from '../pages/mx/mxsessionpage';
+import { redirect } from 'react-router';
+import { Navigate } from 'react-router-dom';
 
 const SessionClassificationPage = React.lazy(() =>
   import(
@@ -114,7 +116,7 @@ const ProposalBreadCrumb: BreadcrumbComponentType<'proposalName'> = ({
 };
 
 const javaRoutes: TitledBreadcrumbsRoute[] = [
-  { index: true, element: <SessionsPage />, breadcrumb: null },
+  { index: true, element: <Navigate to="sessions/list" />, breadcrumb: null },
   { path: 'sessions/list', element: <SessionsPage />, breadcrumb: 'Sessions' },
   {
     path: 'proposals/list',
