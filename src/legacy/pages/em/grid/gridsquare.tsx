@@ -24,6 +24,7 @@ export default function GridSquare({
   return (
     <Card style={{ width: '18rem' }}>
       <ZoomImage
+        alt="Grid square"
         src={
           getCrystalImage({ proposalName, dataCollectionId, imageIndex: 1 }).url
         }

@@ -86,6 +86,7 @@ function getColumns(proposalName: string): ColumnDef<DataCollection>[] {
       cell: (info) => {
         return (
           <ZoomImage
+            alt="indicator"
             style={{ maxWidth: 110 }}
             src={
               getDozorPlot({

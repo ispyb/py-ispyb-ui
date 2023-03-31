@@ -28,6 +28,7 @@ export default function MoviePanel(props: Props) {
       <Row>
         <Col xs={1}>
           <ZoomImage
+            alt="Movie thumbnail"
             src={
               getMovieThumbnail({
                 proposalName,
@@ -81,6 +82,7 @@ export default function MoviePanel(props: Props) {
         <Col xs={2}>
           <div style={{ margin: 5 }}>
             <ZoomImage
+              alt="Motion Correction drift"
               src={
                 getMotionCorrectionDrift({
                   proposalName,
@@ -92,6 +94,7 @@ export default function MoviePanel(props: Props) {
           </div>
           <div style={{ margin: 5 }}>
             <ZoomImage
+              alt="Motion Correction"
               src={
                 getMotionCorrectionThumbnail({
                   proposalName,
@@ -136,6 +139,7 @@ export default function MoviePanel(props: Props) {
         <Col xs={2}>
           <div style={{ margin: 5 }}>
             <ZoomImage
+              alt="CTF"
               src={
                 getCTFThumbnail({
                   proposalName,

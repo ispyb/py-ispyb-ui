@@ -122,7 +122,7 @@ export default function SummaryDataCollectionGroupPanel({
           {!compact && (
             <Col xs={12} sm={6} md={true}>
               <ZoomImage
-                style={{ maxWidth: 300 }}
+                style={{ maxWidth: 300, minWidth: 150 }}
                 alt="Diffraction"
                 src={
                   getDiffrationThumbnail({
@@ -136,7 +136,7 @@ export default function SummaryDataCollectionGroupPanel({
           {!compact && (
             <Col xs={12} sm={6} md={true}>
               <ZoomImage
-                style={{ maxWidth: 300 }}
+                style={{ maxWidth: 300, minWidth: 150 }}
                 alt="Crystal"
                 src={
                   crystalSnapshotId
@@ -157,7 +157,11 @@ export default function SummaryDataCollectionGroupPanel({
           {UI.MX.showQualityIndicatorPlot && (
             <Col xs={12} sm={6} md={true}>
               <ZoomImage
-                style={compact ? { maxWidth: 150 } : { maxWidth: 300 }}
+                style={
+                  compact
+                    ? { maxWidth: 150, minWidth: 150 }
+                    : { maxWidth: 300, minWidth: 150 }
+                }
                 alt="Dozor"
                 src={
                   getDozorPlot({
