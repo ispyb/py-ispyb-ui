@@ -1,4 +1,4 @@
-import { getWorkflowImage } from 'legacy/api/ispyb';
+import { getMxWorkflowLog, getWorkflowImage } from 'legacy/api/ispyb';
 import ZoomImage from 'legacy/components/image/zoomimage';
 import _ from 'lodash';
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
@@ -6,6 +6,8 @@ import { useState } from 'react';
 import { Col, Row, Button, Badge, Container } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import WorkflowModal from './workflowmodal';
+import { openInNewTab } from 'legacy/helpers/opentab';
+import { useAuth } from 'hooks/useAuth';
 
 export default function WorkflowDataCollectionGroupPanel({
   dataCollectionGroup,
@@ -14,6 +16,8 @@ export default function WorkflowDataCollectionGroupPanel({
   dataCollectionGroup: DataCollectionGroup;
   proposalName: string;
 }) {
+  const { site, token } = useAuth();
+
   if (dataCollectionGroup.Workflow_workflowId) {
     const [thumbnails, descriptions] = _(
       dataCollectionGroup.WorkflowStep_workflowStepId?.split(',') || []
@@ -36,8 +40,24 @@ export default function WorkflowDataCollectionGroupPanel({
       .unzip()
       .value();
 
+    const logsUrl = getMxWorkflowLog({
+      workflowId:
+        dataCollectionGroup.DataCollectionGroup_workflowId?.toString() || '',
+    }).url;
+    const fullLogsUrl = `${site.host}${site.apiPrefix}/${token}${logsUrl}`;
+
     return (
       <Container fluid>
+        <Row>
+          <Button
+            variant={'link'}
+            onClick={() => {
+              openInNewTab(fullLogsUrl);
+            }}
+          >
+            Workflow logs
+          </Button>
+        </Row>
         <Row>{thumbnails}</Row>
         <Row>{descriptions}</Row>
       </Container>

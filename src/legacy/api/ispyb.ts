@@ -110,6 +110,12 @@ export function getMxWorkflow({
   };
 }
 
+export function getMxWorkflowLog({ workflowId }: { workflowId: string }) {
+  return {
+    url: `/mx/workflow/${workflowId}/log`,
+  };
+}
+
 export function getMXContainers({
   proposalName,
   containerIds,
