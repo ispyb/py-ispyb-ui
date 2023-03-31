@@ -10,6 +10,8 @@ import ZoomImage from 'legacy/components/image/zoomimage';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faWindowRestore } from '@fortawesome/free-solid-svg-icons';
 import { openInNewTab } from 'legacy/helpers/opentab';
+import { HashAnchorButton, useHashScroll } from 'hooks/hashScroll';
+import { CopyValue } from 'components/Common/CopyValue';
 
 type Props = {
   sessionId: string;
@@ -23,11 +25,21 @@ export default function FluorescencePanel({
   sessionId,
 }: Props) {
   const url = `/legacy/proposals/${proposalName}/MX/${sessionId}/xrf/${spectra.xfeFluorescenceSpectrumId}`;
+  const hashscroll = useHashScroll(`fl-${spectra.xfeFluorescenceSpectrumId}`);
   return (
-    <Card className="themed-card card-energyscan-panel">
+    <Card
+      className="themed-card card-energyscan-panel"
+      ref={hashscroll.ref}
+      style={{
+        backgroundColor: hashscroll.isCurrent ? '#edf2ff' : undefined,
+      }}
+    >
       <Card.Header>
         <Container fluid>
           <Row>
+            <Col xs={'auto'}>
+              <HashAnchorButton hash={hashscroll.hash} />
+            </Col>
             <Col md="auto">
               <h5>
                 {moment(spectra.startTime, 'MMMM Do YYYY, h:mm:ss A').format(
@@ -36,17 +48,36 @@ export default function FluorescencePanel({
                 <Badge bg="info">Fluorescence spectra</Badge>
               </h5>
             </Col>
-            <Col></Col>
-            <Col style={{ display: 'flex' }} md="auto">
-              <p style={{ margin: 0, alignSelf: 'center' }}>
-                {spectra.scanFileFullPath}
-              </p>
-            </Col>
           </Row>
         </Container>
       </Card.Header>
       <Card.Body>
         <Container fluid>
+          {' '}
+          <Row style={{ margin: '1rem' }}>
+            <Col
+              xs={'auto'}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '1rem',
+              }}
+            >
+              <strong>Path:</strong>
+            </Col>
+            <Col
+              xs={'auto'}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                padding: 0,
+              }}
+            >
+              <CopyValue value={spectra.scanFileFullPath} />
+            </Col>
+          </Row>
           <Row>
             <Col>
               <SimpleParameterTable

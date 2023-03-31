@@ -16,6 +16,7 @@ export default function WorkflowThumbnail({
     <Container fluid style={{ height: '100%' }}>
       <Row style={{ height: '80%' }}>
         <ZoomImage
+          alt="Workflow step thumbnail"
           style={{ margin: 'auto', width: '80%' }}
           src={getWorkflowImage({ proposalName, stepId }).url}
         ></ZoomImage>

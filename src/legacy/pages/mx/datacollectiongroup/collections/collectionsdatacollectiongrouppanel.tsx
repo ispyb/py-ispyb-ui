@@ -14,6 +14,7 @@ import {
 import { TanstackBootstrapTable } from 'components/Layout/TanstackBootstrapTable';
 import { formatDateToDayAndTime } from 'helpers/dateparser';
 import { CopyValue } from 'components/Common/CopyValue';
+import { Container } from 'react-bootstrap';
 
 type Param = {
   proposalName: string;
@@ -85,6 +86,7 @@ function getColumns(proposalName: string): ColumnDef<DataCollection>[] {
       cell: (info) => {
         return (
           <ZoomImage
+            alt="indicator"
             style={{ maxWidth: 110 }}
             src={
               getDozorPlot({
@@ -144,5 +146,9 @@ export default function CollectionsDataCollectionGroupPanel({
 
   if (isLoading) return <></>;
   if (isError) throw Error(isError);
-  return <TanstackBootstrapTable table={table} />;
+  return (
+    <Container fluid>
+      <TanstackBootstrapTable table={table} />
+    </Container>
+  );
 }

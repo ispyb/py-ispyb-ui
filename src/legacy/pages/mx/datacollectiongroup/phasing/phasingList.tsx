@@ -598,6 +598,7 @@ function PhasingStepImages({
                   }}
                 >
                   <ZoomImage
+                    alt={'phasing attachment'}
                     src={
                       getPhasingAttachmentImageUrl({
                         proposalName,

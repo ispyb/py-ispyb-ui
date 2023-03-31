@@ -84,8 +84,8 @@ export function ImagesContent({ item }: { item: WorkflowStepItem }) {
             return (
               <td key={value.title}>
                 <ZoomImage
+                  alt={value.title}
                   style={{ maxWidth: 500 }}
-                  lazy={false}
                   src={src}
                   local={true}
                   legend={value.title}

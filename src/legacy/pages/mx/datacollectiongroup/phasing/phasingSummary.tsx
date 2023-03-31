@@ -44,10 +44,10 @@ export function PhasingSummary({
     <>
       {summaryPhasings.map((p) => (
         <Col
-          sm={12}
-          md={6}
-          xl={compact ? 4 : 4}
-          xxl={compact ? 4 : 3}
+          // sm={12}
+          // md={6}
+          // xl={compact ? 4 : 4}
+          // xxl={compact ? 4 : 3}
           key={p.phasing.PhasingStep_phasingStepId}
         >
           <Card

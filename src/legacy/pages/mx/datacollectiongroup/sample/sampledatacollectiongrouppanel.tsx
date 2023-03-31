@@ -1,6 +1,6 @@
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
 import UI from 'legacy/config/ui';
-import { Col, Row } from 'react-bootstrap';
+import { Col, Container, Row } from 'react-bootstrap';
 import ZoomImage from 'legacy/components/image/zoomimage';
 import { getCrystalImage } from 'legacy/api/ispyb';
 import { useParams } from 'react-router-dom';
@@ -33,102 +33,104 @@ export default function SampleDataCollectionGroupPanel({
   } = dataCollectionGroup;
 
   return (
-    <Row>
-      <Col xs={12} sm={12} md={4}>
-        <SimpleParameterTable
-          parameters={[
-            { key: 'Protein', value: Protein_acronym },
-            { key: 'Sample', value: BLSample_name },
-            { key: 'Shipment', value: Shipping_shippingName },
-            { key: 'Parcel', value: Dewar_code },
-            {
-              key: 'Container / Position',
-              value: `${Container_code}/${BLSample_location}`,
-            },
-            { key: 'Beamline location', value: Container_beamlineLocation },
-            {
-              key: 'Sample Changer Location',
-              value: Container_sampleChangerLocation,
-            },
-          ]}
-        ></SimpleParameterTable>
-      </Col>
-      <Col xs={12} sm={6} md={true}>
-        {UI.MX.showCrystalSnapshot1 && (
-          <ZoomImage
-            alt="Crystal 1"
-            src={
-              getCrystalImage({
-                proposalName,
-                dataCollectionId:
-                  dataCollectionGroup.DataCollection_dataCollectionId,
-                imageIndex: 1,
-              }).url
-            }
-          />
-        )}
-      </Col>
-      <Col xs={12} sm={6} md={true}>
-        {UI.MX.showCrystalSnapshot2 && (
-          <ZoomImage
-            alt="Crystal 2"
-            src={
-              getCrystalImage({
-                proposalName,
-                dataCollectionId:
-                  dataCollectionGroup.DataCollection_dataCollectionId,
-                imageIndex: 2,
-              }).url
-            }
-          />
-        )}
-      </Col>
-      <Col xs={12} sm={6} md={true}>
-        {UI.MX.showCrystalSnapshot3 && (
-          <ZoomImage
-            alt="Crystal 3"
-            src={
-              getCrystalImage({
-                proposalName,
-                dataCollectionId:
-                  dataCollectionGroup.DataCollection_dataCollectionId,
-                imageIndex: 3,
-              }).url
-            }
-          />
-        )}
-      </Col>
-      <Col xs={12} sm={6} md={true}>
-        {UI.MX.showCrystalSnapshot4 && (
-          <ZoomImage
-            alt="Crystal 4"
-            src={
-              getCrystalImage({
-                proposalName,
-                dataCollectionId:
-                  dataCollectionGroup.DataCollection_dataCollectionId,
-                imageIndex: 4,
-              }).url
-            }
-          />
-        )}
-      </Col>
-      <Col xs={12} sm={6} md={true}>
-        {dataCollectionGroup.Container_containerId && (
-          <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-            <MXContainer
-              selectedSamples={
-                dataCollectionGroup.BLSample_name
-                  ? [dataCollectionGroup.BLSample_name]
-                  : []
+    <Container fluid>
+      <Row>
+        <Col xs={12} sm={12} md={4}>
+          <SimpleParameterTable
+            parameters={[
+              { key: 'Protein', value: Protein_acronym },
+              { key: 'Sample', value: BLSample_name },
+              { key: 'Shipment', value: Shipping_shippingName },
+              { key: 'Parcel', value: Dewar_code },
+              {
+                key: 'Container / Position',
+                value: `${Container_code}/${BLSample_location}`,
+              },
+              { key: 'Beamline location', value: Container_beamlineLocation },
+              {
+                key: 'Sample Changer Location',
+                value: Container_sampleChangerLocation,
+              },
+            ]}
+          ></SimpleParameterTable>
+        </Col>
+        <Col xs={12} sm={6} md={true}>
+          {UI.MX.showCrystalSnapshot1 && (
+            <ZoomImage
+              alt="Crystal 1"
+              src={
+                getCrystalImage({
+                  proposalName,
+                  dataCollectionId:
+                    dataCollectionGroup.DataCollection_dataCollectionId,
+                  imageIndex: 1,
+                }).url
               }
-              containerId={String(dataCollectionGroup.Container_containerId)}
-              sessionId={sessionId}
-              proposalName={proposalName}
-            ></MXContainer>{' '}
-          </Suspense>
-        )}
-      </Col>
-    </Row>
+            />
+          )}
+        </Col>
+        <Col xs={12} sm={6} md={true}>
+          {UI.MX.showCrystalSnapshot2 && (
+            <ZoomImage
+              alt="Crystal 2"
+              src={
+                getCrystalImage({
+                  proposalName,
+                  dataCollectionId:
+                    dataCollectionGroup.DataCollection_dataCollectionId,
+                  imageIndex: 2,
+                }).url
+              }
+            />
+          )}
+        </Col>
+        <Col xs={12} sm={6} md={true}>
+          {UI.MX.showCrystalSnapshot3 && (
+            <ZoomImage
+              alt="Crystal 3"
+              src={
+                getCrystalImage({
+                  proposalName,
+                  dataCollectionId:
+                    dataCollectionGroup.DataCollection_dataCollectionId,
+                  imageIndex: 3,
+                }).url
+              }
+            />
+          )}
+        </Col>
+        <Col xs={12} sm={6} md={true}>
+          {UI.MX.showCrystalSnapshot4 && (
+            <ZoomImage
+              alt="Crystal 4"
+              src={
+                getCrystalImage({
+                  proposalName,
+                  dataCollectionId:
+                    dataCollectionGroup.DataCollection_dataCollectionId,
+                  imageIndex: 4,
+                }).url
+              }
+            />
+          )}
+        </Col>
+        <Col xs={12} sm={6} md={true}>
+          {dataCollectionGroup.Container_containerId && (
+            <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+              <MXContainer
+                selectedSamples={
+                  dataCollectionGroup.BLSample_name
+                    ? [dataCollectionGroup.BLSample_name]
+                    : []
+                }
+                containerId={String(dataCollectionGroup.Container_containerId)}
+                sessionId={sessionId}
+                proposalName={proposalName}
+              ></MXContainer>{' '}
+            </Suspense>
+          )}
+        </Col>
+      </Row>
+    </Container>
   );
 }

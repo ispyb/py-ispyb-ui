@@ -5,9 +5,8 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LazyWrapper from 'legacy/components/loading/lazywrapper';
-import LoadingPanel from 'legacy/components/loading/loadingpanel';
 import _ from 'lodash';
-import { Suspense, useState } from 'react';
+import { useState } from 'react';
 import {
   Row,
   Col,
@@ -15,6 +14,7 @@ import {
   OverlayTrigger,
   ToggleButton,
   Tooltip,
+  Container,
 } from 'react-bootstrap';
 import { DataCollectionGroup } from '../model';
 import { MXContainer } from './mxcontainer';
@@ -144,7 +144,7 @@ export default function ContainerFilter({
               c && (
                 <Col>
                   <LazyWrapper>
-                    <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+                    <Container fluid>
                       <MXContainer
                         onSampleClick={(s) => {
                           const isSelected = selectedSamples
@@ -161,7 +161,7 @@ export default function ContainerFilter({
                         sessionId={sessionId}
                         proposalName={proposalName}
                       ></MXContainer>
-                    </Suspense>
+                    </Container>
                   </LazyWrapper>
                 </Col>
               )

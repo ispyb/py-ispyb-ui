@@ -3,6 +3,7 @@ import { parsePhasingSteps } from 'legacy/helpers/mx/results/phasingparser';
 import { usePhasingList } from 'legacy/hooks/ispyb';
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
 import { PhasingList } from './phasingList';
+import { Container } from 'react-bootstrap';
 
 export interface Props {
   proposalName: string;
@@ -27,5 +28,9 @@ export default function PhasingTab({
   const urlPrefix = `${site.host}${site.apiPrefix}/${token}`;
   const parsedResults = parsePhasingSteps(results, proposalName, urlPrefix);
 
-  return <PhasingList results={parsedResults} proposalName={proposalName} />;
+  return (
+    <Container fluid>
+      <PhasingList results={parsedResults} proposalName={proposalName} />
+    </Container>
+  );
 }

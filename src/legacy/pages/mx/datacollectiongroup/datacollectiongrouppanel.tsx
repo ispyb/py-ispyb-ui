@@ -10,6 +10,7 @@ import {
   Container,
   Badge,
   Button,
+  Spinner,
 } from 'react-bootstrap';
 
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
@@ -37,6 +38,7 @@ import {
   ResultRankShell,
 } from 'legacy/helpers/mx/results/resultparser';
 import MRTab from './phasing/phasingTab';
+import { HashAnchorButton, useHashScroll } from 'hooks/hashScroll';
 
 type Props = {
   sessionId: string;
@@ -76,29 +78,40 @@ export default function DataCollectionGroupPanel({
     });
   }, [compactToggle, setCompact]);
 
-  const { data: procs } = useAutoProc({
-    proposalName,
-    dataCollectionId:
-      dataCollectionGroup.DataCollection_dataCollectionId?.toString() || '-1',
-  });
+  const hashscroll = useHashScroll(
+    `dcg-${dataCollectionGroup.DataCollectionGroup_dataCollectionGroupId}`
+  );
 
   if (dataCollectionGroup.DataCollection_dataCollectionId === undefined)
     return (
-      <Card className="themed-card card-datacollectiongroup-panel">
+      <Card
+        className="themed-card card-datacollectiongroup-panel"
+        ref={hashscroll.ref}
+        style={{
+          backgroundColor: hashscroll.isCurrent ? '#edf2ff' : undefined,
+        }}
+      >
         <Card.Header style={compact ? { padding: 0 } : undefined}>
           {compact ? (
             <div style={{ height: 5 }}></div>
           ) : (
-            <h5>
-              {moment(
-                dataCollectionGroup.DataCollectionGroup_startTime,
-                'MMMM Do YYYY, h:mm:ss A'
-              ).format('DD/MM/YYYY HH:mm:ss')}
-              <Badge bg="info">
-                {dataCollectionGroup.Workflow_workflowType ||
-                  dataCollectionGroup.DataCollectionGroup_experimentType}
-              </Badge>
-            </h5>
+            <Row>
+              <Col xs={'auto'}>
+                <HashAnchorButton hash={hashscroll.hash} />
+              </Col>
+              <Col xs={'auto'}>
+                <h5>
+                  {moment(
+                    dataCollectionGroup.DataCollectionGroup_startTime,
+                    'MMMM Do YYYY, h:mm:ss A'
+                  ).format('DD/MM/YYYY HH:mm:ss')}
+                  <Badge bg="info">
+                    {dataCollectionGroup.Workflow_workflowType ||
+                      dataCollectionGroup.DataCollectionGroup_experimentType}
+                  </Badge>
+                </h5>
+              </Col>
+            </Row>
           )}
         </Card.Header>
         <Card.Body>
@@ -114,23 +127,27 @@ export default function DataCollectionGroupPanel({
       </Card>
     );
 
-  const pipelines = parseResults(procs?.flatMap((v) => v) || []).filter(
-    (v) =>
-      selectedPipelines.includes(v.program) || selectedPipelines.length === 0
-  );
-
   return (
     <Tab.Container
       activeKey={compact ? 'Summary' : undefined}
       defaultActiveKey="Summary"
     >
-      <Card className="themed-card card-datacollectiongroup-panel">
+      <Card
+        className="themed-card card-datacollectiongroup-panel"
+        ref={hashscroll.ref}
+        style={{
+          backgroundColor: hashscroll.isCurrent ? '#edf2ff' : undefined,
+        }}
+      >
         <Card.Header style={compact ? { padding: 0 } : undefined}>
           {compact ? (
             <div style={{ height: 5 }}></div>
           ) : (
             <Container fluid>
               <Row>
+                <Col xs={'auto'}>
+                  <HashAnchorButton hash={hashscroll.hash} />
+                </Col>
                 <Col md="auto">
                   <h5 style={compact ? { fontSize: 15, margin: 5 } : undefined}>
                     {moment(
@@ -174,14 +191,20 @@ export default function DataCollectionGroupPanel({
                       <Nav.Link eventKey="Sample">Sample</Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
-                      <Nav.Link eventKey="Results">
+                      <Nav.Link
+                        eventKey="Results"
+                        style={{
+                          display: 'flex',
+                        }}
+                      >
                         Autoprocessing
-                        <NbBadge
-                          value={
-                            pipelines.filter((p) => p.status === 'SUCCESS')
-                              .length
-                          }
-                        />
+                        <LazyWrapper>
+                          <AutoprocNbBadge
+                            dataCollectionGroup={dataCollectionGroup}
+                            proposalName={proposalName}
+                            selectedPipelines={selectedPipelines}
+                          />
+                        </LazyWrapper>
                       </Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
@@ -260,18 +283,14 @@ export default function DataCollectionGroupPanel({
               <Container fluid>
                 <Tab.Content>
                   <Tab.Pane eventKey="Summary" title="Summary">
-                    <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                      <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-                        <SummaryDataCollectionGroupPanel
-                          compact={compact}
-                          proposalName={proposalName}
-                          dataCollectionGroup={dataCollectionGroup}
-                          selectedPipelines={selectedPipelines}
-                          resultRankParam={resultRankParam}
-                          resultRankShell={resultRankShell}
-                        ></SummaryDataCollectionGroupPanel>
-                      </Suspense>
-                    </LazyWrapper>
+                    <SummaryDataCollectionGroupPanel
+                      compact={compact}
+                      proposalName={proposalName}
+                      dataCollectionGroup={dataCollectionGroup}
+                      selectedPipelines={selectedPipelines}
+                      resultRankParam={resultRankParam}
+                      resultRankShell={resultRankShell}
+                    ></SummaryDataCollectionGroupPanel>
                   </Tab.Pane>
                   <Tab.Pane eventKey="Beamline" title="Beamline Parameters">
                     <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
@@ -319,12 +338,10 @@ export default function DataCollectionGroupPanel({
                   </Tab.Pane>
                   <Tab.Pane eventKey="Phasing" title="Phasing">
                     <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                      <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-                        <MRTab
-                          proposalName={proposalName}
-                          dataCollectionGroup={dataCollectionGroup}
-                        ></MRTab>
-                      </Suspense>
+                      <MRTab
+                        proposalName={proposalName}
+                        dataCollectionGroup={dataCollectionGroup}
+                      ></MRTab>
                     </LazyWrapper>
                   </Tab.Pane>
                 </Tab.Content>
@@ -332,13 +349,56 @@ export default function DataCollectionGroupPanel({
             </Col>
           </Row>
         </Card.Body>
-        <Suspense>
-          <ProcessingSummary
-            proposalName={proposalName}
-            dataCollectionGroup={dataCollectionGroup}
-          />
-        </Suspense>
+        {dataCollectionGroup.processingStatus?.trim().length && (
+          <Card.Footer>
+            <LazyWrapper
+              height={60}
+              placeholder={
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100%',
+                  }}
+                >
+                  <Spinner animation="border" role="status" variant="primary">
+                    <span className="visually-hidden">Loading...</span>
+                  </Spinner>
+                </div>
+              }
+            >
+              <ProcessingSummary
+                proposalName={proposalName}
+                dataCollectionGroup={dataCollectionGroup}
+              />
+            </LazyWrapper>
+          </Card.Footer>
+        )}
       </Card>
     </Tab.Container>
+  );
+}
+
+function AutoprocNbBadge({
+  dataCollectionGroup,
+  proposalName,
+  selectedPipelines,
+}: {
+  dataCollectionGroup: DataCollectionGroup;
+  proposalName: string;
+  selectedPipelines: string[];
+}) {
+  const { data: procs } = useAutoProc({
+    proposalName,
+    dataCollectionId:
+      dataCollectionGroup.DataCollection_dataCollectionId?.toString() || '-1',
+  });
+  const pipelines = parseResults(procs?.flatMap((v) => v) || []).filter(
+    (v) =>
+      selectedPipelines.includes(v.program) || selectedPipelines.length === 0
+  );
+  return (
+    <NbBadge value={pipelines.filter((p) => p.status === 'SUCCESS').length} />
   );
 }
