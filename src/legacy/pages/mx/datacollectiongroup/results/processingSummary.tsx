@@ -14,14 +14,7 @@ import {
 import { useAutoProc } from 'legacy/hooks/ispyb';
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
 import _ from 'lodash';
-import {
-  Card,
-  Col,
-  Container,
-  OverlayTrigger,
-  Popover,
-  Row,
-} from 'react-bootstrap';
+import { Col, Container, OverlayTrigger, Popover, Row } from 'react-bootstrap';
 
 export interface Props {
   proposalName: string;
@@ -57,21 +50,15 @@ export default function ProcessingSummary({
     .value();
 
   return (
-    <Card.Footer>
-      <Container fluid>
-        <Row>
-          {groupedResults.map((r) => {
-            return (
-              <PipelineStatus
-                key={r[0]}
-                pipeline={r[0]}
-                groupedResults={r[1]}
-              />
-            );
-          })}
-        </Row>
-      </Container>
-    </Card.Footer>
+    <Container fluid>
+      <Row>
+        {groupedResults.map((r) => {
+          return (
+            <PipelineStatus key={r[0]} pipeline={r[0]} groupedResults={r[1]} />
+          );
+        })}
+      </Row>
+    </Container>
   );
 }
 

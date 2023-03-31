@@ -76,12 +76,6 @@ export default function DataCollectionGroupPanel({
     });
   }, [compactToggle, setCompact]);
 
-  const { data: procs } = useAutoProc({
-    proposalName,
-    dataCollectionId:
-      dataCollectionGroup.DataCollection_dataCollectionId?.toString() || '-1',
-  });
-
   if (dataCollectionGroup.DataCollection_dataCollectionId === undefined)
     return (
       <Card className="themed-card card-datacollectiongroup-panel">
@@ -113,11 +107,6 @@ export default function DataCollectionGroupPanel({
         </Card.Body>
       </Card>
     );
-
-  const pipelines = parseResults(procs?.flatMap((v) => v) || []).filter(
-    (v) =>
-      selectedPipelines.includes(v.program) || selectedPipelines.length === 0
-  );
 
   return (
     <Tab.Container
@@ -174,14 +163,20 @@ export default function DataCollectionGroupPanel({
                       <Nav.Link eventKey="Sample">Sample</Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
-                      <Nav.Link eventKey="Results">
+                      <Nav.Link
+                        eventKey="Results"
+                        style={{
+                          display: 'flex',
+                        }}
+                      >
                         Autoprocessing
-                        <NbBadge
-                          value={
-                            pipelines.filter((p) => p.status === 'SUCCESS')
-                              .length
-                          }
-                        />
+                        <LazyWrapper>
+                          <AutoprocNbBadge
+                            dataCollectionGroup={dataCollectionGroup}
+                            proposalName={proposalName}
+                            selectedPipelines={selectedPipelines}
+                          />
+                        </LazyWrapper>
                       </Nav.Link>
                     </Nav.Item>
                     <Nav.Item>
@@ -260,18 +255,14 @@ export default function DataCollectionGroupPanel({
               <Container fluid>
                 <Tab.Content>
                   <Tab.Pane eventKey="Summary" title="Summary">
-                    <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                      <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-                        <SummaryDataCollectionGroupPanel
-                          compact={compact}
-                          proposalName={proposalName}
-                          dataCollectionGroup={dataCollectionGroup}
-                          selectedPipelines={selectedPipelines}
-                          resultRankParam={resultRankParam}
-                          resultRankShell={resultRankShell}
-                        ></SummaryDataCollectionGroupPanel>
-                      </Suspense>
-                    </LazyWrapper>
+                    <SummaryDataCollectionGroupPanel
+                      compact={compact}
+                      proposalName={proposalName}
+                      dataCollectionGroup={dataCollectionGroup}
+                      selectedPipelines={selectedPipelines}
+                      resultRankParam={resultRankParam}
+                      resultRankShell={resultRankShell}
+                    ></SummaryDataCollectionGroupPanel>
                   </Tab.Pane>
                   <Tab.Pane eventKey="Beamline" title="Beamline Parameters">
                     <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
@@ -319,12 +310,10 @@ export default function DataCollectionGroupPanel({
                   </Tab.Pane>
                   <Tab.Pane eventKey="Phasing" title="Phasing">
                     <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                      <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-                        <MRTab
-                          proposalName={proposalName}
-                          dataCollectionGroup={dataCollectionGroup}
-                        ></MRTab>
-                      </Suspense>
+                      <MRTab
+                        proposalName={proposalName}
+                        dataCollectionGroup={dataCollectionGroup}
+                      ></MRTab>
                     </LazyWrapper>
                   </Tab.Pane>
                 </Tab.Content>
@@ -332,13 +321,40 @@ export default function DataCollectionGroupPanel({
             </Col>
           </Row>
         </Card.Body>
-        <Suspense>
-          <ProcessingSummary
-            proposalName={proposalName}
-            dataCollectionGroup={dataCollectionGroup}
-          />
-        </Suspense>
+        {dataCollectionGroup.processingStatus?.trim().length && (
+          <Card.Footer>
+            <LazyWrapper height={60}>
+              <ProcessingSummary
+                proposalName={proposalName}
+                dataCollectionGroup={dataCollectionGroup}
+              />
+            </LazyWrapper>
+          </Card.Footer>
+        )}
       </Card>
     </Tab.Container>
+  );
+}
+
+function AutoprocNbBadge({
+  dataCollectionGroup,
+  proposalName,
+  selectedPipelines,
+}: {
+  dataCollectionGroup: DataCollectionGroup;
+  proposalName: string;
+  selectedPipelines: string[];
+}) {
+  const { data: procs } = useAutoProc({
+    proposalName,
+    dataCollectionId:
+      dataCollectionGroup.DataCollection_dataCollectionId?.toString() || '-1',
+  });
+  const pipelines = parseResults(procs?.flatMap((v) => v) || []).filter(
+    (v) =>
+      selectedPipelines.includes(v.program) || selectedPipelines.length === 0
+  );
+  return (
+    <NbBadge value={pipelines.filter((p) => p.status === 'SUCCESS').length} />
   );
 }

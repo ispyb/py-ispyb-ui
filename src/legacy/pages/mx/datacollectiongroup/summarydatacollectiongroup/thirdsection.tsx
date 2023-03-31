@@ -7,7 +7,7 @@ import {
   ResultRankShell,
 } from 'legacy/helpers/mx/results/resultparser';
 import { useAutoProc } from 'legacy/hooks/ispyb';
-import { Alert } from 'react-bootstrap';
+import { Alert, Container } from 'react-bootstrap';
 
 export default function ThirdSection({
   proposalName,
@@ -48,27 +48,33 @@ export default function ThirdSection({
 
   if (bestResultWithPipelineFilter) {
     return (
-      <BestResultSection
-        compact={compact}
-        bestResult={bestResultWithPipelineFilter}
-      ></BestResultSection>
+      <Container fluid>
+        <BestResultSection
+          compact={compact}
+          bestResult={bestResultWithPipelineFilter}
+        ></BestResultSection>
+      </Container>
     );
   }
   if (bestResultNoPipelineFilter) {
     return (
-      <Alert variant="light">
-        A result is available with pipeline{' '}
-        <strong>
-          <i>{bestResultNoPipelineFilter.program}</i>
-        </strong>{' '}
-        which is filtered out.
-      </Alert>
+      <Container fluid>
+        <Alert variant="light">
+          A result is available with pipeline{' '}
+          <strong>
+            <i>{bestResultNoPipelineFilter.program}</i>
+          </strong>{' '}
+          which is filtered out.
+        </Alert>
+      </Container>
     );
   }
   return (
-    <ScreeningSection
-      compact={compact}
-      dataCollectionGroup={dataCollectionGroup}
-    ></ScreeningSection>
+    <Container fluid>
+      <ScreeningSection
+        compact={compact}
+        dataCollectionGroup={dataCollectionGroup}
+      ></ScreeningSection>
+    </Container>
   );
 }

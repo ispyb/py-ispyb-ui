@@ -287,20 +287,16 @@ export default function MXDataCollectionGroupPage() {
                 key={acquisition.DataCollectionGroup_dataCollectionGroupId}
                 style={compact ? { margin: 1 } : { margin: 5 }}
               >
-                <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                  <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-                    <DataCollectionGroupPanel
-                      compactToggle={compactToggle}
-                      defaultCompact={compact}
-                      dataCollectionGroup={acquisition}
-                      proposalName={proposalName}
-                      sessionId={sessionId}
-                      selectedPipelines={pipelinesSelection.pipelines}
-                      resultRankParam={autoProcRankingSelection.rankParam}
-                      resultRankShell={autoProcRankingSelection.rankShell}
-                    ></DataCollectionGroupPanel>
-                  </Suspense>
-                </LazyWrapper>
+                <DataCollectionGroupPanel
+                  compactToggle={compactToggle}
+                  defaultCompact={compact}
+                  dataCollectionGroup={acquisition}
+                  proposalName={proposalName}
+                  sessionId={sessionId}
+                  selectedPipelines={pipelinesSelection.pipelines}
+                  resultRankParam={autoProcRankingSelection.rankParam}
+                  resultRankShell={autoProcRankingSelection.rankShell}
+                ></DataCollectionGroupPanel>
               </div>
             );
           } else if ('xfeFluorescenceSpectrumId' in acquisition) {
