@@ -37,6 +37,7 @@ import {
   ResultRankShell,
 } from 'legacy/helpers/mx/results/resultparser';
 import MRTab from './phasing/phasingTab';
+import { HashAnchorButton, useHashScroll } from 'hooks/hashScroll';
 
 type Props = {
   sessionId: string;
@@ -76,23 +77,40 @@ export default function DataCollectionGroupPanel({
     });
   }, [compactToggle, setCompact]);
 
+  const hashscroll = useHashScroll(
+    `dcg-${dataCollectionGroup.DataCollectionGroup_dataCollectionGroupId}`
+  );
+
   if (dataCollectionGroup.DataCollection_dataCollectionId === undefined)
     return (
-      <Card className="themed-card card-datacollectiongroup-panel">
+      <Card
+        className="themed-card card-datacollectiongroup-panel"
+        ref={hashscroll.ref}
+        style={{
+          backgroundColor: hashscroll.isCurrent ? '#edf2ff' : undefined,
+        }}
+      >
         <Card.Header style={compact ? { padding: 0 } : undefined}>
           {compact ? (
             <div style={{ height: 5 }}></div>
           ) : (
-            <h5>
-              {moment(
-                dataCollectionGroup.DataCollectionGroup_startTime,
-                'MMMM Do YYYY, h:mm:ss A'
-              ).format('DD/MM/YYYY HH:mm:ss')}
-              <Badge bg="info">
-                {dataCollectionGroup.Workflow_workflowType ||
-                  dataCollectionGroup.DataCollectionGroup_experimentType}
-              </Badge>
-            </h5>
+            <Row>
+              <Col xs={'auto'}>
+                <HashAnchorButton hash={hashscroll.hash} />
+              </Col>
+              <Col xs={'auto'}>
+                <h5>
+                  {moment(
+                    dataCollectionGroup.DataCollectionGroup_startTime,
+                    'MMMM Do YYYY, h:mm:ss A'
+                  ).format('DD/MM/YYYY HH:mm:ss')}
+                  <Badge bg="info">
+                    {dataCollectionGroup.Workflow_workflowType ||
+                      dataCollectionGroup.DataCollectionGroup_experimentType}
+                  </Badge>
+                </h5>
+              </Col>
+            </Row>
           )}
         </Card.Header>
         <Card.Body>
@@ -113,13 +131,22 @@ export default function DataCollectionGroupPanel({
       activeKey={compact ? 'Summary' : undefined}
       defaultActiveKey="Summary"
     >
-      <Card className="themed-card card-datacollectiongroup-panel">
+      <Card
+        className="themed-card card-datacollectiongroup-panel"
+        ref={hashscroll.ref}
+        style={{
+          backgroundColor: hashscroll.isCurrent ? '#edf2ff' : undefined,
+        }}
+      >
         <Card.Header style={compact ? { padding: 0 } : undefined}>
           {compact ? (
             <div style={{ height: 5 }}></div>
           ) : (
             <Container fluid>
               <Row>
+                <Col xs={'auto'}>
+                  <HashAnchorButton hash={hashscroll.hash} />
+                </Col>
                 <Col md="auto">
                   <h5 style={compact ? { fontSize: 15, margin: 5 } : undefined}>
                     {moment(
