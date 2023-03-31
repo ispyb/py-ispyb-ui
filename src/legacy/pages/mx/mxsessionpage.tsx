@@ -1,5 +1,4 @@
-/* eslint-disable react/jsx-key */
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useMemo, useState } from 'react';
 import {
   useMXDataCollectionsBy,
   useMXEnergyScans,
@@ -91,7 +90,7 @@ function SessionTabMenu({
           as={NavLink}
           to={`/legacy/proposals/${proposalName}/MX/${sessionId}/collection`}
         >
-          Data Collections{' '}
+          Acquisitions{' '}
           <Suspense
             fallback={
               <Spinner
@@ -101,54 +100,7 @@ function SessionTabMenu({
               />
             }
           >
-            <NbBadgeEndpoint
-              endpoint={useMXDataCollectionsBy}
-              sessionId={sessionId}
-              proposalName={proposalName}
-            />
-          </Suspense>
-        </Nav.Link>
-      </Nav.Item>
-      <Nav.Item>
-        <Nav.Link
-          as={NavLink}
-          to={`/legacy/proposals/${proposalName}/MX/${sessionId}/energy`}
-        >
-          Energy Scans{' '}
-          <Suspense
-            fallback={
-              <Spinner
-                size="sm"
-                animation="border"
-                style={{ marginLeft: 10 }}
-              />
-            }
-          >
-            <NbBadgeEndpoint
-              endpoint={useMXEnergyScans}
-              sessionId={sessionId}
-              proposalName={proposalName}
-            />
-          </Suspense>
-        </Nav.Link>
-      </Nav.Item>
-      <Nav.Item>
-        <Nav.Link
-          as={NavLink}
-          to={`/legacy/proposals/${proposalName}/MX/${sessionId}/xrf`}
-        >
-          Fluorescence Spectra{' '}
-          <Suspense
-            fallback={
-              <Spinner
-                size="sm"
-                animation="border"
-                style={{ marginLeft: 10 }}
-              />
-            }
-          >
-            <NbBadgeEndpoint
-              endpoint={useMXFluorescenceSpectras}
+            <NbBadgeAcquisition
               sessionId={sessionId}
               proposalName={proposalName}
             />
@@ -159,22 +111,34 @@ function SessionTabMenu({
   );
 }
 
-export function NbBadgeEndpoint({
-  endpoint,
+export function NbBadgeAcquisition({
   sessionId,
   proposalName,
 }: {
-  endpoint: ({
-    proposalName,
-    sessionId,
-  }: {
-    proposalName: string;
-    sessionId: string;
-  }) => { data: any[] | undefined };
   sessionId: string;
   proposalName: string;
 }) {
-  const { data } = endpoint({ proposalName, sessionId });
+  const { data: dataCollectionGroups } = useMXDataCollectionsBy({
+    proposalName,
+    sessionId,
+  });
+  const { data: spectras } = useMXFluorescenceSpectras({
+    proposalName,
+    sessionId,
+  });
+  const { data: energyScans } = useMXEnergyScans({
+    proposalName,
+    sessionId,
+  });
+
+  const data = useMemo(() => {
+    return [
+      ...(dataCollectionGroups || []),
+      ...(spectras || []),
+      ...(energyScans || []),
+    ];
+  }, [dataCollectionGroups, spectras, energyScans]);
+
   return <NbBadge value={data?.length} />;
 }
 

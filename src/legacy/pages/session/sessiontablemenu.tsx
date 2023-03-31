@@ -5,7 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 import { DateRangePicker, FocusedInputShape } from 'react-dates';
-import { Button, Col, Row } from 'react-bootstrap';
+import { Col, Row } from 'react-bootstrap';
 
 interface SessionTableMenuType {
   checkList: Array<{ text: string; selected: boolean; onClick: () => void }>;
@@ -74,7 +74,7 @@ export default function SessionTableMenu({
 
   return (
     <Menu>
-      <Col className="mb-2" xs={'auto'}>
+      <Col className="m-2" xs={'auto'}>
         <Row>
           <strong>Filter by technique</strong>
         </Row>
@@ -82,45 +82,64 @@ export default function SessionTableMenu({
           {checkList &&
             checkList.map((i) => (
               <Col key={i.text} xs={'auto'} style={{ paddingRight: 0 }}>
-                <Button
-                  variant={i.selected ? 'primary' : 'light'}
-                  onClick={i.onClick}
+                <div
+                  style={{ fontSize: 18, margin: 0 }}
+                  className="form-check form-switch"
                 >
-                  {i.text}
-                </Button>
+                  <input
+                    checked={i.selected}
+                    onChange={i.onClick}
+                    className="form-check-input"
+                    type="checkbox"
+                    role="switch"
+                    id="flexSwitchCheckDefault"
+                  />
+                  <label className="form-check-label">{i.text}</label>
+                </div>
               </Col>
             ))}
         </Row>
+        <Row>
+          <Col>
+            <div
+              style={{ fontSize: 18, margin: 0 }}
+              className="form-check form-switch"
+            >
+              <input
+                checked={showEmptySessions}
+                onChange={() => {
+                  setShowEmptySessions(!showEmptySessions);
+                }}
+                className="form-check-input"
+                type="checkbox"
+                role="switch"
+                id="flexSwitchCheckDefault"
+              />
+              <label className="form-check-label">Show empty sessions</label>
+            </div>
+          </Col>
+        </Row>
       </Col>
       {showDatePicker && (
-        <DateRangePicker
-          startDate={localStartDate}
-          startDateId="session_start_date_id"
-          endDate={localEndDate}
-          endDateId="session_end_date_id"
-          onDatesChange={onDateChange}
-          focusedInput={focusedInput}
-          onFocusChange={onFocusChange}
-          isOutsideRange={() => false}
-          displayFormat="DD/MM/YYYY"
-        />
+        <Col className="m-2" style={{ paddingLeft: '1rem' }}>
+          <Row>
+            <strong>Select date</strong>
+          </Row>
+          <Row>
+            <DateRangePicker
+              startDate={localStartDate}
+              startDateId="session_start_date_id"
+              endDate={localEndDate}
+              endDateId="session_end_date_id"
+              onDatesChange={onDateChange}
+              focusedInput={focusedInput}
+              onFocusChange={onFocusChange}
+              isOutsideRange={() => false}
+              displayFormat="DD/MM/YYYY"
+            />
+          </Row>
+        </Col>
       )}
-      <div
-        style={{ fontSize: 18, margin: 0 }}
-        className="form-check form-switch"
-      >
-        <input
-          checked={showEmptySessions}
-          onChange={() => {
-            setShowEmptySessions(!showEmptySessions);
-          }}
-          className="form-check-input"
-          type="checkbox"
-          role="switch"
-          id="flexSwitchCheckDefault"
-        />
-        <label className="form-check-label">Show empty sessions</label>
-      </div>
     </Menu>
   );
 }

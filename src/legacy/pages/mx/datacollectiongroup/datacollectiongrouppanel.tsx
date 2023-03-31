@@ -83,7 +83,36 @@ export default function DataCollectionGroupPanel({
   });
 
   if (dataCollectionGroup.DataCollection_dataCollectionId === undefined)
-    return null;
+    return (
+      <Card className="themed-card card-datacollectiongroup-panel">
+        <Card.Header style={compact ? { padding: 0 } : undefined}>
+          {compact ? (
+            <div style={{ height: 5 }}></div>
+          ) : (
+            <h5>
+              {moment(
+                dataCollectionGroup.DataCollectionGroup_startTime,
+                'MMMM Do YYYY, h:mm:ss A'
+              ).format('DD/MM/YYYY HH:mm:ss')}
+              <Badge bg="info">
+                {dataCollectionGroup.Workflow_workflowType ||
+                  dataCollectionGroup.DataCollectionGroup_experimentType}
+              </Badge>
+            </h5>
+          )}
+        </Card.Header>
+        <Card.Body>
+          <strong
+            style={{
+              color: 'red',
+              margin: '1rem',
+            }}
+          >
+            Collection started but no data found
+          </strong>
+        </Card.Body>
+      </Card>
+    );
 
   const pipelines = parseResults(procs?.flatMap((v) => v) || []).filter(
     (v) =>
@@ -109,7 +138,8 @@ export default function DataCollectionGroupPanel({
                       'MMMM Do YYYY, h:mm:ss A'
                     ).format('DD/MM/YYYY HH:mm:ss')}
                     <Badge bg="info">
-                      {dataCollectionGroup.DataCollectionGroup_experimentType}
+                      {dataCollectionGroup.Workflow_workflowType ||
+                        dataCollectionGroup.DataCollectionGroup_experimentType}
                     </Badge>
                   </h5>
                 </Col>
@@ -145,7 +175,7 @@ export default function DataCollectionGroupPanel({
                     </Nav.Item>
                     <Nav.Item>
                       <Nav.Link eventKey="Results">
-                        Results
+                        Autoprocessing
                         <NbBadge
                           value={
                             pipelines.filter((p) => p.status === 'SUCCESS')

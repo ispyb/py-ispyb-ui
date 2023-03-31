@@ -4,6 +4,7 @@ import {
   getDiffrationThumbnail,
   getCrystalImage,
   getDozorPlot,
+  getWorkflowImage,
 } from 'legacy/api/ispyb';
 import ZoomImage from 'legacy/components/image/zoomimage';
 import FirstSection from 'legacy/pages/mx/datacollectiongroup/summarydatacollectiongroup/firstsection';
@@ -15,6 +16,7 @@ import {
 } from 'legacy/helpers/mx/results/resultparser';
 import { PhasingSummary } from '../phasing/phasingSummary';
 import { CopyValue } from 'components/Common/CopyValue';
+import _ from 'lodash';
 
 export interface Props {
   proposalName: string;
@@ -33,6 +35,27 @@ export default function SummaryDataCollectionGroupPanel({
   resultRankShell,
   resultRankParam,
 }: Props) {
+  //look for crystal Snapshots in workflow steps
+  const crystalSnapshots = _(
+    dataCollectionGroup.WorkflowStep_workflowStepType?.split(',') || []
+  )
+    .zip(
+      dataCollectionGroup.WorkflowStep_status?.split(',') || [],
+      dataCollectionGroup.WorkflowStep_workflowStepId?.split(',') || []
+    )
+    .filter(
+      ([stepType, status]) =>
+        (stepType?.toLocaleLowerCase().includes('snapshot') &&
+          status?.toLocaleLowerCase().includes('success')) ||
+        false
+    )
+    .map(([, , stepId]) => stepId)
+    .filter((stepId) => stepId !== undefined)
+    .value() as string[];
+
+  const crystalSnapshotId =
+    crystalSnapshots.length > 0 ? crystalSnapshots[0] : undefined;
+
   return (
     <Col>
       {dataCollectionGroup.DataCollection_imageDirectory && (
@@ -106,12 +129,17 @@ export default function SummaryDataCollectionGroupPanel({
               style={{ maxWidth: 300 }}
               alt="Crystal"
               src={
-                getCrystalImage({
-                  proposalName,
-                  dataCollectionId:
-                    dataCollectionGroup.DataCollection_dataCollectionId,
-                  imageIndex: 1,
-                }).url
+                crystalSnapshotId
+                  ? getWorkflowImage({
+                      proposalName,
+                      stepId: crystalSnapshotId,
+                    }).url
+                  : getCrystalImage({
+                      proposalName,
+                      dataCollectionId:
+                        dataCollectionGroup.DataCollection_dataCollectionId,
+                      imageIndex: 1,
+                    }).url
               }
             ></ZoomImage>
           </Col>

@@ -6,6 +6,7 @@ import {
   BreadcrumbMatch,
 } from 'use-react-router-breadcrumbs';
 import MXSessionPage from '../pages/mx/mxsessionpage';
+import { Navigate } from 'react-router-dom';
 
 const SessionClassificationPage = React.lazy(() =>
   import(
@@ -47,20 +48,6 @@ const MXDataCollectionGroupPage = React.lazy(() =>
     'legacy/pages/mx/datacollectiongroup' /* webpackChunkName: "legacy_mx_dcg" */
   ).then((m) => ({
     default: m.MXDataCollectionGroupPage,
-  }))
-);
-const MXEnergyScanPage = React.lazy(() =>
-  import(
-    'legacy/pages/mx/energyscan' /* webpackChunkName: "legacy_mx_energy" */
-  ).then((m) => ({
-    default: m.MXEnergyScanPage,
-  }))
-);
-const MXFluorescencePage = React.lazy(() =>
-  import(
-    'legacy/pages/mx/fluorescence' /* webpackChunkName: "legacy_mx_fluo" */
-  ).then((m) => ({
-    default: m.MXFluorescencePage,
   }))
 );
 const MxFluorescenceViewer = React.lazy(() =>
@@ -128,7 +115,7 @@ const ProposalBreadCrumb: BreadcrumbComponentType<'proposalName'> = ({
 };
 
 const javaRoutes: TitledBreadcrumbsRoute[] = [
-  { index: true, element: <SessionsPage />, breadcrumb: null },
+  { index: true, element: <Navigate to="sessions/list" />, breadcrumb: null },
   { path: 'sessions/list', element: <SessionsPage />, breadcrumb: 'Sessions' },
   {
     path: 'proposals/list',
@@ -213,13 +200,8 @@ const javaRoutes: TitledBreadcrumbsRoute[] = [
               { path: 'summary', element: <MXSessionSummaryPage /> },
               { path: 'collection', element: <MXDataCollectionGroupPage /> },
               {
-                path: 'energy',
-                element: <MXEnergyScanPage />,
-              },
-              {
                 path: 'xrf',
                 children: [
-                  { index: true, element: <MXFluorescencePage /> },
                   { path: ':xrfId', element: <MxFluorescenceViewer /> },
                 ],
               },
