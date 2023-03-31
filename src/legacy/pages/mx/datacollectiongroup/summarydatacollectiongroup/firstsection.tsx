@@ -9,7 +9,6 @@ export default function FirstSection({
   compact?: boolean;
 }) {
   const {
-    Workflow_workflowType,
     Protein_acronym,
     BLSample_name,
     DataCollection_imagePrefix,
@@ -28,7 +27,6 @@ export default function FirstSection({
         },
       ]
     : [
-        { key: 'Workflow', value: Workflow_workflowType },
         { key: 'Protein', value: Protein_acronym },
         { key: 'Sample', value: BLSample_name },
         { key: 'Prefix', value: DataCollection_imagePrefix },

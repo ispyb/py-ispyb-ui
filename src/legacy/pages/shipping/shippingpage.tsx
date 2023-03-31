@@ -17,28 +17,7 @@ export default function ShippingPage() {
   const { proposalName = '' } = useParams<Param>();
 
   return (
-    <Tabs defaultActiveKey="addresses">
-      <Tab
-        eventKey="addresses"
-        title={
-          <>
-            <FontAwesomeIcon
-              style={{ marginRight: 10 }}
-              size="lg"
-              icon={faAddressCard}
-            ></FontAwesomeIcon>
-            Shipping addresses
-          </>
-        }
-      >
-        <Card>
-          <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-            <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-              <AddressesTab proposalName={proposalName}></AddressesTab>
-            </Suspense>
-          </LazyWrapper>
-        </Card>
-      </Tab>
+    <Tabs defaultActiveKey="shipments">
       <Tab
         eventKey="shipments"
         title={
@@ -56,6 +35,27 @@ export default function ShippingPage() {
           <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
             <Suspense fallback={<LoadingPanel></LoadingPanel>}>
               <ShipmentsTab proposalName={proposalName}></ShipmentsTab>
+            </Suspense>
+          </LazyWrapper>
+        </Card>
+      </Tab>
+      <Tab
+        eventKey="addresses"
+        title={
+          <>
+            <FontAwesomeIcon
+              style={{ marginRight: 10 }}
+              size="lg"
+              icon={faAddressCard}
+            ></FontAwesomeIcon>
+            Shipping addresses
+          </>
+        }
+      >
+        <Card>
+          <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
+            <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+              <AddressesTab proposalName={proposalName}></AddressesTab>
             </Suspense>
           </LazyWrapper>
         </Card>

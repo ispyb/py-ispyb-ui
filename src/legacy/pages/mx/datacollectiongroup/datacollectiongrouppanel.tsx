@@ -175,7 +175,7 @@ export default function DataCollectionGroupPanel({
                     </Nav.Item>
                     <Nav.Item>
                       <Nav.Link eventKey="Results">
-                        Results
+                        Autoprocessing
                         <NbBadge
                           value={
                             pipelines.filter((p) => p.status === 'SUCCESS')
