@@ -39,7 +39,6 @@ import {
 } from 'legacy/helpers/mx/results/resultparser';
 import MRTab from './phasing/phasingTab';
 import { HashAnchorButton, useHashScroll } from 'hooks/hashScroll';
-import Loading from 'components/Loading';
 
 type Props = {
   sessionId: string;
