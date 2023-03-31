@@ -21,10 +21,10 @@ export function HelpIcon({
           <div style={{ textAlign: 'left' }}>
             {message instanceof Array
               ? message.map((line) => (
-                  <>
+                  <div key={line}>
                     {line}
                     <br />
-                  </>
+                  </div>
                 ))
               : message}
           </div>

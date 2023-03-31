@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-key */
 import { Suspense, useEffect, useState } from 'react';
 import {
   useMXDataCollectionsBy,
@@ -231,9 +232,9 @@ export function AutoprocParameters({
                     })`
                   : line;
               return (
-                <>
+                <div key={text}>
                   {text} <br />
-                </>
+                </div>
               );
             })}
           </i>
