@@ -7,13 +7,18 @@ import { Beamline } from 'legacy/models';
 import { ContainerDewar } from 'legacy/pages/model';
 import { useState } from 'react';
 import { Alert, Button, Col, Row } from 'react-bootstrap';
-import BootstrapTable, { ColumnDescription } from 'react-bootstrap-table-next';
-import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
-import paginationFactory from 'react-bootstrap-table2-paginator';
 import { findBestDefaultBeamline } from './dndloadsamplechanger';
 import Select from 'react-select';
 
 import './tableloadsamplechanger.scss';
+import {
+  ColumnDef,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
+import { TanstackBootstrapTable } from 'components/Layout/TanstackBootstrapTable';
 
 export default function TableLoadSampleChanger({
   dewars,
@@ -80,66 +85,75 @@ export function ContainerTable({
     return undefined;
   };
 
-  const columns: ColumnDescription<ContainerDewar>[] = [
-    { text: 'id', dataField: 'containerId', hidden: true },
+  const columns: ColumnDef<ContainerDewar>[] = [
     {
-      text: 'Shipment',
-      dataField: 'shippingName',
-      filter: textFilter({
-        placeholder: 'Search...',
-      }),
+      header: 'Shipment',
+      footer: 'Shipment',
+      accessorKey: 'shippingName',
     },
     {
-      text: 'Container',
-      dataField: 'containerCode',
-      filter: textFilter({
-        placeholder: 'Search...',
-      }),
+      header: 'Container',
+      footer: 'Container',
+      accessorKey: 'containerCode',
     },
     {
-      text: 'Type',
-      dataField: 'containerType',
-      filter: textFilter({
-        placeholder: 'Search...',
-      }),
+      header: 'Type',
+      footer: 'Type',
+      accessorKey: 'containerType',
     },
     {
-      text: 'Beamline',
-      dataField: 'beamlineLocation',
-      formatter: (cell, row) => {
+      header: 'Beamline',
+      footer: 'Beamline',
+      accessorKey: 'beamlineLocation',
+      cell: (info) => {
         return (
           <BeamLineSelector
-            beamline={getContainerBeamline(row)}
+            beamline={getContainerBeamline(info.row.original)}
             beamlines={beamlines}
             setBeamline={(b) => {
-              setContainerLocation(row.containerId, b.name, undefined);
+              setContainerLocation(
+                info.row.original.containerId,
+                b.name,
+                undefined
+              );
             }}
           ></BeamLineSelector>
         );
       },
-      filter: textFilter({
-        placeholder: 'Search...',
-      }),
     },
     {
-      text: 'Position',
-      dataField: 'sampleChangerLocation',
-      headerStyle: { minWidth: 150 },
-      formatter: (cell, row) => {
+      header: 'Position',
+      footer: 'Position',
+      accessorKey: 'sampleChangerLocation',
+      cell: (info) => {
         return (
           <PositionSelector
-            container={row}
-            beamline={getContainerBeamline(row)}
+            container={info.row.original}
+            beamline={getContainerBeamline(info.row.original)}
             setPosition={(pos) => {
-              setContainerLocation(row.containerId, row.beamlineLocation, pos);
+              setContainerLocation(
+                info.row.original.containerId,
+                info.row.original.beamlineLocation,
+                pos
+              );
             }}
           ></PositionSelector>
         );
       },
-      hidden: false,
     },
   ];
-
+  const table = useReactTable({
+    data: dewars,
+    columns: columns,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    initialState: {
+      pagination: {
+        pageSize: 20,
+      },
+    },
+  });
   return (
     <Col style={{ margin: 15, marginTop: 0 }}>
       <Row style={{ marginBottom: 10 }}>
@@ -157,22 +171,7 @@ export function ContainerTable({
         <Col></Col>
       </Row>
       <Row>
-        <BootstrapTable
-          bootstrap4
-          wrapperClasses="table-responsive"
-          keyField="Id"
-          data={dewars}
-          columns={columns}
-          condensed
-          striped
-          pagination={paginationFactory({
-            sizePerPage: 20,
-            showTotal: true,
-            hideSizePerPage: true,
-            hidePageListOnlyOnePage: true,
-          })}
-          filter={filterFactory()}
-        />
+        <TanstackBootstrapTable table={table} />
       </Row>
     </Col>
   );

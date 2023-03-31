@@ -1,10 +1,15 @@
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useState } from 'react';
+import {
+  ColumnDef,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
+import { TanstackBootstrapTable } from 'components/Layout/TanstackBootstrapTable';
+import { useMemo, useState } from 'react';
 import { Button, Row } from 'react-bootstrap';
-import BootstrapTable, { ColumnDescription } from 'react-bootstrap-table-next';
-import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
-import paginationFactory from 'react-bootstrap-table2-paginator';
 import { KeyedMutator } from 'swr';
 import AddressModal from './addressmodal';
 import { LabContact } from './model';
@@ -24,83 +29,68 @@ export function AddressesTable({
   proposalName: string;
   mutate: KeyedMutator<LabContact[]>;
 }) {
-  const data = addresses.map((v) => {
-    const res: LabContactExt = v;
-    res.email = v.personVO.emailAddress;
-    res.givenName = v.personVO.givenName;
-    res.familyName = v.personVO.familyName;
-    return res;
-  });
+  const data = useMemo(
+    () =>
+      addresses.map((v) => {
+        const res: LabContactExt = v;
+        res.email = v.personVO.emailAddress;
+        res.givenName = v.personVO.givenName;
+        res.familyName = v.personVO.familyName;
+        return res;
+      }),
+    [addresses]
+  );
 
-  const columns: ColumnDescription[] = [
-    { text: 'id', dataField: 'labContactId', hidden: true },
+  const columns: ColumnDef<LabContactExt>[] = [
     {
-      text: '',
-      dataField: 'labContactId',
-      formatter: (cell, row) => {
-        return (
-          <EditAddressButton
-            mutate={mutate}
-            proposalName={proposalName}
-            labContact={row}
-          ></EditAddressButton>
-        );
-      },
-      headerStyle: { width: 56 },
-      style: { padding: 0, verticalAlign: 'middle', textAlign: 'center' },
+      id: 'edit',
+      header: '',
+      accessorKey: 'labContactId',
+      cell: (info) => (
+        <EditAddressButton
+          mutate={mutate}
+          proposalName={proposalName}
+          labContact={info.row.original}
+        />
+      ),
+      enableColumnFilter: false,
     },
     {
-      text: 'Address',
-      dataField: 'cardName',
-      headerStyle: { textAlign: 'center', verticalAlign: 'sub' },
-      filter: textFilter({
-        placeholder: 'Search...',
-      }),
-      sort: true,
+      header: 'Address',
+      footer: 'Address',
+      accessorKey: 'cardName',
     },
     {
-      text: 'Surname',
-      dataField: 'familyName',
-      headerStyle: { textAlign: 'center', verticalAlign: 'sub' },
-      style: { verticalAlign: 'middle', textAlign: 'center' },
-      filter: textFilter({
-        placeholder: 'Search...',
-      }),
-      sort: true,
+      header: 'Surname',
+      footer: 'Surname',
+      accessorKey: 'familyName',
     },
     {
-      text: 'Name',
-      dataField: 'givenName',
-      headerStyle: { textAlign: 'center', verticalAlign: 'sub' },
-      style: { verticalAlign: 'middle', textAlign: 'center' },
-      filter: textFilter({
-        placeholder: 'Search...',
-      }),
-      sort: true,
+      header: 'Name',
+      footer: 'Name',
+      accessorKey: 'givenName',
     },
     {
-      text: 'Email',
-      dataField: 'email',
-      headerStyle: { textAlign: 'center', verticalAlign: 'sub' },
-      style: { verticalAlign: 'middle', textAlign: 'center' },
-      filter: textFilter({
-        placeholder: 'Search...',
-      }),
-      sort: true,
+      header: 'Email',
+      footer: 'Email',
+      accessorKey: 'email',
     },
   ];
-
+  const table = useReactTable({
+    data: data,
+    columns: columns,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    initialState: {
+      pagination: {
+        pageSize: 20,
+      },
+    },
+  });
   return (
     <Row>
-      <BootstrapTable
-        bootstrap4
-        wrapperClasses="table-responsive"
-        keyField="Id"
-        data={data}
-        columns={columns}
-        pagination={paginationFactory({ showTotal: true })}
-        filter={filterFactory()}
-      />
+      <TanstackBootstrapTable table={table} />
     </Row>
   );
 }

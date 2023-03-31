@@ -6,12 +6,6 @@ import {
   Row,
   Tooltip,
 } from 'react-bootstrap';
-import BootstrapTable, { ColumnDescription } from 'react-bootstrap-table-next';
-import 'react-bootstrap-table-next/dist/react-bootstrap-table2.min.css';
-import 'react-bootstrap-table2-filter/dist/react-bootstrap-table2-filter.min.css';
-import 'react-bootstrap-table2-paginator/dist/react-bootstrap-table2-paginator.min.css';
-import paginationFactory from 'react-bootstrap-table2-paginator';
-import filterFactory, { textFilter } from 'react-bootstrap-table2-filter';
 import { useDewars } from 'legacy/hooks/ispyb';
 import { useParams } from 'react-router-dom';
 import _ from 'lodash';
@@ -34,8 +28,16 @@ import { KeyedMutator } from 'swr';
 import produce from 'immer';
 import LoadSampleChanger from './loadsamplechanger';
 import { Shipment } from 'legacy/pages/model';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useAuth } from 'hooks/useAuth';
+import {
+  ColumnDef,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
+import { TanstackBootstrapTable } from 'components/Layout/TanstackBootstrapTable';
 
 type Param = {
   proposalName: string;
@@ -108,21 +110,25 @@ export default function PrepareExperimentPage() {
     }
   };
 
-  const shipments = _(data)
-    .groupBy((d) => d.shippingId)
-    .filter((dewars: ContainerDewar[]) => dewars.length > 0)
-    .map((dewars: ContainerDewar[]) => {
-      const d = dewars[0];
-      const res: Shipment = {
-        shippingId: d.shippingId,
-        name: d.shippingName,
-        status: d.shippingStatus,
-        creationDate: d.creationDate,
-        dewars: dewars,
-      };
-      return res;
-    })
-    .value();
+  const shipments = useMemo(
+    () =>
+      _(data)
+        .groupBy((d) => d.shippingId)
+        .filter((dewars: ContainerDewar[]) => dewars.length > 0)
+        .map((dewars: ContainerDewar[]) => {
+          const d = dewars[0];
+          const res: Shipment = {
+            shippingId: d.shippingId,
+            name: d.shippingName,
+            status: d.shippingStatus,
+            creationDate: d.creationDate,
+            dewars: dewars,
+          };
+          return res;
+        })
+        .value(),
+    [data]
+  );
 
   const processingDewars = _(shipments)
     .filter((s) => Boolean(shipmentIsProcessing(s)))
@@ -131,50 +137,55 @@ export default function PrepareExperimentPage() {
     .filter((d) => d.containerId !== null)
     .value();
 
-  const columns: ColumnDescription<Shipment>[] = [
-    { text: 'id', dataField: 'shippingId', hidden: true },
+  const columns: ColumnDef<Shipment>[] = [
     {
-      text: '',
-      dataField: 'shippingId',
-      formatter: (cell, row) => {
+      header: '',
+      accessorKey: 'shippingId',
+      cell: (info) => {
         return (
           <ToggleShipmentStatus
             proposalName={proposalName}
-            shipment={row}
+            shipment={info.row.original}
             mutate={mutate}
           ></ToggleShipmentStatus>
         );
       },
-      headerStyle: { width: 40 },
-      style: { verticalAlign: 'middle', textAlign: 'center' },
+      enableColumnFilter: false,
     },
     {
-      text: 'Name',
-      dataField: 'name',
-      filter: textFilter({
-        placeholder: 'Search...',
-      }),
-      style: { verticalAlign: 'middle' },
+      header: 'Name',
+      footer: 'Name',
+      accessorKey: 'name',
     },
     {
-      text: 'Status',
-      dataField: 'status',
-      filter: textFilter({
-        placeholder: 'Search...',
-      }),
-      style: { verticalAlign: 'middle' },
+      header: 'Status',
+      footer: 'Status',
+      accessorKey: 'status',
+      enableColumnFilter: false,
     },
     {
-      text: 'Created on',
-      dataField: 'creationDate',
-      formatter: dateFormatter,
-      filter: textFilter({
-        placeholder: 'Search...',
-      }),
-      style: { verticalAlign: 'middle' },
+      header: 'Created on',
+      footer: 'Created on',
+      accessorFn: (v) => dateFormatter(v.creationDate),
+      enableColumnFilter: false,
     },
   ];
-
+  const sortedShipments = useMemo(
+    () => shipments.sort(sortShipments),
+    [shipments]
+  );
+  const table = useReactTable({
+    data: sortedShipments,
+    columns: columns,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    initialState: {
+      pagination: {
+        pageSize: 20,
+      },
+    },
+  });
   const step1 = (
     <Card style={{ border: 'none' }}>
       <Card.Header>
@@ -212,24 +223,11 @@ export default function PrepareExperimentPage() {
       </Card.Header>
       {!compactStep1 && (
         <Card.Body style={{ padding: 0 }}>
-          <BootstrapTable
-            bootstrap4
-            wrapperClasses="table-responsive"
-            keyField="Id"
-            data={shipments.sort(sortShipments)}
-            columns={columns}
-            rowClasses={(row: Shipment) => {
-              return shipmentIsProcessing(row) ? 'processing' : '';
-            }}
-            condensed
-            striped
-            pagination={paginationFactory({
-              sizePerPage: 20,
-              showTotal: true,
-              hideSizePerPage: true,
-              hidePageListOnlyOnePage: true,
-            })}
-            filter={filterFactory()}
+          <TanstackBootstrapTable
+            rowStyle={(v) =>
+              shipmentIsProcessing(v) ? { backgroundColor: 'lightblue' } : {}
+            }
+            table={table}
           />
         </Card.Body>
       )}
@@ -259,9 +257,7 @@ export default function PrepareExperimentPage() {
     return (
       <Row>
         <Col md={'auto'}>
-          <Row>
-            <div style={{ maxWidth: 450 }}>{step1}</div>
-          </Row>
+          <Row>{step1}</Row>
         </Col>
         <Col>{step2}</Col>
       </Row>

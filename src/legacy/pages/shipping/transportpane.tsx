@@ -1,11 +1,18 @@
 import { faQuestionCircle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import {
+  ColumnDef,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
+import { TanstackBootstrapTable } from 'components/Layout/TanstackBootstrapTable';
 import SimpleParameterTable from 'legacy/components/table/simpleparametertable';
 import { formatDateTo } from 'legacy/helpers/dateparser';
 import { useShippingHistory } from 'legacy/hooks/ispyb';
 import _ from 'lodash';
 import { Row, Alert, Col, Badge } from 'react-bootstrap';
-import BootstrapTable from 'react-bootstrap-table-next';
 import { Shipping, ShippingHistory, ShippingHistoryEntry } from './model';
 import './transportpane.scss';
 
@@ -138,6 +145,41 @@ export function DewarTransport({
 }: {
   history: DewarTransportHistory;
 }) {
+  const columns: ColumnDef<ShippingHistoryEntry>[] = [
+    {
+      header: 'date',
+      footer: 'date',
+      accessorFn: (row) =>
+        formatDateTo(row.DewarTransportHistory_arrivalDate, 'yyyy-MM-dd HH:mm'),
+      enableColumnFilter: false,
+    },
+
+    {
+      header: 'status',
+      footer: 'status',
+      accessorKey: 'DewarTransportHistory_dewarStatus',
+      cell: (info) => <Badge>{info.getValue() as string}</Badge>,
+      enableColumnFilter: false,
+    },
+    {
+      header: 'location',
+      footer: 'location',
+      accessorKey: 'DewarTransportHistory_storageLocation',
+      enableColumnFilter: false,
+    },
+  ];
+  const table = useReactTable({
+    data: history.steps,
+    columns: columns,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    initialState: {
+      pagination: {
+        pageSize: 20,
+      },
+    },
+  });
   return (
     <Alert style={{ margin: 10 }} variant="light">
       <Row>
@@ -164,36 +206,8 @@ export function DewarTransport({
             ></SimpleParameterTable>
           </div>
         </Col>
-        <Col>
-          <BootstrapTable
-            bootstrap4
-            wrapperClasses="table-responsive"
-            keyField="date"
-            data={history.steps}
-            striped
-            columns={[
-              {
-                text: 'date',
-                dataField: 'DewarTransportHistory_arrivalDate',
-                formatter: (cell) => formatDateTo(cell, 'yyyy-MM-dd HH:mm'),
-                style: { backgroundColor: 'white' },
-                headerStyle: { backgroundColor: 'white' },
-              },
-              {
-                text: 'status',
-                dataField: 'DewarTransportHistory_dewarStatus',
-                formatter: (cell) => <Badge>{cell}</Badge>,
-                style: { backgroundColor: 'white' },
-                headerStyle: { backgroundColor: 'white' },
-              },
-              {
-                text: 'location',
-                dataField: 'DewarTransportHistory_storageLocation',
-                style: { backgroundColor: 'white' },
-                headerStyle: { backgroundColor: 'white' },
-              },
-            ]}
-          ></BootstrapTable>
+        <Col style={{ backgroundColor: 'white', padding: '1rem' }}>
+          <TanstackBootstrapTable table={table} />
         </Col>
       </Row>
     </Alert>

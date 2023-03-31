@@ -14,11 +14,9 @@ export default function SessionsPage() {
   const username = javaPerson?.username || '';
   const [areEMColumnsVisible, setAreEMColumnsVisible] = useState(true);
   const [areMXColumnsVisible, setAreMXColumnsVisible] = useState(true);
-  const [areSAXSColumnsVisible, setAreSAXSColumnsVisible] = useState(false);
 
   const beamlines: string[] = useGetBeamlines({
     areMXColumnsVisible,
-    areSAXSColumnsVisible,
     areEMColumnsVisible,
   });
   const params: Record<string, string> = useQueryParams();
@@ -62,10 +60,8 @@ export default function SessionsPage() {
       )}
       areEMColumnsVisible={areEMColumnsVisible}
       areMXColumnsVisible={areMXColumnsVisible}
-      areSAXSColumnsVisible={areSAXSColumnsVisible}
       setAreEMColumnsVisible={setAreEMColumnsVisible}
       setAreMXColumnsVisible={setAreMXColumnsVisible}
-      setAreSAXSColumnsVisible={setAreSAXSColumnsVisible}
       userPortalLink={UI.sessionsPage.userPortalLink}
     ></SessionTable>
   );

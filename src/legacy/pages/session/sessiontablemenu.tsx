@@ -5,12 +5,10 @@ import { useSearchParams } from 'react-router-dom';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 import { DateRangePicker, FocusedInputShape } from 'react-dates';
-import { ButtonGroup } from 'react-bootstrap';
-import { ToggleButtonProps } from 'react-bootstrap/esm/ToggleButton';
-import { ToggleButton } from 'react-bootstrap';
+import { Button, Col, Row } from 'react-bootstrap';
 
 interface SessionTableMenuType {
-  checkList: Array<ToggleButtonProps>;
+  checkList: Array<{ text: string; selected: boolean; onClick: () => void }>;
   showDatePicker: boolean;
   startDate?: string;
   // eslint-disable-next-line no-unused-vars
@@ -76,18 +74,24 @@ export default function SessionTableMenu({
 
   return (
     <Menu>
-      <ButtonGroup className="mb-2">
-        {checkList &&
-          checkList.map((item: ToggleButtonProps, i) => (
-            <ToggleButton
-              key={i}
-              {...item}
-              variant={item.checked ? 'primary' : 'outline-primary'}
-            >
-              {item.value}
-            </ToggleButton>
-          ))}
-      </ButtonGroup>
+      <Col className="mb-2" xs={'auto'}>
+        <Row>
+          <strong>Filter by technique</strong>
+        </Row>
+        <Row>
+          {checkList &&
+            checkList.map((i) => (
+              <Col key={i.text} xs={'auto'} style={{ paddingRight: 0 }}>
+                <Button
+                  variant={i.selected ? 'primary' : 'light'}
+                  onClick={i.onClick}
+                >
+                  {i.text}
+                </Button>
+              </Col>
+            ))}
+        </Row>
+      </Col>
       {showDatePicker && (
         <DateRangePicker
           startDate={localStartDate}
