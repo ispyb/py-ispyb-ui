@@ -6,7 +6,6 @@ import {
   BreadcrumbMatch,
 } from 'use-react-router-breadcrumbs';
 import MXSessionPage from '../pages/mx/mxsessionpage';
-import { redirect } from 'react-router';
 import { Navigate } from 'react-router-dom';
 
 const SessionClassificationPage = React.lazy(() =>
