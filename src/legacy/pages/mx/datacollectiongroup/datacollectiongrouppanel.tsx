@@ -95,7 +95,8 @@ export default function DataCollectionGroupPanel({
                 'MMMM Do YYYY, h:mm:ss A'
               ).format('DD/MM/YYYY HH:mm:ss')}
               <Badge bg="info">
-                {dataCollectionGroup.DataCollectionGroup_experimentType}
+                {dataCollectionGroup.Workflow_workflowType ||
+                  dataCollectionGroup.DataCollectionGroup_experimentType}
               </Badge>
             </h5>
           )}
@@ -137,7 +138,8 @@ export default function DataCollectionGroupPanel({
                       'MMMM Do YYYY, h:mm:ss A'
                     ).format('DD/MM/YYYY HH:mm:ss')}
                     <Badge bg="info">
-                      {dataCollectionGroup.DataCollectionGroup_experimentType}
+                      {dataCollectionGroup.Workflow_workflowType ||
+                        dataCollectionGroup.DataCollectionGroup_experimentType}
                     </Badge>
                   </h5>
                 </Col>
