@@ -18,6 +18,7 @@ import { PhasingSummary } from '../phasing/phasingSummary';
 import { CopyValue } from 'components/Common/CopyValue';
 import _ from 'lodash';
 import LazyWrapper from 'legacy/components/loading/lazywrapper';
+import Loading from 'components/Loading';
 
 export interface Props {
   proposalName: string;
@@ -97,7 +98,7 @@ export default function SummaryDataCollectionGroupPanel({
             ></FirstSection>
           </Col>
           <Col sm={12} md={6} xl={compact ? 4 : 4} xxl={compact ? 4 : 3}>
-            <LazyWrapper height={430}>
+            <LazyWrapper height={430} placeholder={<Loading />}>
               <ThirdSection
                 compact={compact}
                 dataCollectionGroup={dataCollectionGroup}

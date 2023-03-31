@@ -10,6 +10,7 @@ import {
   Container,
   Badge,
   Button,
+  Spinner,
 } from 'react-bootstrap';
 
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
@@ -38,6 +39,7 @@ import {
 } from 'legacy/helpers/mx/results/resultparser';
 import MRTab from './phasing/phasingTab';
 import { HashAnchorButton, useHashScroll } from 'hooks/hashScroll';
+import Loading from 'components/Loading';
 
 type Props = {
   sessionId: string;
@@ -350,7 +352,23 @@ export default function DataCollectionGroupPanel({
         </Card.Body>
         {dataCollectionGroup.processingStatus?.trim().length && (
           <Card.Footer>
-            <LazyWrapper height={60}>
+            <LazyWrapper
+              height={60}
+              placeholder={
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '100%',
+                  }}
+                >
+                  <Spinner animation="border" role="status" variant="primary">
+                    <span className="visually-hidden">Loading...</span>
+                  </Spinner>
+                </div>
+              }
+            >
               <ProcessingSummary
                 proposalName={proposalName}
                 dataCollectionGroup={dataCollectionGroup}
