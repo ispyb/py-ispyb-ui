@@ -31,6 +31,7 @@ import { usePersistentParamState } from 'hooks/useParam';
 import { parseDate } from 'helpers/dateparser';
 import EnergyScanPanel from '../energyscan/energyscanpanel';
 import FluorescencePanel from '../fluorescence/fluorescencepanel';
+import { DataCollectionGroup, EnergyScan, FluorescenceSpectra } from '../model';
 
 type Param = {
   sessionId: string;
@@ -118,11 +119,20 @@ export default function MXDataCollectionGroupPage() {
   ]);
 
   const acquisitionData = useMemo(() => {
-    return _([
-      ...(filteredDataCollectionGroups || []),
-      ...(spectras || []),
-      ...(energyScans || []),
-    ])
+    const onlyDataCollectionGroups =
+      filterMR === 'true' ||
+      filterSAD === 'true' ||
+      filterScaling === 'true' ||
+      filterSamples === 'true';
+    const spectraList = onlyDataCollectionGroups ? [] : spectras || [];
+    const energyScanList = onlyDataCollectionGroups ? [] : energyScans || [];
+    return _([...(filteredDataCollectionGroups || [])] as (
+      | DataCollectionGroup
+      | FluorescenceSpectra
+      | EnergyScan
+    )[])
+      .push(...energyScanList)
+      .push(...spectraList)
       .orderBy((v) => {
         const start =
           'startTime' in v ? v.startTime : v.DataCollectionGroup_startTime;
@@ -131,7 +141,15 @@ export default function MXDataCollectionGroupPage() {
       })
       .reverse()
       .value();
-  }, [filteredDataCollectionGroups, spectras, energyScans]);
+  }, [
+    filterMR,
+    filterSAD,
+    filterScaling,
+    filterSamples,
+    spectras,
+    energyScans,
+    filteredDataCollectionGroups,
+  ]);
 
   if (dataCollectionGroups && dataCollectionGroups.length) {
     return (
