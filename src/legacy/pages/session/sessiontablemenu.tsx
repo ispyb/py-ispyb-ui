@@ -5,7 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 import { DateRangePicker, FocusedInputShape } from 'react-dates';
-import { Button, Col, Row } from 'react-bootstrap';
+import { Col, Row } from 'react-bootstrap';
 
 interface SessionTableMenuType {
   checkList: Array<{ text: string; selected: boolean; onClick: () => void }>;
