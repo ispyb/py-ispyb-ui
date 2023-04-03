@@ -12,9 +12,8 @@ import {
   Container,
   Row,
 } from 'react-bootstrap';
-import { DataCollectionGroup } from '../model';
+import { DataCollectionGroup } from 'legacy/pages/mx/model';
 
-import DataCollectionGroupPanel from '../datacollectiongroup/datacollectiongrouppanel';
 import { useAutoProcRanking, usePipelines } from 'hooks/mx';
 import {
   AutoProcIntegration,
@@ -23,8 +22,9 @@ import {
 import { usePersistentParamState } from 'hooks/useParam';
 import LazyWrapper from 'legacy/components/loading/lazywrapper';
 import { MetadataRow } from 'components/Events/Metadata';
-import UnitCellSection from 'legacy/pages/mx/datacollectiongroup/summarydatacollectiongroup/unitcellsection';
 import MasonryLayout from 'components/Layout/Mansonry';
+import { DataCollectionGroupPanel } from '../../dataset/datacollectiongroup/DataCollectionGroupPanel';
+import { UnitCellInfo } from '../../dataset/datacollectiongroup/summary/UnitCellInfo';
 
 export function ProteinsInfo({
   sessionId,
@@ -215,9 +215,6 @@ function BestCollectionSection({
   dataCollectionGroups: DataCollectionGroup[];
   rankedIntegrations: AutoProcIntegration[];
 }) {
-  const ranking = useAutoProcRanking();
-  const pipelines = usePipelines();
-
   const proteinBestIntegration = rankedIntegrations[0];
 
   const proteinBestCollection =
@@ -235,17 +232,13 @@ function BestCollectionSection({
         </Accordion.Header>
         <Accordion.Body style={{ padding: 5 }}>
           <LazyWrapper placeholder={<Loading />}>
-            <Suspense fallback={<Loading />}>
+            <Container fluid>
               <DataCollectionGroupPanel
                 sessionId={sessionId}
                 proposalName={proposalName}
                 dataCollectionGroup={proteinBestCollection}
-                defaultCompact={false}
-                selectedPipelines={pipelines.pipelines}
-                resultRankShell={ranking.rankShell}
-                resultRankParam={ranking.rankParam}
               />
-            </Suspense>
+            </Container>
           </LazyWrapper>
         </Accordion.Body>
       </Accordion.Item>
@@ -380,7 +373,7 @@ function StatisticsSection({
                         </>
                       )}
                     </Card.Header>
-                    <UnitCellSection
+                    <UnitCellInfo
                       cell_a={`${minA?.toFixed(1)} - ${maxA?.toFixed(1)}`}
                       cell_b={`${minB?.toFixed(1)} - ${maxB?.toFixed(1)}`}
                       cell_c={`${minC?.toFixed(1)} - ${maxC?.toFixed(1)}`}

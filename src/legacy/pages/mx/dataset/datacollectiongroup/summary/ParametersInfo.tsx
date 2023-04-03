@@ -1,7 +1,7 @@
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
 import SimpleParameterTable from 'legacy/components/table/simpleparametertable';
 
-export default function FirstSection({
+export function ParametersInfo({
   dataCollectionGroup,
   compact = false,
 }: {

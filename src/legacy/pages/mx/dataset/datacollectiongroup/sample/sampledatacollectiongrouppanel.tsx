@@ -6,8 +6,8 @@ import { getCrystalImage } from 'legacy/api/ispyb';
 import { useParams } from 'react-router-dom';
 import SimpleParameterTable from 'legacy/components/table/simpleparametertable';
 import { MXContainer } from 'legacy/pages/mx/container/mxcontainer';
-import LoadingPanel from 'legacy/components/loading/loadingpanel';
 import { Suspense } from 'react';
+import Loading from 'components/Loading';
 
 type Param = {
   proposalName: string;
@@ -116,7 +116,7 @@ export default function SampleDataCollectionGroupPanel({
         </Col>
         <Col xs={12} sm={6} md={true}>
           {dataCollectionGroup.Container_containerId && (
-            <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+            <Suspense fallback={<Loading />}>
               <MXContainer
                 selectedSamples={
                   dataCollectionGroup.BLSample_name

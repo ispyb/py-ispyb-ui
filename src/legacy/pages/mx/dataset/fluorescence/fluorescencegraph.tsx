@@ -2,8 +2,8 @@ import { parse } from 'papaparse';
 import { useXrfScanCsv } from 'legacy/hooks/ispyb';
 import { useState } from 'react';
 import { Button } from 'react-bootstrap';
-import { FluorescenceSpectra } from '../model';
 import InteractiveGraph from './interactivegraph';
+import { FluorescenceSpectra } from '../../model';
 
 type Props = {
   proposalName: string;

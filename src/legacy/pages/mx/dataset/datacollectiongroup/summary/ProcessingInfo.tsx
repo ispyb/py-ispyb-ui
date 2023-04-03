@@ -1,6 +1,6 @@
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
-import ScreeningSection from './screeningsection';
-import BestResultSection from './autoprocintegrationsection';
+import { ScreeningInfo } from './ScreeningInfo';
+import { BestAutoprocResult } from './BestAutoprocResult';
 import {
   getBestResult,
   ResultRankParam,
@@ -8,11 +8,11 @@ import {
 } from 'legacy/helpers/mx/results/resultparser';
 import { useAutoProc } from 'legacy/hooks/ispyb';
 import { Alert, Container } from 'react-bootstrap';
+import { useMemo } from 'react';
 
-export default function ThirdSection({
+export function ProcessingInfo({
   proposalName,
   dataCollectionGroup,
-  compact,
   selectedPipelines,
   resultRankShell,
   resultRankParam,
@@ -20,7 +20,6 @@ export default function ThirdSection({
   proposalName: string;
 
   dataCollectionGroup: DataCollectionGroup;
-  compact: boolean;
   selectedPipelines: string[];
   resultRankShell: ResultRankShell;
   resultRankParam: ResultRankParam;
@@ -30,29 +29,41 @@ export default function ThirdSection({
     dataCollectionId:
       dataCollectionGroup.DataCollection_dataCollectionId.toString(),
   });
-  if (!data || !data.length) return null;
 
-  const bestResultWithPipelineFilter = getBestResult(
-    data.flatMap((d) => d),
-    resultRankShell,
-    resultRankParam,
-    selectedPipelines
+  const bestResultWithPipelineFilter = useMemo(
+    () =>
+      getBestResult(
+        (data || []).flatMap((d) => d),
+        resultRankShell,
+        resultRankParam,
+        selectedPipelines
+      ),
+    [data, resultRankParam, resultRankShell, selectedPipelines]
   );
 
-  const bestResultNoPipelineFilter = getBestResult(
-    data.flatMap((d) => d),
-    resultRankShell,
-    resultRankParam,
-    []
+  const bestResultNoPipelineFilter = useMemo(
+    () =>
+      getBestResult(
+        (data || []).flatMap((d) => d),
+        resultRankShell,
+        resultRankParam,
+        []
+      ),
+    [data, resultRankParam, resultRankShell]
   );
+
+  if (
+    bestResultWithPipelineFilter === undefined &&
+    bestResultNoPipelineFilter === undefined
+  )
+    return null;
 
   if (bestResultWithPipelineFilter) {
     return (
       <Container fluid>
-        <BestResultSection
-          compact={compact}
+        <BestAutoprocResult
           bestResult={bestResultWithPipelineFilter}
-        ></BestResultSection>
+        ></BestAutoprocResult>
       </Container>
     );
   }
@@ -71,10 +82,7 @@ export default function ThirdSection({
   }
   return (
     <Container fluid>
-      <ScreeningSection
-        compact={compact}
-        dataCollectionGroup={dataCollectionGroup}
-      ></ScreeningSection>
+      <ScreeningInfo dataCollectionGroup={dataCollectionGroup}></ScreeningInfo>
     </Container>
   );
 }

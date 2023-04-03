@@ -1,4 +1,4 @@
-import { faLink } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faLink } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import React, { useEffect, useMemo, useRef } from 'react';
 import { Button, OverlayTrigger, Tooltip } from 'react-bootstrap';
@@ -44,14 +44,22 @@ export function HashAnchorButton({ hash }: { hash: string }) {
     return undefined;
   }, [copied]);
 
+  const { hash: urlHash } = useLocation();
+  const isCurrent = useMemo(() => {
+    return urlHash === hash;
+  }, [urlHash, hash]);
+
+  const message = isCurrent
+    ? 'Current url is anchored here.'
+    : copied
+    ? 'Copied'
+    : 'Copy to clipboard';
+
   return (
-    <OverlayTrigger
-      placement="auto"
-      overlay={<Tooltip>{copied ? 'Copied' : 'Copy to clipboard'}</Tooltip>}
-    >
+    <OverlayTrigger placement="auto" overlay={<Tooltip>{message}</Tooltip>}>
       <Button
         type="button"
-        variant={'secondary'}
+        variant={isCurrent ? 'danger' : 'secondary'}
         size="sm"
         onClick={(e) => {
           e.stopPropagation();
@@ -60,7 +68,7 @@ export function HashAnchorButton({ hash }: { hash: string }) {
           setCopied(true);
         }}
       >
-        <FontAwesomeIcon size={'lg'} icon={faLink} />
+        <FontAwesomeIcon size={'lg'} icon={isCurrent ? faCheck : faLink} />
       </Button>
     </OverlayTrigger>
   );

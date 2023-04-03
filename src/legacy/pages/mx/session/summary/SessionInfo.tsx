@@ -31,7 +31,11 @@ import {
   Popover,
   Row,
 } from 'react-bootstrap';
-import { DataCollectionGroup, EnergyScan, FluorescenceSpectra } from '../model';
+import {
+  DataCollectionGroup,
+  EnergyScan,
+  FluorescenceSpectra,
+} from '../../model';
 
 export function SessionInfo({
   sessionId,

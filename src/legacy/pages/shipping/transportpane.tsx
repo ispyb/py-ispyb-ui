@@ -12,7 +12,7 @@ import SimpleParameterTable from 'legacy/components/table/simpleparametertable';
 import { formatDateTo } from 'legacy/helpers/dateparser';
 import { useShippingHistory } from 'legacy/hooks/ispyb';
 import _ from 'lodash';
-import { Row, Alert, Col, Badge } from 'react-bootstrap';
+import { Row, Alert, Col, Badge, Container } from 'react-bootstrap';
 import { Shipping, ShippingHistory, ShippingHistoryEntry } from './model';
 import './transportpane.scss';
 
@@ -56,87 +56,91 @@ export function TransportPane({
     .value();
 
   return (
-    <Col>
-      <Row style={{ margin: 10 }}>
-        <Col></Col>
-        <Col md={'auto'}>
-          <div className="historyParameterTable">
-            <SimpleParameterTable
-              parameters={[
-                {
-                  key: 'Creation date',
-                  value:
-                    formatDateTo(shipping.creationDate, 'yyyy-MM-dd') ||
-                    'unknown',
-                },
-              ]}
-            ></SimpleParameterTable>
-          </div>
-        </Col>
-        <Col></Col>
-        <Col md={'auto'}>
-          <div className="historyParameterTable">
-            <SimpleParameterTable
-              parameters={[
-                {
-                  key: 'Sending date',
-                  value:
-                    formatDateTo(
-                      shipping.deliveryAgentShippingDate,
-                      'yyyy-MM-dd'
-                    ) || 'unknown',
-                },
-              ]}
-            ></SimpleParameterTable>
-          </div>
-        </Col>
-        <Col></Col>
-        <Col md={'auto'}>
-          <div className="historyParameterTable">
-            <SimpleParameterTable
-              parameters={[
-                {
-                  key: 'Expected arrival date',
-                  value:
-                    formatDateTo(
-                      shipping.deliveryAgentDeliveryDate,
-                      'yyyy-MM-dd'
-                    ) || 'unknown',
-                },
-              ]}
-            ></SimpleParameterTable>
-          </div>
-        </Col>
-        <Col></Col>
-        <Col md={'auto'}>
-          <div className="historyParameterTable">
-            <SimpleParameterTable
-              parameters={[
-                {
-                  key: 'Return date',
-                  value:
-                    formatDateTo(shipping.dateOfShippingToUser, 'yyyy-MM-dd') ||
-                    'unknown',
-                },
-              ]}
-            ></SimpleParameterTable>
-          </div>
-        </Col>
-        <Col></Col>
-      </Row>
-      <Row>
-        <Col>
-          {grouped.map((group) => {
-            return (
-              <DewarTransport
-                key={group.Dewar_dewarId}
-                history={group}
-              ></DewarTransport>
-            );
-          })}
-        </Col>
-      </Row>
-    </Col>
+    <Container fluid>
+      <Col>
+        <Row style={{ margin: 10 }}>
+          <Col></Col>
+          <Col md={'auto'}>
+            <div className="historyParameterTable">
+              <SimpleParameterTable
+                parameters={[
+                  {
+                    key: 'Creation date',
+                    value:
+                      formatDateTo(shipping.creationDate, 'yyyy-MM-dd') ||
+                      'unknown',
+                  },
+                ]}
+              ></SimpleParameterTable>
+            </div>
+          </Col>
+          <Col></Col>
+          <Col md={'auto'}>
+            <div className="historyParameterTable">
+              <SimpleParameterTable
+                parameters={[
+                  {
+                    key: 'Sending date',
+                    value:
+                      formatDateTo(
+                        shipping.deliveryAgentShippingDate,
+                        'yyyy-MM-dd'
+                      ) || 'unknown',
+                  },
+                ]}
+              ></SimpleParameterTable>
+            </div>
+          </Col>
+          <Col></Col>
+          <Col md={'auto'}>
+            <div className="historyParameterTable">
+              <SimpleParameterTable
+                parameters={[
+                  {
+                    key: 'Expected arrival date',
+                    value:
+                      formatDateTo(
+                        shipping.deliveryAgentDeliveryDate,
+                        'yyyy-MM-dd'
+                      ) || 'unknown',
+                  },
+                ]}
+              ></SimpleParameterTable>
+            </div>
+          </Col>
+          <Col></Col>
+          <Col md={'auto'}>
+            <div className="historyParameterTable">
+              <SimpleParameterTable
+                parameters={[
+                  {
+                    key: 'Return date',
+                    value:
+                      formatDateTo(
+                        shipping.dateOfShippingToUser,
+                        'yyyy-MM-dd'
+                      ) || 'unknown',
+                  },
+                ]}
+              ></SimpleParameterTable>
+            </div>
+          </Col>
+          <Col></Col>
+        </Row>
+        <Row>
+          <Col>
+            {grouped.map((group) => {
+              return (
+                <DewarTransport
+                  key={group.Dewar_dewarId}
+                  history={group}
+                ></DewarTransport>
+              );
+            })}
+          </Col>
+        </Row>
+      </Col>
+    </Container>
   );
 }
 

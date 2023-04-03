@@ -8,7 +8,7 @@ function toNumber(value: any) {
   return res.toFixed(1);
 }
 
-export default function UnitCellSection({
+export function UnitCellInfo({
   cell_a,
   cell_b,
   cell_c,

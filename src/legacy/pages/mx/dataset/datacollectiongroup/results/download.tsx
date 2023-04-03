@@ -3,12 +3,12 @@ import {
   faFileZipper,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Loading from 'components/Loading';
 import { useAuth } from 'hooks/useAuth';
 import {
   getAttachmentsDownloadUrl,
   getDownloadAttachmentUrl,
 } from 'legacy/api/ispyb';
-import LoadingPanel from 'legacy/components/loading/loadingpanel';
 import { AutoProcIntegration } from 'legacy/helpers/mx/results/resultparser';
 import { useAttachmentList } from 'legacy/hooks/ispyb';
 import { PropsWithChildren, Suspense, useState } from 'react';
@@ -70,7 +70,7 @@ function DownloadResultModal({
         <h5>Download results from {result.program}</h5>
       </Modal.Header>
       <Modal.Body>
-        <Suspense fallback={<LoadingPanel />}>
+        <Suspense fallback={<Loading />}>
           <DownloadResultModalContent
             proposalName={proposalName}
             result={result}
