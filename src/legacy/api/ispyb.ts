@@ -75,6 +75,53 @@ export function getMxDataCollectionsByGroupId({
   };
 }
 
+export function updateCollectionGroupComments({
+  proposalName,
+  id,
+  comments,
+}: {
+  proposalName: string;
+  id: string;
+  comments: string;
+}) {
+  return {
+    url: `/proposal/${proposalName}/mx/datacollectiongroup/${id}/comments/save`,
+    data: `comments=${comments}`,
+    headers: {},
+  };
+}
+
+export function updateCollectionComments({
+  proposalName,
+  id,
+  comments,
+}: {
+  proposalName: string;
+  id: string;
+  comments: string;
+}) {
+  return {
+    url: `/proposal/${proposalName}/mx/datacollection/${id}/comments/save`,
+    data: `comments=${comments}`,
+    headers: {},
+  };
+}
+export function updateSessionComments({
+  proposalName,
+  id,
+  comments,
+}: {
+  proposalName: string;
+  id: string;
+  comments: string;
+}) {
+  return {
+    url: `/proposal/${proposalName}/mx/session/${id}/comments/save`,
+    data: `comments=${comments}`,
+    headers: {},
+  };
+}
+
 export function getMXEnergyScans({
   proposalName,
   sessionId,
