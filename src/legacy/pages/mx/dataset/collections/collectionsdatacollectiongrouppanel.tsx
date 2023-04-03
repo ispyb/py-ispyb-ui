@@ -3,7 +3,7 @@ import { DataCollection, DataCollectionGroup } from 'legacy/pages/mx/model';
 import { useParams } from 'react-router-dom';
 import { convertToFixed } from 'legacy/helpers/numerictransformation';
 import ZoomImage from 'legacy/components/image/zoomimage';
-import { getDozorPlot } from 'legacy/api/ispyb';
+import { getDozorPlot, updateCollectionComments } from 'legacy/api/ispyb';
 import {
   ColumnDef,
   getCoreRowModel,
@@ -15,6 +15,7 @@ import { TanstackBootstrapTable } from 'components/Layout/TanstackBootstrapTable
 import { formatDateToDayAndTime } from 'helpers/dateparser';
 import { CopyValue } from 'components/Common/CopyValue';
 import { Container } from 'react-bootstrap';
+import { EditComments } from 'legacy/components/EditComments';
 
 type Param = {
   proposalName: string;
@@ -97,6 +98,7 @@ function getColumns(proposalName: string): ColumnDef<DataCollection>[] {
           />
         );
       },
+      enableColumnFilter: false,
     },
     {
       header: 'Phasing',
@@ -108,6 +110,16 @@ function getColumns(proposalName: string): ColumnDef<DataCollection>[] {
       header: 'Comments',
       footer: 'Comments',
       accessorKey: 'comments',
+      cell: (info) => {
+        return (
+          <EditComments
+            comments={(info.getValue() as string) || ''}
+            proposalName={proposalName}
+            id={info.row.original.dataCollectionId?.toString() || ''}
+            saveReq={updateCollectionComments}
+          />
+        );
+      },
     },
   ];
 }

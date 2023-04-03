@@ -7,6 +7,8 @@ import { formatDateTo } from 'legacy/helpers/dateparser';
 import { Session } from 'legacy/pages/model';
 import { Link } from 'react-router-dom';
 import { ColumnDef } from '@tanstack/react-table';
+import { EditComments } from 'legacy/components/EditComments';
+import { updateSessionComments } from 'legacy/api/ispyb';
 
 const dateFormatter = (row: Session) => {
   return `${formatDateTo(
@@ -181,6 +183,17 @@ export default function columns(props: Props): ColumnDef<Session>[] {
       footer: 'Comments',
 
       accessorKey: 'comments',
+      cell: (info) => (
+        <EditComments
+          comments={(info.getValue() as string) || ''}
+          proposalName={
+            info.row.original.Proposal_proposalCode +
+            info.row.original.Proposal_ProposalNumber
+          }
+          id={info.row.original.sessionId?.toString() || ''}
+          saveReq={updateSessionComments}
+        />
+      ),
     },
   ];
 }

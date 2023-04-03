@@ -5,6 +5,7 @@ import {
   getCrystalImage,
   getDozorPlot,
   getWorkflowImage,
+  updateCollectionGroupComments,
 } from 'legacy/api/ispyb';
 import ZoomImage from 'legacy/components/image/zoomimage';
 
@@ -21,6 +22,7 @@ import Loading from 'components/Loading';
 import { ProcessingInfo } from './ProcessingInfo';
 import { ParametersInfo } from './ParametersInfo';
 import { useMemo } from 'react';
+import { EditComments } from 'legacy/components/EditComments';
 
 export interface Props {
   proposalName: string;
@@ -188,8 +190,15 @@ export function SummaryDataCollectionGroupPanel({
           </Alert>
         )}
         <Row>
-          <h6>Comments</h6>
-          <p>{dataCollectionGroup.DataCollectionGroup_comments}</p>
+          <EditComments
+            comments={dataCollectionGroup.DataCollectionGroup_comments || ''}
+            proposalName={proposalName}
+            id={
+              dataCollectionGroup.DataCollectionGroup_dataCollectionGroupId?.toString() ||
+              ''
+            }
+            saveReq={updateCollectionGroupComments}
+          />
         </Row>
       </Col>
     </Container>
