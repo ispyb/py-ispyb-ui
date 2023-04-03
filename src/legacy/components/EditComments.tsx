@@ -26,15 +26,15 @@ export function EditComments({
     headers: any;
   };
 }) {
-  const [value, setValue] = useState(comments);
-  const [saved, setSaved] = useState(comments);
+  const [value, setValue] = useState(comments.trim());
+  const [saved, setSaved] = useState(comments.trim());
   const changed = value.trim() !== saved.trim();
   const { site, token } = useAuth();
 
   useEffect(() => {
     if (!changed) {
-      setValue(comments);
-      setSaved(comments);
+      setValue(comments.trim());
+      setSaved(comments.trim());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [comments]);
@@ -51,14 +51,14 @@ export function EditComments({
         <Button
           variant="success"
           onClick={() => {
-            const req = saveReq({ proposalName, id, comments: value });
+            const req = saveReq({ proposalName, id, comments: value.trim() });
             const fullUrl = `${site.host}${site.apiPrefix}/${token}${req.url}`;
             axios.post(fullUrl, req.data, { headers: req.headers }).then(
               () => {
-                setSaved(value);
+                setSaved(value.trim());
               },
               () => {
-                setSaved(comments);
+                setSaved(comments.trim());
               }
             );
           }}
