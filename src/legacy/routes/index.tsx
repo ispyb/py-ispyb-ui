@@ -45,7 +45,7 @@ const MXSessionSummaryPage = React.lazy(() =>
 );
 const MXAcquisitionsPage = React.lazy(() =>
   import(
-    'legacy/pages/mx/session/acquisitions' /* webpackChunkName: "legacy_mx_dcg" */
+    'legacy/pages/mx/session/acquisitions' /* webpackChunkName: "legacy_mx_acquisitions" */
   ).then((m) => ({
     default: m.MXAcquisitionsPage,
   }))

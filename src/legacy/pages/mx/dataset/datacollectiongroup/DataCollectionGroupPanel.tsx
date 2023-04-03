@@ -10,7 +10,6 @@ import {
 } from 'react-bootstrap';
 
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
-import './DataCollectionGroupPanel.scss';
 import CollectionsDataCollectionGroupPanel from '../collections/collectionsdatacollectiongrouppanel';
 import LazyWrapper from 'legacy/components/loading/lazywrapper';
 import _ from 'lodash';
