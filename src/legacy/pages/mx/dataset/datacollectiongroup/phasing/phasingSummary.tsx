@@ -36,54 +36,52 @@ export function PhasingSummary({
   );
   if (!summaryPhasings || !summaryPhasings.length) return null;
   return (
-    <>
-      {summaryPhasings.map((p) => (
-        <Col key={p.phasing.PhasingStep_phasingStepId}>
-          <Card
-            key={p.phasing.PhasingStep_phasingStepId}
-            style={{ padding: 20 }}
-          >
-            <Card.Body>
-              <Col>
-                <h5 className="text-center">
-                  {p.phasing.PhasingStep_method} phasing{' '}
-                  <HelpIcon
-                    message={[
-                      `This is the best ${p.phasing.PhasingStep_method} result for this data collection group. Click on the phasing tab to see more.`,
-                      ...PHASING_RANKING_METHOD_DESCRIPTION,
-                    ]}
-                  ></HelpIcon>
-                </h5>
-                <Row style={{ justifyContent: 'center' }}>
-                  <Col xs={'auto'}>
-                    <Badge style={{ margin: 0 }}>
-                      {p.phasing.PhasingStep_method}
-                    </Badge>
-                  </Col>
-                  <Col xs={'auto'}>
-                    <Badge style={{ margin: 0 }}>
-                      {p.phasing.PhasingProgramRun_phasingPrograms}
-                    </Badge>
-                  </Col>
-                  <Col xs={'auto'}>
-                    <Badge style={{ margin: 0 }}>
-                      {p.phasing.SpaceGroup_spaceGroupName}
-                    </Badge>
-                  </Col>
-                </Row>
-                <div
-                  style={{
-                    marginTop: 10,
-                    marginBottom: 10,
-                    borderTop: '1px solid lightgray',
-                  }}
-                />
-              </Col>
+    <Card style={{ padding: 20, paddingTop: 0 }}>
+      <Card.Body>
+        <Col>
+          {summaryPhasings.map((p) => (
+            <Row
+              key={p.phasing.PhasingStep_phasingStepId}
+              style={{ paddingTop: 20 }}
+            >
+              <h5 className="text-center">
+                {p.phasing.PhasingStep_method} phasing{' '}
+                <HelpIcon
+                  message={[
+                    `This is the best ${p.phasing.PhasingStep_method} result for this data collection group. Click on the phasing tab to see more.`,
+                    ...PHASING_RANKING_METHOD_DESCRIPTION,
+                  ]}
+                ></HelpIcon>
+              </h5>
+              <Row style={{ justifyContent: 'center' }}>
+                <Col xs={'auto'}>
+                  <Badge style={{ margin: 0 }}>
+                    {p.phasing.PhasingStep_method}
+                  </Badge>
+                </Col>
+                <Col xs={'auto'}>
+                  <Badge style={{ margin: 0 }}>
+                    {p.phasing.PhasingProgramRun_phasingPrograms}
+                  </Badge>
+                </Col>
+                <Col xs={'auto'}>
+                  <Badge style={{ margin: 0 }}>
+                    {p.phasing.SpaceGroup_spaceGroupName}
+                  </Badge>
+                </Col>
+              </Row>
+              <div
+                style={{
+                  marginTop: 10,
+                  marginBottom: 10,
+                  borderTop: '1px solid lightgray',
+                }}
+              />
               <UglyMolPreview mol={p.molecules[0]} />
-            </Card.Body>
-          </Card>
+            </Row>
+          ))}
         </Col>
-      ))}
-    </>
+      </Card.Body>
+    </Card>
   );
 }

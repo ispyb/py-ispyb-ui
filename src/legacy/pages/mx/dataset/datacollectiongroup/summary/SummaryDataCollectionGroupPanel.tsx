@@ -100,73 +100,80 @@ export function SummaryDataCollectionGroupPanel({
               dataCollectionGroup={dataCollectionGroup}
             ></ParametersInfo>
           </Col>
-          <Col sm={12} md={6} xl={4} xxl={3}>
-            <LazyWrapper height={430} placeholder={<Loading />}>
-              <ProcessingInfo
-                dataCollectionGroup={dataCollectionGroup}
-                selectedPipelines={selectedPipelines}
-                resultRankShell={resultRankShell}
-                resultRankParam={resultRankParam}
-                proposalName={proposalName}
-              ></ProcessingInfo>
-            </LazyWrapper>
-          </Col>
-          <Col xs={'auto'}>
-            <Row>
-              <LazyWrapper height={430}>
+          {(dataCollectionGroup.autoProcIds || '').trim().length > 0 ? (
+            <Col sm={12} md={6} xl={4} xxl={3}>
+              <LazyWrapper height={430} placeholder={<Loading />}>
+                <ProcessingInfo
+                  dataCollectionGroup={dataCollectionGroup}
+                  selectedPipelines={selectedPipelines}
+                  resultRankShell={resultRankShell}
+                  resultRankParam={resultRankParam}
+                  proposalName={proposalName}
+                ></ProcessingInfo>
+              </LazyWrapper>
+            </Col>
+          ) : null}
+          {!!dataCollectionGroup.hasMR || !!dataCollectionGroup.hasPhasing ? (
+            <Col sm={12} md={6} xl={4} xxl={3}>
+              <LazyWrapper height={430} placeholder={<Loading />}>
                 <PhasingSummary
                   dataCollectionGroup={dataCollectionGroup}
                   proposalName={proposalName}
                 ></PhasingSummary>
               </LazyWrapper>
+            </Col>
+          ) : null}
+
+          <Col xs={12} md={12} lg={true}>
+            <Row>
+              <Col style={{ paddingTop: 5 }}>
+                <ZoomImage
+                  style={{ maxWidth: 300, minWidth: 150 }}
+                  alt="Diffraction"
+                  src={
+                    getDiffrationThumbnail({
+                      proposalName,
+                      imageId: dataCollectionGroup.firstImageId,
+                    }).url
+                  }
+                ></ZoomImage>
+              </Col>
+              <Col style={{ paddingTop: 5 }}>
+                <ZoomImage
+                  style={{ maxWidth: 300, minWidth: 150 }}
+                  alt="Crystal"
+                  src={
+                    crystalSnapshotId
+                      ? getWorkflowImage({
+                          proposalName,
+                          stepId: crystalSnapshotId,
+                        }).url
+                      : getCrystalImage({
+                          proposalName,
+                          dataCollectionId:
+                            dataCollectionGroup.DataCollection_dataCollectionId,
+                          imageIndex: 1,
+                        }).url
+                  }
+                ></ZoomImage>
+              </Col>
+              {UI.MX.showQualityIndicatorPlot && (
+                <Col style={{ paddingTop: 5 }}>
+                  <ZoomImage
+                    style={{ maxWidth: 300, minWidth: 150 }}
+                    alt="Dozor"
+                    src={
+                      getDozorPlot({
+                        proposalName,
+                        dataCollectionId:
+                          dataCollectionGroup.DataCollection_dataCollectionId,
+                      }).url
+                    }
+                  ></ZoomImage>
+                </Col>
+              )}
             </Row>
           </Col>
-          <Col xs={12} sm={6} md={true}>
-            <ZoomImage
-              style={{ maxWidth: 300, minWidth: 150 }}
-              alt="Diffraction"
-              src={
-                getDiffrationThumbnail({
-                  proposalName,
-                  imageId: dataCollectionGroup.firstImageId,
-                }).url
-              }
-            ></ZoomImage>
-          </Col>
-          <Col xs={12} sm={6} md={true}>
-            <ZoomImage
-              style={{ maxWidth: 300, minWidth: 150 }}
-              alt="Crystal"
-              src={
-                crystalSnapshotId
-                  ? getWorkflowImage({
-                      proposalName,
-                      stepId: crystalSnapshotId,
-                    }).url
-                  : getCrystalImage({
-                      proposalName,
-                      dataCollectionId:
-                        dataCollectionGroup.DataCollection_dataCollectionId,
-                      imageIndex: 1,
-                    }).url
-              }
-            ></ZoomImage>
-          </Col>
-          {UI.MX.showQualityIndicatorPlot && (
-            <Col xs={12} sm={6} md={true}>
-              <ZoomImage
-                style={{ maxWidth: 300, minWidth: 150 }}
-                alt="Dozor"
-                src={
-                  getDozorPlot({
-                    proposalName,
-                    dataCollectionId:
-                      dataCollectionGroup.DataCollection_dataCollectionId,
-                  }).url
-                }
-              ></ZoomImage>
-            </Col>
-          )}
         </Row>
         {dataCollectionGroup.SpaceGroupModelResolvedByMr && (
           <Alert variant="success" className={'mt-3'}>
