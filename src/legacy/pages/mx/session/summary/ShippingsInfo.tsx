@@ -35,8 +35,9 @@ import {
   Row,
 } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import BestResultSection from '../datacollectiongroup/summarydatacollectiongroup/autoprocintegrationsection';
-import { DataCollectionGroup } from '../model';
+import { BestAutoprocResult } from '../../dataset/datacollectiongroup/summary/BestAutoprocResult';
+import { DataCollectionGroup } from '../../model';
+
 import {
   percentToScaleValue,
   ProcColorScaleInformation,
@@ -726,7 +727,7 @@ export function SampleInfo({
         {bestIntegration && (
           <div>
             <br />
-            <BestResultSection bestResult={bestIntegration} compact={false} />
+            <BestAutoprocResult bestResult={bestIntegration} />
           </div>
         )}
         {bestIntegration?.dataCollectionId && (

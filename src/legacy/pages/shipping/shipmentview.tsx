@@ -9,7 +9,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LazyWrapper from 'legacy/components/loading/lazywrapper';
-import LoadingPanel from 'legacy/components/loading/loadingpanel';
 import SimpleParameterTable from 'legacy/components/table/simpleparametertable';
 import { openInNewTab } from 'legacy/helpers/opentab';
 import { useMXContainers, useShipping } from 'legacy/hooks/ispyb';
@@ -55,6 +54,7 @@ import axios from 'axios';
 import DownloadButton from 'legacy/components/buttons/downloadbutton';
 import { EditDewarModal } from './dewarEditModal';
 import { useAuth } from 'hooks/useAuth';
+import Loading from 'components/Loading';
 
 export function ShipmentView({
   proposalName,
@@ -138,13 +138,11 @@ export function ShipmentView({
             </Tab.Content>
             <Tab.Content>
               <Tab.Pane eventKey="transport" title="Transport History">
-                <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                  <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-                    <TransportPane
-                      shipping={data}
-                      proposalName={proposalName}
-                    ></TransportPane>
-                  </Suspense>
+                <LazyWrapper placeholder={<Loading />}>
+                  <TransportPane
+                    shipping={data}
+                    proposalName={proposalName}
+                  ></TransportPane>
                 </LazyWrapper>
               </Tab.Pane>
             </Tab.Content>
@@ -297,10 +295,7 @@ export function ContentPane({
           (a, b) => (a.dewarId ? a.dewarId : 0) - (b.dewarId ? b.dewarId : 0)
         )
         .map((dewar) => (
-          <Suspense
-            key={dewar.dewarId}
-            fallback={<LoadingPanel></LoadingPanel>}
-          >
+          <Suspense key={dewar.dewarId} fallback={<Loading />}>
             <DewarPane
               statisticsMode={statisticsMode}
               key={dewar.dewarId}
@@ -414,7 +409,7 @@ export function ExportPane({
               onChange={() => toggleSelect(dewar.dewarId)}
               checked={selected.includes(dewar.dewarId)}
             ></FormCheck>
-            <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+            <Suspense fallback={<Loading />}>
               <DewarPane
                 statisticsMode={statisticsMode}
                 key={dewar.dewarId}

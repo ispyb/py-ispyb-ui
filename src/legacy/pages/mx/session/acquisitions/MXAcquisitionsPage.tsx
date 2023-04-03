@@ -1,10 +1,9 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   Alert,
   Button,
   ButtonGroup,
-  Card,
   OverlayTrigger,
   ToggleButton,
   Tooltip,
@@ -14,29 +13,25 @@ import {
   useMXEnergyScans,
   useMXFluorescenceSpectras,
 } from 'legacy/hooks/ispyb';
-import DataCollectionGroupPanel from 'legacy/pages/mx/datacollectiongroup/datacollectiongrouppanel';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Subject } from 'rxjs';
 import _ from 'lodash';
-import ContainerFilter from '../container/containerfilter';
-import {
-  faDotCircle,
-  faListAlt,
-  faListUl,
-} from '@fortawesome/free-solid-svg-icons';
-import { useAutoProcRanking, usePipelines } from 'hooks/mx';
+import ContainerFilter from '../../container/containerfilter';
+import { faDotCircle } from '@fortawesome/free-solid-svg-icons';
 import { usePersistentParamState } from 'hooks/useParam';
 import { parseDate } from 'helpers/dateparser';
-import EnergyScanPanel from '../energyscan/energyscanpanel';
-import FluorescencePanel from '../fluorescence/fluorescencepanel';
-import { DataCollectionGroup, EnergyScan, FluorescenceSpectra } from '../model';
+import {
+  DataCollectionGroup,
+  EnergyScan,
+  FluorescenceSpectra,
+} from '../../model';
+import { AcquisitionPanel } from '../../dataset/AcquisitionPanel';
 
 type Param = {
   sessionId: string;
   proposalName: string;
 };
 
-export default function MXDataCollectionGroupPage() {
+export function MXAcquisitionsPage() {
   const { sessionId = '', proposalName = '' } = useParams<Param>();
   const { data: dataCollectionGroups } = useMXDataCollectionsBy({
     proposalName,
@@ -50,9 +45,6 @@ export default function MXDataCollectionGroupPage() {
     proposalName,
     sessionId,
   });
-
-  const [compact, setCompact] = useState(false);
-  const compactToggle = new Subject<boolean>();
 
   const [filterSamples, setFilterSamples] = usePersistentParamState<
     'true' | 'false'
@@ -73,9 +65,6 @@ export default function MXDataCollectionGroupPage() {
   const [filterScaling, setFilterScaling] = usePersistentParamState<
     'true' | 'false'
   >('filterScaling', 'false');
-
-  const pipelinesSelection = usePipelines();
-  const autoProcRankingSelection = useAutoProcRanking();
 
   const containerIds = useMemo(() => {
     return _(dataCollectionGroups)
@@ -159,15 +148,15 @@ export default function MXDataCollectionGroupPage() {
       >
         <div
           style={{
-            alignSelf: 'flex-end',
+            alignSelf: 'flex-start',
           }}
         >
-          <small style={{ marginRight: 10 }}>
+          <small style={{ margin: 10 }}>
             <i>
               <strong>Filter by:</strong>
             </i>
           </small>
-          <ButtonGroup style={{ marginRight: 50 }}>
+          <ButtonGroup>
             <Button
               size="sm"
               variant={filterScaling === 'true' ? 'primary' : 'light'}
@@ -220,53 +209,6 @@ export default function MXDataCollectionGroupPage() {
               </ToggleButton>
             </OverlayTrigger>
           </ButtonGroup>
-          <ButtonGroup>
-            <OverlayTrigger
-              placement={'bottom'}
-              overlay={
-                <Tooltip id={`tooltip-bottom`}>Use detailed view</Tooltip>
-              }
-            >
-              <ToggleButton
-                style={{ margin: 1 }}
-                size="sm"
-                type="checkbox"
-                variant={!compact ? 'outline-primary' : 'light'}
-                name="radio"
-                checked={!compact}
-                onClick={() => {
-                  setCompact(false);
-                  compactToggle.next(false);
-                }}
-                value={''}
-              >
-                <FontAwesomeIcon icon={faListAlt}></FontAwesomeIcon>
-              </ToggleButton>
-            </OverlayTrigger>
-
-            <OverlayTrigger
-              placement={'bottom'}
-              overlay={
-                <Tooltip id={`tooltip-bottom`}>Use compact view</Tooltip>
-              }
-            >
-              <ToggleButton
-                style={{ margin: 1 }}
-                size="sm"
-                type="checkbox"
-                variant={compact ? 'outline-primary' : 'light'}
-                name="radio"
-                checked={compact}
-                onClick={() => {
-                  setCompact(true);
-                  compactToggle.next(true);
-                }}
-                value={''}
-              >
-                <FontAwesomeIcon icon={faListUl}></FontAwesomeIcon>
-              </ToggleButton>
-            </OverlayTrigger>
-          </ButtonGroup>
         </div>
         {filterSamples === 'true' && (
           <ContainerFilter
@@ -279,61 +221,17 @@ export default function MXDataCollectionGroupPage() {
           ></ContainerFilter>
         )}
         {acquisitionData.map((acquisition, i) => {
-          if ('DataCollectionGroup_dataCollectionGroupId' in acquisition) {
-            return (
-              <div
-                key={acquisition.DataCollectionGroup_dataCollectionGroupId}
-                style={compact ? { margin: 1 } : { margin: 5 }}
-              >
-                <DataCollectionGroupPanel
-                  compactToggle={compactToggle}
-                  defaultCompact={compact}
-                  dataCollectionGroup={acquisition}
-                  proposalName={proposalName}
-                  sessionId={sessionId}
-                  selectedPipelines={pipelinesSelection.pipelines}
-                  resultRankParam={autoProcRankingSelection.rankParam}
-                  resultRankShell={autoProcRankingSelection.rankShell}
-                ></DataCollectionGroupPanel>
-              </div>
-            );
-          } else if ('xfeFluorescenceSpectrumId' in acquisition) {
-            return (
-              <div
-                key={acquisition.xfeFluorescenceSpectrumId}
-                style={{ margin: 5 }}
-              >
-                <FluorescencePanel
-                  spectra={acquisition}
-                  proposalName={proposalName}
-                  sessionId={sessionId}
-                ></FluorescencePanel>
-              </div>
-            );
-          } else if ('energyScanId' in acquisition) {
-            return (
-              <div key={acquisition.energyScanId} style={{ margin: 5 }}>
-                <EnergyScanPanel
-                  energyScan={acquisition}
-                  proposalName={proposalName}
-                  sessionId={sessionId}
-                ></EnergyScanPanel>
-              </div>
-            );
-          } else {
-            return (
-              <div key={i} style={{ margin: 5 }}>
-                <Alert variant="danger">Unknown acquisition type</Alert>
-              </div>
-            );
-          }
+          return (
+            <AcquisitionPanel
+              key={i}
+              acquisition={acquisition}
+              proposalName={proposalName}
+              sessionId={sessionId}
+            />
+          );
         })}
       </div>
     );
   }
-  return (
-    <Card>
-      <p>No data collection groups found.</p>
-    </Card>
-  );
+  return <Alert variant="info">No acquisition found.</Alert>;
 }

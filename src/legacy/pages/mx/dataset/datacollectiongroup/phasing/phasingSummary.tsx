@@ -6,17 +6,16 @@ import {
   PHASING_RANKING_METHOD_DESCRIPTION,
 } from 'legacy/helpers/mx/results/phasingparser';
 import { usePhasingList } from 'legacy/hooks/ispyb';
+import { useMemo } from 'react';
 import { Badge, Card, Col, Row } from 'react-bootstrap';
-import { DataCollectionGroup } from '../../model';
+import { DataCollectionGroup } from '../../../model';
 
 export function PhasingSummary({
   proposalName,
   dataCollectionGroup,
-  compact,
 }: {
   proposalName: string;
   dataCollectionGroup: DataCollectionGroup;
-  compact: boolean;
 }) {
   const { data } = usePhasingList({
     proposalName,
@@ -27,29 +26,19 @@ export function PhasingSummary({
 
   const { site, token } = useAuth();
 
-  if (!data || !data.length) return null;
-
-  const results = data.flatMap((r) => r);
+  const results = useMemo(() => (data || []).flatMap((r) => r), [data]);
 
   const urlPrefix = `${site.host}${site.apiPrefix}/${token}`;
 
-  const summaryPhasings = parsePhasingStepsForSummary(
-    results,
-    proposalName,
-    urlPrefix
+  const summaryPhasings = useMemo(
+    () => parsePhasingStepsForSummary(results, proposalName, urlPrefix),
+    [proposalName, results, urlPrefix]
   );
-
   if (!summaryPhasings || !summaryPhasings.length) return null;
   return (
     <>
       {summaryPhasings.map((p) => (
-        <Col
-          // sm={12}
-          // md={6}
-          // xl={compact ? 4 : 4}
-          // xxl={compact ? 4 : 3}
-          key={p.phasing.PhasingStep_phasingStepId}
-        >
+        <Col key={p.phasing.PhasingStep_phasingStepId}>
           <Card
             key={p.phasing.PhasingStep_phasingStepId}
             style={{ padding: 20 }}

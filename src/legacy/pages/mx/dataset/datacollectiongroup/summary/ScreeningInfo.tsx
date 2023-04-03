@@ -1,8 +1,8 @@
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
-import { Col, Row, Table } from 'react-bootstrap';
-import UnitCellSection from './unitcellsection';
+import { Col, Table } from 'react-bootstrap';
+import { UnitCellInfo } from './UnitCellInfo';
 
-import './screeningsection.scss';
+import './ScreeningInfo.scss';
 
 function getSuccessIndexing(datacollectiongroup: DataCollectionGroup) {
   if (datacollectiongroup.ScreeningOutput_indexingSuccess) {
@@ -14,7 +14,7 @@ function getSuccessIndexing(datacollectiongroup: DataCollectionGroup) {
 function getUnitCellSection(datacollectiongroup: DataCollectionGroup) {
   if (datacollectiongroup.ScreeningOutput_strategySuccess) {
     return (
-      <UnitCellSection
+      <UnitCellInfo
         cell_a={String(datacollectiongroup.ScreeningOutputLattice_unitCell_a)}
         cell_b={String(datacollectiongroup.ScreeningOutputLattice_unitCell_b)}
         cell_c={String(datacollectiongroup.ScreeningOutputLattice_unitCell_c)}
@@ -28,7 +28,7 @@ function getUnitCellSection(datacollectiongroup: DataCollectionGroup) {
           datacollectiongroup.ScreeningOutputLattice_unitCell_gamma
         )}
         spaceGroup={datacollectiongroup.ScreeningOutputLattice_spaceGroup}
-      ></UnitCellSection>
+      ></UnitCellInfo>
     );
   }
 }
@@ -64,12 +64,10 @@ function getStrategyOsc(datacollectiongroup: DataCollectionGroup) {
   }
 }
 
-export default function ScreeningSection({
+export function ScreeningInfo({
   dataCollectionGroup,
-  compact,
 }: {
   dataCollectionGroup: DataCollectionGroup;
-  compact: boolean;
 }) {
   const content = [
     <Col key={0}>
@@ -111,7 +109,7 @@ export default function ScreeningSection({
     </Col>,
     <Col key={3}>{getUnitCellSection(dataCollectionGroup)}</Col>,
   ];
-  return compact ? <Row>{content}</Row> : <Col>{content}</Col>;
+  return <Col>{content}</Col>;
 }
 
 function Indexed({

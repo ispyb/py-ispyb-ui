@@ -1,6 +1,6 @@
 import { faWindowMaximize } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import LoadingPanel from 'legacy/components/loading/loadingpanel';
+import Loading from 'components/Loading';
 import { useMxWorkflow } from 'legacy/hooks/ispyb';
 import WorkflowContent from 'legacy/pages/mx/workflow/workflowcontent';
 import { Suspense } from 'react';
@@ -41,7 +41,7 @@ export default function WorkflowModal({
       </Modal.Header>
       <Modal.Body>
         {show && (
-          <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+          <Suspense fallback={<Loading />}>
             <ModalContent
               proposalName={proposalName}
               step={step}

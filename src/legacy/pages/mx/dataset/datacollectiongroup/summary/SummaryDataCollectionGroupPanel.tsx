@@ -7,8 +7,7 @@ import {
   getWorkflowImage,
 } from 'legacy/api/ispyb';
 import ZoomImage from 'legacy/components/image/zoomimage';
-import FirstSection from 'legacy/pages/mx/datacollectiongroup/summarydatacollectiongroup/firstsection';
-import ThirdSection from 'legacy/pages/mx/datacollectiongroup/summarydatacollectiongroup/thirdsection';
+
 import UI from 'legacy/config/ui';
 import {
   ResultRankParam,
@@ -19,44 +18,49 @@ import { CopyValue } from 'components/Common/CopyValue';
 import _ from 'lodash';
 import LazyWrapper from 'legacy/components/loading/lazywrapper';
 import Loading from 'components/Loading';
+import { ProcessingInfo } from './ProcessingInfo';
+import { ParametersInfo } from './ParametersInfo';
+import { useMemo } from 'react';
 
 export interface Props {
   proposalName: string;
   dataCollectionGroup: DataCollectionGroup;
-  compact: boolean;
   selectedPipelines: string[];
   resultRankShell: ResultRankShell;
   resultRankParam: ResultRankParam;
 }
 
-export default function SummaryDataCollectionGroupPanel({
+export function SummaryDataCollectionGroupPanel({
   proposalName,
   dataCollectionGroup,
-  compact,
   selectedPipelines,
   resultRankShell,
   resultRankParam,
 }: Props) {
-  //look for crystal Snapshots in workflow steps
-  const crystalSnapshots = _(
-    dataCollectionGroup.WorkflowStep_workflowStepType?.split(',') || []
-  )
-    .zip(
-      dataCollectionGroup.WorkflowStep_status?.split(',') || [],
-      dataCollectionGroup.WorkflowStep_workflowStepId?.split(',') || []
+  const crystalSnapshotId = useMemo(() => {
+    //look for crystal Snapshots in workflow steps
+    const crystalSnapshots = _(
+      dataCollectionGroup.WorkflowStep_workflowStepType?.split(',') || []
     )
-    .filter(
-      ([stepType, status]) =>
-        (stepType?.toLocaleLowerCase().includes('snapshot') &&
-          status?.toLocaleLowerCase().includes('success')) ||
-        false
-    )
-    .map(([, , stepId]) => stepId)
-    .filter((stepId) => stepId !== undefined)
-    .value() as string[];
-
-  const crystalSnapshotId =
-    crystalSnapshots.length > 0 ? crystalSnapshots[0] : undefined;
+      .zip(
+        dataCollectionGroup.WorkflowStep_status?.split(',') || [],
+        dataCollectionGroup.WorkflowStep_workflowStepId?.split(',') || []
+      )
+      .filter(
+        ([stepType, status]) =>
+          (stepType?.toLocaleLowerCase().includes('snapshot') &&
+            status?.toLocaleLowerCase().includes('success')) ||
+          false
+      )
+      .map(([, , stepId]) => stepId)
+      .filter((stepId) => stepId !== undefined)
+      .value() as string[];
+    return crystalSnapshots.length > 0 ? crystalSnapshots[0] : undefined;
+  }, [
+    dataCollectionGroup.WorkflowStep_status,
+    dataCollectionGroup.WorkflowStep_workflowStepId,
+    dataCollectionGroup.WorkflowStep_workflowStepType,
+  ]);
 
   return (
     <Container fluid>
@@ -92,77 +96,66 @@ export default function SummaryDataCollectionGroupPanel({
 
         <Row>
           <Col xs={12} md={6} xl={4} xxl={3}>
-            <FirstSection
-              compact={compact}
+            <ParametersInfo
               dataCollectionGroup={dataCollectionGroup}
-            ></FirstSection>
+            ></ParametersInfo>
           </Col>
-          <Col sm={12} md={6} xl={compact ? 4 : 4} xxl={compact ? 4 : 3}>
+          <Col sm={12} md={6} xl={4} xxl={3}>
             <LazyWrapper height={430} placeholder={<Loading />}>
-              <ThirdSection
-                compact={compact}
+              <ProcessingInfo
                 dataCollectionGroup={dataCollectionGroup}
                 selectedPipelines={selectedPipelines}
                 resultRankShell={resultRankShell}
                 resultRankParam={resultRankParam}
                 proposalName={proposalName}
-              ></ThirdSection>
+              ></ProcessingInfo>
             </LazyWrapper>
           </Col>
           <Col xs={'auto'}>
             <Row>
               <LazyWrapper height={430}>
                 <PhasingSummary
-                  compact={compact}
                   dataCollectionGroup={dataCollectionGroup}
                   proposalName={proposalName}
                 ></PhasingSummary>
               </LazyWrapper>
             </Row>
           </Col>
-          {!compact && (
-            <Col xs={12} sm={6} md={true}>
-              <ZoomImage
-                style={{ maxWidth: 300, minWidth: 150 }}
-                alt="Diffraction"
-                src={
-                  getDiffrationThumbnail({
-                    proposalName,
-                    imageId: dataCollectionGroup.firstImageId,
-                  }).url
-                }
-              ></ZoomImage>
-            </Col>
-          )}
-          {!compact && (
-            <Col xs={12} sm={6} md={true}>
-              <ZoomImage
-                style={{ maxWidth: 300, minWidth: 150 }}
-                alt="Crystal"
-                src={
-                  crystalSnapshotId
-                    ? getWorkflowImage({
-                        proposalName,
-                        stepId: crystalSnapshotId,
-                      }).url
-                    : getCrystalImage({
-                        proposalName,
-                        dataCollectionId:
-                          dataCollectionGroup.DataCollection_dataCollectionId,
-                        imageIndex: 1,
-                      }).url
-                }
-              ></ZoomImage>
-            </Col>
-          )}
+          <Col xs={12} sm={6} md={true}>
+            <ZoomImage
+              style={{ maxWidth: 300, minWidth: 150 }}
+              alt="Diffraction"
+              src={
+                getDiffrationThumbnail({
+                  proposalName,
+                  imageId: dataCollectionGroup.firstImageId,
+                }).url
+              }
+            ></ZoomImage>
+          </Col>
+          <Col xs={12} sm={6} md={true}>
+            <ZoomImage
+              style={{ maxWidth: 300, minWidth: 150 }}
+              alt="Crystal"
+              src={
+                crystalSnapshotId
+                  ? getWorkflowImage({
+                      proposalName,
+                      stepId: crystalSnapshotId,
+                    }).url
+                  : getCrystalImage({
+                      proposalName,
+                      dataCollectionId:
+                        dataCollectionGroup.DataCollection_dataCollectionId,
+                      imageIndex: 1,
+                    }).url
+              }
+            ></ZoomImage>
+          </Col>
           {UI.MX.showQualityIndicatorPlot && (
             <Col xs={12} sm={6} md={true}>
               <ZoomImage
-                style={
-                  compact
-                    ? { maxWidth: 150, minWidth: 150 }
-                    : { maxWidth: 300, minWidth: 150 }
-                }
+                style={{ maxWidth: 300, minWidth: 150 }}
                 alt="Dozor"
                 src={
                   getDozorPlot({
@@ -187,12 +180,10 @@ export default function SummaryDataCollectionGroupPanel({
             {dataCollectionGroup.SpaceGroupModelResolvedByPhasing}
           </Alert>
         )}
-        {!compact && (
-          <Row>
-            <h6>Comments</h6>
-            <p>{dataCollectionGroup.DataCollectionGroup_comments}</p>
-          </Row>
-        )}
+        <Row>
+          <h6>Comments</h6>
+          <p>{dataCollectionGroup.DataCollectionGroup_comments}</p>
+        </Row>
       </Col>
     </Container>
   );

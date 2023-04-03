@@ -11,7 +11,7 @@ import {
 } from 'legacy/pages/em/movie/helper';
 import { Movie } from 'legacy/pages/em/model';
 import LazyWrapper from 'legacy/components/loading/lazywrapper';
-import LoadingPanel from 'legacy/components/loading/loadingpanel';
+import Loading from 'components/Loading';
 
 export default function MoviesPage() {
   const { dataCollectionId = '', proposalName = '' } = useParams<{
@@ -89,10 +89,7 @@ export default function MoviesPage() {
       </Menu>
 
       {parsedMovies.map((movie: Movie) => (
-        <LazyWrapper
-          key={movie.Movie_movieId}
-          placeholder={<LoadingPanel></LoadingPanel>}
-        >
+        <LazyWrapper key={movie.Movie_movieId} placeholder={<Loading />}>
           <Card style={{ margin: 3 }}>
             <Card.Body>
               <MoviePanel

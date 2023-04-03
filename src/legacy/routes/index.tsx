@@ -5,7 +5,7 @@ import {
   BreadcrumbComponentType,
   BreadcrumbMatch,
 } from 'use-react-router-breadcrumbs';
-import MXSessionPage from '../pages/mx/mxsessionpage';
+import MXSessionPage from '../pages/mx/session/MXSessionPage';
 import { Navigate } from 'react-router-dom';
 
 const SessionClassificationPage = React.lazy(() =>
@@ -38,21 +38,21 @@ const SessionStatisticsPage = React.lazy(() =>
 );
 const MXSessionSummaryPage = React.lazy(() =>
   import(
-    'legacy/pages/mx/sessionsummary' /* webpackChunkName: "legacy_mx_summary" */
+    'legacy/pages/mx/session/summary' /* webpackChunkName: "legacy_mx_summary" */
   ).then((m) => ({
     default: m.MXSessionSummaryPage,
   }))
 );
-const MXDataCollectionGroupPage = React.lazy(() =>
+const MXAcquisitionsPage = React.lazy(() =>
   import(
-    'legacy/pages/mx/datacollectiongroup' /* webpackChunkName: "legacy_mx_dcg" */
+    'legacy/pages/mx/session/acquisitions' /* webpackChunkName: "legacy_mx_dcg" */
   ).then((m) => ({
-    default: m.MXDataCollectionGroupPage,
+    default: m.MXAcquisitionsPage,
   }))
 );
 const MxFluorescenceViewer = React.lazy(() =>
   import(
-    'legacy/pages/mx/fluorescence' /* webpackChunkName: "legacy_mx_fluo" */
+    'legacy/pages/mx/dataset/fluorescence' /* webpackChunkName: "legacy_mx_fluo" */
   ).then((m) => ({
     default: m.MxFluorescenceViewer,
   }))
@@ -198,7 +198,7 @@ const javaRoutes: TitledBreadcrumbsRoute[] = [
             element: <MXSessionPage />,
             children: [
               { path: 'summary', element: <MXSessionSummaryPage /> },
-              { path: 'collection', element: <MXDataCollectionGroupPage /> },
+              { path: 'collection', element: <MXAcquisitionsPage /> },
               {
                 path: 'xrf',
                 children: [

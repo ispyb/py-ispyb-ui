@@ -1,5 +1,5 @@
-import { Card, Col, ProgressBar, Row, Table } from 'react-bootstrap';
-import UnitCellSection from './unitcellsection';
+import { Card, Col, ProgressBar, Table } from 'react-bootstrap';
+import { UnitCellInfo } from './UnitCellInfo';
 import { AutoProcIntegration } from 'legacy/helpers/mx/results/resultparser';
 import { HelpIcon } from 'components/Common/HelpIcon';
 
@@ -51,12 +51,10 @@ function getShellStatistics(
   );
 }
 
-export default function BestResultSection({
+export function BestAutoprocResult({
   bestResult,
-  compact,
 }: {
   bestResult: AutoProcIntegration;
-  compact: boolean;
 }) {
   const content = [
     <Col key={0}>
@@ -114,7 +112,7 @@ export default function BestResultSection({
       </Table>
     </Col>,
     <Col key={1}>
-      <UnitCellSection
+      <UnitCellInfo
         cell_a={bestResult.cell_a}
         cell_b={bestResult.cell_b}
         cell_c={bestResult.cell_c}
@@ -122,12 +120,10 @@ export default function BestResultSection({
         cell_beta={bestResult.cell_beta}
         cell_gamma={bestResult.cell_gamma}
         spaceGroup={bestResult.spaceGroup}
-      ></UnitCellSection>
+      ></UnitCellInfo>
     </Col>,
   ];
-  return compact ? (
-    <Row>{content}</Row>
-  ) : (
+  return (
     <Card style={{ padding: 20 }}>
       <Card.Body>
         <Col>
