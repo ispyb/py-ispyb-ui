@@ -167,7 +167,6 @@ export function useGridSquareStatisticsToPlot(
       defocusUDistribution = getDistribution(defocusU, minDefocus, maxDefocus);
       defocusVDistribution = getDistribution(defocusV, minDefocus, maxDefocus);
       angleDistribution = getDistribution(angle);
-      console.log(angleDistribution);
     }
 
     return {
