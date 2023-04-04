@@ -55,45 +55,7 @@ export function DataCollectionGroupPanel({
   );
 
   if (dataCollectionGroup.DataCollection_dataCollectionId === undefined)
-    return (
-      <Card
-        className="themed-card card-datacollectiongroup-panel"
-        ref={hashscroll.ref}
-        style={{
-          backgroundColor: hashscroll.isCurrent ? '#edf2ff' : undefined,
-        }}
-      >
-        <Card.Header>
-          <Row>
-            <Col xs={'auto'}>
-              <HashAnchorButton hash={hashscroll.hash} />
-            </Col>
-            <Col xs={'auto'}>
-              <h5>
-                {moment(
-                  dataCollectionGroup.DataCollectionGroup_startTime,
-                  'MMMM Do YYYY, h:mm:ss A'
-                ).format('DD/MM/YYYY HH:mm:ss')}
-                <Badge bg="info">
-                  {dataCollectionGroup.Workflow_workflowType ||
-                    dataCollectionGroup.DataCollectionGroup_experimentType}
-                </Badge>
-              </h5>
-            </Col>
-          </Row>
-        </Card.Header>
-        <Card.Body>
-          <strong
-            style={{
-              color: 'red',
-              margin: '1rem',
-            }}
-          >
-            Collection started but no data found
-          </strong>
-        </Card.Body>
-      </Card>
-    );
+    return null;
 
   return (
     <Tab.Container defaultActiveKey="Summary">
