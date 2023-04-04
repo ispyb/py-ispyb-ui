@@ -27,220 +27,205 @@ export default function EmStatisticsPanel({
     <Container fluid>
       <Row>
         <Col xs={12} sm={12} md={12} lg={6}>
-          <LazyWrapper placeholder={<Loading />}>
-            <PlotWidget
-              data={[
-                {
-                  x: movieNumber,
-                  y: resolution,
-                  type: 'scattergl',
-                  mode: 'markers',
-                  marker: { color: 'blue', size: 4 },
-                },
-              ]}
-              useResizeHandler
-              style={{ width: '100%' }}
-              layout={{
-                xaxis: { title: { text: 'Image no' } },
-                yaxis: { title: { text: 'Angstroms' } },
-                autosize: true,
-                title: 'Resolution',
-              }}
-            />
-          </LazyWrapper>
+          <PlotWidget
+            data={[
+              {
+                x: movieNumber,
+                y: resolution,
+                type: 'scattergl',
+                mode: 'markers',
+                marker: { color: 'blue', size: 4 },
+              },
+            ]}
+            useResizeHandler
+            style={{ width: '100%' }}
+            layout={{
+              xaxis: { title: { text: 'Image no' } },
+              yaxis: { title: { text: 'Angstroms' } },
+              autosize: true,
+              title: 'Resolution',
+            }}
+          />
         </Col>
         <Col xs={12} sm={12} md={12} lg={6}>
-          <LazyWrapper placeholder={<Loading />}>
-            <PlotWidget
-              data={[
-                {
-                  x: resolutionDistribution.map(function (value) {
-                    return value[0];
-                  }),
-                  y: resolutionDistribution.map(function (value) {
-                    return value[1];
-                  }),
-                  type: 'bar',
-                  marker: { color: 'blue', size: 4 },
-                },
-              ]}
-              useResizeHandler
-              style={{ width: '100%' }}
-              layout={{
-                xaxis: { title: { text: 'Angstroms' } },
-                autosize: true,
-                title: 'Resolution distribution',
-              }}
-            />
-          </LazyWrapper>
+          <PlotWidget
+            data={[
+              {
+                x: resolutionDistribution.map(function (value) {
+                  return value[0];
+                }),
+                y: resolutionDistribution.map(function (value) {
+                  return value[1];
+                }),
+                type: 'bar',
+                marker: { color: 'blue', size: 4 },
+              },
+            ]}
+            useResizeHandler
+            style={{ width: '100%' }}
+            layout={{
+              xaxis: { title: { text: 'Angstroms' } },
+              autosize: true,
+              title: 'Resolution distribution',
+            }}
+          />
         </Col>
       </Row>
       <Row>
         <Col xs={12} sm={12} md={12} lg={6}>
-          <LazyWrapper placeholder={<Loading />}>
-            <PlotWidget
-              data={[
-                {
-                  x: movieNumber,
-                  y: angle,
-                  type: 'scattergl',
-                  mode: 'markers',
-                  marker: { color: 'blue', size: 4 },
-                },
-              ]}
-              useResizeHandler
-              style={{ width: '100%' }}
-              layout={{
-                xaxis: { title: { text: 'Image no' } },
-                yaxis: { title: { text: 'Degrees' } },
-                autosize: true,
-                title: 'Astigmatism (angle)',
-              }}
-            />
-          </LazyWrapper>
+          <PlotWidget
+            data={[
+              {
+                x: movieNumber,
+                y: angle,
+                type: 'scattergl',
+                mode: 'markers',
+                marker: { color: 'blue', size: 4 },
+              },
+            ]}
+            useResizeHandler
+            style={{ width: '100%' }}
+            layout={{
+              xaxis: { title: { text: 'Image no' } },
+              yaxis: { title: { text: 'Degrees' } },
+              autosize: true,
+              title: 'Astigmatism (angle)',
+            }}
+          />
         </Col>
         <Col xs={12} sm={12} md={12} lg={6}>
-          <LazyWrapper placeholder={<Loading />}>
-            <PlotWidget
-              data={[
-                {
-                  x: angleDistribution.map(function (value) {
-                    return value[0];
-                  }),
-                  y: angleDistribution.map(function (value) {
-                    return value[1];
-                  }),
-                  type: 'bar',
-                  marker: { color: 'blue', size: 4 },
-                },
-              ]}
-              useResizeHandler
-              style={{ width: '100%' }}
-              layout={{
-                xaxis: { title: { text: 'Degrees' } },
-                autosize: true,
-                title: 'Astigmatism (angle) distribution',
-              }}
-            />
-          </LazyWrapper>
+          <PlotWidget
+            data={[
+              {
+                x: angleDistribution.map(function (value) {
+                  return value[0];
+                }),
+                y: angleDistribution.map(function (value) {
+                  return value[1];
+                }),
+                type: 'bar',
+                marker: { color: 'blue', size: 4 },
+              },
+            ]}
+            useResizeHandler
+            style={{ width: '100%' }}
+            layout={{
+              xaxis: { title: { text: 'Degrees' } },
+              autosize: true,
+              title: 'Astigmatism (angle) distribution',
+            }}
+          />
         </Col>
       </Row>
       <Row>
         <Col xs={12} sm={12} md={12} lg={4}>
-          <LazyWrapper placeholder={<Loading />}>
-            <PlotWidget
-              data={[
-                {
-                  x: movieNumber,
-                  y: defocusU,
-                  name: 'Defocus U',
-                  type: 'scattergl',
-                  mode: 'markers',
-                  marker: { color: 'blue', size: 4 },
-                },
-                {
-                  x: movieNumber,
-                  y: defocusV,
-                  name: 'Defocus V',
-                  type: 'scattergl',
-                  mode: 'markers',
-                  marker: { color: 'red', size: 4 },
-                },
-              ]}
-              useResizeHandler
-              style={{ width: '100%' }}
-              layout={{
-                xaxis: { title: { text: 'Image no' } },
-                yaxis: { title: { text: 'Microns' } },
-                autosize: true,
-                title: { text: 'Defocus U and Defocus V' },
-              }}
-            />
-          </LazyWrapper>
+          <PlotWidget
+            data={[
+              {
+                x: movieNumber,
+                y: defocusU,
+                name: 'Defocus U',
+                type: 'scattergl',
+                mode: 'markers',
+                marker: { color: 'blue', size: 4 },
+              },
+              {
+                x: movieNumber,
+                y: defocusV,
+                name: 'Defocus V',
+                type: 'scattergl',
+                mode: 'markers',
+                marker: { color: 'red', size: 4 },
+              },
+            ]}
+            useResizeHandler
+            style={{ width: '100%' }}
+            layout={{
+              xaxis: { title: { text: 'Image no' } },
+              yaxis: { title: { text: 'Microns' } },
+              autosize: true,
+              title: { text: 'Defocus U and Defocus V' },
+            }}
+          />
         </Col>
         <Col xs={12} sm={12} md={12} lg={4}>
-          <LazyWrapper placeholder={<Loading />}>
-            <PlotWidget
-              data={[
-                {
-                  x: movieNumber,
-                  y: defocusDifference,
-                  type: 'scattergl',
-                  mode: 'markers',
-                  marker: { color: 'blue', size: 4 },
-                },
-              ]}
-              useResizeHandler
-              style={{ width: '100%' }}
-              layout={{
-                xaxis: { title: { text: 'Image no' } },
-                yaxis: { title: { text: 'Microns' } },
-                autosize: true,
-                title: 'Defocus U - Defocus V',
-              }}
-            />
-          </LazyWrapper>
+          <PlotWidget
+            data={[
+              {
+                x: movieNumber,
+                y: defocusDifference,
+                type: 'scattergl',
+                mode: 'markers',
+                marker: { color: 'blue', size: 4 },
+              },
+            ]}
+            useResizeHandler
+            style={{ width: '100%' }}
+            layout={{
+              xaxis: { title: { text: 'Image no' } },
+              yaxis: { title: { text: 'Microns' } },
+              autosize: true,
+              title: 'Defocus U - Defocus V',
+            }}
+          />
         </Col>
         <Col xs={12} sm={12} md={12} lg={4}>
-          <LazyWrapper placeholder={<Loading />}>
-            <PlotWidget
-              data={[
-                {
-                  x: defocusUDistribution.map(function (value) {
-                    return value[0];
-                  }),
-                  y: defocusUDistribution.map(function (value) {
-                    return value[1];
-                  }),
-                  name: 'Defocus U',
-                  type: 'bar',
-                  marker: { color: 'blue', size: 4 },
-                },
-                {
-                  x: defocusVDistribution.map(function (value) {
-                    return value[0];
-                  }),
-                  y: defocusVDistribution.map(function (value) {
-                    return value[1];
-                  }),
-                  name: 'Defocus V',
-                  type: 'bar',
-                  marker: { color: 'red', size: 4 },
-                },
-              ]}
-              useResizeHandler
-              style={{ width: '100%' }}
-              layout={{
-                xaxis: { title: { text: 'Microns' } },
-                autosize: true,
-                title: 'Defocus distribution',
-              }}
-            />
-          </LazyWrapper>
+          <PlotWidget
+            data={[
+              {
+                x: defocusUDistribution.map(function (value) {
+                  return value[0];
+                }),
+                y: defocusUDistribution.map(function (value) {
+                  return value[1];
+                }),
+                name: 'Defocus U',
+                type: 'bar',
+                marker: { color: 'blue', size: 4 },
+              },
+              {
+                x: defocusVDistribution.map(function (value) {
+                  return value[0];
+                }),
+                y: defocusVDistribution.map(function (value) {
+                  return value[1];
+                }),
+                name: 'Defocus V',
+                type: 'bar',
+                marker: { color: 'red', size: 4 },
+              },
+            ]}
+            useResizeHandler
+            style={{ width: '100%' }}
+            layout={{
+              xaxis: { title: { text: 'Microns' } },
+              autosize: true,
+              title: 'Defocus distribution',
+              barmode: 'group',
+            }}
+          />
         </Col>
       </Row>
       <Row>
         <Col xs={12} sm={12} md={12} lg={12}>
-          <LazyWrapper placeholder={<Loading />}>
-            <PlotWidget
-              data={[
-                {
-                  x: movieNumber,
-                  y: averageData,
-                  type: 'scattergl',
-                  mode: 'markers',
-                  marker: { color: 'blue', size: 4 },
-                },
-              ]}
-              useResizeHandler
-              style={{ width: '100%' }}
-              layout={{
-                xaxis: { title: { text: 'Image no' } },
-                autosize: true,
-                title: 'Average motion per frame',
-              }}
-            />
-          </LazyWrapper>
+          <PlotWidget
+            data={[
+              {
+                x: movieNumber,
+                y: averageData,
+                type: 'scattergl',
+                mode: 'markers',
+                marker: { color: 'blue', size: 4 },
+              },
+            ]}
+            useResizeHandler
+            style={{ width: '100%' }}
+            layout={{
+              xaxis: { title: { text: 'Image no' } },
+              autosize: true,
+              title: 'Average motion per frame',
+            }}
+          />
         </Col>
       </Row>
     </Container>

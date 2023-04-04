@@ -103,9 +103,16 @@ function getLength(min: number, max: number, data: number[]) {
   return count;
 }
 
-function getDistribution(data: number[]) {
-  const max = Math.max.apply(null, data);
-  const min = Math.min.apply(null, data);
+function getDistribution(
+  data: number[],
+  minOrverride?: number,
+  maxOrverride?: number
+) {
+  const max =
+    maxOrverride !== undefined ? maxOrverride : Math.max.apply(null, data);
+  const min =
+    minOrverride !== undefined ? minOrverride : Math.min.apply(null, data);
+
   const intervals = 50;
   const distribution = [];
   const size = (max - min) / intervals;
@@ -157,8 +164,12 @@ export function useGridSquareStatisticsToPlot(
       angle.push(parseFloat(data[i].angle));
     }
     resolutionDistribution = getDistribution(resolution);
-    defocusUDistribution = getDistribution(defocusU);
-    defocusVDistribution = getDistribution(defocusV);
+
+    //same scale for defocus
+    const maxDefocus = Math.max(...defocusU.concat(defocusV));
+    const minDefocus = Math.min(...defocusU.concat(defocusV));
+    defocusUDistribution = getDistribution(defocusU, minDefocus, maxDefocus);
+    defocusVDistribution = getDistribution(defocusV, minDefocus, maxDefocus);
     angleDistribution = getDistribution(angle);
 
     return {
