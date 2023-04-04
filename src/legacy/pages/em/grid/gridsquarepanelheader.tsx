@@ -17,8 +17,8 @@ export default function GridSquarePanelHeader({
     voltage,
   } = sampleList;
   return (
-    <div>
-      <h3>Sample name : {sampleName}</h3>
+    <>
+      <h3>Grid name : {sampleName}</h3>
       <Container fluid style={{ marginTop: '5px' }}>
         <Row>
           <Col xs={12} sm={3} md={3} lg={3}>
@@ -55,6 +55,6 @@ export default function GridSquarePanelHeader({
           </Col>
         </Row>
       </Container>
-    </div>
+    </>
   );
 }

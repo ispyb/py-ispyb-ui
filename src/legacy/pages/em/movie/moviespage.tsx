@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useMoviesByDataCollectionId } from 'legacy/hooks/ispyb';
 import { Card, ButtonGroup, Badge, ToggleButton } from 'react-bootstrap';
-import MoviePanel from 'legacy/pages/em/movie/moviepanel';
+import MoviePanel, { MovieCard } from 'legacy/pages/em/movie/moviepanel';
 import Menu from 'legacy/components/menu/menu';
 import {
   createImageNumberAndFileName,
@@ -89,34 +89,13 @@ export default function MoviesPage() {
       </Menu>
 
       {parsedMovies.map((movie: Movie) => (
-        <LazyWrapper key={movie.Movie_movieId} placeholder={<Loading />}>
-          <Card style={{ margin: 3 }}>
-            <Card.Body>
-              <MoviePanel
-                movie={movie}
-                proposalName={proposalName}
-                dataCollectionId={parseFloat(dataCollectionId)}
-              ></MoviePanel>
-            </Card.Body>
-            <Card.Footer>
-              <p className="text-primary" style={{ fontSize: 'smaller' }}>
-                {getDirectory(movies)}
-                <br />
-                {movie.Movie_movieFullPath}
-              </p>
-            </Card.Footer>
-          </Card>
-        </LazyWrapper>
+        <MovieCard
+          key={movie.Movie_movieId}
+          movie={movie}
+          proposalName={proposalName}
+          dataCollectionId={Number(dataCollectionId)}
+        />
       ))}
     </div>
   );
-}
-
-function getDirectory(movies: Movie[]) {
-  if (movies.length > 0) {
-    return movies[0].Movie_movieFullPath.substring(
-      0,
-      movies[0].Movie_movieFullPath.lastIndexOf('/')
-    );
-  }
 }

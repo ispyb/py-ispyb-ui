@@ -1,4 +1,4 @@
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Card } from 'react-bootstrap';
 import {
   getMovieThumbnail,
   getMotionCorrectionDrift,
@@ -13,11 +13,60 @@ import {
   isMotionThreshold,
   isResolutionLimitThreshold,
 } from 'legacy/pages/em/movie/helper';
+import { CopyValue } from 'components/Common/CopyValue';
+import { HashAnchorButton, useHashScroll } from 'hooks/hashScroll';
 
 interface Props {
   movie: Movie;
   proposalName: string;
   dataCollectionId: number;
+}
+
+export function MovieCard(props: Props) {
+  const { movie, proposalName, dataCollectionId } = props;
+
+  const hash = useHashScroll(`${movie.Movie_movieId}`);
+  return (
+    <Card style={{ margin: 3 }} ref={hash.ref}>
+      <Card.Header
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+        }}
+      >
+        <strong> {movie.Movie_movieNumber}</strong>
+        {movie.Movie_createdTimeStamp}
+        <HashAnchorButton hash={hash.hash} />
+      </Card.Header>
+      <Card.Body>
+        <MoviePanel
+          movie={movie}
+          proposalName={proposalName}
+          dataCollectionId={dataCollectionId}
+        ></MoviePanel>
+      </Card.Body>
+      <Card.Footer>
+        <Col>
+          <Row>
+            <Col xs={'auto'}>
+              <CopyValue value={getDirectory(movie)} />
+            </Col>
+          </Row>
+          <Row style={{ marginTop: 5 }}>
+            <Col xs={'auto'}>
+              <CopyValue value={movie.Movie_movieFullPath} />
+            </Col>
+          </Row>
+        </Col>
+      </Card.Footer>
+    </Card>
+  );
+}
+function getDirectory(movie: Movie) {
+  return movie.Movie_movieFullPath.substring(
+    0,
+    movie.Movie_movieFullPath.lastIndexOf('/')
+  );
 }
 
 export default function MoviePanel(props: Props) {

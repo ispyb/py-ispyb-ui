@@ -22,7 +22,7 @@ export default function GridSquare({
   sessionId: string;
 }) {
   return (
-    <Card style={{ width: '18rem' }}>
+    <Card>
       <ZoomImage
         alt="Grid square"
         src={
@@ -31,7 +31,6 @@ export default function GridSquare({
       />
       <Card.Body>
         <Card.Title>
-          {' '}
           N<sup>o</sup> movies:
           <Badge style={{ marginLeft: '10px' }}>{movieCount}</Badge>
           <p>{startTime}</p>
