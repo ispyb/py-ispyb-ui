@@ -24,7 +24,7 @@ export default function EmStatisticsPanel({
   } = statisticsPlotData;
 
   return (
-    <Container>
+    <Container fluid>
       <Row>
         <Col xs={12} sm={12} md={12} lg={6}>
           <LazyWrapper placeholder={<Loading />}>
