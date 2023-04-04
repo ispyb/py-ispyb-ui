@@ -14,6 +14,7 @@ export function AcquisitionPanel({
   sessionId: string;
 }) {
   if ('DataCollectionGroup_dataCollectionGroupId' in acquisition) {
+    if (acquisition.DataCollection_dataCollectionId === undefined) return null; // Ignore empty groups
     return (
       <div style={{ margin: 5 }}>
         <DataCollectionGroupPanel

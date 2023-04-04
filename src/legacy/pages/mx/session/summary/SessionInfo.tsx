@@ -116,7 +116,11 @@ export function SessionInfo({
             },
             {
               title: 'Data collections',
-              content: dataCollectionGroups?.length,
+              content: dataCollectionGroups?.filter(
+                (dataCollectionGroup) =>
+                  dataCollectionGroup.DataCollection_dataCollectionId !==
+                  undefined
+              ).length,
             },
             { title: 'Energy scans', content: energyScans?.length },
             { title: 'Fluorescence spectras', content: spectras?.length },

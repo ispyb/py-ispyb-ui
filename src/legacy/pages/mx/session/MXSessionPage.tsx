@@ -122,6 +122,13 @@ export function NbBadgeAcquisition({
     proposalName,
     sessionId,
   });
+  const nonEmptyDataCollectionGroups = useMemo(() => {
+    return dataCollectionGroups?.filter(
+      (dataCollectionGroup) =>
+        dataCollectionGroup.DataCollection_dataCollectionId !== undefined
+    );
+  }, [dataCollectionGroups]);
+
   const { data: spectras } = useMXFluorescenceSpectras({
     proposalName,
     sessionId,
@@ -133,11 +140,11 @@ export function NbBadgeAcquisition({
 
   const data = useMemo(() => {
     return [
-      ...(dataCollectionGroups || []),
+      ...(nonEmptyDataCollectionGroups || []),
       ...(spectras || []),
       ...(energyScans || []),
     ];
-  }, [dataCollectionGroups, spectras, energyScans]);
+  }, [nonEmptyDataCollectionGroups, spectras, energyScans]);
 
   return <NbBadge value={data?.length} />;
 }
