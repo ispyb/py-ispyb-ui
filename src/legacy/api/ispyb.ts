@@ -86,7 +86,7 @@ export function updateCollectionGroupComments({
 }) {
   return {
     url: `/proposal/${proposalName}/mx/datacollectiongroup/${id}/comments/save`,
-    data: `comments=${comments}`,
+    data: `comments=${encodeURIComponent(comments)}`,
     headers: {},
   };
 }
@@ -102,7 +102,7 @@ export function updateCollectionComments({
 }) {
   return {
     url: `/proposal/${proposalName}/mx/datacollection/${id}/comments/save`,
-    data: `comments=${comments}`,
+    data: `comments=${encodeURIComponent(comments)}`,
     headers: {},
   };
 }
@@ -117,7 +117,7 @@ export function updateSessionComments({
 }) {
   return {
     url: `/proposal/${proposalName}/mx/session/${id}/comments/save`,
-    data: `comments=${comments}`,
+    data: `comments=${encodeURIComponent(comments)}`,
     headers: {},
   };
 }
@@ -453,7 +453,7 @@ export function updateLabContact({
 }) {
   return {
     url: `/proposal/${proposalName}/shipping/labcontact/save`,
-    data: `labcontact=${JSON.stringify(data)}`,
+    data: `labcontact=${encodeURIComponent(JSON.stringify(data))}`,
     headers: { 'content-type': 'application/x-www-form-urlencoded;' },
   };
 }
