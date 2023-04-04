@@ -422,7 +422,7 @@ export function updateSampleChangerLocation({
   return {
     url: `/proposal/${proposalName}/container/${containerId}/beamline/${beamline}/samplechangerlocation/update`,
     data: `sampleChangerLocation=${position}`,
-    headers: { 'content-type': 'application/x-www-form-urlencoded;' },
+    headers: {},
   };
 }
 
@@ -454,7 +454,7 @@ export function updateLabContact({
   return {
     url: `/proposal/${proposalName}/shipping/labcontact/save`,
     data: `labcontact=${encodeURIComponent(JSON.stringify(data))}`,
-    headers: { 'content-type': 'application/x-www-form-urlencoded;' },
+    headers: {},
   };
 }
 
@@ -522,7 +522,7 @@ export function saveShipment({
   return {
     url: `/proposal/${proposalName}/shipping/save`,
     data: asString,
-    headers: { 'content-type': 'application/x-www-form-urlencoded;' },
+    headers: {},
   };
 }
 
@@ -544,7 +544,7 @@ export function addDewarsToShipping({
   return {
     url: `/proposal/${proposalName}/shipping/${shippingId}/dewars/add`,
     data: encoded,
-    headers: { 'content-type': 'application/x-www-form-urlencoded;' },
+    headers: {},
   };
 }
 
@@ -597,7 +597,7 @@ export function saveContainer({
   return {
     url: `/proposal/${proposalName}/shipping/${shippingId}/dewar/${dewarId}/puck/${containerId}/save`,
     data: encoded,
-    headers: { 'content-type': 'application/x-www-form-urlencoded;' },
+    headers: {},
   };
 }
 
@@ -689,7 +689,7 @@ export function saveParcel({
   return {
     url: `/proposal/${proposalName}/shipping/${shippingId}/dewar/save`,
     data: asString,
-    headers: { 'content-type': 'application/x-www-form-urlencoded;' },
+    headers: {},
   };
 }
 
