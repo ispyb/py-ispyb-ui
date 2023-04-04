@@ -2,11 +2,6 @@ import React from '@handsontable/react';
 import { usePersistentParamState } from 'hooks/useParam';
 import { useMemo } from 'react';
 import { Form, Row, Col } from 'react-bootstrap';
-import {
-  useNavigate,
-  createSearchParams,
-  useSearchParams,
-} from 'react-router-dom';
 
 interface Props {
   total: number;
@@ -19,7 +14,6 @@ export default function Paginator(props: Props) {
   const { total, skip: skipDefault, limit: limitDefault, suffix } = props;
   const skipParam = suffix ? `skip-${suffix}` : 'skip';
   const limitParam = suffix ? `limit-${suffix}` : 'limit';
-  const navigate = useNavigate();
 
   // @ts-ignore
 
