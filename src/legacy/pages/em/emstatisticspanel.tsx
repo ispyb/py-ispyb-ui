@@ -1,8 +1,6 @@
 import { Col, Container, Row } from 'react-bootstrap';
 import { StatisticsPlotData } from 'legacy/pages/em/model';
 import PlotWidget from 'components/Plotting/plotwidget';
-import LazyWrapper from 'legacy/components/loading/lazywrapper';
-import Loading from 'components/Loading';
 
 export default function EmStatisticsPanel({
   statisticsPlotData,
