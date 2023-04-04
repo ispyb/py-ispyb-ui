@@ -1,6 +1,5 @@
 import { useParams } from 'react-router-dom';
 import EMPage from 'legacy/pages/em/empage';
-import { Card } from 'react-bootstrap';
 import { useEMDataCollectionsBy } from 'legacy/hooks/ispyb';
 import GridSquarePanel from 'legacy/pages/em/grid/gridsquarepanel';
 import { useDataCollectionToGridSquares } from 'legacy/pages/em/helper';

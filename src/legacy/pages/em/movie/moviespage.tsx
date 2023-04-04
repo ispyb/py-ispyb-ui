@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useMoviesByDataCollectionId } from 'legacy/hooks/ispyb';
-import { Card, ButtonGroup, Badge, ToggleButton } from 'react-bootstrap';
-import MoviePanel, { MovieCard } from 'legacy/pages/em/movie/moviepanel';
+import { ButtonGroup, Badge, ToggleButton } from 'react-bootstrap';
+import { MovieCard } from 'legacy/pages/em/movie/moviepanel';
 import Menu from 'legacy/components/menu/menu';
 import {
   createImageNumberAndFileName,
@@ -10,8 +10,6 @@ import {
   isResolutionLimitThreshold,
 } from 'legacy/pages/em/movie/helper';
 import { Movie } from 'legacy/pages/em/model';
-import LazyWrapper from 'legacy/components/loading/lazywrapper';
-import Loading from 'components/Loading';
 
 export default function MoviesPage() {
   const { dataCollectionId = '', proposalName = '' } = useParams<{
