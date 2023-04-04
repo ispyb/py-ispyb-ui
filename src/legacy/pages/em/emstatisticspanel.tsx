@@ -33,7 +33,7 @@ export default function EmStatisticsPanel({
                 {
                   x: movieNumber,
                   y: resolution,
-                  type: 'scatter',
+                  type: 'scattergl',
                   mode: 'markers',
                   marker: { color: 'blue', size: 4 },
                 },
@@ -83,7 +83,7 @@ export default function EmStatisticsPanel({
                 {
                   x: movieNumber,
                   y: angle,
-                  type: 'scatter',
+                  type: 'scattergl',
                   mode: 'markers',
                   marker: { color: 'blue', size: 4 },
                 },
@@ -134,7 +134,7 @@ export default function EmStatisticsPanel({
                   x: movieNumber,
                   y: defocusU,
                   name: 'Defocus U',
-                  type: 'scatter',
+                  type: 'scattergl',
                   mode: 'markers',
                   marker: { color: 'blue', size: 4 },
                 },
@@ -142,7 +142,7 @@ export default function EmStatisticsPanel({
                   x: movieNumber,
                   y: defocusV,
                   name: 'Defocus V',
-                  type: 'scatter',
+                  type: 'scattergl',
                   mode: 'markers',
                   marker: { color: 'red', size: 4 },
                 },
@@ -165,7 +165,7 @@ export default function EmStatisticsPanel({
                 {
                   x: movieNumber,
                   y: defocusDifference,
-                  type: 'scatter',
+                  type: 'scattergl',
                   mode: 'markers',
                   marker: { color: 'blue', size: 4 },
                 },
@@ -227,7 +227,7 @@ export default function EmStatisticsPanel({
                 {
                   x: movieNumber,
                   y: averageData,
-                  type: 'scatter',
+                  type: 'scattergl',
                   mode: 'markers',
                   marker: { color: 'blue', size: 4 },
                 },
