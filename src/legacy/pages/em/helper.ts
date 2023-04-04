@@ -108,18 +108,13 @@ function getDistribution(
   minOrverride?: number,
   maxOrverride?: number
 ) {
-  const max =
-    maxOrverride !== undefined ? maxOrverride : Math.max.apply(null, data);
-  const min =
-    minOrverride !== undefined ? minOrverride : Math.min.apply(null, data);
+  const max = maxOrverride !== undefined ? maxOrverride : Math.max(...data);
+  const min = minOrverride !== undefined ? minOrverride : Math.min(...data, 0);
 
   const intervals = 50;
   const distribution = [];
   const size = (max - min) / intervals;
 
-  if (min > 0) {
-    distribution.push([0, 0]);
-  }
   for (let i = min; i < max; i = i + size) {
     const localmin = i;
     const localmax = localmin + size;
@@ -143,34 +138,37 @@ export function useGridSquareStatisticsToPlot(
     const resolution = [];
     const angle = [];
     const defocusDifference = [];
-    let resolutionDistribution = [];
-    let defocusUDistribution = [];
-    let defocusVDistribution = [];
-    let angleDistribution = [];
+    let resolutionDistribution: (string | number)[][] = [];
+    let defocusUDistribution: (string | number)[][] = [];
+    let defocusVDistribution: (string | number)[][] = [];
+    let angleDistribution: (string | number)[][] = [];
 
-    data.sort(function (a, b) {
-      return a.movieId - b.movieId;
-    });
-    const startMovieId = data[0].movieId;
-    for (let i = 0; i < data.length; i++) {
-      movieNumber.push(data[i].movieId - startMovieId + 1);
-      averageData.push(parseFloat(data[i].averageMotionPerFrame));
-      const U = parseFloat(data[i].defocusU) / 10000.0;
-      const V = parseFloat(data[i].defocusV) / 10000.0;
-      defocusU.push(U);
-      defocusV.push(V);
-      defocusDifference.push(Math.abs(U - V) / ((U + V) / 2.0));
-      resolution.push(parseFloat(data[i].resolutionLimit));
-      angle.push(parseFloat(data[i].angle));
+    if (data && data.length > 0) {
+      data.sort(function (a, b) {
+        return a.movieId - b.movieId;
+      });
+      const startMovieId = data[0].movieId;
+      for (let i = 0; i < data.length; i++) {
+        movieNumber.push(data[i].movieId - startMovieId + 1);
+        averageData.push(parseFloat(data[i].averageMotionPerFrame));
+        const U = parseFloat(data[i].defocusU) / 10000.0;
+        const V = parseFloat(data[i].defocusV) / 10000.0;
+        defocusU.push(U);
+        defocusV.push(V);
+        defocusDifference.push(Math.abs(U - V) / ((U + V) / 2.0));
+        resolution.push(parseFloat(data[i].resolutionLimit));
+        angle.push(parseFloat(data[i].angle));
+      }
+      resolutionDistribution = getDistribution(resolution);
+
+      //same scale for defocus
+      const maxDefocus = Math.max(...defocusU.concat(defocusV));
+      const minDefocus = Math.min(...defocusU.concat(defocusV));
+      defocusUDistribution = getDistribution(defocusU, minDefocus, maxDefocus);
+      defocusVDistribution = getDistribution(defocusV, minDefocus, maxDefocus);
+      angleDistribution = getDistribution(angle);
+      console.log(angleDistribution);
     }
-    resolutionDistribution = getDistribution(resolution);
-
-    //same scale for defocus
-    const maxDefocus = Math.max(...defocusU.concat(defocusV));
-    const minDefocus = Math.min(...defocusU.concat(defocusV));
-    defocusUDistribution = getDistribution(defocusU, minDefocus, maxDefocus);
-    defocusVDistribution = getDistribution(defocusV, minDefocus, maxDefocus);
-    angleDistribution = getDistribution(angle);
 
     return {
       movieNumber,
