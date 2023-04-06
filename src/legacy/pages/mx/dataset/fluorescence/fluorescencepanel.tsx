@@ -121,7 +121,7 @@ export default function FluorescencePanel({
             </Col>
             <Col>
               <ZoomImage
-                style={{ maxWidth: 600, maxHeight: 300 }}
+                style={{ maxWidth: 600 }}
                 alt="Scan thumbnail"
                 src={
                   getJpegxrfscan({

@@ -1,6 +1,6 @@
 import { useMXFluorescenceSpectras } from 'legacy/hooks/ispyb';
 import { useParams } from 'react-router';
-import FluorescenceGraph from './fluorescencegraph';
+import { FluorescenceGraph } from './FluorescenceGraph';
 
 type Param = {
   sessionId: string;
@@ -29,9 +29,8 @@ export default function MxFluorescenceViewer() {
   }
 
   return (
-    <FluorescenceGraph
-      proposalName={proposalName}
-      spectra={spectra}
-    ></FluorescenceGraph>
+    <>
+      <FluorescenceGraph proposalName={proposalName} spectra={spectra} />
+    </>
   );
 }
