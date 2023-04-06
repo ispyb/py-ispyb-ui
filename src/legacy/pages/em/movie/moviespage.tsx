@@ -65,7 +65,7 @@ export default function MoviesPage() {
     );
   }
 
-  const pagination = usePaging(50, 0);
+  const pagination = usePaging(100, 0);
 
   return (
     <div style={{ marginBottom: '100px' }}>
