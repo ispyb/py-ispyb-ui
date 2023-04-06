@@ -173,6 +173,10 @@ function Zoomable({ children }: { children: React.ReactNode }) {
             right: 0,
             zIndex: 1000000,
             backgroundColor: 'black',
+            color: 'white',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
           }}
           onClick={() => setZoom(!zoom)}
         >
