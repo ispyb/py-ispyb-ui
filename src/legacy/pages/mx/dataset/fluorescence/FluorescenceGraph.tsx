@@ -42,12 +42,10 @@ export function FluorescenceGraph({
       document.querySelectorAll('.legendtoggle').forEach((e, i) => {
         const field = fields[i];
         e.addEventListener('mouseover', (e) => {
-          console.log(e);
           e.stopPropagation();
           setHighlighted(field);
         });
         e.addEventListener('mouseout', (e) => {
-          console.log(e);
           e.stopPropagation();
           setHighlighted(null);
         });
@@ -171,22 +169,39 @@ export function FluorescenceGraph({
     [maxValues, disabled]
   );
 
+  const getAnnotationPosition = useCallback(
+    (index: number) => {
+      const angleStep = (2 * Math.PI) / maxValues.length;
+      const radius = 100;
+      const angle = Math.PI + angleStep * index;
+      const x = Math.cos(angle) * radius;
+      const y = Math.sin(angle) * radius;
+      return { x, y };
+    },
+    [maxValues]
+  );
+
   const annotations = useMemo(
     (): Partial<Annotations>[] =>
-      maxValues.map((v) => ({
-        x: v.x,
-        y: v.y,
-        xref: 'x',
-        yref: 'y',
-        text: v.name,
-        showarrow: true,
-        arrowhead: 7,
-        ax: _.random(-50, 50),
-        ay: _.random(-50, 50),
-        bgcolor: 'white',
-        bordercolor: 'black',
-      })),
-    [maxValues]
+      maxValues.map((v, i) => {
+        const position = getAnnotationPosition(i);
+        return {
+          x: v.x,
+          y: v.y,
+          xref: 'x',
+          yref: 'y',
+          text: v.name,
+          showarrow: true,
+          arrowcolor: 'black',
+          arrowwidth: 3,
+          arrowhead: 7,
+          ax: position.x,
+          ay: position.y,
+          bgcolor: 'white',
+          bordercolor: 'black',
+        };
+      }),
+    [getAnnotationPosition, maxValues]
   ).filter((a) => !disabled.includes(a.text as string));
 
   return (
