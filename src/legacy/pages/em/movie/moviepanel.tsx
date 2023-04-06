@@ -82,7 +82,7 @@ export default function MoviePanel(props: Props) {
               getMovieThumbnail({
                 proposalName,
                 dataCollectionId,
-                movieId: movie.MotionCorrection_movieId,
+                movieId: movie.Movie_movieId,
               }).url
             }
           />
@@ -136,7 +136,7 @@ export default function MoviePanel(props: Props) {
                 getMotionCorrectionDrift({
                   proposalName,
                   dataCollectionId,
-                  movieId: movie.MotionCorrection_movieId,
+                  movieId: movie.Movie_movieId,
                 }).url
               }
             />
@@ -148,7 +148,7 @@ export default function MoviePanel(props: Props) {
                 getMotionCorrectionThumbnail({
                   proposalName,
                   dataCollectionId,
-                  movieId: movie.MotionCorrection_movieId,
+                  movieId: movie.Movie_movieId,
                 }).url
               }
             />
@@ -193,7 +193,7 @@ export default function MoviePanel(props: Props) {
                 getCTFThumbnail({
                   proposalName,
                   dataCollectionId,
-                  movieId: movie.MotionCorrection_movieId,
+                  movieId: movie.Movie_movieId,
                 }).url
               }
             />
