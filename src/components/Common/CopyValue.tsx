@@ -40,7 +40,14 @@ export function CopyValue({ value }: { value: string }) {
           size="lg"
           icon={copied ? faClipboardCheck : faClipboard}
         />
-        <span>{value}</span>
+        <span
+          style={{
+            overflow: 'hidden',
+            overflowWrap: 'break-word',
+          }}
+        >
+          {value}
+        </span>
       </Card>
     </OverlayTrigger>
   );
