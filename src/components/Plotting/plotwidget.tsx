@@ -60,6 +60,8 @@ function PlotWidget(props: PlotParams & { compact?: boolean }) {
           ...props.layout,
         }}
         config={{
+          displayModeBar: true,
+          displaylogo: false,
           modeBarButtons: [
             ['toImage'],
             ['pan2d', 'zoom2d'],
