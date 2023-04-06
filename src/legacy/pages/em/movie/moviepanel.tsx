@@ -15,6 +15,7 @@ import {
 } from 'legacy/pages/em/movie/helper';
 import { CopyValue } from 'components/Common/CopyValue';
 import { HashAnchorButton, useHashScroll } from 'hooks/hashScroll';
+import { formatDateToDayAndTime } from 'helpers/dateparser';
 
 interface Props {
   movie: Movie;
@@ -35,7 +36,7 @@ export function MovieCard(props: Props) {
         }}
       >
         <strong> {movie.Movie_movieNumber}</strong>
-        {movie.Movie_createdTimeStamp}
+        {formatDateToDayAndTime(movie.Movie_createdTimeStamp)}
         <HashAnchorButton hash={hash.hash} />
       </Card.Header>
       <Card.Body>
