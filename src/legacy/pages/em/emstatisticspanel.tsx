@@ -37,6 +37,7 @@ export default function EmStatisticsPanel({
             ]}
             useResizeHandler
             style={{ width: '100%' }}
+            compact
             layout={{
               xaxis: { title: { text: 'Image no' } },
               yaxis: { title: { text: 'Angstroms' } },
@@ -61,6 +62,7 @@ export default function EmStatisticsPanel({
             ]}
             useResizeHandler
             style={{ width: '100%' }}
+            compact
             layout={{
               xaxis: { title: { text: 'Angstroms' } },
               autosize: true,
@@ -83,6 +85,7 @@ export default function EmStatisticsPanel({
             ]}
             useResizeHandler
             style={{ width: '100%' }}
+            compact
             layout={{
               xaxis: { title: { text: 'Image no' } },
               yaxis: { title: { text: 'Degrees' } },
@@ -107,6 +110,7 @@ export default function EmStatisticsPanel({
             ]}
             useResizeHandler
             style={{ width: '100%' }}
+            compact
             layout={{
               xaxis: { title: { text: 'Degrees' } },
               autosize: true,
@@ -138,6 +142,7 @@ export default function EmStatisticsPanel({
             ]}
             useResizeHandler
             style={{ width: '100%' }}
+            compact
             layout={{
               xaxis: { title: { text: 'Image no' } },
               yaxis: { title: { text: 'Microns' } },
@@ -159,6 +164,7 @@ export default function EmStatisticsPanel({
             ]}
             useResizeHandler
             style={{ width: '100%' }}
+            compact
             layout={{
               xaxis: { title: { text: 'Image no' } },
               yaxis: { title: { text: 'Microns' } },
@@ -195,6 +201,7 @@ export default function EmStatisticsPanel({
             ]}
             useResizeHandler
             style={{ width: '100%' }}
+            compact
             layout={{
               xaxis: { title: { text: 'Microns' } },
               autosize: true,
@@ -217,6 +224,7 @@ export default function EmStatisticsPanel({
             ]}
             useResizeHandler
             style={{ width: '100%' }}
+            compact
             layout={{
               xaxis: { title: { text: 'Image no' } },
               autosize: true,
