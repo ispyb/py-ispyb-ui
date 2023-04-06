@@ -117,7 +117,7 @@ export default function Paginator(props: Props) {
           onChange={changeLimit}
           value={currentLimitValue}
         >
-          {[5, 10, 25].map((i) => (
+          {[5, 10, 25, 50].map((i) => (
             <option key={`limit-${i}`} value={i}>
               {i}
             </option>
