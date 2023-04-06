@@ -25,6 +25,7 @@ export default function ClassificationPanel({
       <Card.Body>
         <ImageZoom
           alt="Classification"
+          aspectRatio="1/1"
           src={
             getClassificationThumbnail({
               proposalName,
