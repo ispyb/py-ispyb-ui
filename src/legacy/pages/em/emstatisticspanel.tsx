@@ -24,7 +24,7 @@ export default function EmStatisticsPanel({
   return (
     <Container fluid>
       <Row>
-        <Col xs={12} sm={12} md={12} lg={6}>
+        <Col xs={12} xxl={6}>
           <PlotWidget
             data={[
               {
@@ -45,7 +45,7 @@ export default function EmStatisticsPanel({
             }}
           />
         </Col>
-        <Col xs={12} sm={12} md={12} lg={6}>
+        <Col xs={12} xxl={6}>
           <PlotWidget
             data={[
               {
@@ -70,7 +70,7 @@ export default function EmStatisticsPanel({
         </Col>
       </Row>
       <Row>
-        <Col xs={12} sm={12} md={12} lg={6}>
+        <Col xs={12} xxl={6}>
           <PlotWidget
             data={[
               {
@@ -91,7 +91,7 @@ export default function EmStatisticsPanel({
             }}
           />
         </Col>
-        <Col xs={12} sm={12} md={12} lg={6}>
+        <Col xs={12} xxl={6}>
           <PlotWidget
             data={[
               {
@@ -116,7 +116,7 @@ export default function EmStatisticsPanel({
         </Col>
       </Row>
       <Row>
-        <Col xs={12} sm={12} md={12} lg={4}>
+        <Col xs={12} xxl={6}>
           <PlotWidget
             data={[
               {
@@ -146,7 +146,7 @@ export default function EmStatisticsPanel({
             }}
           />
         </Col>
-        <Col xs={12} sm={12} md={12} lg={4}>
+        <Col xs={12} xxl={6}>
           <PlotWidget
             data={[
               {
@@ -167,7 +167,7 @@ export default function EmStatisticsPanel({
             }}
           />
         </Col>
-        <Col xs={12} sm={12} md={12} lg={4}>
+        <Col xs={12} xxl={6}>
           <PlotWidget
             data={[
               {
@@ -203,9 +203,8 @@ export default function EmStatisticsPanel({
             }}
           />
         </Col>
-      </Row>
-      <Row>
-        <Col xs={12} sm={12} md={12} lg={12}>
+
+        <Col xs={12} xxl={6}>
           <PlotWidget
             data={[
               {
