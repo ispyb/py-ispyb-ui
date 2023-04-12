@@ -86,6 +86,9 @@ export function MetadataItem(props: IMetadataItemProps) {
 
   const elem = (
     <div
+      style={{
+        color: 'black',
+      }}
       className={classNames({
         'mx-1': true,
         'mb-2': true,

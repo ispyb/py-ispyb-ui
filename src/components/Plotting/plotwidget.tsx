@@ -1,5 +1,4 @@
-import { lazy, useState } from 'react';
-import { Modal } from 'react-bootstrap';
+import React, { lazy, useState } from 'react';
 import { PlotParams } from 'react-plotly.js';
 import createPlotlyComponent from 'react-plotly.js/factory';
 
@@ -25,8 +24,30 @@ function PlotWidget(props: PlotParams & { compact?: boolean }) {
         ...margin,
       }
     : props.layout.margin;
+
+  const ref = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (fullscreen) {
+      const element = ref.current;
+      if (element && element.requestFullscreen) {
+        element.requestFullscreen().catch((e) => {});
+      }
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch((e) => {});
+      }
+    }
+  }, [fullscreen]);
+
   return (
-    <>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+      }}
+      ref={ref}
+    >
       <Plot
         {...props}
         layout={{
@@ -39,14 +60,16 @@ function PlotWidget(props: PlotParams & { compact?: boolean }) {
           ...props.layout,
         }}
         config={{
+          displayModeBar: true,
+          displaylogo: false,
           modeBarButtons: [
             ['toImage'],
             ['pan2d', 'zoom2d'],
             ['zoomIn2d', 'zoomOut2d', 'resetScale2d'],
             [
               {
-                name: 'Expand',
-                title: 'Expand',
+                name: fullscreen ? 'Exit full screen' : 'Full screen',
+                title: fullscreen ? 'Exit full screen' : 'Full screen',
                 icon: {
                   width: 1000,
                   height: 1000,
@@ -54,7 +77,7 @@ function PlotWidget(props: PlotParams & { compact?: boolean }) {
                   transform: 'matrix(1 0 0 -1 0 850)',
                 },
                 click: function () {
-                  setFullScreen(!fullscreen);
+                  setFullScreen((f) => !f);
                 },
               },
             ],
@@ -62,51 +85,7 @@ function PlotWidget(props: PlotParams & { compact?: boolean }) {
           ...props.config,
         }}
       />
-      <Modal
-        centered
-        size="xl"
-        onHide={() => setFullScreen(false)}
-        show={fullscreen}
-      >
-        <Modal.Header closeButton>
-          <h5>
-            Expanded graph{' '}
-            {typeof props.layout.title === 'string'
-              ? props.layout.title
-              : props.layout.title?.text}
-          </h5>
-        </Modal.Header>
-        <Modal.Body>
-          <Plot
-            {...props}
-            config={{
-              displayModeBar: true,
-              modeBarButtons: [
-                ['toImage'],
-                ['pan2d', 'zoom2d'],
-                ['zoomIn2d', 'zoomOut2d', 'resetScale2d'],
-              ],
-              ...props.config,
-            }}
-            layout={{
-              paper_bgcolor: 'transparent',
-              plot_bgcolor: 'transparent',
-              modebar: {
-                bgcolor: 'transparent',
-                color: 'black',
-                activecolor: 'black',
-              },
-              ...props.layout,
-              height: undefined,
-              width: undefined,
-              autosize: true,
-            }}
-            useResizeHandler={true}
-            style={{ ...props.style, width: '100%', height: '100%' }}
-          />
-        </Modal.Body>
-      </Modal>
-    </>
+    </div>
   );
 }
 

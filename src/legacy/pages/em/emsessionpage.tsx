@@ -1,9 +1,10 @@
 import { useParams } from 'react-router-dom';
 import EMPage from 'legacy/pages/em/empage';
-import { Card } from 'react-bootstrap';
 import { useEMDataCollectionsBy } from 'legacy/hooks/ispyb';
 import GridSquarePanel from 'legacy/pages/em/grid/gridsquarepanel';
 import { useDataCollectionToGridSquares } from 'legacy/pages/em/helper';
+import { usePersistentParamState } from 'hooks/useParam';
+import { useMemo } from 'react';
 
 type Param = {
   sessionId: string;
@@ -17,23 +18,27 @@ export default function EMSessionPage() {
     sessionId,
   });
   const sampleList = useDataCollectionToGridSquares(
-    dataCollectionResponse.data,
+    dataCollectionResponse.data || [],
     proposalName
+  );
+
+  const [grid] = usePersistentParamState<string>('grid', 'all');
+
+  const filteredSampleList = useMemo(
+    () =>
+      sampleList.filter(
+        (sample) => grid === 'all' || sample.sampleName === grid
+      ),
+    [sampleList, grid]
   );
 
   return (
     <EMPage sessionId={sessionId} proposalName={proposalName}>
-      <Card>
-        <div style={{ margin: 10 }}>
-          {sampleList.map((sample, i) => (
-            <GridSquarePanel
-              key={i}
-              sampleList={sample}
-              sessionId={sessionId}
-            />
-          ))}
-        </div>
-      </Card>
+      <div style={{ margin: 10 }}>
+        {filteredSampleList.map((sample, i) => (
+          <GridSquarePanel key={i} sampleList={sample} sessionId={sessionId} />
+        ))}
+      </div>
     </EMPage>
   );
 }

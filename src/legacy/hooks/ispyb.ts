@@ -58,6 +58,7 @@ import {
 import { dateToTimestamp } from 'legacy/helpers/dateparser';
 import { parse } from 'date-fns';
 import { useAuth } from 'hooks/useAuth';
+import { Classification, DataCollections, Record } from 'legacy/pages/em/model';
 
 interface GetHookOption {
   autoRefresh: boolean;
@@ -187,7 +188,7 @@ export function useEMDataCollectionsBy(
   { proposalName, sessionId }: ProposalSessionId,
   options?: GetHookOption
 ) {
-  return useGet(
+  return useGet<DataCollections[]>(
     getEMDataCollectionsBy({ proposalName, sessionId }).url,
     options
   );
@@ -261,7 +262,10 @@ export function useEMStatistics(
   { proposalName, sessionId }: ProposalSessionId,
   options?: GetHookOption
 ) {
-  return useGet(getEMStatisticsBy({ proposalName, sessionId }).url, options);
+  return useGet<Record[]>(
+    getEMStatisticsBy({ proposalName, sessionId }).url,
+    options
+  );
 }
 
 export function useMoviesByDataCollectionId(
@@ -281,7 +285,7 @@ export function useEMClassification(
   { proposalName, sessionId }: ProposalSessionId,
   options?: GetHookOption
 ) {
-  return useGet(
+  return useGet<Classification[]>(
     getEMClassificationBy({ proposalName, sessionId }).url,
     options
   );

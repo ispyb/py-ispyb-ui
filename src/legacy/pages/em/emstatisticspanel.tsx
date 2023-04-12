@@ -1,6 +1,6 @@
 import { Col, Container, Row } from 'react-bootstrap';
-import PlotWidget from 'legacy/components/plotting/plotwidget';
 import { StatisticsPlotData } from 'legacy/pages/em/model';
+import PlotWidget from 'components/Plotting/plotwidget';
 
 export default function EmStatisticsPanel({
   statisticsPlotData,
@@ -22,15 +22,15 @@ export default function EmStatisticsPanel({
   } = statisticsPlotData;
 
   return (
-    <Container>
+    <Container fluid>
       <Row>
-        <Col xs={12} sm={12} md={12} lg={6}>
+        <Col xs={12} xxl={6}>
           <PlotWidget
             data={[
               {
                 x: movieNumber,
                 y: resolution,
-                type: 'scatter',
+                type: 'scattergl',
                 mode: 'markers',
                 marker: { color: 'blue', size: 4 },
               },
@@ -45,7 +45,7 @@ export default function EmStatisticsPanel({
             }}
           />
         </Col>
-        <Col xs={12} sm={12} md={12} lg={6}>
+        <Col xs={12} xxl={6}>
           <PlotWidget
             data={[
               {
@@ -70,13 +70,13 @@ export default function EmStatisticsPanel({
         </Col>
       </Row>
       <Row>
-        <Col xs={12} sm={12} md={12} lg={6}>
+        <Col xs={12} xxl={6}>
           <PlotWidget
             data={[
               {
                 x: movieNumber,
                 y: angle,
-                type: 'scatter',
+                type: 'scattergl',
                 mode: 'markers',
                 marker: { color: 'blue', size: 4 },
               },
@@ -91,7 +91,7 @@ export default function EmStatisticsPanel({
             }}
           />
         </Col>
-        <Col xs={12} sm={12} md={12} lg={6}>
+        <Col xs={12} xxl={6}>
           <PlotWidget
             data={[
               {
@@ -116,14 +116,14 @@ export default function EmStatisticsPanel({
         </Col>
       </Row>
       <Row>
-        <Col xs={12} sm={12} md={12} lg={4}>
+        <Col xs={12} xxl={6}>
           <PlotWidget
             data={[
               {
                 x: movieNumber,
                 y: defocusU,
                 name: 'Defocus U',
-                type: 'scatter',
+                type: 'scattergl',
                 mode: 'markers',
                 marker: { color: 'blue', size: 4 },
               },
@@ -131,7 +131,7 @@ export default function EmStatisticsPanel({
                 x: movieNumber,
                 y: defocusV,
                 name: 'Defocus V',
-                type: 'scatter',
+                type: 'scattergl',
                 mode: 'markers',
                 marker: { color: 'red', size: 4 },
               },
@@ -146,13 +146,13 @@ export default function EmStatisticsPanel({
             }}
           />
         </Col>
-        <Col xs={12} sm={12} md={12} lg={4}>
+        <Col xs={12} xxl={6}>
           <PlotWidget
             data={[
               {
                 x: movieNumber,
                 y: defocusDifference,
-                type: 'scatter',
+                type: 'scattergl',
                 mode: 'markers',
                 marker: { color: 'blue', size: 4 },
               },
@@ -167,7 +167,7 @@ export default function EmStatisticsPanel({
             }}
           />
         </Col>
-        <Col xs={12} sm={12} md={12} lg={4}>
+        <Col xs={12} xxl={6}>
           <PlotWidget
             data={[
               {
@@ -199,18 +199,18 @@ export default function EmStatisticsPanel({
               xaxis: { title: { text: 'Microns' } },
               autosize: true,
               title: 'Defocus distribution',
+              barmode: 'group',
             }}
           />
         </Col>
-      </Row>
-      <Row>
-        <Col xs={12} sm={12} md={12} lg={12}>
+
+        <Col xs={12} xxl={6}>
           <PlotWidget
             data={[
               {
                 x: movieNumber,
                 y: averageData,
-                type: 'scatter',
+                type: 'scattergl',
                 mode: 'markers',
                 marker: { color: 'blue', size: 4 },
               },
