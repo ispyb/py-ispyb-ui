@@ -5,15 +5,11 @@ import { useSuspense } from 'rest-hooks';
 import { IDataCollection } from '../Default';
 import { DataCollectionBox } from '../../DataCollection';
 import { Suspense, useState } from 'react';
-import {
-  createSearchParams,
-  useNavigate,
-  useSearchParams,
-} from 'react-router-dom';
 import { CompactSSXContent } from './SSXCompact';
 import { SampleResource } from 'api/resources/Sample';
-import { DeployedSSXContent } from './SSXDeployed';
+import { ExpandedSSXContent } from './SSXExpanded';
 import Loading from 'components/Loading';
+import { usePersistentParamState } from 'hooks/useParam';
 
 export default function SSX(props: IDataCollection) {
   return (
@@ -56,25 +52,19 @@ export function SSXDataCollectionGroup(props: IDataCollection) {
       : null
   );
 
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const deployedId = searchParams.get('deployedId');
-  // const res = <Row className="g-0">{dcs.results.length}</Row>;
+  const [expandedId, setExpandedId] = usePersistentParamState<string>(
+    'expandedId',
+    'undefined'
+  );
 
-  const deployed = Number(deployedId) === dataCollectionGroupId;
-  const onDeploy = () => {
-    navigate({
-      pathname: '',
-      search: createSearchParams({
-        ...Object.fromEntries([...searchParams]),
-        deployedId: dataCollectionGroupId.toString(),
-      }).toString(),
-    });
-  };
+  const expanded = Number(expandedId) === dataCollectionGroupId;
+
   return (
     <div
-      style={{ margin: 5, cursor: deployed ? undefined : 'pointer' }}
-      onClick={onDeploy}
+      style={{ margin: 5, cursor: expanded ? undefined : 'pointer' }}
+      onClick={() => {
+        setExpandedId(dataCollectionGroupId.toString());
+      }}
     >
       <Tab.Container activeKey={tabKey || 'Summary'} onSelect={setTabKey}>
         <DataCollectionBox
@@ -85,22 +75,22 @@ export function SSXDataCollectionGroup(props: IDataCollection) {
               content: <>Summary</>,
               hint: 'Summary',
               onClick: () => setTabKey('Summary'),
-              hidden: !deployed,
+              hidden: !expanded,
               variant: tabKey === 'Summary' ? 'light' : 'outline-light',
             },
             {
               content: <>Parameters</>,
               hint: 'Parameters',
               onClick: () => setTabKey('Parameters'),
-              hidden: !deployed,
+              hidden: !expanded,
               variant: tabKey === 'Parameters' ? 'light' : 'outline-light',
             },
           ]}
         >
           {sample && (
             <>
-              {deployed ? (
-                <DeployedSSXContent
+              {expanded ? (
+                <ExpandedSSXContent
                   dcg={parent}
                   dcgItem={item}
                   dcs={dcs.results}
