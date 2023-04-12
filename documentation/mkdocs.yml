@@ -1,14 +1,13 @@
-site_name: EXI2
-site_url: https://ispyb.gitlab-pages.esrf.fr/exi2
-repo_name: 'ispyb/EXI2'
-repo_url: 'https://gitlab.esrf.fr/ispyb/exi2'
+site_name: py-ispyb-ui
+site_url: https://ispyb.github.io/py-ispyb-ui/
+repo_name: 'ispyb/py-ispyb-ui'
+repo_url: 'https://github.com/ispyb/py-ispyb-ui'
 theme:
   name: null
   custom_dir: 'cinder'
 nav:
   - Home: index.md
   - Installation: installation.md
-  - FAQ: faq.md
 
 plugins:
   - search
