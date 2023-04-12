@@ -1,6 +1,6 @@
 # What is py-ispyb-ui?
 
-` py-ispyb-ui` is the project name for a web user interface for ISPyB (Information System for Protein Xtal beamlines). It is React application.
+` py-ispyb-ui` is the project name for a web user interface for ISPyB (Information System for Protein Xtal beamlines). It is a React application.
 
 ## Main differences between py-ispyb-ui and EXI2
 
