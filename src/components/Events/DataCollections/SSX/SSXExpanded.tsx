@@ -20,7 +20,7 @@ import {
   HitsStatisticsCumulative,
 } from './statistics/hits';
 
-export function DeployedSSXContent({
+export function ExpandedSSXContent({
   dcg,
   dcgItem,
   dcs,
@@ -53,11 +53,6 @@ export function DeployedSSXContent({
 }
 
 function DataCollectionGroupSummary({ dcs }: { dcs: Event[] }) {
-  // const dcs = dcsData.sort(
-  //   (a, b) =>
-  //     parseDate(a.startTime).getTime() - parseDate(b.startTime).getTime()
-  // );
-
   return (
     <Col>
       <Row>

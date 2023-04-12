@@ -181,24 +181,24 @@ function PyHeader() {
 export function ProposalMenu({ proposal }: { proposal: string }) {
   return (
     <>
-      <NavDropdown.Item as={NavLink} to={`/proposals/${proposal}/sessions`}>
+      <Nav.Link as={NavLink} to={`/proposals/${proposal}/sessions`}>
         Sessions
-      </NavDropdown.Item>
-      <NavDropdown.Item as={NavLink} to={`/proposals/${proposal}/calendar`}>
+      </Nav.Link>
+      <Nav.Link as={NavLink} to={`/proposals/${proposal}/calendar`}>
         Calendar
-      </NavDropdown.Item>
-      <NavDropdown.Item as={NavLink} to={`/proposals/${proposal}/contacts`}>
+      </Nav.Link>
+      <Nav.Link as={NavLink} to={`/proposals/${proposal}/contacts`}>
         Contacts
-      </NavDropdown.Item>
-      <NavDropdown.Item as={NavLink} to={`/proposals/${proposal}/shipments`}>
+      </Nav.Link>
+      <Nav.Link as={NavLink} to={`/proposals/${proposal}/shipments`}>
         Shipments
-      </NavDropdown.Item>
-      <NavDropdown.Item as={NavLink} to={`/proposals/${proposal}/proteins`}>
+      </Nav.Link>
+      <Nav.Link as={NavLink} to={`/proposals/${proposal}/proteins`}>
         Proteins
-      </NavDropdown.Item>
-      <NavDropdown.Item as={NavLink} to={`/proposals/${proposal}/samples`}>
+      </Nav.Link>
+      <Nav.Link as={NavLink} to={`/proposals/${proposal}/samples`}>
         Samples
-      </NavDropdown.Item>
+      </Nav.Link>
     </>
   );
 }

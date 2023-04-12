@@ -100,7 +100,6 @@ export function StorageRing({
 }) {
   const properties = [
     { title: 'Filling mode', content: session?.BeamLineSetup?.synchrotronMode },
-    { title: 'Current', content: 'MISSING?' },
     { title: 'Ondulator', content: session?.BeamLineSetup?.undulatorType1 },
     { title: 'Gap', content: dc.undulatorGap1 },
   ];
@@ -115,7 +114,10 @@ export function Optics({
   sample?: Sample;
 }) {
   const properties = [
-    { title: 'KB', content: 'MISSING?' },
+    {
+      title: 'Focussing optic',
+      content: session?.BeamLineSetup?.focusingOptic,
+    },
     { title: 'Mono type', content: session?.BeamLineSetup?.monochromatorType },
     { title: 'Mono bandwith', content: dc.SSXDataCollection?.energyBandwidth },
     { title: 'Mono stripe', content: dc.SSXDataCollection?.monoStripe },
@@ -173,7 +175,6 @@ export function SampleParams({
         .map((v) => (v === undefined ? 'null' : v))
         .join(', '),
     },
-    // { title: 'Crystal concentration', content: sample?.Crystal.abundance },
     {
       title: 'Support',
       content: dc.DataCollectionGroup.experimentType?.split('SSX-')[1],
@@ -195,7 +196,6 @@ export function Collection({
     { title: 'Prefix', content: dc.imagePrefix },
     { title: 'Transmission', content: dc.transmission },
     { title: 'Number frames', content: dc.numberOfImages },
-    { title: 'Sub sampling', content: 'MISSING?' },
     { title: 'Exposure time', content: dc.exposureTime },
     { title: 'Flux', content: dc.flux },
     { title: 'Jet speed', content: dc.SSXDataCollection?.jetSpeed },
