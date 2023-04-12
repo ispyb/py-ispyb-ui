@@ -2,4 +2,4 @@
 
 The py-ispyb user interface.
 
-Check the [latest documentation](https://ispyb.gitlab-pages.esrf.fr/py-ispyb-ui/doc)
+Check the [latest documentation](https://ispyb.github.io/py-ispyb-ui/)

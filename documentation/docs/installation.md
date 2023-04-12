@@ -18,9 +18,17 @@ npm install
 
 ## Configuration
 
-### Configuration file
+Configuration is defined in `src/config`.
+There, you will find different configuration presets which you can enable with the environment variable `REACT_APP_ISPYB_ENV`.
+Currently, we have the following presets:
+  - `default.ts` connection to a python server on `http://localhost:8000`
+  - `netlify.ts` used by automatic preview deployment from the CI. Defines various sites for tests.
+  - `esrf.ts` connecting to the python and java servers at ESRF.
 
-### Environment variables
+The `config.ts` file defines what value the environment variable should have to use each configuration preset.
+
+Feel free to add a new configuration file for your site using these as templates. You can configure it to connect to you java and/or python instances of ispyb.
+
 
 ## Run
 
