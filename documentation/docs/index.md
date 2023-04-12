@@ -13,6 +13,10 @@
 | Bootstrap  | 3                              | 5.2.1                                |
 | Bootwatch  | [Yes](https://bootswatch.com/) | [Yes](https://bootswatch.com/)       |
 
+
+## Installation
+
+See the [installation guide](https://ispyb.github.io/py-ispyb-ui/installation/).
 ## License
 
 The source code of ` py-ispyb-ui` is licensed under the MIT license.
