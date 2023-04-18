@@ -11,7 +11,15 @@ import axios from 'axios';
 import SimpleParameterTable from 'legacy/components/table/simpleparametertable';
 import { formatDateTo } from 'legacy/helpers/dateparser';
 import { useState } from 'react';
-import { Row, Col, Badge, Alert, Button, Spinner } from 'react-bootstrap';
+import {
+  Row,
+  Col,
+  Badge,
+  Alert,
+  Button,
+  Spinner,
+  Container as ContainerB,
+} from 'react-bootstrap';
 import { KeyedMutator } from 'swr';
 import { Container, Shipping } from './model';
 
@@ -116,63 +124,65 @@ export function InformationPane({
   return (
     <Col>
       <Row>
-        <Col></Col>
-        <Col md={'auto'}>
-          <SimpleParameterTable
-            parameters={[
-              { key: 'Beamline', value: data.beamlineName },
-              { key: 'Date', value: data.startDate },
-              {
-                key: 'Status',
-                value: (
-                  <Badge style={{ margin: 0, fontSize: 'small' }}>
-                    {data.shippingStatus}
-                  </Badge>
-                ),
-              },
-            ]}
-          ></SimpleParameterTable>
+        <Col>
+          <ContainerB fluid>
+            <SimpleParameterTable
+              parameters={[
+                { key: 'Beamline', value: data.beamlineName },
+                { key: 'Date', value: data.startDate },
+                {
+                  key: 'Status',
+                  value: (
+                    <Badge style={{ margin: 0, fontSize: 'small' }}>
+                      {data.shippingStatus}
+                    </Badge>
+                  ),
+                },
+              ]}
+            ></SimpleParameterTable>
+          </ContainerB>
         </Col>
-        <Col></Col>
-        <Col md={'auto'}>
-          <SimpleParameterTable
-            parameters={[
-              {
-                key: 'Sender address',
-                value: data.sendingLabContactVO.cardName,
-              },
-              {
-                key: 'Return address',
-                value: data.returnLabContactVO.cardName,
-              },
-              {
-                key: 'Fedex reference',
-                value: (
-                  <Badge style={{ margin: 0, fontSize: 'small' }}>
-                    {data.fedexCode}
-                  </Badge>
-                ),
-              },
-            ]}
-          ></SimpleParameterTable>
+        <Col>
+          <ContainerB fluid>
+            <SimpleParameterTable
+              parameters={[
+                {
+                  key: 'Sender address',
+                  value: data.sendingLabContactVO.cardName,
+                },
+                {
+                  key: 'Return address',
+                  value: data.returnLabContactVO.cardName,
+                },
+                {
+                  key: 'Fedex reference',
+                  value: (
+                    <Badge style={{ margin: 0, fontSize: 'small' }}>
+                      {data.fedexCode}
+                    </Badge>
+                  ),
+                },
+              ]}
+            ></SimpleParameterTable>
+          </ContainerB>
         </Col>
-        <Col></Col>
-        <Col md={'auto'}>
-          <SimpleParameterTable
-            parameters={[
-              { key: 'Allowed reimb. parcels', value: data.nbReimbDewars },
-              {
-                key: 'Courier company',
-                value: data.returnLabContactVO.defaultCourrierCompany,
-              },
-              {
-                key: 'Billing reference',
-                value: data.returnLabContactVO.billingReference,
-              },
-            ]}
-          ></SimpleParameterTable>
+        <Col>
+          <ContainerB fluid>
+            <SimpleParameterTable
+              parameters={[
+                { key: 'Allowed reimb. parcels', value: data.nbReimbDewars },
+                {
+                  key: 'Courier company',
+                  value: data.returnLabContactVO.defaultCourrierCompany,
+                },
+                {
+                  key: 'Billing reference',
+                  value: data.returnLabContactVO.billingReference,
+                },
+              ]}
+            ></SimpleParameterTable>
+          </ContainerB>
         </Col>
-        <Col></Col>
       </Row>
       <Row>
         <Col style={{ marginLeft: 20 }}>
@@ -186,7 +196,7 @@ export function InformationPane({
       </Row>
       <Row>
         <Col>
-          {data.nbReimbDewars && data.nbReimbDewars > 0 ? (
+          {data.nbReimbDewars && Number(data.nbReimbDewars) > 0 ? (
             <Alert variant="info" style={{ margin: 15 }}>
               <FontAwesomeIcon
                 style={{ marginRight: 10 }}
