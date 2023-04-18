@@ -68,13 +68,14 @@ export function MXContainer({
 
           const sampleArray = sampleByPosition[String(n)];
 
-          let collected: 0 | Sample[] = sampleArray
+          let collected: 0 | Sample[] = _(sampleArray)
             .filter((s) => !sessionId || Number(sessionId) === s?.sessionId)
             .filter(
               (s) =>
                 s?.DataCollectionGroup_dataCollectionGroupId !== null &&
                 s?.DataCollectionGroup_dataCollectionGroupId !== undefined
-            );
+            )
+            .value();
 
           const refSample =
             collected && collected.length
