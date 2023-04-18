@@ -469,7 +469,8 @@ export function DewarPane({
                       value: samples.filter(
                         (s) =>
                           s.DataCollectionGroup_dataCollectionGroupId !==
-                          undefined
+                            undefined &&
+                          s.DataCollectionGroup_dataCollectionGroupId !== null
                       ).length,
                     },
                   ]
@@ -491,15 +492,16 @@ export function DewarPane({
                   (b.containerId ? b.containerId : 0)
               )
               .map((c) => (
-                <ContainerView
-                  statisticsMode={statisticsMode}
-                  key={c.containerId}
-                  proposalName={proposalName}
-                  container={c}
-                  shipping={shipping}
-                  dewar={dewar}
-                  mutateShipping={mutateShipping}
-                ></ContainerView>
+                <Suspense key={c.containerId} fallback={<Loading />}>
+                  <ContainerView
+                    statisticsMode={statisticsMode}
+                    proposalName={proposalName}
+                    container={c}
+                    shipping={shipping}
+                    dewar={dewar}
+                    mutateShipping={mutateShipping}
+                  ></ContainerView>
+                </Suspense>
               ))}
           </Row>
         </Col>
@@ -659,30 +661,34 @@ export function ContainerView({
       <Popover.Body>
         <Col>
           <Row>
-            <SimpleParameterTable
-              parameters={
-                statisticsMode
-                  ? [
-                      { key: 'code', value: container.code },
-                      { key: 'type', value: container.containerType },
-                      { key: 'capacity', value: container.capacity },
-                      { key: 'Samples', value: samples.length },
-                      {
-                        key: 'Measured',
-                        value: samples.filter(
-                          (s) =>
-                            s.DataCollectionGroup_dataCollectionGroupId !==
-                            undefined
-                        ).length,
-                      },
-                    ]
-                  : [
-                      { key: 'code', value: container.code },
-                      { key: 'type', value: container.containerType },
-                      { key: 'capacity', value: container.capacity },
-                    ]
-              }
-            ></SimpleParameterTable>
+            <ContainerB fluid>
+              <SimpleParameterTable
+                parameters={
+                  statisticsMode
+                    ? [
+                        { key: 'code', value: container.code },
+                        { key: 'type', value: container.containerType },
+                        { key: 'capacity', value: container.capacity },
+                        { key: 'Samples', value: samples.length },
+                        {
+                          key: 'Measured',
+                          value: samples.filter(
+                            (s) =>
+                              s.DataCollectionGroup_dataCollectionGroupId !==
+                                undefined &&
+                              s.DataCollectionGroup_dataCollectionGroupId !==
+                                null
+                          ).length,
+                        },
+                      ]
+                    : [
+                        { key: 'code', value: container.code },
+                        { key: 'type', value: container.containerType },
+                        { key: 'capacity', value: container.capacity },
+                      ]
+                }
+              ></SimpleParameterTable>
+            </ContainerB>
           </Row>
           {editable && mutateShipping ? (
             <Row>
@@ -748,7 +754,8 @@ export function ContainerView({
                       value: samples.filter(
                         (s) =>
                           s.DataCollectionGroup_dataCollectionGroupId !==
-                          undefined
+                            undefined &&
+                          s.DataCollectionGroup_dataCollectionGroupId !== null
                       ).length,
                     },
                   ]

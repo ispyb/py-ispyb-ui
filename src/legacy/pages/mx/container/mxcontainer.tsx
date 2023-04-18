@@ -68,14 +68,14 @@ export function MXContainer({
 
           const sampleArray = sampleByPosition[String(n)];
 
-          let collected: 0 | Sample[] = sampleArray;
-
-          if (sessionId) {
-            collected =
-              sampleArray &&
-              sampleArray.length &&
-              sampleArray.filter((s) => Number(sessionId) === s?.sessionId);
-          }
+          let collected: 0 | Sample[] = _(sampleArray)
+            .filter((s) => !sessionId || Number(sessionId) === s?.sessionId)
+            .filter(
+              (s) =>
+                s?.DataCollectionGroup_dataCollectionGroupId !== null &&
+                s?.DataCollectionGroup_dataCollectionGroupId !== undefined
+            )
+            .value();
 
           const refSample =
             collected && collected.length
@@ -405,7 +405,7 @@ function SampleSVG({
           {sampleCircle}
         </OverlayTrigger>
         <text className={type} x={position.x} y={position.y}>
-          <tspan dx="0" dy="3" pointerEvents="none">
+          <tspan dx="0" dy="5" pointerEvents="none">
             {n}
           </tspan>
         </text>
@@ -422,7 +422,7 @@ function SampleSVG({
         r={containerRadius * 0.175}
       ></circle>
       <text x={position.x} y={position.y} className="sampleEmpty">
-        <tspan dx="0" dy="3" pointerEvents="none">
+        <tspan dx="0" dy="5" pointerEvents="none">
           {n}
         </tspan>
       </text>
