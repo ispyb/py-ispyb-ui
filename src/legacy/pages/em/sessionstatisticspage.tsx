@@ -1,10 +1,6 @@
 import { useParams } from 'react-router-dom';
 import EMPage from 'legacy/pages/em/empage';
-import {
-  useEMDataCollectionsBy,
-  useEMStatistics,
-  useMoviesByDataCollectionId,
-} from 'legacy/hooks/ispyb';
+import { useEMDataCollectionsBy, useEMStatistics } from 'legacy/hooks/ispyb';
 import {
   useDataCollectionToGridSquares,
   useGridSquareStatisticsToPlot,
