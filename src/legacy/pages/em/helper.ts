@@ -138,6 +138,8 @@ export function useGridSquareStatisticsToPlot(
     const resolution = [];
     const angle = [];
     const defocusDifference = [];
+    const movieId = [];
+    const collectionId = [];
     let resolutionDistribution: (string | number)[][] = [];
     let defocusUDistribution: (string | number)[][] = [];
     let defocusVDistribution: (string | number)[][] = [];
@@ -147,9 +149,10 @@ export function useGridSquareStatisticsToPlot(
       data.sort(function (a, b) {
         return a.movieId - b.movieId;
       });
-      const startMovieId = data[0].movieId;
       for (let i = 0; i < data.length; i++) {
-        movieNumber.push(data[i].movieId - startMovieId + 1);
+        movieNumber.push(i + 1);
+        movieId.push(data[i].movieId);
+        collectionId.push(data[i].dataCollectionId);
         averageData.push(parseFloat(data[i].averageMotionPerFrame));
         const U = parseFloat(data[i].defocusU) / 10000.0;
         const V = parseFloat(data[i].defocusV) / 10000.0;
@@ -181,6 +184,8 @@ export function useGridSquareStatisticsToPlot(
       angleDistribution,
       angle,
       defocusDifference,
+      movieId,
+      collectionId,
     };
   }, [data]);
 }

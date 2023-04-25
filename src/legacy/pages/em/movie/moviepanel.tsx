@@ -84,11 +84,6 @@ export default function MoviePanel(props: Props) {
                 parameters={[
                   { key: 'Number', value: movie.Movie_movieNumber },
                   { key: 'Time', value: movie.Movie_createdTimeStamp },
-                  {
-                    key: 'Movie File Name',
-                    value: movie.Movie_fileName,
-                    valueTooltip: movie.Movie_movieFullPath,
-                  },
                 ]}
               ></SimpleParameterTable>
             </Col>

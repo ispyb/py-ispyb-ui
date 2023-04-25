@@ -1,6 +1,10 @@
 import { useParams } from 'react-router-dom';
 import EMPage from 'legacy/pages/em/empage';
-import { useEMDataCollectionsBy, useEMStatistics } from 'legacy/hooks/ispyb';
+import {
+  useEMDataCollectionsBy,
+  useEMStatistics,
+  useMoviesByDataCollectionId,
+} from 'legacy/hooks/ispyb';
 import {
   useDataCollectionToGridSquares,
   useGridSquareStatisticsToPlot,
@@ -57,6 +61,7 @@ export default function SessionStatisticsPage() {
     <EMPage sessionId={sessionId} proposalName={proposalName}>
       <EmStatisticsPanel
         statisticsPlotData={statisticsPlotData}
+        proposalName={proposalName}
       ></EmStatisticsPanel>
     </EMPage>
   );

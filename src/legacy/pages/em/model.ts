@@ -106,4 +106,6 @@ export interface StatisticsPlotData {
   angleDistribution: (number | string)[][];
   angle: number[];
   defocusDifference: number[];
+  movieId: number[];
+  collectionId: number[];
 }
