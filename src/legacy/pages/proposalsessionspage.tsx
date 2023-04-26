@@ -13,7 +13,8 @@ type Param = {
 
 export default function ProposalSessionsPage() {
   const { javaPerson } = useAuth();
-  const isManager = javaPerson?.roles.includes('Manager') || false;
+  const isManager =
+    javaPerson?.roles.some((r) => r.toLowerCase().includes('manager')) || false;
   const username = javaPerson?.username || '';
   const { proposalName } = useParams<Param>();
   const [areEMColumnsVisible, setAreEMColumnsVisible] = useState(true);

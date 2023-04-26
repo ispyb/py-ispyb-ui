@@ -10,7 +10,8 @@ import { useAuth } from 'hooks/useAuth';
 
 export default function SessionsPage() {
   const { javaPerson } = useAuth();
-  const isManager = javaPerson?.roles.includes('Manager') || false;
+  const isManager =
+    javaPerson?.roles.some((r) => r.toLowerCase().includes('manager')) || false;
   const username = javaPerson?.username || '';
   const [areEMColumnsVisible, setAreEMColumnsVisible] = useState(true);
   const [areMXColumnsVisible, setAreMXColumnsVisible] = useState(true);
