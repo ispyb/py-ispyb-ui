@@ -19,11 +19,20 @@ function PlotWidget(props: PlotParams & { compact?: boolean }) {
     ? {
         b: props.layout?.xaxis?.title ? 35 : 20,
         l: props.layout?.yaxis?.title ? 50 : 35,
-        t: 50,
+        t: 60,
         r: 5,
         ...margin,
       }
     : props.layout.margin;
+  const title = props.layout.title;
+  props.layout.title = props.compact
+    ? {
+        yref: 'container',
+        y: 40,
+        yanchor: 'top',
+        ...(typeof title === 'string' ? { text: title } : title),
+      }
+    : title;
 
   const ref = React.useRef<HTMLDivElement>(null);
 

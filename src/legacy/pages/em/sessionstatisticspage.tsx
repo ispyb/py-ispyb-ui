@@ -57,6 +57,7 @@ export default function SessionStatisticsPage() {
     <EMPage sessionId={sessionId} proposalName={proposalName}>
       <EmStatisticsPanel
         statisticsPlotData={statisticsPlotData}
+        proposalName={proposalName}
       ></EmStatisticsPanel>
     </EMPage>
   );
