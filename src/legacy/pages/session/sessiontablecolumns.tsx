@@ -1,6 +1,6 @@
-import { Badge, Button } from 'react-bootstrap';
+import { Badge } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBook, faSearch } from '@fortawesome/free-solid-svg-icons';
+import { faBook } from '@fortawesome/free-solid-svg-icons';
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
 import { formatDateTo } from 'legacy/helpers/dateparser';
 import { Session } from 'legacy/pages/model';
@@ -14,19 +14,6 @@ const dateFormatter = (row: Session) => {
     'dd/MM/yyyy'
   )} ⇨ ${formatDateTo(row.BLSession_endDate, 'dd/MM/yyyy')}`;
 };
-
-export function SessionSearch({ session }: { session: Session }) {
-  return (
-    <OverlayTrigger
-      placement="right"
-      overlay={<Tooltip>Open session {session.sessionId}</Tooltip>}
-    >
-      <Button variant="link">
-        <FontAwesomeIcon icon={faSearch}></FontAwesomeIcon>
-      </Button>
-    </OverlayTrigger>
-  );
-}
 
 const getProposalName = (row: Session) => {
   return row.Proposal_proposalCode + row.Proposal_ProposalNumber;
@@ -106,15 +93,6 @@ export default function columns(props: Props): ColumnDef<Session>[] {
     },
   ];
   return [
-    {
-      id: 'open',
-      accessorKey: 'sessionId',
-      cell: (info) => (
-        <SessionSearch session={info.row.original}></SessionSearch>
-      ),
-      enableColumnFilter: false,
-      header: '',
-    },
     {
       header: 'Date',
       footer: 'Date',

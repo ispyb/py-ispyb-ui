@@ -1,13 +1,5 @@
 import { Proposal } from 'legacy/pages/model';
-import {
-  Badge,
-  Button,
-  Tooltip,
-  OverlayTrigger,
-  Container,
-} from 'react-bootstrap';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch } from '@fortawesome/free-solid-svg-icons';
+import { Badge, Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import {
   ColumnDef,
@@ -25,14 +17,6 @@ export default function ProposalTable({
   variant: 'sessions' | 'experiments';
 }) {
   const columns: ColumnDef<Proposal>[] = [
-    {
-      header: '',
-      accessorKey: 'Proposal_proposalId',
-      cell: (info) => {
-        return <ProposalSessions proposal={info.row.original} />;
-      },
-      enableColumnFilter: false,
-    },
     {
       header: 'Proposal',
       footer: 'Proposal',
@@ -78,25 +62,11 @@ export function ProposalName({ proposal }: { proposal: Proposal }) {
     <>
       <p style={{ fontSize: 15, fontWeight: 'bold', margin: 'auto' }}>
         <Badge
-          bg="secondary"
+          bg="primary"
           style={{ marginRight: 5 }}
         >{`${proposal.Proposal_proposalType}`}</Badge>
         {`${proposal.Proposal_proposalCode}${proposal.Proposal_proposalNumber}`}
       </p>
     </>
-  );
-}
-
-export function ProposalSessions({ proposal }: { proposal: Proposal }) {
-  const proposalName = `${proposal.Proposal_proposalCode}${proposal.Proposal_proposalNumber}`;
-  return (
-    <OverlayTrigger
-      placement="right"
-      overlay={<Tooltip>Open {proposalName}</Tooltip>}
-    >
-      <Button variant="link">
-        <FontAwesomeIcon icon={faSearch}></FontAwesomeIcon>
-      </Button>
-    </OverlayTrigger>
   );
 }
