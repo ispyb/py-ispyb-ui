@@ -46,6 +46,12 @@ export default function ProposalTable({
       accessorKey: 'Proposal_title',
     },
   ];
+  const navigate = useNavigate();
+
+  const proposalClick = (proposal: Proposal) => {
+    const proposalName = `${proposal.Proposal_proposalCode}${proposal.Proposal_proposalNumber}`;
+    navigate(`/legacy/proposals/${proposalName}/sessions`);
+  };
 
   const table = useReactTable({
     data: data,
@@ -61,8 +67,8 @@ export default function ProposalTable({
   });
 
   return (
-    <Container>
-      <TanstackBootstrapTable table={table} />
+    <Container fluid>
+      <TanstackBootstrapTable table={table} onRowClick={proposalClick} />
     </Container>
   );
 }
@@ -82,19 +88,13 @@ export function ProposalName({ proposal }: { proposal: Proposal }) {
 }
 
 export function ProposalSessions({ proposal }: { proposal: Proposal }) {
-  const navigate = useNavigate();
   const proposalName = `${proposal.Proposal_proposalCode}${proposal.Proposal_proposalNumber}`;
   return (
     <OverlayTrigger
       placement="right"
       overlay={<Tooltip>Open {proposalName}</Tooltip>}
     >
-      <Button
-        variant="link"
-        onClick={() => {
-          navigate(`/legacy/proposals/${proposalName}/sessions`);
-        }}
-      >
+      <Button variant="link">
         <FontAwesomeIcon icon={faSearch}></FontAwesomeIcon>
       </Button>
     </OverlayTrigger>

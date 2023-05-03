@@ -2,10 +2,8 @@ import { Badge, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBook, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
-import { useGetTechniqueByBeamline } from 'legacy/hooks/site';
 import { formatDateTo } from 'legacy/helpers/dateparser';
 import { Session } from 'legacy/pages/model';
-import { Link } from 'react-router-dom';
 import { ColumnDef } from '@tanstack/react-table';
 import { EditComments } from 'legacy/components/EditComments';
 import { updateSessionComments } from 'legacy/api/ispyb';
@@ -18,19 +16,14 @@ const dateFormatter = (row: Session) => {
 };
 
 export function SessionSearch({ session }: { session: Session }) {
-  const technique = useGetTechniqueByBeamline(session.beamLineName);
-  const url = `/legacy/proposals/${session.Proposal_proposalCode}${session.Proposal_ProposalNumber}/${technique}/${session.sessionId}/summary`;
-
   return (
     <OverlayTrigger
       placement="right"
       overlay={<Tooltip>Open session {session.sessionId}</Tooltip>}
     >
-      <Link to={url}>
-        <Button variant="link">
-          <FontAwesomeIcon icon={faSearch}></FontAwesomeIcon>
-        </Button>
-      </Link>
+      <Button variant="link">
+        <FontAwesomeIcon icon={faSearch}></FontAwesomeIcon>
+      </Button>
     </OverlayTrigger>
   );
 }
@@ -65,7 +58,12 @@ const proposalFormatter = (
           delay={{ show: 250, hide: 400 }}
           overlay={renderTooltip}
         >
-          <a href={userPortalLink.url + session.expSessionPk}>
+          <a
+            href={userPortalLink.url + session.expSessionPk}
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
             <FontAwesomeIcon
               icon={faBook}
               style={{ marginRight: 10 }}
@@ -90,50 +88,19 @@ interface Props {
   };
 }
 export default function columns(props: Props): ColumnDef<Session>[] {
-  const { areMXColumnsVisible, areEMColumnsVisible, userPortalLink } = props;
+  const { areMXColumnsVisible, userPortalLink } = props;
   const MXColumns = [
     {
-      header: 'En. Scans',
-      footer: 'En. Scans',
+      header: 'Energy scans',
+      footer: 'Energy scans',
       accessorKey: 'energyScanCount',
       enableColumnFilter: false,
       cell: statsFormatter,
     },
     {
-      header: 'XRF',
-      footer: 'XRF',
+      header: 'XRF scans',
+      footer: 'XRF scans',
       accessorKey: 'xrfSpectrumCount',
-      enableColumnFilter: false,
-      cell: statsFormatter,
-    },
-    {
-      header: 'Samples',
-      footer: 'Samples',
-      accessorKey: 'sampleCount',
-      enableColumnFilter: false,
-      cell: statsFormatter,
-    },
-    {
-      header: 'Tests',
-      footer: 'Tests',
-      accessorKey: 'testDataCollectionGroupCount',
-      enableColumnFilter: false,
-      cell: statsFormatter,
-    },
-    {
-      header: 'Collects',
-      footer: 'Collects',
-      accessorKey: 'dataCollectionGroupCount',
-      enableColumnFilter: false,
-      cell: statsFormatter,
-    },
-  ];
-  const EMColumns = [
-    {
-      header: 'Grid Squares',
-      footer: 'Grid Squares',
-
-      accessorKey: 'EMdataCollectionGroupCount',
       enableColumnFilter: false,
       cell: statsFormatter,
     },
@@ -174,9 +141,21 @@ export default function columns(props: Props): ColumnDef<Session>[] {
 
       accessorKey: 'beamLineOperator',
     },
-
+    {
+      header: 'Samples analysed',
+      footer: 'Samples analysed',
+      accessorKey: 'sampleCount',
+      enableColumnFilter: false,
+      cell: statsFormatter,
+    },
+    {
+      header: 'Collections',
+      footer: 'Collections',
+      accessorKey: 'dataCollectionGroupCount',
+      enableColumnFilter: false,
+      cell: statsFormatter,
+    },
     ...(areMXColumnsVisible ? MXColumns : []),
-    ...(areEMColumnsVisible ? EMColumns : []),
 
     {
       header: 'Comments',

@@ -14,22 +14,89 @@ import {
 export function TanstackBootstrapTable<TData extends RowData>({
   table,
   pagination = true,
-  rowStyle,
+  onRowClick,
+  rowStyle = () => ({}),
 }: {
   table: Table<TData>;
   pagination?: boolean;
+  onRowClick?: (row: TData) => void;
   rowStyle?: (v: TData) => CSSProperties;
 }) {
-  return (
-    <Col>
-      <Row>
-        <BootstrapTable
-          striped
-          hover
-          responsive
+  const paginationElement = (
+    <Row>
+      <Col xs="auto">
+        <ButtonGroup>
+          <Button
+            variant={table.getCanPreviousPage() ? 'secondary' : 'light'}
+            size="sm"
+            onClick={() => table.setPageIndex(0)}
+            disabled={!table.getCanPreviousPage()}
+          >
+            {'<<'}
+          </Button>
+          <Button
+            variant={table.getCanPreviousPage() ? 'secondary' : 'light'}
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            {'<'}
+          </Button>
+          <Button
+            variant={table.getCanNextPage() ? 'secondary' : 'light'}
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            {'>'}
+          </Button>
+          <Button
+            variant={table.getCanNextPage() ? 'secondary' : 'light'}
+            size="sm"
+            onClick={() => table.setPageIndex(table.getPageCount() - 1)}
+            disabled={!table.getCanNextPage()}
+          >
+            {'>>'}
+          </Button>
+        </ButtonGroup>
+      </Col>
+
+      <Col xs="auto" style={{ display: 'flex', alignItems: 'center' }}>
+        <span>
+          Page{' '}
+          <strong>
+            {table.getState().pagination.pageIndex + 1} of{' '}
+            {table.getPageCount()}
+          </strong>
+        </span>
+      </Col>
+
+      <Col xs="auto">
+        <FormSelect
           size="sm"
-          style={{ marginTop: '1rem' }}
+          value={table.getState().pagination.pageSize}
+          onChange={(e) => {
+            table.setPageSize(Number(e.target.value));
+          }}
         >
+          {[10, 20, 30, 40, 50].map((pageSize) => (
+            <option key={pageSize} value={pageSize}>
+              Show {pageSize}
+            </option>
+          ))}
+        </FormSelect>
+      </Col>
+    </Row>
+  );
+  return (
+    <Col style={{ marginTop: '1rem' }}>
+      {pagination && paginationElement}
+      <Row
+        style={{
+          overflowX: 'auto',
+        }}
+      >
+        <BootstrapTable striped hover size="sm">
           <thead>
             {table.getHeaderGroups().map((headerGroup) => (
               <tr key={headerGroup.id}>
@@ -57,10 +124,21 @@ export function TanstackBootstrapTable<TData extends RowData>({
             {table.getRowModel().rows.map((row) => (
               <tr
                 key={row.id}
-                style={rowStyle ? rowStyle(row.original) : undefined}
+                onClick={
+                  onRowClick ? () => onRowClick(row.original) : undefined
+                }
+                style={{
+                  cursor: onRowClick ? 'pointer' : undefined,
+                  ...rowStyle(row.original),
+                }}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <td key={cell.id}>
+                  <td
+                    key={cell.id}
+                    style={{
+                      verticalAlign: 'middle',
+                    }}
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </td>
                 ))}
@@ -85,72 +163,7 @@ export function TanstackBootstrapTable<TData extends RowData>({
           </tfoot>
         </BootstrapTable>
       </Row>
-      {pagination && (
-        <Row>
-          <Col xs="auto">
-            <ButtonGroup>
-              <Button
-                variant={table.getCanPreviousPage() ? 'secondary' : 'light'}
-                size="sm"
-                onClick={() => table.setPageIndex(0)}
-                disabled={!table.getCanPreviousPage()}
-              >
-                {'<<'}
-              </Button>
-              <Button
-                variant={table.getCanPreviousPage() ? 'secondary' : 'light'}
-                size="sm"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-              >
-                {'<'}
-              </Button>
-              <Button
-                variant={table.getCanNextPage() ? 'secondary' : 'light'}
-                size="sm"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-              >
-                {'>'}
-              </Button>
-              <Button
-                variant={table.getCanNextPage() ? 'secondary' : 'light'}
-                size="sm"
-                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                disabled={!table.getCanNextPage()}
-              >
-                {'>>'}
-              </Button>
-            </ButtonGroup>
-          </Col>
-
-          <Col xs="auto" style={{ display: 'flex', alignItems: 'center' }}>
-            <span>
-              Page{' '}
-              <strong>
-                {table.getState().pagination.pageIndex + 1} of{' '}
-                {table.getPageCount()}
-              </strong>
-            </span>
-          </Col>
-
-          <Col xs="auto">
-            <FormSelect
-              size="sm"
-              value={table.getState().pagination.pageSize}
-              onChange={(e) => {
-                table.setPageSize(Number(e.target.value));
-              }}
-            >
-              {[10, 20, 30, 40, 50].map((pageSize) => (
-                <option key={pageSize} value={pageSize}>
-                  Show {pageSize}
-                </option>
-              ))}
-            </FormSelect>
-          </Col>
-        </Row>
-      )}
+      {pagination && paginationElement}
     </Col>
   );
 }
