@@ -57,6 +57,13 @@ export function DataCollectionGroupPanel({
   if (dataCollectionGroup.DataCollection_dataCollectionId === undefined)
     return null;
 
+  const getBadge = () => {
+    if (dataCollectionGroup.Workflow_workflowType)
+      return dataCollectionGroup.Workflow_workflowType;
+    if (dataCollectionGroup.DataCollectionGroup_experimentType === 'OSC')
+      return 'Dataset';
+    return dataCollectionGroup.DataCollectionGroup_experimentType;
+  };
   return (
     <Tab.Container defaultActiveKey="Summary">
       <Card
@@ -78,10 +85,7 @@ export function DataCollectionGroupPanel({
                     dataCollectionGroup.DataCollectionGroup_startTime,
                     'MMMM Do YYYY, h:mm:ss A'
                   ).format('DD/MM/YYYY HH:mm:ss')}
-                  <Badge bg="info">
-                    {dataCollectionGroup.Workflow_workflowType ||
-                      dataCollectionGroup.DataCollectionGroup_experimentType}
-                  </Badge>
+                  <Badge bg="info">{getBadge()}</Badge>
                 </h5>
               </Col>
               <Col></Col>
