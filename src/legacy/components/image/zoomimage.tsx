@@ -10,56 +10,78 @@ interface props {
   legend?: string;
   aspectRatio?: string;
   local?: boolean;
+  showCenter?: boolean;
 }
 
 export default function ZoomImage(props: props) {
   const aspectRatio = props.aspectRatio || '3/2';
   const placeholder = (
-    <>
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        display: 'flex',
+      }}
+    >
+      <Spinner
+        style={{ marginRight: 5 }}
+        size="sm"
+        animation="border"
+        role="status"
+        variant="dark"
+      ></Spinner>
+      <i>Loading...</i>
+    </div>
+  );
+  return (
+    <div
+      style={{
+        ...props.style,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+      }}
+    >
       <div
         style={{
-          ...props.style,
           width: '100%',
           aspectRatio: aspectRatio,
           position: 'relative',
-          border: '1px solid black',
-          borderRadius: '5px',
+          border: '3px solid #d4e4bc',
+          borderRadius: '6px',
           display: 'flex',
           flexDirection: 'row',
           justifyContent: 'center',
           alignItems: 'center',
+          backgroundColor: 'black',
+          color: 'white',
         }}
       >
-        <Spinner
-          style={{ marginRight: 5 }}
-          size="sm"
-          animation="border"
-          role="status"
-          variant="dark"
-        ></Spinner>
-        <i>Loading...</i>
+        <LazyWrapper
+          threshold={100}
+          aspectRatio={aspectRatio}
+          placeholder={placeholder}
+        >
+          <Zoomable>
+            <LoadImage {...props} placeholder={placeholder} />
+          </Zoomable>
+        </LazyWrapper>
       </div>
-      {props.legend && <span>{props.legend}</span>}
-    </>
-  );
-  return (
-    <div style={props.style}>
-      <LazyWrapper
-        threshold={100}
-        aspectRatio={aspectRatio}
-        placeholder={placeholder}
-      >
-        <Zoomable>
-          <LoadImage {...props} placeholder={placeholder} />
-        </Zoomable>
-      </LazyWrapper>
+      {props.legend ? <span>{props.legend}</span> : null}
     </div>
   );
 }
 
 const fetchBase64Data = (url: string) =>
   fetch(url)
-    .then((response) => response.blob())
+    .then((response) => {
+      if (response.status !== 200) throw new Error('Not found');
+      return response.blob();
+    })
     .then(
       (blob) =>
         new Promise<string | undefined>((resolve, reject) => {
@@ -75,9 +97,9 @@ const fetchBase64Data = (url: string) =>
 function LoadImage({
   src,
   alt,
-  legend,
   placeholder,
   local = false,
+  showCenter,
 }: props & { placeholder: React.ReactNode }) {
   const [loaded, setLoaded] = useState(false);
 
@@ -110,16 +132,13 @@ function LoadImage({
         style={{
           width: '100%',
           height: '100%',
-          backgroundColor: 'black',
-          color: 'white',
-          display: 'flex',
-          flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
+          display: 'flex',
         }}
+        className="text-center"
       >
         <span>{alt} not found</span>
-        {legend && <span>{legend}</span>}
       </div>
     );
   }
@@ -127,10 +146,11 @@ function LoadImage({
   return (
     <div
       style={{
-        width: '100%',
-        height: '100%',
-        backgroundColor: 'black',
-        color: 'white',
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
       }}
     >
       <img
@@ -143,7 +163,41 @@ function LoadImage({
         }}
         src={data}
       />
-      {legend && <span>{legend}</span>}
+      {showCenter && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            width: '5%',
+            aspectRatio: '1/1',
+            transform: 'translate(-50%, -50%)',
+          }}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              bottom: 0,
+              left: '50%',
+              width: 1,
+              backgroundColor: 'red',
+              transform: 'translate(-50%, 0%)',
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              top: '50%',
+              height: 1,
+              backgroundColor: 'red',
+              transform: 'translate(0%, -50%)',
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -158,7 +212,6 @@ function Zoomable({ children }: { children: React.ReactNode }) {
         width: '100%',
         height: '100%',
         overflow: 'hidden',
-        borderRadius: '5px',
       }}
       onClick={() => setZoom(!zoom)}
     >
@@ -173,10 +226,6 @@ function Zoomable({ children }: { children: React.ReactNode }) {
             right: 0,
             zIndex: 1000000,
             backgroundColor: 'black',
-            color: 'white',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
           }}
           onClick={() => setZoom(!zoom)}
         >

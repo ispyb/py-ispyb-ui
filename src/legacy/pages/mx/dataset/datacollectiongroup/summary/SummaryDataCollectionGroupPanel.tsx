@@ -132,6 +132,7 @@ export function SummaryDataCollectionGroupPanel({
                 <ZoomImage
                   style={{ maxWidth: 300, minWidth: 150 }}
                   alt="Diffraction"
+                  aspectRatio="1/1"
                   src={
                     getDiffrationThumbnail({
                       proposalName,
@@ -143,6 +144,7 @@ export function SummaryDataCollectionGroupPanel({
               <Col style={{ paddingTop: 5 }}>
                 <ZoomImage
                   style={{ maxWidth: 300, minWidth: 150 }}
+                  aspectRatio="5/4"
                   alt="Crystal"
                   src={
                     crystalSnapshotId
@@ -163,6 +165,7 @@ export function SummaryDataCollectionGroupPanel({
                 <Col style={{ paddingTop: 5 }}>
                   <ZoomImage
                     style={{ maxWidth: 300, minWidth: 150 }}
+                    aspectRatio="4/3"
                     alt="Dozor"
                     src={
                       getDozorPlot({

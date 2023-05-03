@@ -76,6 +76,7 @@ function WorkflowThumbnail({ id }: { id: string | undefined }) {
       <Col style={{ textAlign: 'center', margin: 'auto' }}>
         <ZoomImage
           alt="Workflow step thumbnail"
+          aspectRatio="5/4"
           style={{ maxWidth: 500, marginLeft: 'auto', marginRight: 'auto' }}
           src={getWorkflowImage({ proposalName, stepId: id }).url}
         ></ZoomImage>

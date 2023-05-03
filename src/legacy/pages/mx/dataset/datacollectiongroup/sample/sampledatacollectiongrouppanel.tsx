@@ -58,6 +58,7 @@ export default function SampleDataCollectionGroupPanel({
           {UI.MX.showCrystalSnapshot1 && (
             <ZoomImage
               alt="Crystal 1"
+              aspectRatio="5/4"
               src={
                 getCrystalImage({
                   proposalName,
@@ -73,6 +74,7 @@ export default function SampleDataCollectionGroupPanel({
           {UI.MX.showCrystalSnapshot2 && (
             <ZoomImage
               alt="Crystal 2"
+              aspectRatio="5/4"
               src={
                 getCrystalImage({
                   proposalName,
@@ -88,6 +90,7 @@ export default function SampleDataCollectionGroupPanel({
           {UI.MX.showCrystalSnapshot3 && (
             <ZoomImage
               alt="Crystal 3"
+              aspectRatio="5/4"
               src={
                 getCrystalImage({
                   proposalName,
@@ -103,6 +106,7 @@ export default function SampleDataCollectionGroupPanel({
           {UI.MX.showCrystalSnapshot4 && (
             <ZoomImage
               alt="Crystal 4"
+              aspectRatio="5/4"
               src={
                 getCrystalImage({
                   proposalName,
