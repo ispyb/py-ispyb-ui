@@ -192,7 +192,11 @@ export function SummaryDataCollectionGroupPanel({
             {dataCollectionGroup.SpaceGroupModelResolvedByPhasing}
           </Alert>
         )}
-        <Row>
+        <Row
+          style={{
+            marginTop: '0.5rem',
+          }}
+        >
           <EditComments
             comments={dataCollectionGroup.DataCollectionGroup_comments || ''}
             proposalName={proposalName}
