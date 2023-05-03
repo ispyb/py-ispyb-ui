@@ -127,8 +127,8 @@ export default function columns(props: Props): ColumnDef<Session>[] {
       cell: statsFormatter,
     },
     {
-      header: 'Collections',
-      footer: 'Collections',
+      header: 'Acquisitions',
+      footer: 'Acquisitions',
       accessorKey: 'dataCollectionGroupCount',
       enableColumnFilter: false,
       cell: statsFormatter,

@@ -115,7 +115,7 @@ export function SessionInfo({
               ),
             },
             {
-              title: 'Data collections',
+              title: 'Data acquisitions',
               content: dataCollectionGroups?.filter(
                 (dataCollectionGroup) =>
                   dataCollectionGroup.DataCollection_dataCollectionId !==
