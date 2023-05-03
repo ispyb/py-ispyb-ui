@@ -38,10 +38,16 @@ function PersonMenu() {
       id="admin-nav-dropdown"
       align="end"
     >
-      <NavDropdown.Header>
-        <i>{javaPerson?.roles}</i>
-      </NavDropdown.Header>
       <Logout />
+      <NavDropdown.ItemText>
+        <small
+          style={{
+            fontSize: '12px',
+          }}
+        >
+          <i>Permissions: {javaPerson?.roles}</i>
+        </small>
+      </NavDropdown.ItemText>
     </NavDropdown>
   );
 }
@@ -55,7 +61,7 @@ export function Logout() {
         clearToken();
       }}
     >
-      Logout
+      Log out
     </NavDropdown.Item>
   );
 }
