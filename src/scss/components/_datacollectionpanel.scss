@@ -1,6 +1,13 @@
 .tabs-datacollectiongroup-panel {
-  justify-content: right;
+  flex-wrap: nowrap;
+  white-space: nowrap;
   margin-bottom: 0px !important;
+  align-items: flex-end;
+}
+
+.tabs-datacollectiongroup-panel .nav-link {
+  padding: 5px 10px !important;
+  margin-bottom: -2px;
 }
 
 .card-datacollectiongroup-panel .card-body {
