@@ -74,14 +74,30 @@ export function getFieldString(
 ): { index: number; value: string | undefined } {
   const v = getField(line, field);
 
-  return { ...v, value: v.value === undefined ? undefined : String(v.value) };
+  return {
+    ...v,
+    value:
+      v.value === undefined
+        ? undefined
+        : v.value === null
+        ? undefined
+        : String(v.value),
+  };
 }
 export function getFieldNumber(
   line: Line,
   field: FieldName
 ): { index: number; value: number | undefined } {
   const v = getField(line, field);
-  return { ...v, value: v.value === undefined ? undefined : Number(v.value) };
+  return {
+    ...v,
+    value:
+      v.value === undefined
+        ? undefined
+        : v.value === null
+        ? undefined
+        : Number(v.value),
+  };
 }
 
 const getSampleKey = (protein?: Value, name?: Value) => {
@@ -309,7 +325,7 @@ export function parseShippingCSV(
   data: Line[],
   proposal: ProposalDetail
 ): ShippingDewar[] {
-  return _(data)
+  const res = _(data)
     .groupBy((line) => getField(line, 'parcel name').value)
     .map((parcelLines, parcelName): ShippingDewar => {
       return {
@@ -404,4 +420,6 @@ export function parseShippingCSV(
       };
     })
     .value();
+  console.log(res);
+  return res;
 }
