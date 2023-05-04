@@ -1,7 +1,7 @@
 import { ContainerDewar } from 'legacy/pages/model';
 import { MXContainer } from 'legacy/pages/mx/container/mxcontainer';
 import { useState, useEffect } from 'react';
-import { Alert, Anchor, Button, Col, Dropdown, Row } from 'react-bootstrap';
+import { Alert, Anchor, Button, Dropdown } from 'react-bootstrap';
 
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -52,156 +52,155 @@ export default function DnDLoadSampleChanger({
 
   return (
     <DndProvider backend={HTML5Backend}>
-      <Col>
-        <Row>
-          <Col xs={'auto'}>
-            <Row>
-              <Dropdown style={{ paddingRight: 0 }}>
-                <Dropdown.Toggle
-                  disabled={false}
-                  size="sm"
-                  variant="primary"
-                  style={{ width: '100%', borderRadius: 0 }}
-                >
-                  {filterUnset ? 'Show not loaded' : 'Show all'}
-                </Dropdown.Toggle>
-                <Dropdown.Menu>
-                  <Dropdown.Item
-                    as={Anchor}
-                    onClick={(e) => setFilterUnset(false)}
-                  >
-                    Show all
-                  </Dropdown.Item>
-                  <Dropdown.Item
-                    as={Anchor}
-                    onClick={(e) => setFilterUnset(true)}
-                  >
-                    Show not loaded
-                  </Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
-            </Row>
-            <Row>
-              <Col
-                style={{
-                  maxHeight: 600,
-                  overflow: 'auto',
-                  marginLeft: 15,
-                }}
+      <div
+        style={{
+          height: '100%',
+          width: '100%',
+          display: 'flex',
+          flexDirection: 'row',
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          style={{
+            height: '100%',
+            width: 150,
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
+          <div>
+            <Dropdown style={{ paddingRight: 0 }}>
+              <Dropdown.Toggle
+                disabled={false}
+                size="sm"
+                variant="primary"
+                style={{ width: '100%', borderRadius: 0 }}
               >
-                {dewars
-                  ?.filter((d) => {
-                    if (filterUnset) {
-                      return (
-                        !d.sampleChangerLocation ||
-                        d.sampleChangerLocation === 'undefined' ||
-                        d.sampleChangerLocation === '' ||
-                        !d.beamlineLocation ||
-                        d.beamlineLocation === 'undefined' ||
-                        d.beamlineLocation === ''
-                      );
-                    }
-                    return true;
-                  })
-                  ?.map((d) => {
-                    return (
-                      <>
-                        <Row key={d.dewarId}>
-                          <div style={{ margin: 'auto' }}>
-                            <DragableContainer
-                              d={d}
-                              beamlines={beamlines}
-                              proposalName={proposalName}
-                            ></DragableContainer>
-                          </div>
-                        </Row>
-                        <Row style={{ borderTop: '1px solid gray' }}></Row>
-                      </>
-                    );
-                  })}
-              </Col>
-            </Row>
-          </Col>
-
-          <Col xs={'auto'} style={{ borderLeft: '1px solid black' }} />
-          <Col xs={'auto'} className="d-flex align-items-center" align="center">
-            <FontAwesomeIcon style={{ height: 50 }} icon={faArrowRight} />
-          </Col>
-          <Col>
-            <Row>
-              <Col></Col>
-              <Col xs={'auto'}>
-                <Button
-                  style={{
-                    margin: 5,
-                  }}
-                  size="sm"
-                  onClick={emptyAll}
+                {filterUnset ? 'Show not loaded' : 'Show all'}
+              </Dropdown.Toggle>
+              <Dropdown.Menu>
+                <Dropdown.Item
+                  as={Anchor}
+                  onClick={(e) => setFilterUnset(false)}
                 >
-                  Unload sample changer
-                </Button>
-              </Col>
-              <Col></Col>
-            </Row>
-            <Row>
-              <Col></Col>
-              <Col md={'auto'}>
-                <Alert
-                  variant="info"
-                  style={{
-                    padding: 5,
-                  }}
+                  Show all
+                </Dropdown.Item>
+                <Dropdown.Item
+                  as={Anchor}
+                  onClick={(e) => setFilterUnset(true)}
                 >
-                  <FontAwesomeIcon
-                    icon={faInfoCircle}
-                    style={{ marginRight: 10 }}
-                  ></FontAwesomeIcon>
-                  <small>
-                    Select destination beamline and drag containers to their
-                    location.
-                  </small>
-                </Alert>
-              </Col>
-              <Col></Col>
-            </Row>
-            <Row>
-              <div style={{ position: 'relative' }}>
-                <Row className="flex-nowrap"></Row>
-                <Row>
-                  <Col></Col>
-                  <Col xs={'auto'}>
-                    <BeamLineSelector
-                      beamline={beamline}
-                      beamlines={beamlines}
-                      setBeamline={setBeamline}
-                    ></BeamLineSelector>
-                  </Col>
-                  <Col></Col>
-                </Row>
-
-                <Row>
-                  <div
-                    style={{
-                      width: 400,
-                      margin: 'auto',
-                      marginTop: 10,
-                      marginBottom: 20,
-                    }}
-                  >
-                    <DnDSampleChanger
-                      beamline={beamline}
-                      setContainerLocation={setContainerLocation}
-                      proposalName={proposalName}
-                      containers={dewars}
-                    ></DnDSampleChanger>
+                  Show not loaded
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
+          </div>
+          <div
+            style={{
+              overflowY: 'auto',
+            }}
+          >
+            {dewars
+              ?.filter((d) => {
+                if (filterUnset) {
+                  return (
+                    !d.sampleChangerLocation ||
+                    d.sampleChangerLocation === 'undefined' ||
+                    d.sampleChangerLocation === '' ||
+                    !d.beamlineLocation ||
+                    d.beamlineLocation === 'undefined' ||
+                    d.beamlineLocation === ''
+                  );
+                }
+                return true;
+              })
+              ?.map((d) => {
+                return (
+                  <div key={d.dewarId}>
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                    >
+                      <DragableContainer
+                        d={d}
+                        beamlines={beamlines}
+                        proposalName={proposalName}
+                      ></DragableContainer>
+                    </div>
+                    <hr />
                   </div>
-                </Row>
-              </div>
-              <CustomDragLayer proposalName={proposalName}></CustomDragLayer>
-            </Row>
-          </Col>
-        </Row>
-      </Col>
+                );
+              })}
+          </div>
+        </div>
+
+        <div style={{ borderLeft: '1px solid grey' }} />
+
+        <div className="d-flex align-items-center">
+          <FontAwesomeIcon
+            style={{ height: 50, margin: 5 }}
+            icon={faArrowRight}
+          />
+        </div>
+
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            width: '100%',
+            gap: 5,
+            padding: 5,
+            alignContent: 'center',
+          }}
+        >
+          <Button size="sm" onClick={emptyAll}>
+            Unload sample changer
+          </Button>
+
+          <Alert
+            variant="info"
+            style={{
+              padding: 5,
+              margin: 0,
+            }}
+          >
+            <FontAwesomeIcon
+              icon={faInfoCircle}
+              style={{ marginRight: 10 }}
+            ></FontAwesomeIcon>
+            <small>
+              Select destination beamline and drag containers to their location.
+            </small>
+          </Alert>
+
+          <BeamLineSelector
+            beamline={beamline}
+            beamlines={beamlines}
+            setBeamline={setBeamline}
+          ></BeamLineSelector>
+
+          <div
+            style={{
+              height: '100%',
+              width: '100%',
+              display: 'flex',
+              overflow: 'hidden',
+              justifyContent: 'center',
+            }}
+          >
+            <DnDSampleChanger
+              beamline={beamline}
+              setContainerLocation={setContainerLocation}
+              proposalName={proposalName}
+              containers={dewars}
+            ></DnDSampleChanger>
+          </div>
+          <CustomDragLayer proposalName={proposalName}></CustomDragLayer>
+        </div>
+      </div>
     </DndProvider>
   );
 }
@@ -263,20 +262,21 @@ function DragableContainer({
   const changer = getSampleChanger(beamline?.sampleChangerType);
   const pos = changer?.getPosition(Number(d.sampleChangerLocation));
   return (
-    <div style={{ maxWidth: 100 }}>
-      <Col>
-        <Row>
-          <p
-            style={{
-              padding: 0,
-              margin: 0,
-              textAlign: 'center',
-            }}
-          >
-            <strong>[{d.shippingName}]</strong> {d.containerCode}
-          </p>
-        </Row>
-      </Col>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}
+    >
+      <span
+        style={{
+          textAlign: 'center',
+        }}
+      >
+        <strong>[{d.shippingName}]</strong> {d.containerCode}
+      </span>
+
       <div
         ref={drag}
         style={{
@@ -295,22 +295,20 @@ function DragableContainer({
         ></MXContainer>
       </div>
       {pos && (
-        <Col
+        <div
           style={{
             backgroundColor: 'lightgreen',
             borderRadius: 10,
             marginBottom: 5,
           }}
         >
-          <Row>
-            <p style={{ padding: 0, margin: 0, textAlign: 'center' }}>
-              {d.beamlineLocation}
-            </p>
-            <p style={{ padding: 0, margin: 0, textAlign: 'center' }}>
-              cell {pos.cell + 1} pos {pos.position + 1}
-            </p>
-          </Row>
-        </Col>
+          <p style={{ padding: 0, margin: 0, textAlign: 'center' }}>
+            {d.beamlineLocation}
+          </p>
+          <p style={{ padding: 0, margin: 0, textAlign: 'center' }}>
+            cell {pos.cell + 1} pos {pos.position + 1}
+          </p>
+        </div>
       )}
     </div>
   );

@@ -5,7 +5,7 @@ import {
   MXContainer,
 } from 'legacy/pages/mx/container/mxcontainer';
 import { useState } from 'react';
-import { Col, OverlayTrigger, Popover, Row } from 'react-bootstrap';
+import { OverlayTrigger, Popover } from 'react-bootstrap';
 
 import { useDrop } from 'react-dnd';
 import { ItemTypes } from './dndlayer';
@@ -81,11 +81,7 @@ export default function DnDSampleChanger({
         );
       });
     });
-    return (
-      <Col>
-        <Row>{changer.getChangerSVG(containerJSX)}</Row>
-      </Col>
-    );
+    return <>{changer.getChangerSVG(containerJSX)}</>;
   }
   return <></>;
 }
