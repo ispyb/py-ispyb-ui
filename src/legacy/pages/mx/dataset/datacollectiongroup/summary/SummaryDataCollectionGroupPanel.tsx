@@ -68,7 +68,7 @@ export function SummaryDataCollectionGroupPanel({
     <Container fluid>
       <Col>
         {dataCollectionGroup.DataCollection_imageDirectory && (
-          <Row className="mb-1">
+          <Row className="g-2 mb-1">
             <Col
               xs={'auto'}
               style={{
@@ -77,6 +77,7 @@ export function SummaryDataCollectionGroupPanel({
                 justifyContent: 'center',
                 fontSize: '1rem',
               }}
+              className="d-none d-lg-flex"
             >
               <strong>Path:</strong>
             </Col>
@@ -86,7 +87,6 @@ export function SummaryDataCollectionGroupPanel({
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                padding: 0,
                 fontSize: '0.8rem',
               }}
             >

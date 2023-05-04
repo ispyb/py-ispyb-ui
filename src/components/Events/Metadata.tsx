@@ -92,8 +92,7 @@ export function MetadataItem(props: IMetadataItemProps) {
         color: 'black',
       }}
       className={classNames({
-        'mx-1': true,
-        'mb-2': true,
+        'mb-1': true,
         'p-2': true,
         'bg-light': true,
         'text-truncate': props.truncate !== false,
