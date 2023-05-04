@@ -3,8 +3,6 @@ import { MXContainer } from 'legacy/pages/mx/container/mxcontainer';
 import { useState, useEffect } from 'react';
 import { Alert, Anchor, Button, Dropdown } from 'react-bootstrap';
 
-import { DndProvider } from 'react-dnd';
-import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDrag } from 'react-dnd';
 
 import { getEmptyImage } from 'react-dnd-html5-backend';
@@ -22,6 +20,8 @@ import {
 
 import './dndloadsamplechanger.scss';
 import { BeamLineSelector } from './tableloadsamplechanger';
+import { DndProvider } from 'react-dnd-multi-backend';
+import { HTML5toTouch } from 'rdndmb-html5-to-touch';
 
 export default function DnDLoadSampleChanger({
   dewars,
@@ -51,7 +51,7 @@ export default function DnDLoadSampleChanger({
   };
 
   return (
-    <DndProvider backend={HTML5Backend}>
+    <DndProvider options={HTML5toTouch}>
       <div
         style={{
           height: '100%',
@@ -114,9 +114,12 @@ export default function DnDLoadSampleChanger({
                 }
                 return true;
               })
+              .sort((a, b) => {
+                return b.containerId - a.containerId;
+              })
               ?.map((d) => {
                 return (
-                  <div key={d.dewarId}>
+                  <div key={d.containerId}>
                     <div
                       style={{
                         display: 'flex',
@@ -254,6 +257,7 @@ function DragableContainer({
       isDragging: !!monitor.isDragging(),
     }),
   }));
+
   useEffect(() => {
     preview(getEmptyImage(), { captureDraggingState: true });
   }, [preview]);
