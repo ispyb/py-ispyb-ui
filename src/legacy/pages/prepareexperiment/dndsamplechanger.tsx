@@ -4,10 +4,10 @@ import {
   EmptyContainer,
   MXContainer,
 } from 'legacy/pages/mx/container/mxcontainer';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { OverlayTrigger, Popover } from 'react-bootstrap';
 
-import { useDrop } from 'react-dnd';
+import { useDrag, useDrop } from 'react-dnd';
 import { ItemTypes } from './dndlayer';
 import { Beamline, containerType } from 'legacy/models';
 
@@ -17,6 +17,7 @@ import {
   getSampleChanger,
 } from 'legacy/helpers/mx/samplehelper';
 import { AbstractSampleChanger } from './samplechanger/abstractsamplechanger';
+import { getEmptyImage } from 'react-dnd-html5-backend';
 
 function getContainerOn(
   cell: number,
@@ -112,50 +113,33 @@ function ChangerContainer({
     cell,
     position
   );
+
   const containerType = changer.getContainerType(cell, position);
+
   return (
     <g>
       <svg x={x - r} y={y - r} width={2 * r} height={2 * r}>
+        <EmptyContainer containerType={containerType}></EmptyContainer>
         {container ? (
-          <MXContainer
-            containerType={getContainerType(container.containerType)}
-            showInfo={false}
-            proposalName={proposalName}
-            containerId={String(container.containerId)}
-          ></MXContainer>
-        ) : (
-          <EmptyContainer containerType={containerType}></EmptyContainer>
-        )}
+          <DragableChangerContainer
+            {...{
+              changer,
+              cell,
+              position,
+              container,
+              proposalName,
+              beamline,
+              setContainerLocation,
+            }}
+          />
+        ) : null}
       </svg>
+
       <text className="cellPositionNumber" x={xtxt} y={ytxt + 3}>
         {position + 1}
       </text>
-      {container ? (
-        <g>
-          <circle
-            cx={x}
-            cy={y}
-            r={r}
-            stroke="black"
-            fill="transparent"
-          ></circle>
-          <RemoveContainerBtn
-            onClick={() => {
-              setContainerLocation(container.containerId, undefined, undefined);
-            }}
-            cx={x}
-            cy={y}
-            cr={r}
-          ></RemoveContainerBtn>
-          <InfoContainerBtn
-            proposalName={proposalName}
-            container={container}
-            cx={x}
-            cy={y}
-            cr={r}
-          ></InfoContainerBtn>
-        </g>
-      ) : (
+
+      {container ? null : (
         <DroppablePosition
           containerType={containerType}
           beamline={beamline}
@@ -164,8 +148,82 @@ function ChangerContainer({
           x={x}
           y={y}
           r={r}
-        ></DroppablePosition>
+        />
       )}
+    </g>
+  );
+}
+
+function DragableChangerContainer({
+  changer,
+  cell,
+  position,
+  container,
+  proposalName,
+  setContainerLocation,
+}: {
+  changer: AbstractSampleChanger;
+  cell: number;
+  position: number;
+  container: ContainerDewar;
+  proposalName: string;
+  // eslint-disable-next-line no-unused-vars
+  setContainerLocation: (
+    containerId: number,
+    beamline: string | undefined,
+    position: string | undefined
+  ) => void;
+}) {
+  const { r } = changer.getContainerCoordinates(cell, position);
+
+  const [{ isDragging }, drag, preview] = useDrag(() => ({
+    type: ItemTypes.CONTAINER,
+    item: container,
+    collect: (monitor) => ({
+      isDragging: !!monitor.isDragging(),
+    }),
+  }));
+
+  useEffect(() => {
+    preview(getEmptyImage(), { captureDraggingState: true });
+  }, [preview]);
+
+  return (
+    <g
+      style={{
+        opacity: isDragging ? 0 : 1,
+      }}
+    >
+      <MXContainer
+        containerType={getContainerType(container.containerType)}
+        showInfo={false}
+        proposalName={proposalName}
+        containerId={String(container.containerId)}
+      />
+      <circle
+        cx={r}
+        cy={r}
+        r={r}
+        stroke="none"
+        fill={'transparent'}
+        ref={drag}
+        cursor={'grab'}
+      />
+      <RemoveContainerBtn
+        cx={0}
+        cy={0}
+        cr={r}
+        onClick={() => {
+          setContainerLocation(container.containerId, undefined, undefined);
+        }}
+      />
+      <InfoContainerBtn
+        proposalName={proposalName}
+        container={container}
+        cx={0}
+        cy={0}
+        cr={r}
+      />
     </g>
   );
 }
@@ -181,9 +239,10 @@ function RemoveContainerBtn({
   cr: number;
   onClick: () => void;
 }) {
-  const r = cr / 3;
-  const x = cx + cr * Math.cos(Math.PI / 4);
-  const y = cy - cr * Math.sin(Math.PI / 4);
+  const angle = -Math.PI / 4;
+  const r = cr / 5;
+  const x = cx + cr + cr * Math.cos(angle);
+  const y = cy + cr + cr * Math.sin(angle);
   return (
     <g>
       <circle
@@ -215,9 +274,10 @@ function InfoContainerBtn({
 }) {
   const [show, setShow] = useState(false);
 
-  const r = cr / 3;
-  const x = cx + cr * Math.cos(Math.PI / 4);
-  const y = cy + cr * Math.sin(Math.PI / 4);
+  const angle = Math.PI / 4;
+  const r = cr / 5;
+  const x = cx + cr + cr * Math.cos(angle);
+  const y = cy + cr + cr * Math.sin(angle);
 
   const popover = (
     <Popover style={{ width: 300 }}>

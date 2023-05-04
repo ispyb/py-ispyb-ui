@@ -1,5 +1,14 @@
 @import 'scss/main.scss';
 
+svg text {
+  cursor: default;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  pointer-events: none;
+}
+
 .cell {
   fill: rgb(50, 50, 50);
 }
