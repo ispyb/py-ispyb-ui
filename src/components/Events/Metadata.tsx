@@ -17,7 +17,7 @@ export interface IMetadataProps {
 export default function Metadata(props: IMetadataProps) {
   return (
     <Container className="g-0">
-      <Row className="metadata-list g-0 me-2">
+      <Row className="metadata-list g-1 me-2">
         {props.properties
           .filter((item) => item.test === undefined || item.test)
           .map((item) => (
@@ -59,7 +59,7 @@ export function MetadataCol(props: IMetadataProps) {
 
 export function MetadataRow(props: { auto?: boolean } & IMetadataProps) {
   return (
-    <Row className="metadata-list  g-0">
+    <Row className="metadata-list  g-1">
       {props.properties
         .filter((item) => item.test === undefined || item.test)
         .map((item) => (
