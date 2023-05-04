@@ -147,22 +147,35 @@ export function DataCollectionGroupPanel({
         <Card.Header
           style={{
             padding: 0,
-            paddingTop: 5,
           }}
         >
           <Container fluid>
             <Row>
-              <Col xs={'auto'}>
+              <Col
+                className="d-none d-lg-flex"
+                xs={'auto'}
+                style={{
+                  paddingTop: 5,
+                  paddingBottom: 5,
+                }}
+              >
                 <HashAnchorButton hash={hashscroll.hash} />
               </Col>
-              <Col xs="auto">
-                <h5>
+              <Col
+                xs="auto"
+                style={{
+                  padding: 5,
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <span>
                   {moment(
                     dataCollectionGroup.DataCollectionGroup_startTime,
                     'MMMM Do YYYY, h:mm:ss A'
                   ).format('DD/MM/YYYY HH:mm:ss')}
                   <Badge bg="info">{getBadge()}</Badge>
-                </h5>
+                </span>
               </Col>
               <Col
                 className="d-none d-lg-flex"
@@ -179,6 +192,7 @@ export function DataCollectionGroupPanel({
                 style={{
                   justifyContent: 'flex-end',
                   flexWrap: 'nowrap',
+                  padding: 5,
                 }}
                 className="d-flex d-lg-none"
               >
