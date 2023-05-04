@@ -68,7 +68,7 @@ export function SummaryDataCollectionGroupPanel({
     <Container fluid>
       <Col>
         {dataCollectionGroup.DataCollection_imageDirectory && (
-          <Row style={{ marginBottom: '1rem' }}>
+          <Row className="mb-1">
             <Col
               xs={'auto'}
               style={{
@@ -87,6 +87,7 @@ export function SummaryDataCollectionGroupPanel({
                 alignItems: 'center',
                 justifyContent: 'center',
                 padding: 0,
+                fontSize: '0.8rem',
               }}
             >
               <CopyValue
@@ -96,7 +97,7 @@ export function SummaryDataCollectionGroupPanel({
           </Row>
         )}
 
-        <Row>
+        <Row className="g-2">
           <Col xs={12} md={6} xl={4} xxl={3}>
             <ParametersInfo
               dataCollectionGroup={dataCollectionGroup}
@@ -104,7 +105,7 @@ export function SummaryDataCollectionGroupPanel({
           </Col>
           {(dataCollectionGroup.autoProcIds || '').trim().length > 0 ? (
             <Col sm={12} md={6} xl={4} xxl={3}>
-              <LazyWrapper height={430} placeholder={<Loading />}>
+              <LazyWrapper height={350} placeholder={<Loading />}>
                 <ProcessingInfo
                   dataCollectionGroup={dataCollectionGroup}
                   selectedPipelines={selectedPipelines}
@@ -117,7 +118,7 @@ export function SummaryDataCollectionGroupPanel({
           ) : null}
           {!!dataCollectionGroup.hasMR || !!dataCollectionGroup.hasPhasing ? (
             <Col sm={12} md={6} xl={4} xxl={3}>
-              <LazyWrapper height={430} placeholder={<Loading />}>
+              <LazyWrapper height={350} placeholder={<Loading />}>
                 <PhasingSummary
                   dataCollectionGroup={dataCollectionGroup}
                   proposalName={proposalName}
@@ -127,10 +128,10 @@ export function SummaryDataCollectionGroupPanel({
           ) : null}
 
           <Col xs={12} md={12} lg={true}>
-            <Row>
-              <Col style={{ paddingTop: 5 }}>
+            <Row className="g-2 align-items-center justify-content-center">
+              <Col>
                 <ZoomImage
-                  style={{ maxWidth: 300, minWidth: 150 }}
+                  style={{ maxWidth: 350, minWidth: 150 }}
                   alt="Diffraction"
                   aspectRatio="1/1"
                   src={
@@ -141,9 +142,9 @@ export function SummaryDataCollectionGroupPanel({
                   }
                 ></ZoomImage>
               </Col>
-              <Col style={{ paddingTop: 5 }}>
+              <Col>
                 <ZoomImage
-                  style={{ maxWidth: 300, minWidth: 150 }}
+                  style={{ maxWidth: 350, minWidth: 150 }}
                   aspectRatio="5/4"
                   alt="Crystal"
                   src={
@@ -162,9 +163,9 @@ export function SummaryDataCollectionGroupPanel({
                 ></ZoomImage>
               </Col>
               {UI.MX.showQualityIndicatorPlot && (
-                <Col style={{ paddingTop: 5 }}>
+                <Col>
                   <ZoomImage
-                    style={{ maxWidth: 300, minWidth: 150 }}
+                    style={{ maxWidth: 350, minWidth: 150 }}
                     aspectRatio="4/3"
                     alt="Dozor"
                     src={

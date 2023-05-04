@@ -206,84 +206,88 @@ export function DataCollectionGroupPanel({
           </Container>
         </Card.Header>
         <Card.Body>
-          <Row className="flex-nowrap">
-            <Col
+          <div className="flex-nowrap">
+            <div
               style={{
                 marginLeft: 0,
-                marginRight: 12,
-                marginTop: 10,
-                padding: 10,
+                marginRight: 0,
+                marginTop: 5,
+                marginBottom: 5,
                 overflowX: 'auto',
               }}
             >
-              <Container fluid>
-                <Tab.Content>
-                  <Tab.Pane eventKey="Summary">
-                    <SummaryDataCollectionGroupPanel
+              <Tab.Content>
+                <Tab.Pane eventKey="Summary">
+                  <SummaryDataCollectionGroupPanel
+                    proposalName={proposalName}
+                    dataCollectionGroup={dataCollectionGroup}
+                    selectedPipelines={pipelines.pipelines}
+                    resultRankParam={ranking.rankParam}
+                    resultRankShell={ranking.rankShell}
+                  ></SummaryDataCollectionGroupPanel>
+                </Tab.Pane>
+                <Tab.Pane eventKey="Beamline Parameters">
+                  <LazyWrapper placeholder={<Loading />}>
+                    <BeamlineDataCollectionGroupPanel
+                      dataCollectionGroup={dataCollectionGroup}
+                    ></BeamlineDataCollectionGroupPanel>
+                  </LazyWrapper>
+                </Tab.Pane>
+                {UI.MX.showCollectionTab && (
+                  <Tab.Pane eventKey="Acquisitions">
+                    <LazyWrapper placeholder={<Loading />}>
+                      <CollectionsDataCollectionGroupPanel
+                        dataCollectionGroup={dataCollectionGroup}
+                      ></CollectionsDataCollectionGroupPanel>
+                    </LazyWrapper>
+                  </Tab.Pane>
+                )}
+                <Tab.Pane eventKey="Sample">
+                  <LazyWrapper placeholder={<Loading />}>
+                    <SampleDataCollectionGroupPanel
+                      dataCollectionGroup={dataCollectionGroup}
+                    ></SampleDataCollectionGroupPanel>
+                  </LazyWrapper>
+                </Tab.Pane>
+                <Tab.Pane eventKey="Autoprocessing">
+                  <LazyWrapper placeholder={<Loading />}>
+                    <ResultsDataCollectionGroupPanel
                       proposalName={proposalName}
                       dataCollectionGroup={dataCollectionGroup}
                       selectedPipelines={pipelines.pipelines}
                       resultRankParam={ranking.rankParam}
                       resultRankShell={ranking.rankShell}
-                    ></SummaryDataCollectionGroupPanel>
-                  </Tab.Pane>
-                  <Tab.Pane eventKey="Beamline Parameters">
-                    <LazyWrapper placeholder={<Loading />}>
-                      <BeamlineDataCollectionGroupPanel
-                        dataCollectionGroup={dataCollectionGroup}
-                      ></BeamlineDataCollectionGroupPanel>
-                    </LazyWrapper>
-                  </Tab.Pane>
-                  {UI.MX.showCollectionTab && (
-                    <Tab.Pane eventKey="Acquisitions">
-                      <LazyWrapper placeholder={<Loading />}>
-                        <CollectionsDataCollectionGroupPanel
-                          dataCollectionGroup={dataCollectionGroup}
-                        ></CollectionsDataCollectionGroupPanel>
-                      </LazyWrapper>
-                    </Tab.Pane>
-                  )}
-                  <Tab.Pane eventKey="Sample">
-                    <LazyWrapper placeholder={<Loading />}>
-                      <SampleDataCollectionGroupPanel
-                        dataCollectionGroup={dataCollectionGroup}
-                      ></SampleDataCollectionGroupPanel>
-                    </LazyWrapper>
-                  </Tab.Pane>
-                  <Tab.Pane eventKey="Autoprocessing">
-                    <LazyWrapper placeholder={<Loading />}>
-                      <ResultsDataCollectionGroupPanel
-                        proposalName={proposalName}
-                        dataCollectionGroup={dataCollectionGroup}
-                        selectedPipelines={pipelines.pipelines}
-                        resultRankParam={ranking.rankParam}
-                        resultRankShell={ranking.rankShell}
-                      />
-                    </LazyWrapper>
-                  </Tab.Pane>
-                  <Tab.Pane eventKey="Workflow" title="Workflow">
-                    <LazyWrapper placeholder={<Loading />}>
-                      <WorkflowDataCollectionGroupPanel
-                        proposalName={proposalName}
-                        dataCollectionGroup={dataCollectionGroup}
-                      ></WorkflowDataCollectionGroupPanel>
-                    </LazyWrapper>
-                  </Tab.Pane>
-                  <Tab.Pane eventKey="Phasing" title="Phasing">
-                    <LazyWrapper placeholder={<Loading />}>
-                      <MRTab
-                        proposalName={proposalName}
-                        dataCollectionGroup={dataCollectionGroup}
-                      ></MRTab>
-                    </LazyWrapper>
-                  </Tab.Pane>
-                </Tab.Content>
-              </Container>
-            </Col>
-          </Row>
+                    />
+                  </LazyWrapper>
+                </Tab.Pane>
+                <Tab.Pane eventKey="Workflow" title="Workflow">
+                  <LazyWrapper placeholder={<Loading />}>
+                    <WorkflowDataCollectionGroupPanel
+                      proposalName={proposalName}
+                      dataCollectionGroup={dataCollectionGroup}
+                    ></WorkflowDataCollectionGroupPanel>
+                  </LazyWrapper>
+                </Tab.Pane>
+                <Tab.Pane eventKey="Phasing" title="Phasing">
+                  <LazyWrapper placeholder={<Loading />}>
+                    <MRTab
+                      proposalName={proposalName}
+                      dataCollectionGroup={dataCollectionGroup}
+                    ></MRTab>
+                  </LazyWrapper>
+                </Tab.Pane>
+              </Tab.Content>
+            </div>
+          </div>
         </Card.Body>
         {dataCollectionGroup.processingStatus?.trim().length && (
-          <Card.Footer>
+          <Card.Footer
+            style={{
+              fontSize: '0.9em',
+              overflow: 'auto',
+              padding: 0,
+            }}
+          >
             <LazyWrapper
               height={60}
               placeholder={

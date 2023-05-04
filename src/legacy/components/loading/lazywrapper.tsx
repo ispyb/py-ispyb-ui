@@ -30,8 +30,7 @@ export default function LazyWrapper({
         height: height,
         aspectRatio: aspectRatio,
         width: '100%',
-        overflowY: 'auto',
-        overflowX: 'visible',
+        overflow: 'auto',
       }}
     >
       {!inView && placeholder}

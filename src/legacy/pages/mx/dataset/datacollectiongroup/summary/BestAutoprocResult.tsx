@@ -1,4 +1,4 @@
-import { Card, Col, ProgressBar, Table } from 'react-bootstrap';
+import { Card, Col, Container, ProgressBar, Row, Table } from 'react-bootstrap';
 import { UnitCellInfo } from './UnitCellInfo';
 import { AutoProcIntegration } from 'legacy/helpers/mx/results/resultparser';
 import { HelpIcon } from 'components/Common/HelpIcon';
@@ -60,7 +60,7 @@ export function BestAutoprocResult({
     <Col key={0}>
       <Table
         size="sm"
-        style={{ whiteSpace: 'nowrap' }}
+        style={{ whiteSpace: 'nowrap', fontSize: '1rem' }}
         responsive
         className="parameterKey"
       >
@@ -124,30 +124,44 @@ export function BestAutoprocResult({
     </Col>,
   ];
   return (
-    <Card style={{ padding: 20 }}>
-      <Card.Body>
-        <Col>
-          <h5 className={'text-center m-0'}>
-            Best result{' '}
-            <HelpIcon
-              message={`You can adjust criteria for best result selection in the ranking
+    <Card
+      style={{
+        height: '100%',
+      }}
+    >
+      <Card.Body
+        style={{
+          height: '100%',
+          overflow: 'auto',
+        }}
+      >
+        <Container fluid>
+          <Row>
+            <Col>
+              <div className={'text-center m-0 mt-2'}>
+                <strong>
+                  Best result
+                  <HelpIcon
+                    message={`You can adjust criteria for best result selection in the ranking
                 menu at the top of the page.`}
-            ></HelpIcon>
-          </h5>
-          <div className={'text-center'} style={{ textDecoration: 'italic' }}>
-            <small>
-              <i>from {bestResult.program}</i>
-            </small>
-          </div>
-          <div
-            style={{
-              marginTop: 10,
-              marginBottom: 10,
-              borderTop: '1px solid lightgray',
-            }}
-          />
-          {content}
-        </Col>
+                  ></HelpIcon>
+                </strong>
+              </div>
+
+              <div
+                className={'text-center'}
+                style={{ textDecoration: 'italic' }}
+              >
+                <small>
+                  <i>from {bestResult.program}</i>
+                </small>
+              </div>
+
+              <hr className="m-0 mt-2 mb-2" />
+              <div className="p-1">{content}</div>
+            </Col>
+          </Row>
+        </Container>
       </Card.Body>
     </Card>
   );

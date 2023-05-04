@@ -60,24 +60,20 @@ export function ProcessingInfo({
 
   if (bestResultWithPipelineFilter) {
     return (
-      <Container fluid>
-        <BestAutoprocResult
-          bestResult={bestResultWithPipelineFilter}
-        ></BestAutoprocResult>
-      </Container>
+      <BestAutoprocResult
+        bestResult={bestResultWithPipelineFilter}
+      ></BestAutoprocResult>
     );
   }
   if (bestResultNoPipelineFilter) {
     return (
-      <Container fluid>
-        <Alert variant="light">
-          A result is available with pipeline{' '}
-          <strong>
-            <i>{bestResultNoPipelineFilter.program}</i>
-          </strong>{' '}
-          which is filtered out.
-        </Alert>
-      </Container>
+      <Alert variant="light">
+        A result is available with pipeline{' '}
+        <strong>
+          <i>{bestResultNoPipelineFilter.program}</i>
+        </strong>{' '}
+        which is filtered out.
+      </Alert>
     );
   }
   return (

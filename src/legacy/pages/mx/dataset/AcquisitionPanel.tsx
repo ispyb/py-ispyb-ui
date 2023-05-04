@@ -16,7 +16,7 @@ export function AcquisitionPanel({
   if ('DataCollectionGroup_dataCollectionGroupId' in acquisition) {
     if (acquisition.DataCollection_dataCollectionId === undefined) return null; // Ignore empty groups
     return (
-      <div style={{ margin: 5 }}>
+      <div style={{ marginTop: 5 }}>
         <DataCollectionGroupPanel
           dataCollectionGroup={acquisition}
           proposalName={proposalName}
@@ -26,7 +26,7 @@ export function AcquisitionPanel({
     );
   } else if ('xfeFluorescenceSpectrumId' in acquisition) {
     return (
-      <div style={{ margin: 5 }}>
+      <div style={{ marginTop: 5 }}>
         <FluorescencePanel
           spectra={acquisition}
           proposalName={proposalName}
@@ -36,7 +36,7 @@ export function AcquisitionPanel({
     );
   } else if ('energyScanId' in acquisition) {
     return (
-      <div style={{ margin: 5 }}>
+      <div style={{ marginTop: 5 }}>
         <EnergyScanPanel
           energyScan={acquisition}
           proposalName={proposalName}
@@ -46,7 +46,7 @@ export function AcquisitionPanel({
     );
   } else {
     return (
-      <div style={{ margin: 5 }}>
+      <div style={{ marginTop: 5 }}>
         <Alert variant="danger">Unknown acquisition type</Alert>
       </div>
     );

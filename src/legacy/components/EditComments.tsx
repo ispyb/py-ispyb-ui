@@ -46,6 +46,7 @@ export function EditComments({
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder="Save any comment here..."
+        style={{ fontSize: '0.9rem' }}
       />
       {changed && (
         <Button

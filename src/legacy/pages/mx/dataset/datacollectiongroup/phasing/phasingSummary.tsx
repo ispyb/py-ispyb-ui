@@ -36,8 +36,19 @@ export function PhasingSummary({
   );
   if (!summaryPhasings || !summaryPhasings.length) return null;
   return (
-    <Card style={{ padding: 20, paddingTop: 0 }}>
-      <Card.Body>
+    <Card
+      style={{
+        height: '100%',
+      }}
+    >
+      <Card.Body
+        style={{
+          padding: 20,
+          paddingTop: 0,
+          overflow: 'auto',
+          height: '100%',
+        }}
+      >
         <Col>
           {summaryPhasings.map((p) => (
             <Row
