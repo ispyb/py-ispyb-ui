@@ -420,6 +420,5 @@ export function parseShippingCSV(
       };
     })
     .value();
-  console.log(res);
   return res;
 }
