@@ -303,8 +303,8 @@ function DroppablePosition({
       cx={x}
       cy={y}
       r={r}
-      stroke={canDrop ? (isOver ? 'red' : 'yellow') : 'none'}
-      fill={'transparent'}
+      stroke={canDrop ? '#00ff00' : 'none'}
+      fill={canDrop && isOver ? '#00ff0045' : 'transparent'}
     ></circle>
   );
 }
