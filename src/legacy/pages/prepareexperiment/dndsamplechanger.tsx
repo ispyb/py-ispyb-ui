@@ -145,7 +145,7 @@ function ChangerContainer({
           ></circle>
           <RemoveContainerBtn
             onClick={() => {
-              setContainerLocation(container.containerId, undefined, '');
+              setContainerLocation(container.containerId, undefined, undefined);
             }}
             cx={x}
             cy={y}

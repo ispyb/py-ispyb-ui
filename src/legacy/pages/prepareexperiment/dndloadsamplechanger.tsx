@@ -1,7 +1,7 @@
 import { ContainerDewar } from 'legacy/pages/model';
 import { MXContainer } from 'legacy/pages/mx/container/mxcontainer';
 import { useState, useEffect } from 'react';
-import { Alert, Anchor, Col, Dropdown, Row } from 'react-bootstrap';
+import { Alert, Anchor, Button, Col, Dropdown, Row } from 'react-bootstrap';
 
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
@@ -42,8 +42,13 @@ export default function DnDLoadSampleChanger({
   const [beamline, setBeamline] = useState(
     findBestDefaultBeamline(beamlines, dewars)
   );
-
   const [filterUnset, setFilterUnset] = useState(true);
+
+  const emptyAll = () => {
+    dewars?.forEach((d) => {
+      setContainerLocation(d.containerId, undefined, undefined);
+    });
+  };
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -85,7 +90,19 @@ export default function DnDLoadSampleChanger({
                 }}
               >
                 {dewars
-                  ?.filter((d) => !filterUnset || !d.beamlineLocation)
+                  ?.filter((d) => {
+                    if (filterUnset) {
+                      return (
+                        !d.sampleChangerLocation ||
+                        d.sampleChangerLocation === 'undefined' ||
+                        d.sampleChangerLocation === '' ||
+                        !d.beamlineLocation ||
+                        d.beamlineLocation === 'undefined' ||
+                        d.beamlineLocation === ''
+                      );
+                    }
+                    return true;
+                  })
                   ?.map((d) => {
                     return (
                       <>
@@ -113,14 +130,36 @@ export default function DnDLoadSampleChanger({
           <Col>
             <Row>
               <Col></Col>
+              <Col xs={'auto'}>
+                <Button
+                  style={{
+                    margin: 5,
+                  }}
+                  size="sm"
+                  onClick={emptyAll}
+                >
+                  Unload sample changer
+                </Button>
+              </Col>
+              <Col></Col>
+            </Row>
+            <Row>
+              <Col></Col>
               <Col md={'auto'}>
-                <Alert variant="info" style={{ marginTop: 15 }}>
+                <Alert
+                  variant="info"
+                  style={{
+                    padding: 5,
+                  }}
+                >
                   <FontAwesomeIcon
                     icon={faInfoCircle}
                     style={{ marginRight: 10 }}
                   ></FontAwesomeIcon>
-                  Select destination beamline and drag containers to their
-                  location.
+                  <small>
+                    Select destination beamline and drag containers to their
+                    location.
+                  </small>
                 </Alert>
               </Col>
               <Col></Col>
@@ -128,9 +167,9 @@ export default function DnDLoadSampleChanger({
             <Row>
               <div style={{ position: 'relative' }}>
                 <Row className="flex-nowrap"></Row>
-                <Row style={{ marginTop: 20 }}>
+                <Row>
                   <Col></Col>
-                  <Col md={'auto'}>
+                  <Col xs={'auto'}>
                     <BeamLineSelector
                       beamline={beamline}
                       beamlines={beamlines}
@@ -139,6 +178,7 @@ export default function DnDLoadSampleChanger({
                   </Col>
                   <Col></Col>
                 </Row>
+
                 <Row>
                   <div
                     style={{

@@ -88,7 +88,7 @@ export default function PrepareExperimentPage() {
           req = updateSampleChangerLocation({
             proposalName,
             containerId: containerId,
-            beamline: d.beamlineLocation || 'undefined',
+            beamline: d.beamlineName || 'undefined',
             position,
           });
         }
