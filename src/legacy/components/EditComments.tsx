@@ -8,6 +8,7 @@ export function EditComments({
   proposalName,
   id,
   saveReq,
+  maxWidth = 800,
 }: {
   comments: string;
   proposalName: string;
@@ -25,6 +26,7 @@ export function EditComments({
     data: string;
     headers: any;
   };
+  maxWidth?: number | string;
 }) {
   const [value, setValue] = useState(comments.trim());
   const [saved, setSaved] = useState(comments.trim());
@@ -40,7 +42,7 @@ export function EditComments({
   }, [comments]);
 
   return (
-    <InputGroup style={{ maxWidth: 800, minWidth: 200 }}>
+    <InputGroup style={{ maxWidth: maxWidth, minWidth: 200 }}>
       <textarea
         className="form-control"
         value={value}

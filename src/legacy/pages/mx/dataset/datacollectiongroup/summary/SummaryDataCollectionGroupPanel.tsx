@@ -206,6 +206,7 @@ export function SummaryDataCollectionGroupPanel({
               ''
             }
             saveReq={updateCollectionGroupComments}
+            maxWidth={'100%'}
           />
         </Row>
       </Col>
