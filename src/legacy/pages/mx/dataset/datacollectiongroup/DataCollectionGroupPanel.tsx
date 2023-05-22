@@ -7,6 +7,7 @@ import {
   Container,
   Badge,
   Spinner,
+  DropdownButton,
 } from 'react-bootstrap';
 
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
@@ -28,6 +29,7 @@ import WorkflowDataCollectionGroupPanel from './workflow/workflowdatacollectiong
 import { useAutoProcRanking, usePipelines } from 'hooks/mx';
 import { SummaryDataCollectionGroupPanel } from './summary/SummaryDataCollectionGroupPanel';
 import Loading from 'components/Loading';
+import { useState } from 'react';
 
 type Props = {
   sessionId: string;
@@ -49,6 +51,7 @@ export function DataCollectionGroupPanel({
 }: Props) {
   const ranking = useAutoProcRanking();
   const pipelines = usePipelines();
+  const [currentTab, setCurrentTab] = useState('Summary');
 
   const hashscroll = useHashScroll(
     `dcg-${dataCollectionGroup.DataCollectionGroup_dataCollectionGroupId}`
@@ -57,8 +60,83 @@ export function DataCollectionGroupPanel({
   if (dataCollectionGroup.DataCollection_dataCollectionId === undefined)
     return null;
 
+  const getBadge = () => {
+    if (dataCollectionGroup.Workflow_workflowType)
+      return dataCollectionGroup.Workflow_workflowType;
+    if (dataCollectionGroup.DataCollectionGroup_experimentType === 'OSC')
+      return 'Dataset';
+    return dataCollectionGroup.DataCollectionGroup_experimentType;
+  };
+
+  const navItems = (
+    <>
+      <Nav.Item>
+        <Nav.Link eventKey="Summary">Summary</Nav.Link>
+      </Nav.Item>
+      <Nav.Item>
+        <Nav.Link eventKey="Beamline Parameters">Beamline Parameters</Nav.Link>
+      </Nav.Item>
+      {UI.MX.showCollectionTab && (
+        <Nav.Item>
+          <Nav.Link eventKey="Acquisitions">
+            Acquisitions
+            <NbBadge value={dataCollectionGroup.totalNumberOfDataCollections} />
+          </Nav.Link>
+        </Nav.Item>
+      )}
+      <Nav.Item>
+        <Nav.Link eventKey="Sample">Sample</Nav.Link>
+      </Nav.Item>
+      <Nav.Item>
+        <Nav.Link
+          eventKey="Autoprocessing"
+          style={{
+            display: 'flex',
+          }}
+        >
+          Autoprocessing
+          <LazyWrapper>
+            <AutoprocNbBadge
+              dataCollectionGroup={dataCollectionGroup}
+              proposalName={proposalName}
+              selectedPipelines={pipelines.pipelines}
+            />
+          </LazyWrapper>
+        </Nav.Link>
+      </Nav.Item>
+      <Nav.Item>
+        <Nav.Link eventKey="Workflow">
+          Workflow
+          <NbBadge
+            value={getUniqueCount(
+              dataCollectionGroup.WorkflowStep_workflowStepId
+            )}
+          />
+        </Nav.Link>
+      </Nav.Item>
+      {dataCollectionGroup.hasMR || dataCollectionGroup.hasPhasing ? (
+        <Nav.Item>
+          <Nav.Link eventKey="Phasing">
+            Phasing
+            <NbBadge
+              value={
+                Number(dataCollectionGroup.hasMR || '0') +
+                Number(dataCollectionGroup.hasPhasing || '0')
+              }
+            />
+          </Nav.Link>
+        </Nav.Item>
+      ) : null}
+    </>
+  );
+
   return (
-    <Tab.Container defaultActiveKey="Summary">
+    <Tab.Container
+      activeKey={currentTab}
+      onSelect={(v) => {
+        v && setCurrentTab(v);
+      }}
+    >
       <Card
         className="themed-card card-datacollectiongroup-panel"
         ref={hashscroll.ref}
@@ -66,173 +144,150 @@ export function DataCollectionGroupPanel({
           backgroundColor: hashscroll.isCurrent ? '#edf2ff' : undefined,
         }}
       >
-        <Card.Header>
+        <Card.Header
+          style={{
+            padding: 0,
+          }}
+        >
           <Container fluid>
             <Row>
-              <Col xs={'auto'}>
+              <Col
+                className="d-none d-lg-flex"
+                xs={'auto'}
+                style={{
+                  paddingTop: 5,
+                  paddingBottom: 5,
+                }}
+              >
                 <HashAnchorButton hash={hashscroll.hash} />
               </Col>
-              <Col md="auto">
-                <h5>
+              <Col
+                xs="auto"
+                style={{
+                  padding: 5,
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <span>
                   {moment(
                     dataCollectionGroup.DataCollectionGroup_startTime,
                     'MMMM Do YYYY, h:mm:ss A'
                   ).format('DD/MM/YYYY HH:mm:ss')}
-                  <Badge bg="info">
-                    {dataCollectionGroup.Workflow_workflowType ||
-                      dataCollectionGroup.DataCollectionGroup_experimentType}
-                  </Badge>
-                </h5>
+                  <Badge bg="info">{getBadge()}</Badge>
+                </span>
               </Col>
-              <Col></Col>
-              <Col md="auto">
+              <Col
+                className="d-none d-lg-flex"
+                style={{
+                  justifyContent: 'flex-end',
+                  flexWrap: 'nowrap',
+                }}
+              >
                 <Nav className="tabs-datacollectiongroup-panel" variant="tabs">
-                  <Nav.Item>
-                    <Nav.Link eventKey="Summary">Summary</Nav.Link>
-                  </Nav.Item>
-                  <Nav.Item>
-                    <Nav.Link eventKey="Beamline">Beamline Parameters</Nav.Link>
-                  </Nav.Item>
-                  {UI.MX.showCollectionTab && (
-                    <Nav.Item>
-                      <Nav.Link eventKey="Data">
-                        Data Collections
-                        <NbBadge
-                          value={
-                            dataCollectionGroup.totalNumberOfDataCollections
-                          }
-                        />
-                      </Nav.Link>
-                    </Nav.Item>
-                  )}
-                  <Nav.Item>
-                    <Nav.Link eventKey="Sample">Sample</Nav.Link>
-                  </Nav.Item>
-                  <Nav.Item>
-                    <Nav.Link
-                      eventKey="Results"
-                      style={{
-                        display: 'flex',
-                      }}
-                    >
-                      Autoprocessing
-                      <LazyWrapper>
-                        <AutoprocNbBadge
-                          dataCollectionGroup={dataCollectionGroup}
-                          proposalName={proposalName}
-                          selectedPipelines={pipelines.pipelines}
-                        />
-                      </LazyWrapper>
-                    </Nav.Link>
-                  </Nav.Item>
-                  <Nav.Item>
-                    <Nav.Link eventKey="Workflow">
-                      Workflow
-                      <NbBadge
-                        value={getUniqueCount(
-                          dataCollectionGroup.WorkflowStep_workflowStepId
-                        )}
-                      />
-                    </Nav.Link>
-                  </Nav.Item>
-                  {dataCollectionGroup.hasMR ||
-                  dataCollectionGroup.hasPhasing ? (
-                    <Nav.Item>
-                      <Nav.Link eventKey="Phasing">
-                        Phasing
-                        <NbBadge
-                          value={
-                            Number(dataCollectionGroup.hasMR || '0') +
-                            Number(dataCollectionGroup.hasPhasing || '0')
-                          }
-                        />
-                      </Nav.Link>
-                    </Nav.Item>
-                  ) : null}
+                  {navItems}
+                </Nav>
+              </Col>
+              <Col
+                style={{
+                  justifyContent: 'flex-end',
+                  flexWrap: 'nowrap',
+                  padding: 5,
+                }}
+                className="d-flex d-lg-none"
+              >
+                <Nav>
+                  <DropdownButton size="sm" variant="dark" title={currentTab}>
+                    {navItems}
+                  </DropdownButton>
                 </Nav>
               </Col>
             </Row>
           </Container>
         </Card.Header>
         <Card.Body>
-          <Row className="flex-nowrap">
-            <Col
+          <div className="flex-nowrap">
+            <div
               style={{
                 marginLeft: 0,
-                marginRight: 12,
-                marginTop: 10,
-                padding: 10,
+                marginRight: 0,
+                marginTop: 5,
+                marginBottom: 5,
                 overflowX: 'auto',
               }}
             >
-              <Container fluid>
-                <Tab.Content>
-                  <Tab.Pane eventKey="Summary" title="Summary">
-                    <SummaryDataCollectionGroupPanel
+              <Tab.Content>
+                <Tab.Pane eventKey="Summary">
+                  <SummaryDataCollectionGroupPanel
+                    proposalName={proposalName}
+                    dataCollectionGroup={dataCollectionGroup}
+                    selectedPipelines={pipelines.pipelines}
+                    resultRankParam={ranking.rankParam}
+                    resultRankShell={ranking.rankShell}
+                  ></SummaryDataCollectionGroupPanel>
+                </Tab.Pane>
+                <Tab.Pane eventKey="Beamline Parameters">
+                  <LazyWrapper placeholder={<Loading />}>
+                    <BeamlineDataCollectionGroupPanel
+                      dataCollectionGroup={dataCollectionGroup}
+                    ></BeamlineDataCollectionGroupPanel>
+                  </LazyWrapper>
+                </Tab.Pane>
+                {UI.MX.showCollectionTab && (
+                  <Tab.Pane eventKey="Acquisitions">
+                    <LazyWrapper placeholder={<Loading />}>
+                      <CollectionsDataCollectionGroupPanel
+                        dataCollectionGroup={dataCollectionGroup}
+                      ></CollectionsDataCollectionGroupPanel>
+                    </LazyWrapper>
+                  </Tab.Pane>
+                )}
+                <Tab.Pane eventKey="Sample">
+                  <LazyWrapper placeholder={<Loading />}>
+                    <SampleDataCollectionGroupPanel
+                      dataCollectionGroup={dataCollectionGroup}
+                    ></SampleDataCollectionGroupPanel>
+                  </LazyWrapper>
+                </Tab.Pane>
+                <Tab.Pane eventKey="Autoprocessing">
+                  <LazyWrapper placeholder={<Loading />}>
+                    <ResultsDataCollectionGroupPanel
                       proposalName={proposalName}
                       dataCollectionGroup={dataCollectionGroup}
                       selectedPipelines={pipelines.pipelines}
                       resultRankParam={ranking.rankParam}
                       resultRankShell={ranking.rankShell}
-                    ></SummaryDataCollectionGroupPanel>
-                  </Tab.Pane>
-                  <Tab.Pane eventKey="Beamline" title="Beamline Parameters">
-                    <LazyWrapper placeholder={<Loading />}>
-                      <BeamlineDataCollectionGroupPanel
-                        dataCollectionGroup={dataCollectionGroup}
-                      ></BeamlineDataCollectionGroupPanel>
-                    </LazyWrapper>
-                  </Tab.Pane>
-                  {UI.MX.showCollectionTab && (
-                    <Tab.Pane eventKey="Data" title="Data Collections">
-                      <LazyWrapper placeholder={<Loading />}>
-                        <CollectionsDataCollectionGroupPanel
-                          dataCollectionGroup={dataCollectionGroup}
-                        ></CollectionsDataCollectionGroupPanel>
-                      </LazyWrapper>
-                    </Tab.Pane>
-                  )}
-                  <Tab.Pane eventKey="Sample" title="Sample">
-                    <LazyWrapper placeholder={<Loading />}>
-                      <SampleDataCollectionGroupPanel
-                        dataCollectionGroup={dataCollectionGroup}
-                      ></SampleDataCollectionGroupPanel>
-                    </LazyWrapper>
-                  </Tab.Pane>
-                  <Tab.Pane eventKey="Results" title="Results">
-                    <LazyWrapper placeholder={<Loading />}>
-                      <ResultsDataCollectionGroupPanel
-                        proposalName={proposalName}
-                        dataCollectionGroup={dataCollectionGroup}
-                        selectedPipelines={pipelines.pipelines}
-                        resultRankParam={ranking.rankParam}
-                        resultRankShell={ranking.rankShell}
-                      />
-                    </LazyWrapper>
-                  </Tab.Pane>
-                  <Tab.Pane eventKey="Workflow" title="Workflow">
-                    <LazyWrapper placeholder={<Loading />}>
-                      <WorkflowDataCollectionGroupPanel
-                        proposalName={proposalName}
-                        dataCollectionGroup={dataCollectionGroup}
-                      ></WorkflowDataCollectionGroupPanel>
-                    </LazyWrapper>
-                  </Tab.Pane>
-                  <Tab.Pane eventKey="Phasing" title="Phasing">
-                    <LazyWrapper placeholder={<Loading />}>
-                      <MRTab
-                        proposalName={proposalName}
-                        dataCollectionGroup={dataCollectionGroup}
-                      ></MRTab>
-                    </LazyWrapper>
-                  </Tab.Pane>
-                </Tab.Content>
-              </Container>
-            </Col>
-          </Row>
+                    />
+                  </LazyWrapper>
+                </Tab.Pane>
+                <Tab.Pane eventKey="Workflow" title="Workflow">
+                  <LazyWrapper placeholder={<Loading />}>
+                    <WorkflowDataCollectionGroupPanel
+                      proposalName={proposalName}
+                      dataCollectionGroup={dataCollectionGroup}
+                    ></WorkflowDataCollectionGroupPanel>
+                  </LazyWrapper>
+                </Tab.Pane>
+                <Tab.Pane eventKey="Phasing" title="Phasing">
+                  <LazyWrapper placeholder={<Loading />}>
+                    <MRTab
+                      proposalName={proposalName}
+                      dataCollectionGroup={dataCollectionGroup}
+                    ></MRTab>
+                  </LazyWrapper>
+                </Tab.Pane>
+              </Tab.Content>
+            </div>
+          </div>
         </Card.Body>
         {dataCollectionGroup.processingStatus?.trim().length && (
-          <Card.Footer>
+          <Card.Footer
+            style={{
+              fontSize: '0.9em',
+              overflow: 'auto',
+              padding: 0,
+            }}
+          >
             <LazyWrapper
               height={60}
               placeholder={

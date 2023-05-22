@@ -17,7 +17,7 @@ export interface IMetadataProps {
 export default function Metadata(props: IMetadataProps) {
   return (
     <Container className="g-0">
-      <Row className="metadata-list g-0 me-2">
+      <Row className="metadata-list g-1 me-2">
         {props.properties
           .filter((item) => item.test === undefined || item.test)
           .map((item) => (
@@ -38,17 +38,19 @@ export default function Metadata(props: IMetadataProps) {
 
 export function MetadataCol(props: IMetadataProps) {
   return (
-    <Col className="metadata-list  g-0 me-2">
+    <Col className="metadata-list  g-0">
       {props.properties
         .filter((item) => item.test === undefined || item.test)
         .map((item) => (
-          <Row key={item.title}>
-            <MetadataItem
-              {...item}
-              truncate={
-                item.truncate !== undefined ? item.truncate : props.truncate
-              }
-            />
+          <Row key={item.title} className="g-0">
+            <Col className="g-0">
+              <MetadataItem
+                {...item}
+                truncate={
+                  item.truncate !== undefined ? item.truncate : props.truncate
+                }
+              />
+            </Col>
           </Row>
         ))}
     </Col>
@@ -57,7 +59,7 @@ export function MetadataCol(props: IMetadataProps) {
 
 export function MetadataRow(props: { auto?: boolean } & IMetadataProps) {
   return (
-    <Row className="metadata-list  g-0">
+    <Row className="metadata-list  g-1">
       {props.properties
         .filter((item) => item.test === undefined || item.test)
         .map((item) => (
@@ -90,8 +92,7 @@ export function MetadataItem(props: IMetadataItemProps) {
         color: 'black',
       }}
       className={classNames({
-        'mx-1': true,
-        'mb-2': true,
+        'mb-1': true,
         'p-2': true,
         'bg-light': true,
         'text-truncate': props.truncate !== false,

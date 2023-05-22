@@ -170,7 +170,8 @@ export function getMXContainers({
   proposalName: string;
   containerIds: string[];
 }) {
-  const containers = containerIds.length ? containerIds.join(',') : 'null';
+  const filtered = containerIds.filter((c) => c !== undefined);
+  const containers = filtered.length ? filtered.join(',') : 'null';
   return {
     url: `/proposal/${proposalName}/mx/sample/containerid/${containers}/list`,
   };

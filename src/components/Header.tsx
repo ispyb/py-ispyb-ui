@@ -115,7 +115,7 @@ export default function Header() {
         bg="primary"
         variant="dark"
         expand="md"
-        className="main-header p-2"
+        className="main-header p-0"
       >
         <Container>
           <Navbar.Brand as={Link} to="/">

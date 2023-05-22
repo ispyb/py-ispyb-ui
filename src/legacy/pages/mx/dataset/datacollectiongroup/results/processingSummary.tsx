@@ -14,7 +14,7 @@ import {
 import { useAutoProc } from 'legacy/hooks/ispyb';
 import { DataCollectionGroup } from 'legacy/pages/mx/model';
 import _ from 'lodash';
-import { Col, Container, OverlayTrigger, Popover, Row } from 'react-bootstrap';
+import { Col, OverlayTrigger, Popover, Row } from 'react-bootstrap';
 
 export interface Props {
   proposalName: string;
@@ -50,15 +50,24 @@ export default function ProcessingSummary({
     .value();
 
   return (
-    <Container fluid>
-      <Row>
-        {groupedResults.map((r) => {
-          return (
-            <PipelineStatus key={r[0]} pipeline={r[0]} groupedResults={r[1]} />
-          );
-        })}
-      </Row>
-    </Container>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'start',
+        gap: '0.5rem',
+        marginLeft: 5,
+        marginRight: 5,
+        marginTop: 4,
+        flexWrap: 'nowrap',
+      }}
+    >
+      {groupedResults.map((r) => {
+        return (
+          <PipelineStatus key={r[0]} pipeline={r[0]} groupedResults={r[1]} />
+        );
+      })}
+    </div>
   );
 }
 
@@ -94,28 +103,26 @@ function PipelineStatus({
   );
 
   return (
-    <Col sm={'auto'}>
-      <OverlayTrigger
-        trigger={['focus', 'hover']}
-        placement="auto"
-        overlay={popover}
+    <OverlayTrigger
+      trigger={['focus', 'hover']}
+      placement="auto"
+      overlay={popover}
+    >
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
       >
-        <div
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-          }}
-        >
-          <div>
-            {statuses.map((s, i) => (
-              <StatusIcon key={i} status={s} />
-            ))}
-          </div>
-          <small>{pipeline}</small>
+        <div>
+          {statuses.map((s, i) => (
+            <StatusIcon key={i} status={s} />
+          ))}
         </div>
-      </OverlayTrigger>
-    </Col>
+        <small>{pipeline}</small>
+      </div>
+    </OverlayTrigger>
   );
 }
 

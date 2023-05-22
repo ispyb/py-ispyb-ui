@@ -161,9 +161,16 @@ export function AutoprocParameters({
     rootMargin: '0px 0px',
     triggerOnce: false,
   });
+  const [expandHoveringSelector, setExpandHoveringSelector] = useState(false);
+
   const selector = (
     <div>
-      <Row>
+      <Row
+        style={{
+          cursor: 'pointer',
+        }}
+        onClick={() => setExpandHoveringSelector(!expandHoveringSelector)}
+      >
         <Col
           xs={'auto'}
           style={{
@@ -177,6 +184,8 @@ export function AutoprocParameters({
             </i>
           </strong>
         </Col>
+      </Row>
+      <Row>
         <Col xs={'auto'}>
           <SelectPipelinesSuspense
             sessionId={sessionId}
@@ -213,8 +222,6 @@ export function AutoprocParameters({
       </Row>
     </div>
   );
-
-  const [expandHoveringSelector, setExpandHoveringSelector] = useState(false);
 
   useEffect(() => {
     if (inView) {

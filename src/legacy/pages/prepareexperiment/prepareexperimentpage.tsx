@@ -2,6 +2,7 @@ import {
   Button,
   Card,
   Col,
+  Container,
   OverlayTrigger,
   Row,
   Tooltip,
@@ -12,12 +13,7 @@ import _ from 'lodash';
 import { ContainerDewar } from 'legacy/pages/model';
 import './prepareexperimentpage.scss';
 import { formatDateTo, parseDate } from 'legacy/helpers/dateparser';
-import {
-  faAngleDown,
-  faAngleUp,
-  faPlus,
-  faTimes,
-} from '@fortawesome/free-solid-svg-icons';
+import { faPlus, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 import {
@@ -28,7 +24,7 @@ import { KeyedMutator } from 'swr';
 import produce from 'immer';
 import LoadSampleChanger from './loadsamplechanger';
 import { Shipment } from 'legacy/pages/model';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useAuth } from 'hooks/useAuth';
 import {
   ColumnDef,
@@ -44,7 +40,6 @@ type Param = {
 };
 
 export default function PrepareExperimentPage() {
-  const [compactStep1, setCompactStep1] = useState(false);
   const { site, token } = useAuth();
 
   const { proposalName = '' } = useParams<Param>();
@@ -187,50 +182,26 @@ export default function PrepareExperimentPage() {
     },
   });
   const step1 = (
-    <Card style={{ border: 'none' }}>
+    <Card>
       <Card.Header>
-        <Row>
-          <Col md={'auto'}>
-            <h6 style={{ margin: 5 }}>1. Select shipments</h6>
-          </Col>
-          <Col></Col>
-          <Col md={'auto'}>
-            <OverlayTrigger
-              key={'right'}
-              placement={'right'}
-              overlay={
-                <Tooltip id={`tooltip-right`}>
-                  {compactStep1 ? 'Expand' : 'Minify'}
-                </Tooltip>
-              }
-            >
-              <Button
-                style={{ paddingTop: 0, paddingBottom: 0 }}
-                variant="link"
-                onClick={() => {
-                  setCompactStep1(!compactStep1);
-                }}
-              >
-                <FontAwesomeIcon
-                  color="white"
-                  size="lg"
-                  icon={compactStep1 ? faAngleDown : faAngleUp}
-                />
-              </Button>
-            </OverlayTrigger>
-          </Col>
-        </Row>
+        <h6 style={{ margin: 5 }}>1. Select shipments</h6>
       </Card.Header>
-      {!compactStep1 && (
-        <Card.Body style={{ padding: 0 }}>
+      <Card.Body
+        style={{
+          padding: 0,
+          maxHeight: 'calc(100vh - 200px)',
+          overflow: 'auto',
+        }}
+      >
+        <Container fluid>
           <TanstackBootstrapTable
             rowStyle={(v) =>
               shipmentIsProcessing(v) ? { backgroundColor: 'lightblue' } : {}
             }
             table={table}
           />
-        </Card.Body>
-      )}
+        </Container>
+      </Card.Body>
     </Card>
   );
 
@@ -242,27 +213,16 @@ export default function PrepareExperimentPage() {
     ></LoadSampleChanger>
   );
 
-  if (compactStep1) {
-    return (
-      <Col>
-        <Row>
-          <Col>{step1}</Col>
-        </Row>
-        <Row>
-          <Col>{step2}</Col>
-        </Row>
+  return (
+    <Row>
+      <Col xs={12} lg={5} xl={'auto'}>
+        {step1}
       </Col>
-    );
-  } else {
-    return (
-      <Row>
-        <Col md={'auto'}>
-          <Row>{step1}</Row>
-        </Col>
-        <Col>{step2}</Col>
-      </Row>
-    );
-  }
+      <Col xs={12} lg={7} xl={true}>
+        {step2}
+      </Col>
+    </Row>
+  );
 }
 
 const dateFormatter = (cell: string) => {

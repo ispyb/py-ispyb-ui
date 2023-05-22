@@ -93,9 +93,11 @@ export function UnitCellInfo({
     <Col>
       <Row className={'text-center'}>
         {spacegroupInfo?.crystalSystem ? (
-          <strong>
-            {spacegroupInfo?.crystalSystem} system ({spacegroupInfo.name})
-          </strong>
+          <small>
+            <strong>
+              {spacegroupInfo?.crystalSystem} system ({spacegroupInfo.name})
+            </strong>
+          </small>
         ) : null}
       </Row>
       <Row>{table}</Row>
@@ -133,18 +135,28 @@ function UnitCellTable({
   cell_beta: number | string | undefined;
   cell_gamma: number | string | undefined;
 } & cellShowParams) {
+  const tdProps = {
+    style: {
+      padding: 0,
+    },
+  };
   return (
     <>
       <Table
         responsive
         size="sm"
-        style={{ whiteSpace: 'nowrap', textAlign: 'center', margin: 0 }}
+        style={{
+          whiteSpace: 'nowrap',
+          textAlign: 'center',
+          margin: 0,
+          fontSize: '1rem',
+        }}
         striped
       >
         <thead style={{}}>
           <tr>
             {show_cell_a && (
-              <td>
+              <td {...tdProps}>
                 <strong>
                   a{!show_cell_b && '=b'}
                   {!show_cell_c && '=c'}
@@ -152,12 +164,12 @@ function UnitCellTable({
               </td>
             )}
             {show_cell_b && (
-              <td>
+              <td {...tdProps}>
                 <strong>b</strong>
               </td>
             )}
             {show_cell_c && (
-              <td>
+              <td {...tdProps}>
                 <strong>c</strong>
               </td>
             )}
@@ -166,17 +178,17 @@ function UnitCellTable({
         <tbody>
           <tr>
             {show_cell_a && (
-              <td>
+              <td {...tdProps}>
                 <small>{toNumber(cell_a) || cell_a} Å</small>
               </td>
             )}
             {show_cell_b && (
-              <td>
+              <td {...tdProps}>
                 <small>{toNumber(cell_b) || cell_b} Å</small>
               </td>
             )}
             {show_cell_c && (
-              <td>
+              <td {...tdProps}>
                 <small>{toNumber(cell_c) || cell_c} Å</small>
               </td>
             )}
@@ -186,13 +198,18 @@ function UnitCellTable({
       <Table
         responsive
         size="sm"
-        style={{ whiteSpace: 'nowrap', textAlign: 'center', margin: 0 }}
+        style={{
+          whiteSpace: 'nowrap',
+          textAlign: 'center',
+          margin: 0,
+          fontSize: '0.8rem',
+        }}
         striped
       >
         <thead style={{ borderTop: 'none' }}>
           <tr>
             {show_cell_alpha && (
-              <td>
+              <td {...tdProps}>
                 <strong>
                   α{!show_cell_beta && '=β'}
                   {!show_cell_gamma && '=γ'}
@@ -200,12 +217,12 @@ function UnitCellTable({
               </td>
             )}
             {show_cell_beta && (
-              <td>
+              <td {...tdProps}>
                 <strong>β</strong>
               </td>
             )}
             {show_cell_gamma && (
-              <td>
+              <td {...tdProps}>
                 <strong>γ</strong>
               </td>
             )}
@@ -214,17 +231,17 @@ function UnitCellTable({
         <tbody>
           <tr>
             {show_cell_alpha && (
-              <td>
+              <td {...tdProps}>
                 <small>{toNumber(cell_alpha) || cell_alpha} °</small>
               </td>
             )}
             {show_cell_beta && (
-              <td>
+              <td {...tdProps}>
                 <small>{toNumber(cell_beta) || cell_beta} °</small>
               </td>
             )}
             {show_cell_gamma && (
-              <td>
+              <td {...tdProps}>
                 <small>{toNumber(cell_gamma) || cell_gamma} °</small>
               </td>
             )}

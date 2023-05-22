@@ -1,6 +1,6 @@
 import { useAuth } from 'hooks/useAuth';
 import { JavaProposalMenu } from 'legacy/components/Header';
-import { Container, Nav, Navbar } from 'react-bootstrap';
+import { Container, Navbar } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
 import { ProposalMenu } from './Header';
 
@@ -20,9 +20,9 @@ export function ActiveProposal() {
 
   return (
     <>
-      <Navbar bg="dark" variant="dark" className="proposalnav">
+      <Navbar bg="dark" variant="dark" expand="sm" className="proposalnav">
         <Container>
-          <div style={{ display: 'flex' }}>
+          <div style={{ display: 'flex', gap: 15 }}>
             <span className="proposalname">{proposal}</span>
             <div
               style={{
@@ -30,11 +30,16 @@ export function ActiveProposal() {
                 alignSelf: 'stretch',
               }}
             />
-            <Nav>
+            <Navbar.Collapse
+              style={{
+                gap: 15,
+              }}
+            >
               {site.javaMode && <JavaProposalMenu proposal={proposal} />}
               {!site.javaMode && <ProposalMenu proposal={proposal} />}
-            </Nav>
+            </Navbar.Collapse>
           </div>
+          <Navbar.Toggle aria-controls="proposal-nav" />
         </Container>
       </Navbar>
     </>

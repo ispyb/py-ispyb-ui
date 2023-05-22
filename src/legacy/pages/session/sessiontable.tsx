@@ -12,6 +12,9 @@ import {
 } from '@tanstack/react-table';
 import { TanstackBootstrapTable } from 'components/Layout/TanstackBootstrapTable';
 import { useMemo } from 'react';
+import { getTechniqueByBeamline } from 'legacy/hooks/site';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from 'hooks/useAuth';
 
 interface Props {
   data?: Session[];
@@ -68,13 +71,21 @@ export default function SessionTable({
     getPaginationRowModel: getPaginationRowModel(),
     initialState: {
       pagination: {
-        pageSize: 20,
+        pageSize: 10,
       },
     },
   });
 
+  const auth = useAuth();
+  const navigate = useNavigate();
+  const clickSession = (session: Session) => {
+    const technique = getTechniqueByBeamline(auth, session.beamLineName);
+    const url = `/legacy/proposals/${session.Proposal_proposalCode}${session.Proposal_ProposalNumber}/${technique}/${session.sessionId}/summary`;
+    navigate(url);
+  };
+
   return (
-    <Container>
+    <Container fluid>
       <SessionTableMenu
         startDate={startDate}
         setStartDate={setStartDate}
@@ -97,7 +108,7 @@ export default function SessionTable({
         ]}
       />
       {data && data.length ? (
-        <TanstackBootstrapTable table={table} />
+        <TanstackBootstrapTable table={table} onRowClick={clickSession} />
       ) : (
         <Alert variant="info">
           <FontAwesomeIcon icon={faInfoCircle} style={{ marginRight: 10 }} />
