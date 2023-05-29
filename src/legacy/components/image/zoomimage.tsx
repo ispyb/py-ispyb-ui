@@ -1,85 +1,238 @@
-import Zoom from 'react-medium-image-zoom';
-import { Image, Spinner } from 'react-bootstrap';
-import { useEffect, useState } from 'react';
-
-import './zoomimage.css';
-import 'react-medium-image-zoom/dist/styles.css';
-import LazyWrapper from 'legacy/components/loading/lazywrapper';
-import { CSSProperties } from 'react';
+import { Spinner } from 'react-bootstrap';
+import { CSSProperties, useEffect, useState } from 'react';
+import LazyWrapper from '../loading/lazywrapper';
 import { useAuth } from 'hooks/useAuth';
 
 interface props {
   src: string;
-  alt?: string;
+  alt: string;
   style?: CSSProperties;
-  lazy?: boolean;
   legend?: string;
+  aspectRatio?: string;
   local?: boolean;
+  showCenter?: boolean;
 }
-export default function ZoomImage({
+
+export default function ZoomImage(props: props) {
+  const aspectRatio = props.aspectRatio || '3/2';
+  const placeholder = (
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        display: 'flex',
+      }}
+    >
+      <Spinner
+        style={{ marginRight: 5 }}
+        size="sm"
+        animation="border"
+        role="status"
+        variant="dark"
+      ></Spinner>
+      <i>Loading...</i>
+    </div>
+  );
+  return (
+    <div
+      style={{
+        ...props.style,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+      }}
+    >
+      <div
+        style={{
+          width: '100%',
+          aspectRatio: aspectRatio,
+          position: 'relative',
+          border: '3px solid #d4e4bc',
+          borderRadius: '6px',
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'center',
+          alignItems: 'center',
+          backgroundColor: 'black',
+          color: 'white',
+        }}
+      >
+        <LazyWrapper
+          threshold={100}
+          aspectRatio={aspectRatio}
+          placeholder={placeholder}
+        >
+          <Zoomable>
+            <LoadImage {...props} placeholder={placeholder} />
+          </Zoomable>
+        </LazyWrapper>
+      </div>
+      {props.legend ? <span>{props.legend}</span> : null}
+    </div>
+  );
+}
+
+const fetchBase64Data = (url: string) =>
+  fetch(url)
+    .then((response) => {
+      if (response.status !== 200) throw new Error('Not found');
+      return response.blob();
+    })
+    .then(
+      (blob) =>
+        new Promise<string | undefined>((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () =>
+            resolve(reader.result?.toString() || undefined);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        })
+    )
+    .catch(() => undefined);
+
+function LoadImage({
   src,
   alt,
-  style,
-  lazy = true,
-  legend,
+  placeholder,
   local = false,
-}: props) {
-  const { site, token } = useAuth();
-
-  const fullUrl = local ? src : `${site.host}${site.apiPrefix}/${token}${src}`;
-
-  const [error, setError] = useState(false);
-
+  showCenter,
+}: props & { placeholder: React.ReactNode }) {
   const [loaded, setLoaded] = useState(false);
 
-  const [img, setImg] = useState<JSX.Element | undefined>(undefined);
+  const [data, setData] = useState<string | undefined>(undefined);
+  const { site, token } = useAuth();
+  const fullUrl = local ? src : `${site.host}${site.apiPrefix}/${token}${src}`;
 
   useEffect(() => {
     setLoaded(false);
-    setImg(
-      <Image
-        width="100%"
-        thumbnail
-        src={fullUrl}
-        alt={alt}
-        onLoad={() => setLoaded(true)}
-        onError={() => setError(true)}
-      />
-    );
+    fetchBase64Data(fullUrl)
+      .then((data) => {
+        if (data) {
+          setData(data);
+        }
+      })
+      .catch(() => {
+        setData(undefined);
+      })
+      .finally(() => {
+        setLoaded(true);
+      });
   }, [fullUrl, alt]);
 
-  if (error) {
+  if (!loaded) {
+    return <>{placeholder}</>;
+  }
+  if (!data || data === 'data:' || data === 'data:;base64,') {
     return (
-      <>
-        <div style={style} className="zoom-image-alt">
-          <p>{alt} not found</p>
-        </div>
-        {legend && <span>{legend}</span>}
-      </>
+      <div
+        style={{
+          width: '100%',
+          height: '100%',
+          justifyContent: 'center',
+          alignItems: 'center',
+          display: 'flex',
+        }}
+        className="text-center"
+      >
+        <span>{alt} not found</span>
+      </div>
     );
   }
 
-  const placeholder = (
-    <>
-      <div className="zoom-image-placeholder" style={style}>
-        <Spinner animation="border" role="status" variant="dark"></Spinner>
-      </div>
-      {legend && <span>{legend}</span>}
-    </>
-  );
-  if (lazy && !loaded) {
-    return (
-      <div style={style}>
-        <LazyWrapper placeholder={placeholder}>
-          <div style={{ display: 'none' }}>{img}</div>
-        </LazyWrapper>
-      </div>
-    );
-  }
   return (
-    <div className="zoomimage" style={style}>
-      <Zoom>{img}</Zoom>
-      {legend && <span>{legend}</span>}
+    <div
+      style={{
+        position: 'absolute',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+      }}
+    >
+      <img
+        alt={alt}
+        style={{
+          objectFit: 'contain',
+          overflow: 'auto',
+          width: '100%',
+          height: '100%',
+        }}
+        src={data}
+      />
+      {showCenter && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            width: '5%',
+            aspectRatio: '1/1',
+            transform: 'translate(-50%, -50%)',
+          }}
+        >
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              bottom: 0,
+              left: '50%',
+              width: 1,
+              backgroundColor: 'red',
+              transform: 'translate(-50%, 0%)',
+            }}
+          />
+          <div
+            style={{
+              position: 'absolute',
+              left: 0,
+              right: 0,
+              top: '50%',
+              height: 1,
+              backgroundColor: 'red',
+              transform: 'translate(0%, -50%)',
+            }}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function Zoomable({ children }: { children: React.ReactNode }) {
+  const [zoom, setZoom] = useState(false);
+
+  return (
+    <div
+      style={{
+        cursor: 'zoom-in',
+        width: '100%',
+        height: '100%',
+        overflow: 'hidden',
+      }}
+      onClick={() => setZoom(!zoom)}
+    >
+      {zoom && (
+        <div
+          style={{
+            cursor: 'zoom-out',
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            zIndex: 1000000,
+            backgroundColor: 'black',
+          }}
+          onClick={() => setZoom(!zoom)}
+        >
+          {children}
+        </div>
+      )}
+      {children}
     </div>
   );
 }

@@ -9,7 +9,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import LazyWrapper from 'legacy/components/loading/lazywrapper';
-import LoadingPanel from 'legacy/components/loading/loadingpanel';
 import SimpleParameterTable from 'legacy/components/table/simpleparametertable';
 import { openInNewTab } from 'legacy/helpers/opentab';
 import { useMXContainers, useShipping } from 'legacy/hooks/ispyb';
@@ -55,6 +54,7 @@ import axios from 'axios';
 import DownloadButton from 'legacy/components/buttons/downloadbutton';
 import { EditDewarModal } from './dewarEditModal';
 import { useAuth } from 'hooks/useAuth';
+import Loading from 'components/Loading';
 
 export function ShipmentView({
   proposalName,
@@ -138,13 +138,11 @@ export function ShipmentView({
             </Tab.Content>
             <Tab.Content>
               <Tab.Pane eventKey="transport" title="Transport History">
-                <LazyWrapper placeholder={<LoadingPanel></LoadingPanel>}>
-                  <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-                    <TransportPane
-                      shipping={data}
-                      proposalName={proposalName}
-                    ></TransportPane>
-                  </Suspense>
+                <LazyWrapper placeholder={<Loading />}>
+                  <TransportPane
+                    shipping={data}
+                    proposalName={proposalName}
+                  ></TransportPane>
                 </LazyWrapper>
               </Tab.Pane>
             </Tab.Content>
@@ -297,10 +295,7 @@ export function ContentPane({
           (a, b) => (a.dewarId ? a.dewarId : 0) - (b.dewarId ? b.dewarId : 0)
         )
         .map((dewar) => (
-          <Suspense
-            key={dewar.dewarId}
-            fallback={<LoadingPanel></LoadingPanel>}
-          >
+          <Suspense key={dewar.dewarId} fallback={<Loading />}>
             <DewarPane
               statisticsMode={statisticsMode}
               key={dewar.dewarId}
@@ -414,7 +409,7 @@ export function ExportPane({
               onChange={() => toggleSelect(dewar.dewarId)}
               checked={selected.includes(dewar.dewarId)}
             ></FormCheck>
-            <Suspense fallback={<LoadingPanel></LoadingPanel>}>
+            <Suspense fallback={<Loading />}>
               <DewarPane
                 statisticsMode={statisticsMode}
                 key={dewar.dewarId}
@@ -474,7 +469,8 @@ export function DewarPane({
                       value: samples.filter(
                         (s) =>
                           s.DataCollectionGroup_dataCollectionGroupId !==
-                          undefined
+                            undefined &&
+                          s.DataCollectionGroup_dataCollectionGroupId !== null
                       ).length,
                     },
                   ]
@@ -496,15 +492,16 @@ export function DewarPane({
                   (b.containerId ? b.containerId : 0)
               )
               .map((c) => (
-                <ContainerView
-                  statisticsMode={statisticsMode}
-                  key={c.containerId}
-                  proposalName={proposalName}
-                  container={c}
-                  shipping={shipping}
-                  dewar={dewar}
-                  mutateShipping={mutateShipping}
-                ></ContainerView>
+                <Suspense key={c.containerId} fallback={<Loading />}>
+                  <ContainerView
+                    statisticsMode={statisticsMode}
+                    proposalName={proposalName}
+                    container={c}
+                    shipping={shipping}
+                    dewar={dewar}
+                    mutateShipping={mutateShipping}
+                  ></ContainerView>
+                </Suspense>
               ))}
           </Row>
         </Col>
@@ -664,30 +661,34 @@ export function ContainerView({
       <Popover.Body>
         <Col>
           <Row>
-            <SimpleParameterTable
-              parameters={
-                statisticsMode
-                  ? [
-                      { key: 'code', value: container.code },
-                      { key: 'type', value: container.containerType },
-                      { key: 'capacity', value: container.capacity },
-                      { key: 'Samples', value: samples.length },
-                      {
-                        key: 'Measured',
-                        value: samples.filter(
-                          (s) =>
-                            s.DataCollectionGroup_dataCollectionGroupId !==
-                            undefined
-                        ).length,
-                      },
-                    ]
-                  : [
-                      { key: 'code', value: container.code },
-                      { key: 'type', value: container.containerType },
-                      { key: 'capacity', value: container.capacity },
-                    ]
-              }
-            ></SimpleParameterTable>
+            <ContainerB fluid>
+              <SimpleParameterTable
+                parameters={
+                  statisticsMode
+                    ? [
+                        { key: 'code', value: container.code },
+                        { key: 'type', value: container.containerType },
+                        { key: 'capacity', value: container.capacity },
+                        { key: 'Samples', value: samples.length },
+                        {
+                          key: 'Measured',
+                          value: samples.filter(
+                            (s) =>
+                              s.DataCollectionGroup_dataCollectionGroupId !==
+                                undefined &&
+                              s.DataCollectionGroup_dataCollectionGroupId !==
+                                null
+                          ).length,
+                        },
+                      ]
+                    : [
+                        { key: 'code', value: container.code },
+                        { key: 'type', value: container.containerType },
+                        { key: 'capacity', value: container.capacity },
+                      ]
+                }
+              ></SimpleParameterTable>
+            </ContainerB>
           </Row>
           {editable && mutateShipping ? (
             <Row>
@@ -753,7 +754,8 @@ export function ContainerView({
                       value: samples.filter(
                         (s) =>
                           s.DataCollectionGroup_dataCollectionGroupId !==
-                          undefined
+                            undefined &&
+                          s.DataCollectionGroup_dataCollectionGroupId !== null
                       ).length,
                     },
                   ]

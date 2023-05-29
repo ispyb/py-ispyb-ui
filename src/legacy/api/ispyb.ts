@@ -45,8 +45,10 @@ export function getProposals() {
   return { url: `/proposal/list` };
 }
 
-export function getSessionById(sessionId: string | undefined) {
-  return { url: `/proposal/session/${sessionId}` };
+export function getSessionById(proposalName: string, sessionId: string) {
+  return {
+    url: `/proposal/${proposalName}/session/sessionId/${sessionId}/list`,
+  };
 }
 
 export function getMXDataCollectionsBy({
@@ -70,6 +72,53 @@ export function getMxDataCollectionsByGroupId({
 }) {
   return {
     url: `/proposal/${proposalName}/mx/datacollection/datacollectiongroupid/${dataCollectionGroupId}/list`,
+  };
+}
+
+export function updateCollectionGroupComments({
+  proposalName,
+  id,
+  comments,
+}: {
+  proposalName: string;
+  id: string;
+  comments: string;
+}) {
+  return {
+    url: `/proposal/${proposalName}/mx/datacollectiongroup/${id}/comments/save`,
+    data: `comments=${encodeURIComponent(comments)}`,
+    headers: {},
+  };
+}
+
+export function updateCollectionComments({
+  proposalName,
+  id,
+  comments,
+}: {
+  proposalName: string;
+  id: string;
+  comments: string;
+}) {
+  return {
+    url: `/proposal/${proposalName}/mx/datacollection/${id}/comments/save`,
+    data: `comments=${encodeURIComponent(comments)}`,
+    headers: {},
+  };
+}
+export function updateSessionComments({
+  proposalName,
+  id,
+  comments,
+}: {
+  proposalName: string;
+  id: string;
+  comments: string;
+}) {
+  return {
+    url: `/proposal/${proposalName}/mx/session/${id}/comments/save`,
+    data: `comments=${encodeURIComponent(comments)}`,
+    headers: {},
   };
 }
 
@@ -108,6 +157,12 @@ export function getMxWorkflow({
   };
 }
 
+export function getMxWorkflowLog({ workflowId }: { workflowId: string }) {
+  return {
+    url: `/mx/workflow/${workflowId}/log`,
+  };
+}
+
 export function getMXContainers({
   proposalName,
   containerIds,
@@ -115,7 +170,8 @@ export function getMXContainers({
   proposalName: string;
   containerIds: string[];
 }) {
-  const containers = containerIds.length ? containerIds.join(',') : 'null';
+  const filtered = containerIds.filter((c) => c !== undefined);
+  const containers = filtered.length ? filtered.join(',') : 'null';
   return {
     url: `/proposal/${proposalName}/mx/sample/containerid/${containers}/list`,
   };
@@ -367,7 +423,7 @@ export function updateSampleChangerLocation({
   return {
     url: `/proposal/${proposalName}/container/${containerId}/beamline/${beamline}/samplechangerlocation/update`,
     data: `sampleChangerLocation=${position}`,
-    headers: { 'content-type': 'application/x-www-form-urlencoded;' },
+    headers: {},
   };
 }
 
@@ -398,8 +454,8 @@ export function updateLabContact({
 }) {
   return {
     url: `/proposal/${proposalName}/shipping/labcontact/save`,
-    data: `labcontact=${JSON.stringify(data)}`,
-    headers: { 'content-type': 'application/x-www-form-urlencoded;' },
+    data: `labcontact=${encodeURIComponent(JSON.stringify(data))}`,
+    headers: {},
   };
 }
 
@@ -467,7 +523,7 @@ export function saveShipment({
   return {
     url: `/proposal/${proposalName}/shipping/save`,
     data: asString,
-    headers: { 'content-type': 'application/x-www-form-urlencoded;' },
+    headers: {},
   };
 }
 
@@ -489,7 +545,7 @@ export function addDewarsToShipping({
   return {
     url: `/proposal/${proposalName}/shipping/${shippingId}/dewars/add`,
     data: encoded,
-    headers: { 'content-type': 'application/x-www-form-urlencoded;' },
+    headers: {},
   };
 }
 
@@ -542,7 +598,7 @@ export function saveContainer({
   return {
     url: `/proposal/${proposalName}/shipping/${shippingId}/dewar/${dewarId}/puck/${containerId}/save`,
     data: encoded,
-    headers: { 'content-type': 'application/x-www-form-urlencoded;' },
+    headers: {},
   };
 }
 
@@ -634,7 +690,7 @@ export function saveParcel({
   return {
     url: `/proposal/${proposalName}/shipping/${shippingId}/dewar/save`,
     data: asString,
-    headers: { 'content-type': 'application/x-www-form-urlencoded;' },
+    headers: {},
   };
 }
 

@@ -1,9 +1,20 @@
+import {
+  ColumnDef,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  useReactTable,
+} from '@tanstack/react-table';
 import { EventChainResource } from 'api/resources/EventChains';
+import { TanstackBootstrapTable } from 'components/Layout/TanstackBootstrapTable';
 import _ from 'lodash';
 import { Event } from 'models/Event';
-import { EventChainResponse, EventType } from 'models/EventChainResponse';
+import {
+  EventChainResponse,
+  EventType,
+  EventResponse,
+} from 'models/EventChainResponse';
 import { Badge, Col, Container, Row, Toast } from 'react-bootstrap';
-import BootstrapTable from 'react-bootstrap-table-next';
 import { useSuspense } from 'rest-hooks';
 
 export function EventChains({ dcg }: { dcg: Event }) {
@@ -102,47 +113,53 @@ export function DetailedEventChain({
 }: {
   eventChain: EventChainResponse;
 }) {
-  return (
-    <BootstrapTable
-      keyField="SessionTableToolkitProvider"
-      data={eventChain.events}
-      bootstrap4
-      striped
-      condensed
-      columns={[
-        { text: 'id', dataField: 'eventChainId', hidden: true },
-        { text: 'offset', dataField: 'offset', sort: true },
+  function addCulumnIfPresent<T extends keyof EventResponse>(
+    field: T
+  ): ColumnDef<EventResponse>[] {
+    if (eventChain.events.some((e) => e[field])) {
+      return [
         {
-          text: 'type',
-          dataField: 'EventType',
-          sort: true,
-          formatter: formatEventTypeObj,
+          header: field,
+          footer: field,
+          accessorKey: field,
+          enableColumnFilter: false,
         },
-        {
-          text: 'name',
-          dataField: 'name',
-          sort: true,
-          hidden: !eventChain.events.some((e) => e.name),
-        },
-        {
-          text: 'duration',
-          dataField: 'duration',
-          sort: true,
-          hidden: !eventChain.events.some((e) => e.duration),
-        },
-        {
-          text: 'period',
-          dataField: 'period',
-          sort: true,
-          hidden: !eventChain.events.some((e) => e.period),
-        },
-        {
-          text: 'repetition',
-          dataField: 'repetition',
-          sort: true,
-          hidden: !eventChain.events.some((e) => e.repetition),
-        },
-      ]}
-    ></BootstrapTable>
-  );
+      ];
+    }
+    return [];
+  }
+  const cols: ColumnDef<EventResponse>[] = [
+    {
+      header: 'offset',
+      footer: 'offset',
+      accessorKey: 'offset',
+      enableColumnFilter: false,
+    },
+    {
+      header: 'type',
+      footer: 'type',
+      accessorKey: 'EventType',
+      cell: (info) => formatEventTypeObj(info.getValue() as EventType),
+      enableColumnFilter: false,
+    },
+    ...addCulumnIfPresent('name'),
+    ...addCulumnIfPresent('duration'),
+    ...addCulumnIfPresent('period'),
+    ...addCulumnIfPresent('repetition'),
+  ];
+
+  const table = useReactTable({
+    data: eventChain.events,
+    columns: cols,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    initialState: {
+      pagination: {
+        pageSize: 20,
+      },
+    },
+  });
+
+  return <TanstackBootstrapTable table={table} />;
 }

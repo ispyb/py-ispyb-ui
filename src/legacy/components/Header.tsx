@@ -1,5 +1,4 @@
-import { Navbar, NavDropdown, Nav } from 'react-bootstrap';
-import { Logout } from 'components/Header';
+import { Navbar, NavDropdown, Nav, NavItem } from 'react-bootstrap';
 import { PersonBadge } from 'react-bootstrap-icons';
 import { useAuth } from 'hooks/useAuth';
 import { NavLink } from 'react-router-dom';
@@ -12,10 +11,10 @@ export function JavaHeader() {
       <Navbar.Collapse id="main-navbar">
         <Nav className="me-auto">
           <Nav.Link as={NavLink} to="/legacy/sessions/list">
-            My sessions
+            All my sessions
           </Nav.Link>
           <Nav.Link as={NavLink} to="/legacy/proposals/list">
-            My proposals
+            All my proposals
           </Nav.Link>
         </Nav>
 
@@ -42,10 +41,34 @@ function PersonMenu() {
       align="end"
     >
       <NavDropdown.Header><div className='new-line'>{javaPerson?.roles.join('\n\r')}</div></NavDropdown.Header>
-      
+      <Logout />
+      <NavDropdown.ItemText>
+        <small
+          style={{
+            fontSize: '12px',
+          }}
+        >
+          <i>Permissions: {javaPerson?.roles}</i>
+        </small>
+      </NavDropdown.ItemText>
     </NavDropdown>
   );
 }
+
+export function Logout() {
+  const { clearToken } = useAuth();
+  return (
+    <NavDropdown.Item
+      as={NavItem}
+      onClick={() => {
+        clearToken();
+      }}
+    >
+      Log out
+    </NavDropdown.Item>
+  );
+}
+
 export function JavaProposalMenu({ proposal }: { proposal: string }) {
   return (
     <>

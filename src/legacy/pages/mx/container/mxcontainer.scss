@@ -11,10 +11,12 @@ circle.sampleCollectedSelected {
   fill: $warning;
 }
 circle.sampleFilled {
-  fill: $secondary;
+  stroke: #000;
+  stroke-width: 2;
+  fill: $light;
 }
 circle.sampleEmpty {
-  fill: $light;
+  fill: transparent;
 }
 
 circle.sample-clickable:hover {
@@ -24,26 +26,26 @@ circle.sample-clickable:hover {
 
 text.sampleCollected {
   fill: color-contrast($primary);
-  font-size: 8.25px;
+  font-size: 12px;
   text-anchor: middle;
   pointer-events: none;
 }
 text.sampleCollectedSelected {
   fill: color-contrast($warning);
-  font-size: 8.25px;
+  font-size: 12px;
   text-anchor: middle;
   pointer-events: none;
 }
 text.sampleFilled {
-  fill: color-contrast($secondary);
-  font-size: 8.25px;
+  fill: color-contrast($light);
+  font-size: 12px;
   text-anchor: middle;
   pointer-events: none;
 }
 
 text.sampleEmpty {
   fill: color-contrast($light);
-  font-size: 8.25px;
+  font-size: 12px;
   text-anchor: middle;
   pointer-events: none;
 }

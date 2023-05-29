@@ -22,15 +22,15 @@ export default function GridSquare({
   sessionId: string;
 }) {
   return (
-    <Card style={{ width: '18rem' }}>
+    <Card>
       <ZoomImage
+        alt="Grid square"
         src={
           getCrystalImage({ proposalName, dataCollectionId, imageIndex: 1 }).url
         }
       />
       <Card.Body>
         <Card.Title>
-          {' '}
           N<sup>o</sup> movies:
           <Badge style={{ marginLeft: '10px' }}>{movieCount}</Badge>
           <p>{startTime}</p>

@@ -8,6 +8,7 @@ import {
   InputGroup,
   FormControl,
   Button,
+  Container,
 } from 'react-bootstrap';
 import { Parcel, Shipment } from './model';
 import './shipmentstab.scss';
@@ -16,7 +17,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { ShipmentView } from './shipmentview';
 import { EditShippingModal } from './shipmenteditmodal';
-import LoadingPanel from 'legacy/components/loading/loadingpanel';
+import Loading from 'components/Loading';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars,no-unused-vars
 export function ShipmentsTab({ proposalName }: { proposalName: string }) {
@@ -66,64 +67,66 @@ export function ShipmentsTab({ proposalName }: { proposalName: string }) {
     });
 
   return (
-    <Row>
-      <Col md="auto">
-        <Row style={{ paddingRight: 12, paddingLeft: 12 }}>
-          <Button
-            style={{ margin: 5, marginTop: 10 }}
-            onClick={() => setShowNewShipmentModal(true)}
-          >
-            <FontAwesomeIcon
-              style={{ marginRight: 5 }}
-              icon={faPlus}
-            ></FontAwesomeIcon>
-            Create new shipment
-          </Button>
-          <EditShippingModal
-            proposalName={proposalName}
-            mutateShipments={mutate}
-            show={showNewShipmentModal}
-            setShow={setShowNewShipmentModal}
-          ></EditShippingModal>
-        </Row>
-        <Row>
-          <InputGroup style={{ margin: 5 }}>
-            <InputGroup.Text>
-              <FontAwesomeIcon icon={faSearch}></FontAwesomeIcon>
-            </InputGroup.Text>
-            <FormControl
-              placeholder={`search in ${shipments.length} shipments...`}
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </InputGroup>
-        </Row>
-        <Row style={{ height: '75vh', overflowY: 'scroll' }}>
-          <Col>
-            {filteredShipments.map((s) => (
-              <ShipmentCard
-                key={s.Shipping_shippingId}
-                onClick={() => setSelected(s)}
-                proposalName={proposalName}
-                shipment={s}
-                selected={
-                  s.Shipping_shippingId === selected?.Shipping_shippingId
-                }
-              ></ShipmentCard>
-            ))}
-          </Col>
-        </Row>
-      </Col>
-      <Col>
-        <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-          <ShipmentView
-            mutateShipments={mutate}
-            proposalName={proposalName}
-            shipment={selected}
-          ></ShipmentView>
-        </Suspense>
-      </Col>
-    </Row>
+    <Container fluid>
+      <Row>
+        <Col md="auto">
+          <Row style={{ paddingRight: 12, paddingLeft: 12 }}>
+            <Button
+              style={{ margin: 5, marginTop: 10 }}
+              onClick={() => setShowNewShipmentModal(true)}
+            >
+              <FontAwesomeIcon
+                style={{ marginRight: 5 }}
+                icon={faPlus}
+              ></FontAwesomeIcon>
+              Create new shipment
+            </Button>
+            <EditShippingModal
+              proposalName={proposalName}
+              mutateShipments={mutate}
+              show={showNewShipmentModal}
+              setShow={setShowNewShipmentModal}
+            ></EditShippingModal>
+          </Row>
+          <Row>
+            <InputGroup style={{ margin: 5 }}>
+              <InputGroup.Text>
+                <FontAwesomeIcon icon={faSearch}></FontAwesomeIcon>
+              </InputGroup.Text>
+              <FormControl
+                placeholder={`search in ${shipments.length} shipments...`}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+            </InputGroup>
+          </Row>
+          <Row style={{ height: '75vh', overflowY: 'scroll' }}>
+            <Col>
+              {filteredShipments.map((s) => (
+                <ShipmentCard
+                  key={s.Shipping_shippingId}
+                  onClick={() => setSelected(s)}
+                  proposalName={proposalName}
+                  shipment={s}
+                  selected={
+                    s.Shipping_shippingId === selected?.Shipping_shippingId
+                  }
+                ></ShipmentCard>
+              ))}
+            </Col>
+          </Row>
+        </Col>
+        <Col>
+          <Suspense fallback={<Loading />}>
+            <ShipmentView
+              mutateShipments={mutate}
+              proposalName={proposalName}
+              shipment={selected}
+            ></ShipmentView>
+          </Suspense>
+        </Col>
+      </Row>
+    </Container>
   );
 }
 

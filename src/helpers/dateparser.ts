@@ -13,6 +13,9 @@ export function formatDateToDayAndTime(dateTime: string | undefined): string {
 export function formatDateToTime(dateTime: string | undefined): string {
   return formatDateTo(dateTime, 'HH:mm:ss');
 }
+export function formatDateToHour(dateTime: string | undefined): string {
+  return formatDateTo(dateTime, 'HH:mm');
+}
 export function formatDateToDayAndPreciseTime(
   dateTime: string | undefined
 ): string {

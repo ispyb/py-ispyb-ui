@@ -6,9 +6,11 @@ import { Col, OverlayTrigger, Tooltip } from 'react-bootstrap';
 export function HelpIcon({
   message,
   size = '1x',
+  style,
 }: {
   message: string | string[];
   size?: SizeProp;
+  style?: React.CSSProperties;
 }) {
   return (
     <OverlayTrigger
@@ -19,17 +21,22 @@ export function HelpIcon({
           <div style={{ textAlign: 'left' }}>
             {message instanceof Array
               ? message.map((line) => (
-                  <>
+                  <div key={line}>
                     {line}
                     <br />
-                  </>
+                  </div>
                 ))
               : message}
           </div>
         </Tooltip>
       }
     >
-      <FontAwesomeIcon size={size} color="gray" icon={faQuestionCircle} />
+      <FontAwesomeIcon
+        size={size}
+        style={style}
+        color="gray"
+        icon={faQuestionCircle}
+      />
     </OverlayTrigger>
   );
 }

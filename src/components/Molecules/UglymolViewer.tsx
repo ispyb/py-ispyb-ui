@@ -24,7 +24,7 @@ export function UglyMolPreview({
   const fallback = (
     <UnloadedUglyMolViewer
       title={title}
-      height={250}
+      height={200}
       setShow={setShow}
       show={show}
     />
@@ -37,7 +37,7 @@ export function UglyMolPreview({
           <UglyMolViewer
             mol={mol}
             title={title}
-            height={250}
+            height={200}
             unload={() => setShow(false)}
           />
         </Suspense>

@@ -77,24 +77,20 @@ export function TableContent({ item }: { item: WorkflowStepItem }) {
 export function ImagesContent({ item }: { item: WorkflowStepItem }) {
   return (
     <Row>
-      <Table responsive>
-        <tr>
-          {item.items?.map((value) => {
-            const src = 'data:image/png;base64,' + value.value;
-            return (
-              <td key={value.title}>
-                <ZoomImage
-                  style={{ maxWidth: 500 }}
-                  lazy={false}
-                  src={src}
-                  local={true}
-                  legend={value.title}
-                ></ZoomImage>
-              </td>
-            );
-          })}
-        </tr>
-      </Table>
+      {item.items?.map((value) => {
+        const src = 'data:image/png;base64,' + value.value;
+        return (
+          <Col key={value.title}>
+            <ZoomImage
+              alt={value.title}
+              style={{ maxWidth: 500, marginBottom: 15 }}
+              src={src}
+              local={true}
+              legend={value.title}
+            />
+          </Col>
+        );
+      })}
     </Row>
   );
 }

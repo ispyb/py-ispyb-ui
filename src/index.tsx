@@ -7,6 +7,7 @@ import App from './App';
 // import reportWebVitals from './reportWebVitals';
 import './scss/main.scss';
 import { AuthProvider } from 'hooks/useAuth';
+import { PersistentParamStateProvider } from 'hooks/useParam';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
@@ -15,7 +16,9 @@ root.render(
     <CacheProvider>
       <AuthProvider>
         <SuspenseRouter>
-          <App />
+          <PersistentParamStateProvider>
+            <App />
+          </PersistentParamStateProvider>
         </SuspenseRouter>
       </AuthProvider>
     </CacheProvider>

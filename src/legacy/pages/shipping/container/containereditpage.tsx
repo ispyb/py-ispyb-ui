@@ -17,8 +17,7 @@ import {
   parseTableData,
 } from './containertotabledata';
 import { registerAllCellTypes } from 'handsontable/cellTypes';
-import { Suspense, useEffect, useState } from 'react';
-import LoadingPanel from 'legacy/components/loading/loadingpanel';
+import { useEffect, useState } from 'react';
 import LazyWrapper from 'legacy/components/loading/lazywrapper';
 import _ from 'lodash';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -36,6 +35,7 @@ import { validateContainers } from 'legacy/helpers/mx/shipping/containervalidati
 import { EXPERIMENT_TYPES } from 'legacy/constants/experiments';
 import { useAuth } from 'hooks/useAuth';
 import { SPACE_GROUPS } from 'helpers/spacegroups';
+import Loading from 'components/Loading';
 
 type Param = {
   proposalName: string;
@@ -147,21 +147,19 @@ export default function ContainerEditPage() {
         </h5>
       </Alert>
       {refreshing ? (
-        <LoadingPanel></LoadingPanel>
+        <Loading />
       ) : (
-        <LazyWrapper>
-          <Suspense fallback={<LoadingPanel></LoadingPanel>}>
-            <ContainerEditor
-              key={forceRefreshEditor}
-              proposalName={proposalName}
-              proposal={proposal}
-              proposalSamples={proposalSamples}
-              container={container}
-              shipping={shipping}
-              dewar={dewar}
-              forceRefresh={forceRefresh}
-            ></ContainerEditor>
-          </Suspense>
+        <LazyWrapper placeholder={<Loading />}>
+          <ContainerEditor
+            key={forceRefreshEditor}
+            proposalName={proposalName}
+            proposal={proposal}
+            proposalSamples={proposalSamples}
+            container={container}
+            shipping={shipping}
+            dewar={dewar}
+            forceRefresh={forceRefresh}
+          ></ContainerEditor>
         </LazyWrapper>
       )}
     </Col>

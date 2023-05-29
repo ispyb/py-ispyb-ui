@@ -5,6 +5,8 @@ import {
   BreadcrumbComponentType,
   BreadcrumbMatch,
 } from 'use-react-router-breadcrumbs';
+import MXSessionPage from '../pages/mx/session/MXSessionPage';
+import { Navigate } from 'react-router-dom';
 
 const SessionClassificationPage = React.lazy(() =>
   import(
@@ -34,30 +36,23 @@ const SessionStatisticsPage = React.lazy(() =>
     })
   )
 );
-const MXDataCollectionGroupPage = React.lazy(() =>
+const MXSessionSummaryPage = React.lazy(() =>
   import(
-    'legacy/pages/mx/datacollectiongroup' /* webpackChunkName: "legacy_mx_dcg" */
+    'legacy/pages/mx/session/summary' /* webpackChunkName: "legacy_mx_summary" */
   ).then((m) => ({
-    default: m.MXDataCollectionGroupPage,
+    default: m.MXSessionSummaryPage,
   }))
 );
-const MXEnergyScanPage = React.lazy(() =>
+const MXAcquisitionsPage = React.lazy(() =>
   import(
-    'legacy/pages/mx/energyscan' /* webpackChunkName: "legacy_mx_energy" */
+    'legacy/pages/mx/session/acquisitions' /* webpackChunkName: "legacy_mx_acquisitions" */
   ).then((m) => ({
-    default: m.MXEnergyScanPage,
-  }))
-);
-const MXFluorescencePage = React.lazy(() =>
-  import(
-    'legacy/pages/mx/fluorescence' /* webpackChunkName: "legacy_mx_fluo" */
-  ).then((m) => ({
-    default: m.MXFluorescencePage,
+    default: m.MXAcquisitionsPage,
   }))
 );
 const MxFluorescenceViewer = React.lazy(() =>
   import(
-    'legacy/pages/mx/fluorescence' /* webpackChunkName: "legacy_mx_fluo" */
+    'legacy/pages/mx/dataset/fluorescence' /* webpackChunkName: "legacy_mx_fluo" */
   ).then((m) => ({
     default: m.MxFluorescenceViewer,
   }))
@@ -120,7 +115,7 @@ const ProposalBreadCrumb: BreadcrumbComponentType<'proposalName'> = ({
 };
 
 const javaRoutes: TitledBreadcrumbsRoute[] = [
-  { index: true, element: <SessionsPage />, breadcrumb: null },
+  { index: true, element: <Navigate to="sessions/list" />, breadcrumb: null },
   { path: 'sessions/list', element: <SessionsPage />, breadcrumb: 'Sessions' },
   {
     path: 'proposals/list',
@@ -200,16 +195,13 @@ const javaRoutes: TitledBreadcrumbsRoute[] = [
           { path: 'prepare', element: <PrepareExperimentPage /> },
           {
             path: ':sessionId',
+            element: <MXSessionPage />,
             children: [
-              { path: 'summary', element: <MXDataCollectionGroupPage /> },
-              {
-                path: 'energy',
-                element: <MXEnergyScanPage />,
-              },
+              { path: 'summary', element: <MXSessionSummaryPage /> },
+              { path: 'collection', element: <MXAcquisitionsPage /> },
               {
                 path: 'xrf',
                 children: [
-                  { index: true, element: <MXFluorescencePage /> },
                   { path: ':xrfId', element: <MxFluorescenceViewer /> },
                 ],
               },

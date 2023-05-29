@@ -36,7 +36,6 @@ export function CompactSSXContent({
     <Col>
       <MetadataRow properties={fields} />
       <Row>
-        {' '}
         <CompactSSXStats dcs={dcs}></CompactSSXStats>
       </Row>
     </Col>

@@ -50,6 +50,7 @@ export interface Grid {
   dataCollectionId: number;
   startTime: string;
   movieCount: number;
+  imageDirectory: string;
 }
 
 export interface SampleList {
@@ -73,6 +74,7 @@ interface Statistics {
 export interface DataCollections {
   dataCollectionIdList: string;
   magnificationList: string;
+  imageDirectoryList: string;
   totalNumberOfDataCollections: number;
   stats: Statistics[];
   imagesCount: number;
@@ -89,6 +91,7 @@ export interface Record {
   averageMotionPerFrame: string;
   resolutionLimit: string;
   angle: string;
+  dataCollectionId: number;
 }
 
 export interface StatisticsPlotData {
@@ -103,4 +106,6 @@ export interface StatisticsPlotData {
   angleDistribution: (number | string)[][];
   angle: number[];
   defocusDifference: number[];
+  movieId: number[];
+  collectionId: number[];
 }

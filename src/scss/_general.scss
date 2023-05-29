@@ -9,14 +9,13 @@ html {
 
 .breadcrumbs {
   background-color: $tertiary;
-  font-family: Poppins;
   font-size: 12px;
   font-weight: 400;
-  padding: 0.25rem 0;
+  font-style: italic;
 }
 
 .loading-progress {
-  background-color: $tertiary;
+  background-color: 'transparent';
 }
 
 .main {
@@ -76,20 +75,16 @@ html {
   opacity: 1;
 }
 
-.react-bootstrap-table table {
-  table-layout: auto !important;
-}
-
 .card-header {
   background-color: $tertiary !important;
   color: color-contrast($tertiary) !important;
 }
 
-.card-header .nav-link {
+.card-header .nav-tabs .nav-link[role='tab'] {
   color: color-contrast($tertiary) !important;
 }
 
-.card-header .nav-link.active {
+.card-header .nav-tabs .nav-link.active[role='tab'] {
   color: color-contrast($white) !important;
 }
 

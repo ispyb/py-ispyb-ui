@@ -13,15 +13,14 @@ type Param = {
 
 export default function ProposalSessionsPage() {
   const { javaPerson } = useAuth();
-  const isManager = javaPerson?.roles.includes('Manager') || false;
+  const isManager =
+    javaPerson?.roles.some((r) => r.toLowerCase().includes('manager')) || false;
   const username = javaPerson?.username || '';
   const { proposalName } = useParams<Param>();
   const [areEMColumnsVisible, setAreEMColumnsVisible] = useState(true);
   const [areMXColumnsVisible, setAreMXColumnsVisible] = useState(true);
-  const [areSAXSColumnsVisible, setAreSAXSColumnsVisible] = useState(false);
   const beamlines: string[] = useGetBeamlines({
     areMXColumnsVisible,
-    areSAXSColumnsVisible,
     areEMColumnsVisible,
   });
 
@@ -46,10 +45,8 @@ export default function ProposalSessionsPage() {
       setShowEmptySessions={setShowEmptySessions}
       areEMColumnsVisible={areEMColumnsVisible}
       areMXColumnsVisible={areMXColumnsVisible}
-      areSAXSColumnsVisible={areSAXSColumnsVisible}
       setAreEMColumnsVisible={setAreEMColumnsVisible}
       setAreMXColumnsVisible={setAreMXColumnsVisible}
-      setAreSAXSColumnsVisible={setAreSAXSColumnsVisible}
     ></SessionTable>
   );
 }

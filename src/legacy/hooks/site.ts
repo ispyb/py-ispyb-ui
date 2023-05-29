@@ -1,4 +1,4 @@
-import { useAuth } from 'hooks/useAuth';
+import { AuthData, useAuth } from 'hooks/useAuth';
 
 /**
  * It returns the name of the beamlines per technique as it is defined in config/sites.hs
@@ -28,7 +28,15 @@ export function useBeamlinesObjects(technique: string) {
  * @returns Name of the beamline. Example: ID29
  */
 export function useGetTechniqueByBeamline(beamline: string): string | null {
-  const { site } = useAuth();
+  const auth = useAuth();
+  return getTechniqueByBeamline(auth, beamline);
+}
+
+export function getTechniqueByBeamline(
+  auth: AuthData,
+  beamline: string
+): string | null {
+  const { site } = auth;
   if (site.javaConfig) {
     for (const [techniqueName, technique] of Object.entries(
       site.javaConfig.techniques
@@ -43,24 +51,17 @@ export function useGetTechniqueByBeamline(beamline: string): string | null {
 
 export function useGetBeamlines({
   areMXColumnsVisible,
-  areSAXSColumnsVisible,
   areEMColumnsVisible,
 }: {
   areMXColumnsVisible: boolean;
-  areSAXSColumnsVisible: boolean;
   areEMColumnsVisible: boolean;
 }): string[] {
   let beamlines: string[] = [];
 
   const mxBeamlines = useBeamlines('MX');
-  const saxsBeamlines = useBeamlines('SAXS');
   const emBeamlines = useBeamlines('EM');
   if (areMXColumnsVisible) {
     beamlines = beamlines.concat(mxBeamlines);
-  }
-
-  if (areSAXSColumnsVisible) {
-    beamlines = beamlines.concat(saxsBeamlines);
   }
 
   if (areEMColumnsVisible) {

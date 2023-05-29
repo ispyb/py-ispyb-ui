@@ -58,12 +58,15 @@ import {
 import { dateToTimestamp } from 'legacy/helpers/dateparser';
 import { parse } from 'date-fns';
 import { useAuth } from 'hooks/useAuth';
+import { Classification, DataCollections, Record } from 'legacy/pages/em/model';
 
 interface GetHookOption {
   autoRefresh: boolean;
+  refreshInterval?: number;
 }
 const defaultOptions: GetHookOption = {
   autoRefresh: true,
+  refreshInterval: 1000 * 60,
 };
 
 // eslint-disable-next-line no-unused-vars,@typescript-eslint/no-explicit-any
@@ -90,6 +93,7 @@ function useGet<T = any>(
       revalidateIfStale: options.autoRefresh,
       revalidateOnFocus: options.autoRefresh,
       revalidateOnReconnect: options.autoRefresh,
+      refreshInterval: options.refreshInterval,
     }
   );
   return {
@@ -171,17 +175,20 @@ export function useSessions(
 }
 
 export function useSession(
-  { sessionId }: { sessionId: string },
+  { proposalName, sessionId }: { proposalName: string; sessionId: string },
   options?: GetHookOption
 ) {
-  return useGet(getSessionById(sessionId).url, options);
+  return useGet<Session[]>(
+    getSessionById(proposalName, sessionId).url,
+    options
+  );
 }
 
 export function useEMDataCollectionsBy(
   { proposalName, sessionId }: ProposalSessionId,
   options?: GetHookOption
 ) {
-  return useGet(
+  return useGet<DataCollections[]>(
     getEMDataCollectionsBy({ proposalName, sessionId }).url,
     options
   );
@@ -255,7 +262,10 @@ export function useEMStatistics(
   { proposalName, sessionId }: ProposalSessionId,
   options?: GetHookOption
 ) {
-  return useGet(getEMStatisticsBy({ proposalName, sessionId }).url, options);
+  return useGet<Record[]>(
+    getEMStatisticsBy({ proposalName, sessionId }).url,
+    options
+  );
 }
 
 export function useMoviesByDataCollectionId(
@@ -275,7 +285,7 @@ export function useEMClassification(
   { proposalName, sessionId }: ProposalSessionId,
   options?: GetHookOption
 ) {
-  return useGet(
+  return useGet<Classification[]>(
     getEMClassificationBy({ proposalName, sessionId }).url,
     options
   );

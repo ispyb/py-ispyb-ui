@@ -1,10 +1,7 @@
-import { useRef, useEffect } from 'react';
+import React from '@handsontable/react';
+import { usePersistentParamState } from 'hooks/useParam';
+import { useMemo } from 'react';
 import { Form, Row, Col } from 'react-bootstrap';
-import {
-  useNavigate,
-  createSearchParams,
-  useSearchParams,
-} from 'react-router-dom';
 
 interface Props {
   total: number;
@@ -14,15 +11,25 @@ interface Props {
 }
 
 export default function Paginator(props: Props) {
-  const { total, skip, limit, suffix } = props;
+  const { total, skip: skipDefault, limit: limitDefault, suffix } = props;
   const skipParam = suffix ? `skip-${suffix}` : 'skip';
   const limitParam = suffix ? `limit-${suffix}` : 'limit';
-  const limitRef = useRef<any>();
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+
   // @ts-ignore
-  const searchParamsObj = Object.fromEntries([...searchParams]);
-  const searchLimit = searchParamsObj[limitParam];
+
+  const [currentLimitValue, setCurrentLimitValue] = usePersistentParamState(
+    limitParam,
+    limitDefault.toString()
+  );
+  const limit = useMemo(
+    () => parseFloat(currentLimitValue),
+    [currentLimitValue]
+  );
+  const [currentSkipValue, setCurrentSkipValue] = usePersistentParamState(
+    skipParam,
+    skipDefault.toString()
+  );
+  const skip = useMemo(() => parseFloat(currentSkipValue), [currentSkipValue]);
 
   const nPages = Math.ceil(total / limit);
   const currentPage = skip / limit + 1;
@@ -33,34 +40,15 @@ export default function Paginator(props: Props) {
       : currentPage > nPages - 2
       ? nPages - 2
       : currentPage - 1;
-  useEffect(() => {
-    if (limitRef.current) {
-      limitRef.current.value = searchLimit;
-    }
-  }, [searchLimit]);
 
   const gotoPage = (page: number) => {
     const newSkip = limit * (page - 1);
-    const newParams = {
-      ...searchParamsObj,
-    };
-    newParams[skipParam] = newSkip.toString();
-    newParams[limitParam] = limit.toString();
-    navigate({
-      pathname: '',
-      search: createSearchParams(newParams).toString(),
-    });
+    setCurrentSkipValue(newSkip.toString());
   };
 
   const changeLimit = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newParams = {
-      ...searchParamsObj,
-    };
-    newParams[limitParam] = e.target.value;
-    navigate({
-      pathname: '',
-      search: createSearchParams(newParams).toString(),
-    });
+    const newLimit = e.target.value;
+    setCurrentLimitValue(newLimit);
   };
 
   return (
@@ -116,14 +104,20 @@ export default function Paginator(props: Props) {
           &raquo;
         </div>
       </Col>
-      <Col>
+      <Col
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+        }}
+      >
+        <span>Show:</span>
         <Form.Control
-          ref={limitRef}
           as="select"
           onChange={changeLimit}
-          defaultValue={searchParamsObj[limitParam] || limit}
+          value={currentLimitValue}
         >
-          {[5, 10, 25].map((i) => (
+          {[5, 10, 25, 50, 100].map((i) => (
             <option key={`limit-${i}`} value={i}>
               {i}
             </option>
