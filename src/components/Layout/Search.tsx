@@ -1,44 +1,26 @@
+import { usePersistentParamState } from 'hooks/useParam';
 import { debounce } from 'lodash';
 import { useEffect, useRef } from 'react';
 import { Form, InputGroup, Button } from 'react-bootstrap';
 import { X } from 'react-bootstrap-icons';
-import {
-  useNavigate,
-  useSearchParams,
-  createSearchParams,
-} from 'react-router-dom';
+import {} from 'react-router-dom';
 
 export default function Search({ focus }: { focus?: boolean }) {
-  const navigate = useNavigate();
+  const [search, setSearch] = usePersistentParamState<string>('search', '');
   const searchRef = useRef<HTMLInputElement | null>(null);
-  const [searchParams] = useSearchParams();
-  // @ts-ignore
-  const searchParamsObj = Object.fromEntries([...searchParams]);
 
   useEffect(() => {
     if (focus) searchRef.current?.focus();
   }, [focus]);
 
   function doSearch(e: React.ChangeEvent<HTMLInputElement>) {
-    const { search, ...excludeSearch } = searchParamsObj;
-    navigate({
-      pathname: '',
-      search: createSearchParams({
-        ...excludeSearch,
-        search: e.target.value,
-      }).toString(),
-    });
+    setSearch(e.target.value || '');
   }
 
   function clear() {
     if (searchRef.current) searchRef.current.value = '';
-    const { search, ...excludeSearch } = searchParamsObj;
-    navigate({
-      pathname: '',
-      search: createSearchParams({
-        ...excludeSearch,
-      }).toString(),
-    });
+    setSearch('');
+
     searchRef.current?.focus();
   }
 
@@ -50,9 +32,9 @@ export default function Search({ focus }: { focus?: boolean }) {
         placeholder="Search"
         ref={searchRef}
         onChange={debouncedDoSearch}
-        defaultValue={searchParamsObj.search}
+        defaultValue={search}
       />
-      {searchParamsObj.search && (
+      {search && (
         <Button onClick={clear}>
           <X />
         </Button>

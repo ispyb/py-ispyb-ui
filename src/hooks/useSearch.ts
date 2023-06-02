@@ -1,10 +1,10 @@
-import { useSearchParams } from 'react-router-dom';
+import { usePersistentParamState } from './useParam';
 
 /**
  * Get the query search parameter
  * @returns - the search parameter
  */
 export function useSearch() {
-  const [searchParams] = useSearchParams();
-  return searchParams.get('search');
+  const [searchParam] = usePersistentParamState<string>('search', '');
+  return searchParam;
 }
