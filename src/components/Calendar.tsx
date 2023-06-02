@@ -13,9 +13,19 @@ import { Button, ButtonGroup, Col, Row } from 'react-bootstrap';
 import { Session } from 'models/Session';
 import { usePath } from 'hooks/usePath';
 import { range } from 'lodash';
+import { usePersistentParamState } from 'hooks/useParam';
 
-function CalendarNav({ year, month }: { year: number; month: number }) {
-  const navigate = useNavigate();
+function CalendarNav({
+  year,
+  month,
+  setMonthParam,
+  setYearParam,
+}: {
+  year: number;
+  month: number;
+  setMonthParam: (month: string) => void;
+  setYearParam: (year: string) => void;
+}) {
   const today = DateTime.now();
   const currentMonth = DateTime.fromObject({ year, month });
 
@@ -26,12 +36,8 @@ function CalendarNav({ year, month }: { year: number; month: number }) {
   const nextMonth = currentMonth.plus({ month: 1 });
 
   function goto(date: DateTime) {
-    navigate({
-      search: createSearchParams({
-        year: date.year.toString(),
-        month: date.month.toString(),
-      }).toString(),
-    });
+    setMonthParam(date.month.toString());
+    setYearParam(date.year.toString());
   }
 
   return (
@@ -160,10 +166,12 @@ function CalendarDays({ year, month }: { year: number; month: number }) {
 
 export default function Calendar() {
   const now = DateTime.now();
-  const [searchParams] = useSearchParams();
-  const yearParam = searchParams.get('year');
+  const [yearParam, setYearParam] = usePersistentParamState<string>('year', '');
   const year = yearParam !== null ? parseInt(yearParam) : now.year;
-  const monthParam = searchParams.get('month');
+  const [monthParam, setMonthParam] = usePersistentParamState<string>(
+    'month',
+    ''
+  );
   const month = monthParam !== null ? parseInt(monthParam) : now.month;
 
   return (
@@ -172,7 +180,12 @@ export default function Calendar() {
         {Info.months()[month - 1]} {year}
       </h1>
       <div className="calendar">
-        <CalendarNav month={month} year={year} />
+        <CalendarNav
+          month={month}
+          year={year}
+          setYearParam={setYearParam}
+          setMonthParam={setMonthParam}
+        />
         <CalendarHeader />
         <CalendarDays month={month} year={year} />
       </div>
