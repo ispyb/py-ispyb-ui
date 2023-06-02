@@ -162,12 +162,12 @@ function CalendarDays({ year, month }: { year: number; month: number }) {
 export default function Calendar() {
   const now = DateTime.now();
   const [yearParam, setYearParam] = usePersistentParamState<string>('year', '');
-  const year = yearParam !== null ? parseInt(yearParam) : now.year;
+  const year = yearParam ? parseInt(yearParam) : now.year;
   const [monthParam, setMonthParam] = usePersistentParamState<string>(
     'month',
     ''
   );
-  const month = monthParam !== null ? parseInt(monthParam) : now.month;
+  const month = monthParam ? parseInt(monthParam) : now.month;
 
   return (
     <section>
