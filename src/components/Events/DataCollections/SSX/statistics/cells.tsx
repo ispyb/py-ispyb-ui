@@ -26,36 +26,38 @@ export function UnitCellStatistics({ dcs }: { dcs: Event[] }) {
   ];
 
   return (
-    <Row>
-      <Col md={'auto'}>
-        <div className="flex-nowrap">
-          {cells1.map((cell) => {
-            const d = data[cell];
-            if (!d || !('x' in d)) return null;
-            return (
+    <Col>
+      <Row>
+        {cells1.map((cell) => {
+          const d = data[cell];
+          if (!d || !('x' in d)) return null;
+          return (
+            <Col key={cell} md={'auto'}>
               <UnitCellParamGraph
                 key={cell}
                 name={cell}
                 data={d}
               ></UnitCellParamGraph>
-            );
-          })}
-        </div>
-        <div className="flex-nowrap">
-          {cells2.map((cell) => {
-            const d = data[cell];
-            if (!d || !('x' in d)) return null;
-            return (
+            </Col>
+          );
+        })}
+      </Row>
+      <Row>
+        {cells2.map((cell) => {
+          const d = data[cell];
+          if (!d || !('x' in d)) return null;
+          return (
+            <Col key={cell} md={'auto'}>
               <UnitCellParamGraph
                 key={cell}
                 name={cell}
                 data={d}
               ></UnitCellParamGraph>
-            );
-          })}
-        </div>
-      </Col>
-    </Row>
+            </Col>
+          );
+        })}
+      </Row>
+    </Col>
   );
 }
 

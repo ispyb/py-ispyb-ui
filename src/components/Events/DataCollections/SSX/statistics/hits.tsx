@@ -105,7 +105,7 @@ export function DataCollectionGroupHitGraph({ dcs }: { dcs: Event[] }) {
       : 0;
   });
 
-  const x = _.range(1, data.length + 1);
+  const x = _.range(1, dcs.length + 1);
   const y1 = dcs.map((dc) => getStats(data, dc.id)?.nbHits || 0);
   const y2 = dcs.map((dc) => getStats(data, dc.id)?.nbIndexed || 0);
   const colors = dcs.map((dc, index) => {

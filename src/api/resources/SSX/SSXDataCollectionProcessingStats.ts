@@ -14,11 +14,14 @@ export const SSXDataCollectionProcessingStatsEndpoint =
     path: '/ssx/datacollection/processing/stats',
     schema: [SSXDataCollectionProcessingStatsEntity],
     process(value, params) {
-      value.key = `dataCollectionIds:${params.dataCollectionIds
-        .split(',')
-        .sort()
-        .join(',')}`;
-      return value;
+      const res = value.map((v: any) => {
+        v.key = `dataCollectionIds:${params.dataCollectionIds
+          .split(',')
+          .sort()
+          .join(',')}`;
+        return v;
+      });
+      return res;
     },
     searchParams: {} as {
       dataCollectionIds: string;
