@@ -100,7 +100,7 @@ export function StorageRing({
 }) {
   const properties = [
     { title: 'Filling mode', content: session?.BeamLineSetup?.synchrotronMode },
-    { title: 'Ondulator', content: session?.BeamLineSetup?.undulatorType1 },
+    { title: 'Undulator', content: session?.BeamLineSetup?.undulatorType1 },
     { title: 'Gap', content: dc.undulatorGap1 },
   ];
   return <MetadataCol properties={properties}></MetadataCol>;
