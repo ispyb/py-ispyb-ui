@@ -44,12 +44,15 @@ export function InformationPane({
   const [showEditModal, setShowEditModal] = useState(false);
   const { site, token } = useAuth();
 
+  const javaName = site?.javaName;
+  const sentToFacilityStatus = 'Sent_to_' + javaName;
+
   const onSendToFacility = () => {
     setSendingShipment(true);
     const req = updateShippingStatus({
       proposalName,
       shippingId: shipping.shippingId,
-      status: 'Sent_to_ESRF',
+      status: sentToFacilityStatus,
     });
     const fullUrl = `${site.host}${site.apiPrefix}/${token}${req.url}`;
     axios.get(fullUrl).then(
