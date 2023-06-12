@@ -141,15 +141,21 @@ export default function columns(props: Props): ColumnDef<Session>[] {
 
       accessorKey: 'comments',
       cell: (info) => (
-        <EditComments
-          comments={(info.getValue() as string) || ''}
-          proposalName={
-            info.row.original.Proposal_proposalCode +
-            info.row.original.Proposal_ProposalNumber
-          }
-          id={info.row.original.sessionId?.toString() || ''}
-          saveReq={updateSessionComments}
-        />
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+        >
+          <EditComments
+            comments={(info.getValue() as string) || ''}
+            proposalName={
+              info.row.original.Proposal_proposalCode +
+              info.row.original.Proposal_ProposalNumber
+            }
+            id={info.row.original.sessionId?.toString() || ''}
+            saveReq={updateSessionComments}
+          />
+        </div>
       ),
     },
   ];

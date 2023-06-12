@@ -15,6 +15,8 @@ import { useMemo } from 'react';
 import { getTechniqueByBeamline } from 'legacy/hooks/site';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from 'hooks/useAuth';
+import _ from 'lodash';
+import { parseDate } from 'helpers/dateparser';
 
 interface Props {
   data?: Session[];
@@ -61,7 +63,17 @@ export default function SessionTable({
     userPortalLink,
   });
 
-  const dataTable = useMemo(() => data || [], [data]);
+  const dataTable = useMemo(
+    () =>
+      _(data)
+        .sort((a, b) => {
+          const aDate = parseDate(a.BLSession_startDate);
+          const bDate = parseDate(b.BLSession_startDate);
+          return bDate.getTime() - aDate.getTime();
+        })
+        .value(),
+    [data]
+  );
 
   const table = useReactTable({
     data: dataTable,
@@ -71,7 +83,7 @@ export default function SessionTable({
     getPaginationRowModel: getPaginationRowModel(),
     initialState: {
       pagination: {
-        pageSize: 10,
+        pageSize: 20,
       },
     },
   });
