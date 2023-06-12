@@ -5,6 +5,7 @@ import {
   Container,
   OverlayTrigger,
   Row,
+  Spinner,
   Tooltip,
 } from 'react-bootstrap';
 import { useDewars } from 'legacy/hooks/ispyb';
@@ -24,7 +25,7 @@ import { KeyedMutator } from 'swr';
 import produce from 'immer';
 import LoadSampleChanger from './loadsamplechanger';
 import { Shipment } from 'legacy/pages/model';
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useAuth } from 'hooks/useAuth';
 import {
   ColumnDef,
@@ -262,22 +263,13 @@ export function ToggleShipmentStatus({
   proposalName: string;
   mutate: KeyedMutator<ContainerDewar[]>;
 }) {
+  const [loading, setLoading] = React.useState(false);
   const { site, token } = useAuth();
   const isProcessing = shipmentIsProcessing(shipment);
-  const newStatus = isProcessing ? 'at_ESRF' : 'processing';
+  const javaName = site?.javaName;
+  const newStatus = isProcessing ? 'at_' + javaName : 'processing';
   const onClick = () => {
-    mutate(
-      produce((dewarsDraft: ContainerDewar[] | undefined) => {
-        if (dewarsDraft) {
-          for (const dewarDraft of dewarsDraft) {
-            if (dewarDraft.shippingId === shipment.shippingId) {
-              dewarDraft.shippingStatus = newStatus;
-            }
-          }
-        }
-      }),
-      false
-    );
+    setLoading(true);
     const req = updateShippingStatus({
       proposalName,
       shippingId: shipment.shippingId,
@@ -286,10 +278,14 @@ export function ToggleShipmentStatus({
     const fullUrl = `${site.host}${site.apiPrefix}/${token}${req.url}`;
     axios.get(fullUrl).then(
       () => {
-        mutate();
+        mutate().then(() => {
+          setLoading(false);
+        });
       },
       () => {
-        mutate();
+        mutate().then(() => {
+          setLoading(false);
+        });
       }
     );
   };
@@ -304,10 +300,17 @@ export function ToggleShipmentStatus({
         </Tooltip>
       }
     >
-      <Button style={{ padding: 0 }} variant="link" onClick={onClick}>
-        <FontAwesomeIcon
-          icon={isProcessing ? faTimes : faPlus}
-        ></FontAwesomeIcon>
+      <Button
+        style={{ padding: 0 }}
+        variant="link"
+        onClick={onClick}
+        disabled={loading}
+      >
+        {loading ? (
+          <Spinner animation="border" size="sm" />
+        ) : (
+          <FontAwesomeIcon icon={isProcessing ? faTimes : faPlus} />
+        )}
       </Button>
     </OverlayTrigger>
   );
