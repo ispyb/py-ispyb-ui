@@ -23,7 +23,7 @@ export default function SessionsPage() {
 
   const [startDate, setStartDate] = usePersistentParamState<string>(
     'startDate',
-    format(new Date(), 'yyyyMMdd')
+    format(new Date(Date.now() - 3600 * 1000 * 24), 'yyyyMMdd')
   );
   const [endDate, setEndDate] = usePersistentParamState<string>(
     'endDate',
