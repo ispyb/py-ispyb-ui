@@ -34,12 +34,11 @@ export default function Paginator(props: Props) {
   const nPages = Math.ceil(total / limit);
   const currentPage = skip / limit + 1;
   const nPagesShown = nPages > 3 ? 3 : nPages;
-  const nPageStart =
-    currentPage === 1
-      ? currentPage
-      : currentPage > nPages - 2
-      ? nPages - 2
-      : currentPage - 1;
+  const nPageStart = useMemo(() => {
+    if (currentPage === 1) return 1;
+    if (currentPage > nPages - 2) return nPages - 2 < 1 ? 1 : nPages - 2;
+    return currentPage - 1 < 1 ? 1 : currentPage - 1;
+  }, [currentPage, nPages]);
 
   const gotoPage = (page: number) => {
     const newSkip = limit * (page - 1);
@@ -117,7 +116,7 @@ export default function Paginator(props: Props) {
           onChange={changeLimit}
           value={currentLimitValue}
         >
-          {[5, 10, 25, 50, 100].map((i) => (
+          {[5, 10, 25, 40, 50, 100].map((i) => (
             <option key={`limit-${i}`} value={i}>
               {i}
             </option>

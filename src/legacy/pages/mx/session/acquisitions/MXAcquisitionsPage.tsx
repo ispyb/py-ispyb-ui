@@ -25,6 +25,8 @@ import {
   FluorescenceSpectra,
 } from '../../model';
 import { AcquisitionPanel } from '../../dataset/AcquisitionPanel';
+import { usePaging } from 'hooks/usePaging';
+import Paginator from 'components/Layout/Paginator';
 
 type Param = {
   sessionId: string;
@@ -138,6 +140,8 @@ export function MXAcquisitionsPage() {
     filteredDataCollectionGroups,
   ]);
 
+  const pagination = usePaging(40, 0);
+
   if (dataCollectionGroups && dataCollectionGroups.length) {
     return (
       <div
@@ -209,6 +213,11 @@ export function MXAcquisitionsPage() {
               </ToggleButton>
             </OverlayTrigger>
           </ButtonGroup>
+          <Paginator
+            total={acquisitionData.length}
+            skip={pagination.skip}
+            limit={pagination.limit}
+          />
         </div>
         {filterSamples === 'true' && (
           <ContainerFilter
@@ -220,16 +229,23 @@ export function MXAcquisitionsPage() {
             proposalName={proposalName}
           ></ContainerFilter>
         )}
-        {acquisitionData.map((acquisition, i) => {
-          return (
-            <AcquisitionPanel
-              key={i}
-              acquisition={acquisition}
-              proposalName={proposalName}
-              sessionId={sessionId}
-            />
-          );
-        })}
+        {acquisitionData
+          .slice(pagination.skip, pagination.skip + pagination.limit)
+          .map((acquisition, i) => {
+            return (
+              <AcquisitionPanel
+                key={i}
+                acquisition={acquisition}
+                proposalName={proposalName}
+                sessionId={sessionId}
+              />
+            );
+          })}
+        <Paginator
+          total={acquisitionData.length}
+          skip={pagination.skip}
+          limit={pagination.limit}
+        />
       </div>
     );
   }
