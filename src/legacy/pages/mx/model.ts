@@ -235,24 +235,13 @@ export interface WorkflowStep {
 }
 
 export interface WorkflowStepItem {
-  type: 'table' | 'warning' | 'info' | 'images' | 'logFile';
+  type: 'table' | 'warning' | 'info' | 'images' | 'image' | 'logFile';
   title?: string;
   orientation?: string;
   columns?: string[];
   data?: string[][];
   value?: string;
-  items?: {
-    suffix: string;
-    thumbnailSuffix: string;
-    thumbnailValue: string;
-    thumbnailXsize: number;
-    thumbnailYsize: number;
-    title: string;
-    type: 'image';
-    value: string;
-    xsize: number;
-    ysize: number;
-  }[];
+  items?: WorkflowStepItem[];
   linkText?: string;
   logText?: string;
 }

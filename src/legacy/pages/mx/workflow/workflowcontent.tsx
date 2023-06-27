@@ -19,9 +19,12 @@ export default function WorkflowContent({ step }: { step: WorkflowStep }) {
               return <InfoContent item={item}></InfoContent>;
             case 'images':
               return <ImagesContent item={item}></ImagesContent>;
+            case 'image':
+              return <ImageContent item={item}></ImageContent>;
             case 'logFile':
               return <LogFileContent item={item}></LogFileContent>;
             default:
+              console.error('Unknown workflow item type: ' + item.type);
               return null;
           }
         })}
@@ -78,20 +81,28 @@ export function ImagesContent({ item }: { item: WorkflowStepItem }) {
   return (
     <Row>
       {item.items?.map((value) => {
-        const src = 'data:image/png;base64,' + value.value;
         return (
           <Col key={value.title}>
-            <ZoomImage
-              alt={value.title}
-              style={{ maxWidth: 500, marginBottom: 15 }}
-              src={src}
-              local={true}
-              legend={value.title}
-            />
+            <ImageContent item={value} />
           </Col>
         );
       })}
     </Row>
+  );
+}
+
+export function ImageContent({ item }: { item: WorkflowStepItem }) {
+  const src = 'data:image/png;base64,' + item.value;
+  return (
+    <Col key={item.title}>
+      <ZoomImage
+        alt={item.title || ''}
+        style={{ maxWidth: 500, marginBottom: 15 }}
+        src={src}
+        local={true}
+        legend={item.title}
+      />
+    </Col>
   );
 }
 
