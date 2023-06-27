@@ -140,7 +140,7 @@ export function MXAcquisitionsPage() {
     filteredDataCollectionGroups,
   ]);
 
-  const pagination = usePaging(50, 0);
+  const pagination = usePaging(40, 0);
 
   if (dataCollectionGroups && dataCollectionGroups.length) {
     return (
