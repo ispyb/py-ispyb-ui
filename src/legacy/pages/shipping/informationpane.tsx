@@ -19,6 +19,9 @@ import {
   Button,
   Spinner,
   Container as ContainerB,
+  OverlayTrigger,
+  Tooltip,
+  Modal,
 } from 'react-bootstrap';
 import { KeyedMutator } from 'swr';
 import { Container, Shipping } from './model';
@@ -98,9 +101,13 @@ export function InformationPane({
     }).length > 0
   );
   const isEditShipmentActive = shipping.shippingStatus !== 'processing';
-  const isDeleteShipmentActive = shipping.shippingStatus !== 'processing';
+  const isDeleteShipmentActive =
+    shipping.shippingStatus === 'opened' &&
+    shipping.dewarVOs.flatMap((d) => d.containerVOs).flatMap((c) => c.sampleVOs)
+      .length === 0;
 
   const [deleting, setDeleting] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const onDelete = () => {
     setDeleting(true);
@@ -275,26 +282,69 @@ export function InformationPane({
           ></EditShippingModal>
         </Col>
         <Col md="auto" style={{ padding: 0 }}>
-          <Button
-            onClick={onDelete}
-            disabled={!isDeleteShipmentActive || deleting}
-            style={{ marginLeft: 15 }}
+          <OverlayTrigger
+            overlay={
+              <Tooltip>
+                You can only delete a shipment if it has not been sent to the
+                facility and if it does not contain any samples.
+              </Tooltip>
+            }
+            trigger={['hover', 'focus']}
           >
-            {!deleting && (
-              <FontAwesomeIcon
-                style={{ marginRight: 10 }}
-                icon={faTrash}
-              ></FontAwesomeIcon>
-            )}
-            {deleting && (
-              <Spinner
-                size="sm"
-                animation="border"
-                style={{ marginRight: 10 }}
-              ></Spinner>
-            )}
-            Delete
-          </Button>
+            <span>
+              <Button
+                onClick={() => setShowDeleteModal(true)}
+                disabled={!isDeleteShipmentActive || deleting}
+                style={{ marginLeft: 15 }}
+              >
+                {!deleting && (
+                  <FontAwesomeIcon
+                    style={{ marginRight: 10 }}
+                    icon={faTrash}
+                  ></FontAwesomeIcon>
+                )}
+                {deleting && (
+                  <Spinner
+                    size="sm"
+                    animation="border"
+                    style={{ marginRight: 10 }}
+                  ></Spinner>
+                )}
+                Delete
+              </Button>
+            </span>
+          </OverlayTrigger>
+          <Modal
+            show={showDeleteModal}
+            onHide={() => setShowDeleteModal(false)}
+          >
+            <Modal.Header closeButton>
+              <Modal.Title>Delete shipment</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <p>
+                Are you sure you want to delete this shipment? This action
+                cannot be undone.
+              </p>
+            </Modal.Body>
+            <Modal.Footer>
+              <Button
+                variant="primary"
+                onClick={() => setShowDeleteModal(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                variant="danger"
+                onClick={() => {
+                  setShowDeleteModal(false);
+                  onDelete();
+                }}
+              >
+                Delete
+              </Button>
+            </Modal.Footer>
+          </Modal>
         </Col>
         <Col></Col>
       </Row>
