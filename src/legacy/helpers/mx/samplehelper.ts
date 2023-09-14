@@ -2,6 +2,7 @@ import { Beamline, containerType, sampleChangerType } from 'legacy/models';
 import { ContainerDewar } from 'legacy/pages/model';
 import { AbstractSampleChanger } from 'legacy/pages/prepareexperiment/samplechanger/abstractsamplechanger';
 import { FlexHCDDual } from 'legacy/pages/prepareexperiment/samplechanger/flexhcddual';
+import { FlexHCDDualID231 } from 'legacy/pages/prepareexperiment/samplechanger/flexhcddualid231';
 import { FlexHCDUnipuckPlate } from 'legacy/pages/prepareexperiment/samplechanger/flexhdcunipuckplate';
 import { ISARA } from 'legacy/pages/prepareexperiment/samplechanger/isara';
 import { P11SC } from 'legacy/pages/prepareexperiment/samplechanger/p11sc';
@@ -11,6 +12,9 @@ export function getSampleChanger(
 ): AbstractSampleChanger | undefined {
   if (type === 'FlexHCDDual') {
     return new FlexHCDDual();
+  }
+  if (type === 'FlexHCDDualID231') {
+    return new FlexHCDDualID231();
   }
   if (type === 'FlexHCDUnipuckPlate') {
     return new FlexHCDUnipuckPlate();
