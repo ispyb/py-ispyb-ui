@@ -14,7 +14,7 @@ export const NETLIFY: SiteConfig[] = [
         EM: { beamlines: [{ name: 'CM01' }] },
         MX: {
           beamlines: [
-            { name: 'ID23-1', sampleChangerType: 'FlexHCDDual' },
+            { name: 'ID23-1', sampleChangerType: 'FlexHCDDualID231' },
             { name: 'ID23-2', sampleChangerType: 'FlexHCDUnipuckPlate' },
             { name: 'ID29', sampleChangerType: 'FlexHCDDual' },
             { name: 'ID30A-1', sampleChangerType: 'FlexHCDUnipuckPlate' },
