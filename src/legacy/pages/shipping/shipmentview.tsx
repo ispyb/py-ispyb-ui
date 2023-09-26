@@ -21,6 +21,7 @@ import {
   Col,
   Container as ContainerB,
   FormCheck,
+  Modal,
   Nav,
   OverlayTrigger,
   Popover,
@@ -442,6 +443,7 @@ export function DewarPane({
   const [hide, setHide] = useState(false);
   const [editingDewar, setEditingDewar] = useState(false);
   const { site, token } = useAuth();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
   const { data: samples, isError: isErrorContainer } = useMXContainers({
     proposalName,
@@ -452,6 +454,8 @@ export function DewarPane({
   if (hide) return null;
 
   if (samples === undefined) return <></>;
+
+  const isDeleteActive = shipping.shippingStatus === 'opened';
 
   return (
     <Alert style={{ marginTop: 10 }} variant="light">
@@ -592,15 +596,9 @@ export function DewarPane({
                 variant={'warning'}
                 style={{ marginTop: 5 }}
                 onClick={() => {
-                  setHide(true);
-                  const req = removeDewar({
-                    proposalName,
-                    shippingId: String(shipping.shippingId),
-                    dewarId: String(dewar.dewarId),
-                  });
-                  const fullUrl = `${site.host}${site.apiPrefix}/${token}${req.url}`;
-                  axios.get(fullUrl).then(() => mutateShipping());
+                  setShowDeleteModal(true);
                 }}
+                disabled={!isDeleteActive}
               >
                 <FontAwesomeIcon
                   icon={faTrash}
@@ -608,6 +606,44 @@ export function DewarPane({
                 ></FontAwesomeIcon>
                 Remove
               </Button>
+              <Modal
+                show={showDeleteModal}
+                onHide={() => setShowDeleteModal(false)}
+              >
+                <Modal.Header closeButton>
+                  <Modal.Title>Delete shipment</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <p>
+                    Are you sure you want to delete this dewar? This action
+                    cannot be undone.
+                  </p>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button
+                    variant="primary"
+                    onClick={() => setShowDeleteModal(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="danger"
+                    onClick={() => {
+                      setShowDeleteModal(false);
+                      setHide(true);
+                      const req = removeDewar({
+                        proposalName,
+                        shippingId: String(shipping.shippingId),
+                        dewarId: String(dewar.dewarId),
+                      });
+                      const fullUrl = `${site.host}${site.apiPrefix}/${token}${req.url}`;
+                      axios.get(fullUrl).then(() => mutateShipping());
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </Modal.Footer>
+              </Modal>
             </Row>
           </Col>
         ) : (

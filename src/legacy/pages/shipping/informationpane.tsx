@@ -101,10 +101,7 @@ export function InformationPane({
     }).length > 0
   );
   const isEditShipmentActive = shipping.shippingStatus !== 'processing';
-  const isDeleteShipmentActive =
-    shipping.shippingStatus === 'opened' &&
-    shipping.dewarVOs.flatMap((d) => d.containerVOs).flatMap((c) => c.sampleVOs)
-      .length === 0;
+  const isDeleteShipmentActive = shipping.shippingStatus === 'opened';
 
   const [deleting, setDeleting] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -286,7 +283,7 @@ export function InformationPane({
             overlay={
               <Tooltip>
                 You can only delete a shipment if it has not been sent to the
-                facility and if it does not contain any samples.
+                facility.
               </Tooltip>
             }
             trigger={['hover', 'focus']}
