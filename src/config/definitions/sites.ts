@@ -14,7 +14,6 @@ export interface JavaSiteConfig {
 
 export type sampleChangerType =
   | 'FlexHCDDual'
-  | 'FlexHCDDualID231'
   | 'FlexHCDUnipuckPlate'
   | 'ISARA'
   | 'P11SC';
