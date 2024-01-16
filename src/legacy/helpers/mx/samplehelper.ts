@@ -12,7 +12,6 @@ export function getSampleChanger(
   if (type === 'FlexHCDDual') {
     return new FlexHCDDual();
   }
- 
   if (type === 'FlexHCDUnipuckPlate') {
     return new FlexHCDUnipuckPlate();
   }
