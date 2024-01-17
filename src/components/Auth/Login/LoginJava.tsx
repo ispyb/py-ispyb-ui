@@ -96,7 +96,7 @@ export default function LoginJava() {
               </Row>
             )}
             <Form.Group as={Row} className="mb-2">
-              <Form.Label column>Username JAVA</Form.Label>
+              <Form.Label column>Username</Form.Label>
               <Col md={12} lg={8}>
                 <Form.Control
                   type="text"

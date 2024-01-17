@@ -4,6 +4,7 @@ import { useAuth } from 'hooks/useAuth';
 import { NavLink } from 'react-router-dom';
 
 export function JavaHeader() {
+
   return (
     <>
       <Navbar.Toggle aria-controls="main-navbar" />
@@ -19,6 +20,7 @@ export function JavaHeader() {
 
         <Nav>
           <PersonMenu />
+          <Logout/>
         </Nav>
       </Navbar.Collapse>
     </>
@@ -38,6 +40,7 @@ function PersonMenu() {
       id="admin-nav-dropdown"
       align="end"
     >
+      <NavDropdown.Header><div className='new-line'>{javaPerson?.roles.join('\n\r')}</div></NavDropdown.Header>
       <Logout />
       <NavDropdown.ItemText>
         <small

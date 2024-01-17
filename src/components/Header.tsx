@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { Link, NavLink, Outlet } from 'react-router-dom';
+import { Link, NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useController } from 'rest-hooks';
 import { Navbar, NavDropdown, Container, Nav, Button } from 'react-bootstrap';
 import { PersonBadge } from 'react-bootstrap-icons';
@@ -12,6 +12,8 @@ import Breadcrumbs from './Breadcrumbs';
 import { ActiveProposal } from './ActiveProposal';
 import { Footer } from './Footer';
 import Loading from './Loading';
+
+
 
 function PersonMenu() {
   const currentUser = useCurrentUser();
@@ -38,11 +40,14 @@ function PersonMenu() {
 export function Logout() {
   const { clearToken } = useAuth();
   const { resetEntireStore } = useController();
+  const navigate = useNavigate();
+  
   return (
     <Button
       onClick={() => {
         clearToken();
         resetEntireStore();
+        navigate("/");
       }}
     >
       Logout
