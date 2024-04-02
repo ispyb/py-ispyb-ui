@@ -232,14 +232,16 @@ function parseSample(
   const getString = (index: number) => {
     if (data.length <= index) return undefined;
     const r = data[index];
-    if (r === undefined) return undefined;
-    return String(r);
+    if (r === undefined || r === null) return undefined;
+    const converted = String(r).trim();
+    return converted.length ? converted : undefined;
   };
   const getNumber = (index: number) => {
     if (data.length <= index) return undefined;
     const r = data[index];
-    if (r === undefined) return undefined;
-    return Number(r);
+    if (r === undefined || r === null) return undefined;
+    const converted = Number(r);
+    return isNaN(converted) ? undefined : converted;
   };
 
   if (

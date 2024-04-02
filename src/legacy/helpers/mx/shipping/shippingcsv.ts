@@ -74,14 +74,15 @@ export function getFieldString(
 ): { index: number; value: string | undefined } {
   const v = getField(line, field);
 
+  const getValue = () => {
+    if (v.value === undefined || v.value === null) return undefined;
+    const converted = String(v.value).trim();
+    return converted.length ? converted : undefined;
+  };
+
   return {
     ...v,
-    value:
-      v.value === undefined
-        ? undefined
-        : v.value === null
-        ? undefined
-        : String(v.value),
+    value: getValue(),
   };
 }
 export function getFieldNumber(
@@ -89,14 +90,16 @@ export function getFieldNumber(
   field: FieldName
 ): { index: number; value: number | undefined } {
   const v = getField(line, field);
+
+  const getValue = () => {
+    if (v.value === undefined || v.value === null) return undefined;
+    const converted = Number(v.value);
+    return isNaN(converted) ? undefined : converted;
+  };
+
   return {
     ...v,
-    value:
-      v.value === undefined
-        ? undefined
-        : v.value === null
-        ? undefined
-        : Number(v.value),
+    value: getValue(),
   };
 }
 
